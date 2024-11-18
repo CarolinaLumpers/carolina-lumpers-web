@@ -146,7 +146,7 @@ font-family: 'Anton', sans-serif;
 }
 
 .banner-image {
-  max-width: 90%; /* Ensures the image scales down within its container */
+  max-width: 10%; /* Ensures the image scales down within its container */
   height: auto; /* Maintains aspect ratio */
   border-radius: 8px; /* Slight rounding for consistency */
   object-fit: contain; /* Ensures the entire image fits within its container */
@@ -268,19 +268,6 @@ section h2 {
   color: #1A1A1A;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-  .services-brief {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .brief-item {
-    width: 100%;
-  }
-}
-
-
 
 /* Footer */
 footer {
@@ -298,46 +285,4 @@ footer {
 
 .footer-icons img:hover {
   transform: scale(1.1);
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .hero {
-    flex-direction: column;
-    height: auto;
-  }
-
-  .hero-content {
-    height: auto;
-    text-align: center;
-    padding: 20px;
-  }
-
-  .hero-video {
-    height: 250px;
-  }
-
-  .nav-links {
-    gap: 10px;
-  }
-}
-
-@media (max-width: 480px) {
-  .banner-video {
-    display: none;
-  }
-
-  .hero-content {
-    padding: 10px;
-  }
-
-  .navbar {
-    flex-direction: column;
-    padding: 10px;
-  }
-
-  .nav-links {
-    flex-direction: column;
-    gap: 10px;
-  }
 }
