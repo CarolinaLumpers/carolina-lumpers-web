@@ -385,3 +385,13 @@ footer {
     height: 50px; /* Further reduce logo size */
   }
 }
+/* Change hyperlink colors */
+a {
+  color: var(--text-color); /* Matches your primary text color */
+  text-decoration: none; /* Removes underline */
+}
+
+a:hover {
+  color: var(--accent-color); /* Highlight color on hover */
+  text-decoration: underline; /* Adds underline on hover for accessibility */
+}
