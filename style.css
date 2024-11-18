@@ -1,13 +1,13 @@
 :root {
-  --primary-bg: #FFBF00; /* Dark Gray */
-  --secondary-bg:  #1A1A1A; /* High-Visibility Lime */
-  --accent-color:#FFBF00;
+  --primary-bg: #FFBF00; /* Amber, Fluorescent orange */
+  --accent-color:#FFBF00;  /* Amber, Fluorescent orange */
+  --secondary-bg:  #1A1A1A; /* Gray10 */
   --text-color: #FFFFFF; /* Bright White */
-  --button-hover-bg: #FFBF00; /* Deep Gold */
+  --button-hover-bg: #FFFFFF; /* Bright White */
   --service-bg: #2E2E2E; /* Charcoal Gray */
-  --card-bg: #FBB040; /* Light Gray */
-  --text-muted: #B3B3B3; /* Subtle Gray */
-  --text-color-2: black;
+  --card-bg: #FBB040; /* Mellow orange */
+  --text-muted: #B3B3B3; /*  Philippine Silver */
+  --text-color-2: #000000;  /* Black */
 }
 
 
@@ -138,8 +138,8 @@ font-family: 'Anton', sans-serif;
 .hero-image {
   flex: 1;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: left;
+  justify-content: left;
   overflow: hidden;
   border-radius: 12px; /* Matches other elements for rounded corners */
   padding: 10px; /* Adds spacing around the image */
@@ -148,7 +148,7 @@ font-family: 'Anton', sans-serif;
 .banner-image {
   max-width: 90%; /* Ensures the image scales down within its container */
   height: auto; /* Maintains aspect ratio */
-  border-radius: 8px; /* Slight rounding for consistency */
+  border-radius: 12px; /* Slight rounding for consistency */
   object-fit: contain; /* Ensures the entire image fits within its container */
 }
 
@@ -228,12 +228,17 @@ section h2 {
   min-width: 280px;
   padding: 20px;
   background-color: var(--card-bg);
-  border-radius: 12px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  color: var(--text-color-2);
+  padding: 10px 20px;
+  text-decoration: none;
+  font-size: 1em;
+  border-radius: 5px;
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
 
 .brief-item:hover {
+  background-color: #FFFFFF; /* White */
+  color: #1A1A1A;
   transform: translateY(-5px);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
@@ -385,9 +390,9 @@ footer {
     height: 50px; /* Further reduce logo size */
   }
 }
-.email-button {
+.action-button {
   display: inline-block;
-  background-color: var(--accent-color); /* Use your accent color */
+  background-color: var(--card-bg); /* Use your accent color */
   color: var(--secondary-bg); /* Use contrasting text color */
   padding: 10px 20px;
   text-decoration: none;
@@ -395,12 +400,12 @@ footer {
   font-weight: bold;
   border-radius: 5px;
   transition: background-color 0.3s ease, transform 0.3s ease;
+  margin: 10px 5px; /* Add some spacing between buttons */
 }
 
-.email-button:hover {
-  background-color: var(--button-hover-bg); /* Slightly different hover color */
-  color: var(--text-color); /* Hover text color */
+.action-button:hover {
+  background-color: #FFFFFF; /* White */
+  color: #1A1A1A;
   transform: translateY(-2px); /* Subtle lift effect on hover */
   text-decoration: none; /* Ensures no underline on hover */
 }
-
