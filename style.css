@@ -288,3 +288,100 @@ footer {
   transform: scale(1.1);
 }
 
+@media (max-width: 768px) {
+  /* Navbar */
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 10px;
+  }
+
+  .logo {
+    height: 60px; /* Reduce logo size for mobile */
+  }
+
+/* Reduce company name size on mobile */
+@media (max-width: 768px) {
+  .company-name {
+    font-size: 1.5em; /* Smaller font size for mobile */
+    margin-left: 10px; /* Reduce spacing from the logo */
+  }
+
+  .nav-links {
+    gap: 10px; /* Adjust gap for menu items */
+  }
+}
+
+@media (max-width: 768px) {
+  .nav-links {
+    flex-direction: row; /* Ensure horizontal layout */
+    gap: 15px;
+    justify-content: flex-end; /* Align links to the right */
+    width: 100%; /* Ensure it spans the navbar width */
+  }
+
+  .nav-links li {
+    display: inline-block; /* Keep inline block for spacing */
+  }
+
+  .navbar {
+    flex-wrap: wrap; /* Allow wrapping if content overflows */
+    justify-content: space-between;
+  }
+}
+
+
+  /* Hero Section */
+  .hero {
+    flex-direction: column; /* Stack content vertically */
+    padding: 10px;
+    margin: 10px auto;
+  }
+
+  .hero-content {
+    text-align: center; /* Center-align text for better readability */
+  }
+
+  .hero-content h2 {
+    font-size: 1.8em; /* Adjust heading size for mobile */
+  }
+
+  .cta-container {
+    text-align: center;
+  }
+
+  /* Services Section */
+  .services-brief {
+    flex-direction: column; /* Stack service cards vertically */
+  }
+
+  .brief-item {
+    width: 100%; /* Full width for service cards */
+    margin-bottom: 15px;
+  }
+
+  /* About and What We Offer Sections */
+  section {
+    padding: 15px; /* Reduce padding for better spacing */
+    margin: 10px auto;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Further tweaks for smaller screens */
+  .hero-content h2 {
+    font-size: 1.5em; /* Smaller heading size for very small screens */
+  }
+
+  .hero-content p {
+    font-size: 1em; /* Adjust paragraph font size */
+  }
+
+  .cta-button {
+    padding: 8px 16px; /* Smaller button padding */
+  }
+
+  .logo {
+    height: 50px; /* Further reduce logo size */
+  }
+}
