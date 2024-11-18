@@ -469,3 +469,14 @@ footer {
     padding: 6px 12px;
   }
 }
+/* Change hyperlink colors and make them bold */
+a {
+  color: var(--text-color); /* Matches your primary text color */
+  text-decoration: none; /* Removes underline */
+  font-weight: bold; /* Makes the text bold */
+}
+
+a:hover {
+  color: var(--accent-color); /* Highlight color on hover */
+  text-decoration: underline; /* Adds underline on hover for accessibility */
+}
