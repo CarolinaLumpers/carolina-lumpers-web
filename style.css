@@ -293,103 +293,6 @@ footer {
   transform: scale(1.1);
 }
 
-@media (max-width: 768px) {
-  /* Navbar */
-  .navbar {
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 10px;
-  }
-
-  .logo {
-    height: 60px; /* Reduce logo size for mobile */
-  }
-
-/* Reduce company name size on mobile */
-@media (max-width: 768px) {
-  .company-name {
-    font-size: 1.5em; /* Smaller font size for mobile */
-    margin-left: 10px; /* Reduce spacing from the logo */
-  }
-
-  .nav-links {
-    gap: 10px; /* Adjust gap for menu items */
-  }
-}
-
-@media (max-width: 768px) {
-  .nav-links {
-    flex-direction: row; /* Ensure horizontal layout */
-    gap: 15px;
-    justify-content: flex-end; /* Align links to the right */
-    width: 100%; /* Ensure it spans the navbar width */
-  }
-
-  .nav-links li {
-    display: inline-block; /* Keep inline block for spacing */
-  }
-
-  .navbar {
-    flex-wrap: wrap; /* Allow wrapping if content overflows */
-    justify-content: space-between;
-  }
-}
-
-
-  /* Hero Section */
-  .hero {
-    flex-direction: column; /* Stack content vertically */
-    padding: 10px;
-    margin: 10px auto;
-  }
-
-  .hero-content {
-    text-align: center; /* Center-align text for better readability */
-  }
-
-  .hero-content h2 {
-    font-size: 1.8em; /* Adjust heading size for mobile */
-  }
-
-  .cta-container {
-    text-align: center;
-  }
-
-  /* Services Section */
-  .services-brief {
-    flex-direction: column; /* Stack service cards vertically */
-  }
-
-  .brief-item {
-    width: 100%; /* Full width for service cards */
-    margin-bottom: 15px;
-  }
-
-  /* About and What We Offer Sections */
-  section {
-    padding: 15px; /* Reduce padding for better spacing */
-    margin: 10px auto;
-  }
-}
-
-@media (max-width: 480px) {
-  /* Further tweaks for smaller screens */
-  .hero-content h2 {
-    font-size: 1.5em; /* Smaller heading size for very small screens */
-  }
-
-  .hero-content p {
-    font-size: 1em; /* Adjust paragraph font size */
-  }
-
-  .cta-button {
-    padding: 8px 16px; /* Smaller button padding */
-  }
-
-  .logo {
-    height: 50px; /* Further reduce logo size */
-  }
-}
 .action-button {
   display: inline-block;
   background-color: var(--card-bg); /* Use your accent color */
@@ -408,4 +311,110 @@ footer {
   color: #1A1A1A;
   transform: translateY(-2px); /* Subtle lift effect on hover */
   text-decoration: none; /* Ensures no underline on hover */
+}
+
+@media (max-width: 768px) {
+  /* Navbar adjustments */
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 10px;
+  }
+
+  .company-name {
+    font-size: 1.5em;
+    margin-left: 0;
+  }
+
+  .nav-links {
+    flex-direction: row;
+    gap: 10px;
+    justify-content: flex-end;
+    width: 100%;
+  }
+
+  .logo {
+    height: 60px;
+  }
+
+  /* Hero section adjustments */
+  .hero {
+    display: flex;
+    flex-direction: column; /* Stack content vertically */
+    padding: 10px;
+    margin: 10px auto;
+  }
+
+  .hero-image {
+    order: -1; /* Moves the image to the top */
+    margin-bottom: 10px; /* Space below the image */
+    width: 100%; /* Ensure it takes full width */
+    display: flex;
+    justify-content: center; /* Center the image */
+  }
+
+  .banner-image {
+    max-width: 100%; /* Full width for better scaling */
+    height: auto; /* Maintain aspect ratio */
+  }
+
+  .hero-content {
+    text-align: center;
+    padding: 10px;
+  }
+
+  .hero-content h2 {
+    font-size: 1.8em;
+    margin-top: 0;
+    margin-bottom: 5px;
+  }
+
+  .hero-content p {
+    font-size: 1em;
+    margin: 5px 0;
+  }
+
+  .cta-button {
+    padding: 8px 16px;
+    margin: 10px 0;
+  }
+
+  /* Service section adjustments */
+  .services-brief {
+    flex-direction: column;
+  }
+
+  .brief-item {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  /* Section adjustments */
+  section {
+    padding: 15px;
+    margin: 10px auto;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Further adjustments for very small screens */
+  .company-name {
+    font-size: 1.2em;
+  }
+
+  .hero-content h2 {
+    font-size: 1.5em;
+  }
+
+  .hero-content p {
+    font-size: 0.9em;
+  }
+
+  .logo {
+    height: 50px;
+  }
+
+  .cta-button {
+    padding: 6px 12px;
+  }
 }
