@@ -146,7 +146,7 @@ font-family: 'Anton', sans-serif;
 }
 
 .banner-image {
-  max-width: 10%; /* Ensures the image scales down within its container */
+  max-width: 100%; /* Ensures the image scales down within its container */
   height: auto; /* Maintains aspect ratio */
   border-radius: 8px; /* Slight rounding for consistency */
   object-fit: contain; /* Ensures the entire image fits within its container */
