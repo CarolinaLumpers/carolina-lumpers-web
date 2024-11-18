@@ -135,6 +135,22 @@ font-family: 'Anton', sans-serif;
   font-size: 1.1em;
   margin-bottom: 20px;
 }
+.hero-image {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 12px; /* Matches other elements for rounded corners */
+  padding: 10px; /* Adds spacing around the image */
+}
+
+.banner-image {
+  max-width: 90%; /* Ensures the image scales down within its container */
+  height: auto; /* Maintains aspect ratio */
+  border-radius: 8px; /* Slight rounding for consistency */
+  object-fit: contain; /* Ensures the entire image fits within its container */
+}
 
 .cta-container {
   margin-top: 20px;
