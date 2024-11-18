@@ -131,14 +131,16 @@ font-family: 'Anton', sans-serif;
   justify-content: center;
   overflow: hidden;
   border-radius: 12px;
+  padding: 10px; /* Adds some spacing around the image */
 }
 
 .banner-image {
-  width: 100%;
-  height: auto;
-  object-fit: cover;
-  border-radius: 12px;
+  max-width: 90%; /* Ensures the image scales down within its container */
+  height: auto; /* Maintains aspect ratio */
+  border-radius: 8px; /* Slight rounding for consistency with other elements */
+  object-fit: contain; /* Ensures the image fits nicely */
 }
+
 
 
 .cta-container {
