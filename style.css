@@ -385,13 +385,22 @@ footer {
     height: 50px; /* Further reduce logo size */
   }
 }
-/* Change hyperlink colors */
-a {
-  color: var(--text-color); /* Matches your primary text color */
-  text-decoration: none; /* Removes underline */
+.email-button {
+  display: inline-block;
+  background-color: var(--accent-color); /* Use your accent color */
+  color: var(--secondary-bg); /* Use contrasting text color */
+  padding: 10px 20px;
+  text-decoration: none;
+  font-size: 1em;
+  font-weight: bold;
+  border-radius: 5px;
+  transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
-a:hover {
-  color: var(--accent-color); /* Highlight color on hover */
-  text-decoration: underline; /* Adds underline on hover for accessibility */
+.email-button:hover {
+  background-color: var(--button-hover-bg); /* Slightly different hover color */
+  color: var(--text-color); /* Hover text color */
+  transform: translateY(-2px); /* Subtle lift effect on hover */
+  text-decoration: none; /* Ensures no underline on hover */
 }
+
