@@ -121,7 +121,7 @@ font-family: 'Anton', sans-serif;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  color: text-color-2;
+  color: text-color;
 }
 
 .hero-content h2 {
@@ -135,6 +135,8 @@ font-family: 'Anton', sans-serif;
   font-size: 1.1em;
   margin-bottom: 20px;
 }
+
+
 .hero-image {
   flex: 1;
   display: flex;
