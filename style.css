@@ -163,6 +163,25 @@ font-family: 'Anton', sans-serif;
   pointer-events: none;
 }
 
+/* About Section Centering */
+#overview {
+  text-align: center; /* Centers the text */
+}
+
+#overview h2 {
+  font-size: 2em; /* Maintain a large heading size */
+  color: var(--accent-color);
+  margin-bottom: 15px;
+}
+
+#overview p {
+  font-size: 1.1em;
+  color: var(--text-color);
+  margin: 0 auto; /* Center the paragraph with auto margins */
+  max-width: 700px; /* Limit width for better readability */
+  line-height: 1.6; /* Increase line spacing for better legibility */
+}
+
 
 /* Section Styles */
 section {
@@ -252,6 +271,36 @@ section h2 {
 .cta-button:hover {
   background-color: #FFFFFF; /* White */
   color: #1A1A1A;
+}
+
+/* Contact Section Centering */
+#contact {
+  text-align: center; /* Centers all text and buttons */
+}
+
+#contact h2 {
+  font-size: 2em; /* Maintain consistent heading size */
+  color: var(--accent-color);
+  margin-bottom: 15px; /* Adds spacing below the heading */
+}
+
+.action-button {
+  display: inline-block; /* Inline-block allows buttons to be placed side-by-side */
+  background-color: var(--card-bg); /* Use your accent color */
+  color: var(--secondary-bg); /* Text color contrast */
+  padding: 10px 20px;
+  text-decoration: none;
+  font-size: 1em;
+  font-weight: bold;
+  border-radius: 5px;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  margin: 10px 5px; /* Space between buttons */
+}
+
+.action-button:hover {
+  background-color: #FFFFFF; /* White on hover */
+  color: #1A1A1A; /* Dark gray text on hover */
+  transform: translateY(-2px); /* Slight hover effect */
 }
 
 
