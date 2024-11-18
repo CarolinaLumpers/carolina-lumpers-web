@@ -1,13 +1,13 @@
 :root {
-  --primary-bg: #FFBF00; /* Dark Gray */
-  --secondary-bg:  #1A1A1A; /* High-Visibility Lime */
-  --accent-color:#FFBF00;
+  --primary-bg: #FFBF00; /* Bright Yellow */
+  --secondary-bg: #1A1A1A; /* Dark Gray */
+  --accent-color: #FFBF00; /* Bright Yellow Accent */
   --text-color: #FFFFFF; /* Bright White */
-  --button-hover-bg: #FFBF00; /* Deep Gold */
+  --button-hover-bg: #FBB040; /* Light Orange */
   --service-bg: #2E2E2E; /* Charcoal Gray */
-  --card-bg: #FBB040; /* Light Gray */
-  --text-muted: #B3B3B3; /* Subtle Gray */
-  --text-color-2: black;
+  --card-bg: #FBB040; /* Soft Orange */
+  --text-muted: #B3B3B3; /* Light Gray for muted text */
+  --text-color-2: #000000; /* Black for contrast */
 }
 
 
@@ -121,7 +121,7 @@ font-family: 'Anton', sans-serif;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  color: var(--text-color-2);
+  color: var(--accent-color);
 }
 
 .hero-image {
