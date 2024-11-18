@@ -1,13 +1,13 @@
 :root {
-  --primary-bg: #FFBF00; /* Amber, Fluorescent orange */
-  --accent-color:#FFBF00;  /* Amber, Fluorescent orange */
-  --secondary-bg:  #1A1A1A; /* Gray10 */
-  --text-color: #FFFFFF; /* Bright White */
-  --button-hover-bg: #FFFFFF; /* Bright White */
-  --service-bg: #2E2E2E; /* Charcoal Gray */
-  --card-bg: #FBB040; /* Mellow orange */
-  --text-muted: #B3B3B3; /*  Philippine Silver */
-  --text-color-2: #000000;  /* Black */
+  --primary-bg: #FFBF00; /* Amber, Fluorescent orange - Main background color for highlights */
+  --accent-color: #FFBF00; /* Amber, Fluorescent orange - Used for accent elements like headings */
+  --secondary-bg: #1A1A1A; /* Gray10 - Dark background for contrast */
+  --text-color: #FFFFFF; /* Bright White - Main text color for readability on dark backgrounds */
+  --button-hover-bg: #FFFFFF; /* Bright White - Background color for buttons on hover */
+  --service-bg: #2E2E2E; /* Charcoal Gray - Background for service sections */
+  --card-bg: #FBB040; /* Mellow orange - Background for cards and important elements */
+  --text-muted: #B3B3B3; /* Philippine Silver - Muted text for less prominent information */
+  --text-color-2: #000000; /* Black - Secondary text color for light backgrounds */
 }
 
 
