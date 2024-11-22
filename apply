@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apply | Carolina Lumpers</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f9;
+      text-align: center;
+    }
+    header {
+      background-color: #333;
+      color: white;
+      padding: 10px 0;
+    }
+    header h1 {
+      margin: 0;
+    }
+    iframe {
+      width: 90%;
+      height: 80vh;
+      border: none;
+      margin-top: 20px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      border-radius: 10px;
+    }
+    footer {
+      margin-top: 20px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Apply to Join Carolina Lumpers</h1>
+  </header>
+
+  <iframe src="https://docs.google.com/forms/d/YOUR_FORM_ID/viewform"></iframe>
+
+  <footer>
+    <p>&copy; 2024 Carolina Lumpers. All rights reserved.</p>
+  </footer>
+</body>
+</html>
