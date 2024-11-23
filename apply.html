@@ -37,45 +37,43 @@
   </header>
 
   <!-- Application Form Section -->
-  <h2>Application Form</h2>
-  <form id="applicationForm">
-    <label for="firstName">First Name:</label>
-    <input type="text" id="firstName" name="firstName" required>
 
-    <label for="lastName">Last Name:</label>
-    <input type="text" id="lastName" name="lastName" required>
+    <main>
+        <h2 style="text-align: center; color: var(--accent-color);">Worker Application Form</h2>
+        <form action="https://docs.google.com/forms/u/0/d/e/1FAIpQLSeK6gOhryYgeghFwb00VvCg2oG1gyF9pHZmqUsKTWazqreO8g/formResponse" method="POST" target="_self">
+            <label for="firstName">First Name</label>
+            <input type="text" name="entry.720559030" id="firstName" placeholder="Enter your first name" required>
 
-    <label for="email">Email:</label>
-    <input type="email" id="email" name="email" required>
+            <label for="lastName">Last Name</label>
+            <input type="text" name="entry.2052473747" id="lastName" placeholder="Enter your last name" required>
 
-    <label for="phone">Phone:</label>
-    <input type="tel" id="phone" name="phone" required>
+            <label for="email">Email</label>
+            <input type="email" name="entry.973171030" id="email" placeholder="Enter your email address" required>
 
-    <label for="role">Role:</label>
-    <input type="text" id="role" name="role">
+            <label for="phone">Phone</label>
+            <input type="tel" name="entry.1559296403" id="phone" placeholder="Enter your phone number" required>
 
-    <label for="experience">Experience:</label>
-    <textarea id="experience" name="experience"></textarea>
+            <label for="role">Role</label>
+            <select name="entry.892708798" id="role" required>
+                <option value="Lumper">Lumper</option>
+                <option value="Supervisor">Supervisor</option>
+                <option value="Other">Other</option>
+            </select>
 
-    <button type="submit">Submit</button>
-  </form>
+            <label for="experience">Experience</label>
+            <textarea name="entry.752181964" id="experience" rows="5" placeholder="Describe your work experience"></textarea>
 
-  <script>
-    document.getElementById('applicationForm').addEventListener('submit', async function(e) {
-      e.preventDefault();
-      const formData = new FormData(e.target);
-      const data = Object.fromEntries(formData.entries());
+            <button type="submit">Submit Application</button>
+        </form>
+    </main>
 
-      try {
-const response = await fetch('https://script.google.com/macros/s/AKfycbwoffogoyZ4NHsyj-m84T9RJSE1jelr55G0EJupb79s0Hc12T-lGyjFf3JgRl1fiFzf/exec', {
-  method: 'POST',
-  body: JSON.stringify(data),
-  headers: {
-    'Content-Type': 'application/json'
-  }
-});
 
-  </script>
+
+
+
+
+
+  
 
   <!-- Footer -->
   <footer>
