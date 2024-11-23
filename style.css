@@ -151,7 +151,6 @@ button:hover {
     display: block; /* Ensure button doesn't overflow */
     margin: 0 auto; /* Center button horizontally */
   }
-
 }
 
 @media (max-width: 480px) {
