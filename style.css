@@ -151,6 +151,19 @@ button:hover {
     display: block; /* Ensure button doesn't overflow */
     margin: 0 auto; /* Center button horizontally */
   }
+    .nav-links {
+    display: flex;
+    flex-wrap: wrap; /* Allow links to wrap as needed */
+    justify-content: center; /* Center the links */
+    gap: 10px; /* Add spacing between links */
+  }
+
+  .nav-links a {
+    white-space: nowrap; /* Prevent unwanted text wrapping */
+    line-height: 1.2; /* Tighter line height */
+    word-spacing: normal; /* Prevent extra space between words */
+    font-size: 1em; /* Ensure font size is consistent */
+  }
 }
 
 @media (max-width: 480px) {
