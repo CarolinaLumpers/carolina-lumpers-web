@@ -65,7 +65,7 @@ body {
 }
 
 .logo {
-  height: 100px;
+  max-height: 100px;
   margin-right: 10px;
 }
 
@@ -91,17 +91,24 @@ font-family: 'Anton', sans-serif;
 .nav-links {
   list-style: none;
   display: flex;
+  justify-content: center; /* Center all links horizontally */
   gap: 20px;
 }
 
 .nav-links li {
-  display: inline;
+  display: inline-block; /* Ensure inline-block behavior for proper spacing */
+  text-align: center; /* Center the text inside each link */
 }
 
 .nav-links a {
+  display: inline-block; /* Allow wrapping and alignment within the link */
   color: white;
   text-decoration: none;
   font-size: 1em;
+  text-align: center; /* Center-align the text */
+  line-height: 1.2; /* Reduce vertical spacing between lines */
+  padding: 5px; /* Add slight padding for touch targets */
+  white-space: normal; /* Allow wrapping of long text like "About Us" */
 }
 
 .nav-links a:hover {
