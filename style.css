@@ -151,18 +151,19 @@ button:hover {
     display: block; /* Ensure button doesn't overflow */
     margin: 0 auto; /* Center button horizontally */
   }
-    .nav-links {
+  .nav-links {
     display: flex;
-    flex-wrap: wrap; /* Allow links to wrap as needed */
-    justify-content: center; /* Center the links */
+    flex-direction: column; /* Stack links vertically */
+    align-items: center; /* Center-align all links */
     gap: 10px; /* Add spacing between links */
+    text-align: center;
   }
 
   .nav-links a {
-    white-space: nowrap; /* Prevent unwanted text wrapping */
-    line-height: 1.2; /* Tighter line height */
-    word-spacing: normal; /* Prevent extra space between words */
-    font-size: 1em; /* Ensure font size is consistent */
+    display: block; /* Ensures each link behaves like a block */
+    text-align: center; /* Center-aligns text within the block */
+    white-space: normal; /* Allows text wrapping */
+    font-size: 1.1em; /* Adjust font size for readability */
   }
 }
 
