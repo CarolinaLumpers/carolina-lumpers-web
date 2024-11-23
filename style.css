@@ -139,13 +139,19 @@ body {
   }
 
   .nav-links {
-    flex-direction: row;
-    gap: 10px;
+    flex-wrap: wrap; /* Allows the links to wrap if needed, but still stay in a row */
+    gap: 10px; /* Space between the links */
     justify-content: center;
     width: 100%;
     margin-top: 10px;
+    text-align: center; /* Ensures the links are centered */
+  }
+
+  .nav-links a {
+    padding: 10px 15px; /* Adds padding to make links easier to click */
   }
 }
+
 
 /* ===================
    Hero Section Styles
