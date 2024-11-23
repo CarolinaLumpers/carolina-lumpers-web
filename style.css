@@ -1,163 +1,566 @@
 :root {
-  /* Theme colors for the website */
   --primary-bg: #FFBF00; /* Amber, Fluorescent orange - Main background color for highlights */
-  --accent-color: #FFBF00; /* Accent elements like headings */
-  --secondary-bg: #1A1A1A; /* Dark background for contrast */
-  --text-color: #FFFFFF; /* Main text color for dark backgrounds */
-  --button-hover-bg: #FFFFFF; /* Button hover background color */
-  --service-bg: #2E2E2E; /* Background for service sections */
-  --card-bg: #FBB040; /* Background for cards and important elements */
-  --text-muted: #B3B3B3; /* Muted text for less prominent info */
-  --text-color-2: #000000; /* Secondary text color for light backgrounds */
+  --accent-color: #FFBF00; /* Amber, Fluorescent orange - Used for accent elements like headings */
+  --secondary-bg: #1A1A1A; /* Gray10 - Dark background for contrast */
+  --text-color: #FFFFFF; /* Bright White - Main text color for readability on dark backgrounds */
+  --button-hover-bg: #FFFFFF; /* Bright White - Background color for buttons on hover */
+  --service-bg: #2E2E2E; /* Charcoal Gray - Background for service sections */
+  --card-bg: #FBB040; /* Mellow orange - Background for cards and important elements */
+  --text-muted: #B3B3B3; /* Philippine Silver - Muted text for less prominent information */
+  --text-color-2: #000000; /* Black - Secondary text color for light backgrounds */
 }
+
+
 
 /* General Styles */
 body {
-  font-family: 'Roboto', Arial, sans-serif; /* Modern and clean font */
-  margin: 0; /* Remove default browser margin */
-  padding: 0; /* Remove default browser padding */
-  background-color: var(--primary-bg); /* Set the background color */
-  color: var(--text-color); /* Default text color */
-  line-height: 1.8; /* Improve text readability */
-  box-sizing: border-box; /* Ensure consistent box model across all elements */
+  font-family: 'Roboto', Arial, sans-serif; /* Modern font */
+  margin: 0;
+  padding: 0;
+  background-color: var(--primary-bg);
+  color: var(--text-color);
+  line-height: 1.8;
+  box-sizing: border-box;
 }
 
 *,
 *::before,
 *::after {
-  box-sizing: inherit; /* Inherit box-sizing for consistency */
+  box-sizing: inherit;
 }
 
 /* Navigation Bar */
 .navbar {
-  display: flex; /* Align items in a row */
-  justify-content: space-between; /* Space out items evenly */
-  align-items: center; /* Vertically center items */
-  background-color: var(--secondary-bg); /* Solid background for contrast */
-  padding: 10px 40px; /* Add space around content */
-  position: sticky; /* Stick to the top when scrolling */
-  top: 0; /* Stick to the very top */
-  z-index: 1000; /* Ensure it's always above other elements */
-  width: 100%; /* Full width */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add slight depth */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--secondary-bg); /* Ensure solid background */
+  padding: 10px 40px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  width: 100%;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Optional for slight depth */
+}
+.nav-links a.active {
+  font-weight: bold;
+  color: var(--accent-color);
+  text-decoration: underline; /* Optional for emphasis */
 }
 
-.nav-links a.active {
-  font-weight: bold; /* Highlight active links */
-  color: var(--accent-color); /* Use accent color for active links */
-  text-decoration: underline; /* Optional visual cue */
+/* Ensure background is not transparent */
+.navbar::after {
+  content: '';
+  background-color: var(--secondary-bg);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1; /* Keeps it behind the content */
+}
+.logo-container {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  height: 100px;
+  margin-right: 10px;
+}
+
+/* Company Name in Navbar */
+.company-name {
+  font-size: 3em; /* Slightly larger for prominence *
+  font-weight: 700; /* Bold for emphasis */
+  color: var(--accent-color); /* Use accent color for contrast */
+  text-transform: uppercase; /* Adds a professional feel */
+  letter-spacing: 2px; /* Adds space between letters for clarity */
+font-family: 'Anton', sans-serif;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4); /* Subtle shadow for depth */
+  margin-left: 40px; /* Adds spacing from the logo */
+}
+
+/* Optional Hover Effect */
+.company-name:hover {
+  color: #FFFFFF; /* Changes to white on hover */
+  transition: color 0.3s ease; /* Smooth transition */
+}
+
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+}
+
+.nav-links li {
+  display: inline;
 }
 
 .nav-links a {
-  color: white; /* Standard link color */
-  text-decoration: none; /* Remove underlines */
-  font-size: 1em; /* Ensure readability */
+  color: white;
+  text-decoration: none;
+  font-size: 1em;
 }
 
 .nav-links a:hover {
-  text-decoration: underline; /* Visual cue on hover */
+  text-decoration: underline;
 }
 
-/* Hero Section */
 .hero {
-  display: flex; /* Horizontal layout for content */
-  align-items: center; /* Center items vertically */
-  justify-content: space-between; /* Space out text and image */
-  background-color: var(--secondary-bg); /* Dark background for contrast */
-  padding: 20px; /* Add space inside the section */
-  margin: 20px auto; /* Center section with spacing */
-  max-width: 1200px; /* Limit the width for readability */
-  width: 100%; /* Take full width within the limit */
-  border-radius: 12px; /* Rounded corners for a modern look */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add depth */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--secondary-bg);
+  padding: 20px;
+  margin: 20px auto;
+  max-width: 1200px;
+  width: 100%;
+  border-radius: 12px;
+  position: relative;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .hero-content {
-  flex: 1; /* Take one part of the space */
-  padding: 20px; /* Add space around content */
-  color: var(--text-color); /* Bright text for contrast */
+  flex: 1;
+  padding: 20px;
+  color: var(--text-color);
+  z-index: 3;
+  text-align: left;
 }
 
 .hero-content h2 {
-  font-size: 2.5em; /* Large heading for emphasis */
-  margin-bottom: 20px; /* Add spacing below heading */
-  font-weight: 700; /* Make text bold */
-  color: var(--accent-color); /* Highlight text with the accent color */
+  font-size: 2.5em;
+  margin-bottom: 20px;
+  font-weight: 700;
+  color: var(--accent-color);
 }
 
 .hero-content p {
-  font-size: 1.1em; /* Slightly larger for readability */
-  margin-bottom: 20px; /* Add spacing below paragraph */
+  font-size: 1.1em;
+  margin-bottom: 20px;
 }
 
-/* Form Styling */
+.hero-image {
+  flex: 2; /* Slightly larger for the image */
+  position: relative; /* Important for overlay layering */
+  display: flex;
+  justify-content: center; /* Center image within the space */
+}
+
+.banner-image {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  border-radius: 12px;
+  z-index: 1;
+}
+
+.blur-overlay {
+  position: absolute;
+  top: 0;
+  left: 0; /* Moves the gradient overlay to the right */
+  width: 50%; /* Covers right half of the image */
+  height: 100%;
+  background: linear-gradient(to right, var(--secondary-bg), rgba(26, 26, 26, 0));
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* About Section Centering */
+#overview {
+  text-align: center; /* Centers the text */
+}
+
+#overview h2 {
+  font-size: 2em; /* Maintain a large heading size */
+  color: var(--accent-color);
+  margin-bottom: 15px;
+}
+
+#overview p {
+  font-size: 1.1em;
+  color: var(--text-color);
+  margin: 0 auto; /* Center the paragraph with auto margins */
+  max-width: 700px; /* Limit width for better readability */
+  line-height: 1.6; /* Increase line spacing for better legibility */
+}
+
+
+/* Section Styles */
+section {
+  background-color: var(--secondary-bg);
+  padding: 20px;
+  margin: 20px auto;
+  max-width: 1200px;
+  width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Adds slight depth */
+}
+
+section h2 {
+  color: var(--accent-color);
+  font-size: 2em;
+  margin-bottom: 10px;
+}
+
+/* Services Section */
+#services {
+  text-align: center;
+  padding: 40px 20px;
+  background-color: var(--secondary-bg);
+  border-radius: 12px;
+  color: white;
+}
+
+#services h2 {
+  color: var(--accent-color);
+  font-size: 2em;
+  margin-bottom: 20px;
+}
+
+.services-brief {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.brief-item {
+  width: 30%;
+  min-width: 280px;
+  padding: 20px;
+  background-color: var(--card-bg);
+  color: var(--text-color-2);
+  padding: 10px 20px;
+  text-decoration: none;
+  font-size: 1em;
+  border-radius: 5px;
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.brief-item:hover {
+  background-color: #FFFFFF; /* White */
+  color: #1A1A1A;
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.brief-item h4 {
+  color: var(--text-color-2);
+  margin-bottom: 10px;
+}
+
+.brief-item p {
+  font-size: 1em;
+  color: var(--text-color-2);
+}
+
+/* Call-to-Action Button */
+.cta-container {
+  margin-top: 20px;
+}
+
+.cta-button {
+  background-color: #FBB040; /* Yellow */
+  color: #1A1A1A; /* Dark Gray */
+  padding: 10px 20px;
+  text-decoration: none;
+  font-size: 1em;
+  border-radius: 5px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.cta-button:hover {
+  background-color: #FFFFFF; /* White */
+  color: #1A1A1A;
+}
+
+/* Contact Section Centering */
+#contact {
+  text-align: center; /* Centers all text and buttons */
+}
+
+#contact h2 {
+  font-size: 2em; /* Maintain consistent heading size */
+  color: var(--accent-color);
+  margin-bottom: 15px; /* Adds spacing below the heading */
+}
+
+.action-button {
+  display: inline-block; /* Inline-block allows buttons to be placed side-by-side */
+  background-color: var(--card-bg); /* Use your accent color */
+  color: var(--secondary-bg); /* Text color contrast */
+  padding: 10px 20px;
+  text-decoration: none;
+  font-size: 1em;
+  font-weight: bold;
+  border-radius: 5px;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  margin: 10px 5px; /* Space between buttons */
+}
+
+.action-button:hover {
+  background-color: #FFFFFF; /* White on hover */
+  color: #1A1A1A; /* Dark gray text on hover */
+  transform: translateY(-2px); /* Slight hover effect */
+}
+
+
+
+/* Footer */
+footer {
+  background-color: var(--secondary-bg);
+  color: white;
+  padding: 20px;
+  text-align: center;
+}
+
+.footer-icons img {
+  width: 24px;
+  margin: 0 10px;
+  transition: transform 0.3s;
+}
+
+.footer-icons img:hover {
+  transform: scale(1.1);
+}
+
+.action-button {
+  display: inline-block;
+  background-color: var(--card-bg); /* Use your accent color */
+  color: var(--secondary-bg); /* Use contrasting text color */
+  padding: 10px 20px;
+  text-decoration: none;
+  font-size: 1em;
+  font-weight: bold;
+  border-radius: 5px;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  margin: 10px 5px; /* Add some spacing between buttons */
+}
+
+.action-button:hover {
+  background-color: #FFFFFF; /* White */
+  color: #1A1A1A;
+  transform: translateY(-2px); /* Subtle lift effect on hover */
+  text-decoration: none; /* Ensures no underline on hover */
+}
+
+@media (max-width: 768px) {
+	
+  /* Navbar adjustments */
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 10px;
+  }
+
+  .company-name {
+    font-size: 1.5em;
+    margin-left: 0;
+  }
+
+  .nav-links {
+    flex-direction: row;
+    gap: 10px;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .logo {
+    height: 60px;
+  }
+
+   /* Hero section adjustments for mobile */
+  .hero {
+    flex-direction: column-reverse; /* Stack image below the text */
+    align-items: center; /* Center-align items */
+    padding: 10px;
+    margin: 10px auto;
+  }
+
+  .hero-content {
+    text-align: center; /* Center-align text for better readability */
+    padding: 10px;
+  }
+
+  .hero-content h2 {
+    font-size: 1.8em;
+    margin: 10px 0;
+  }
+
+  .hero-content p {
+    font-size: 1em;
+    margin: 5px 0;
+  }
+
+  .cta-button {
+    padding: 8px 16px;
+    margin: 10px 0;
+  }
+
+  .hero-image {
+    width: 100%; /* Full width on mobile */
+    position: relative; /* Maintain positioning for overlay */
+    margin-bottom: 10px; /* Space below image */
+  }
+
+  .banner-image {
+    width: 100%; /* Ensure full width scaling */
+    height: auto; /* Maintain aspect ratio */
+    border-radius: 12px; /* Keep consistent rounded corners */
+  }
+
+  .blur-overlay {
+    position: absolute;
+    top: 0;
+    left: 0; /* Shift overlay to cover the left side of the image */
+    width: 100%; /* Cover the entire width for mobile */
+    height: 100%;
+    background: linear-gradient(to right, var(--secondary-bg), rgba(26, 26, 26, 0)); /* Left-to-right gradient */
+    z-index: 2; /* Overlay should remain above image */
+    pointer-events: none; /* No interaction */
+  }
+  
+  
+  /* Disable overlay on mobile */
+  .blur-overlay {
+    display: none; /* Hide the overlay */
+  }
+
+  /* Service section adjustments */
+  .services-brief {
+    flex-direction: column;
+  }
+
+  .brief-item {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  /* Section adjustments */
+  section {
+    padding: 15px;
+    margin: 10px auto;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Further adjustments for very small screens */
+  .company-name {
+    font-size: 1.2em;
+  }
+
+  .hero-content h2 {
+    font-size: 1.5em;
+  }
+
+  .hero-content p {
+    font-size: 0.9em;
+  }
+
+  .logo {
+    height: 50px;
+  }
+
+  .cta-button {
+    padding: 6px 12px;
+  }
+}
+/* Change hyperlink colors and make them bold */
+a {
+  color: var(--text-color); /* Matches your primary text color */
+  text-decoration: none; /* Removes underline */
+  font-weight: bold; /* Makes the text bold */
+}
+
+a:hover {
+  color: var(--accent-color); /* Highlight color on hover */
+  text-decoration: underline; /* Adds underline on hover for accessibility */
+}
+
+
+
 form {
-  display: flex; /* Stack fields vertically */
-  flex-direction: column; /* Ensure vertical alignment */
-  gap: 20px; /* Space between form fields */
-  max-width: 600px; /* Limit form width */
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* Space between rows */
+  max-width: 600px; /* Limit width for desktop */
   margin: 0 auto; /* Center the form horizontally */
-  padding: 20px; /* Add space inside the form */
-  background-color: var(--secondary-bg); /* Match section background */
-  border-radius: 10px; /* Rounded corners */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+  padding: 20px; /* Add padding for a better layout */
+  background-color: var(--secondary-bg); /* Ensure background matches the section */
+  border-radius: 10px; /* Rounded corners for aesthetic */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add depth with shadow */
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Align labels and inputs */
 }
 
 label {
-  font-size: 1em; /* Readable size for labels */
-  font-weight: bold; /* Highlight form labels */
-  color: var(--text-color); /* Bright label color */
-  margin-bottom: 5px; /* Space between label and input */
+  font-size: 1em;
+  font-weight: bold;
+  color: var(--text-color);
+  margin-bottom: 5px; /* Add spacing between label and input */
 }
 
-input,
-select,
-textarea {
-  width: 100%; /* Full width input fields */
-  padding: 10px; /* Add space inside fields */
-  border: 1px solid var(--text-muted); /* Subtle border for inputs */
-  border-radius: 5px; /* Rounded corners */
-  font-size: 1em; /* Consistent font size */
-  color: var(--text-color-2); /* Dark text for inputs */
-  background-color: var(--card-bg); /* Background to match theme */
+input, select, textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--text-muted); /* Add border */
+  border-radius: 5px;
+  font-size: 1em;
+  color: var(--text-color-2);
+  background-color: var(--card-bg);
 }
+
+
+
+
+
+
+
+
+
 
 button {
-  width: 100%; /* Full width button for consistency */
-  padding: 10px 20px; /* Add spacing */
-  font-size: 1em; /* Readable button text */
-  font-weight: bold; /* Emphasize button text */
-  background-color: var(--accent-color); /* Use the accent color */
-  color: var(--text-color-2); /* Ensure text contrast */
-  border: none; /* Remove default border */
-  border-radius: 5px; /* Rounded corners */
-  cursor: pointer; /* Pointer cursor for interactivity */
-  transition: background-color 0.3s ease, transform 0.3s ease; /* Smooth animations */
+  width: 100%; /* Make the button full width */
+  padding: 10px 20px;
+  font-size: 1em;
+  font-weight: bold;
+  background-color: var(--accent-color);
+  color: var(--text-color-2);
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
 button:hover {
-  background-color: var(--button-hover-bg); /* Change background on hover */
-  color: var(--secondary-bg); /* Ensure text contrast */
-  transform: translateY(-2px); /* Lift button slightly */
+  background-color: var(--button-hover-bg);
+  color: var(--secondary-bg);
+  transform: translateY(-2px); /* Subtle lift effect */
 }
 
 /* Responsive Styles */
 @media (max-width: 768px) {
   form {
     max-width: 100%; /* Full width on smaller screens */
-    padding: 10px; /* Reduce padding for mobile */
+    padding: 10px; /* Reduce padding */
   }
-  button {
-    display: block; /* Ensure button doesn't overflow */
-    margin: 0 auto; /* Center button horizontally */
-  }
-}
 
-@media (max-width: 480px) {
-  .hero-content h2 {
-    font-size: 1.5em; /* Adjust heading size for smaller screens */
+  .button-container {
+    text-align: center; /* Centers content inside the container */
+    margin-top: 20px; /* Space above the button */
+    width: 100%; /* Ensures container spans full width */
   }
-  .hero-content p {
-    font-size: 0.9em; /* Adjust paragraph size for readability */
+
+  .button-container button {
+    display: inline-block; /* Prevents button from stretching */
+    margin: 0 auto; /* Centers button horizontally */
   }
 }
