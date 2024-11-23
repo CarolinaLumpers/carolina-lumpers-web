@@ -151,16 +151,6 @@ button:hover {
     display: block; /* Ensure button doesn't overflow */
     margin: 0 auto; /* Center button horizontally */
   }
-  .nav-links {
-    text-align: center; /* Center-align all link text */
-    justify-content: center; /* Keep the links centered horizontally */
-  }
-
-  .nav-links a {
-    text-align: center; /* Center-align individual link text */
-    white-space: normal; /* Allow text wrapping if needed */
-    font-size: 1.1em; /* Adjust font size for readability on mobile */
-  }
 }
 
 @media (max-width: 480px) {
