@@ -67,25 +67,14 @@
       const data = Object.fromEntries(formData.entries());
 
       try {
-        const response = await fetch('https://script.google.com/macros/s/AKfycbwoffogoyZ4NHsyj-m84T9RJSE1jelr55G0EJupb79s0Hc12T-lGyjFf3JgRl1fiFzf/exec', {
-          method: 'POST',
-          body: JSON.stringify(data),
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        });
-        const result = await response.json();
-        if (result.success) {
-          alert('Application submitted successfully!');
-          e.target.reset();
-        } else {
-          alert('There was an issue submitting your application.');
-        }
-      } catch (error) {
-        console.error('Error:', error);
-        alert('An error occurred. Please try again later.');
-      }
-    });
+const response = await fetch('https://script.google.com/macros/s/AKfycbwoffogoyZ4NHsyj-m84T9RJSE1jelr55G0EJupb79s0Hc12T-lGyjFf3JgRl1fiFzf/exec', {
+  method: 'POST',
+  body: JSON.stringify(data),
+  headers: {
+    'Content-Type': 'application/json'
+  }
+});
+
   </script>
 
   <!-- Footer -->
