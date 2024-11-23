@@ -1,24 +1,23 @@
 :root {
-  --primary-bg: #FFBF00; /* Amber, Fluorescent orange - Main background color for highlights */
-  --accent-color: #FFBF00; /* Amber, Fluorescent orange - Used for accent elements like headings */
-  --secondary-bg: #1A1A1A; /* Gray10 - Dark background for contrast */
-  --text-color: #FFFFFF; /* Bright White - Main text color for readability on dark backgrounds */
-  --button-hover-bg: #FFFFFF; /* Bright White - Background color for buttons on hover */
-  --service-bg: #2E2E2E; /* Charcoal Gray - Background for service sections */
-  --card-bg: #FBB040; /* Mellow orange - Background for cards and important elements */
-  --text-muted: #B3B3B3; /* Philippine Silver - Muted text for less prominent information */
-  --text-color-2: #000000; /* Black - Secondary text color for light backgrounds */
+  --brand-highlight: #FFBF00; /* Amber - Used for main highlights, headings, and primary elements */
+  --dark-bg: #1A1A1A; /* Dark Gray - Used for main background areas and contrast sections */
+  --light-text: #FFFFFF; /* Bright White - Used for text on dark backgrounds and button hover states */
+  --accent-bg: #FBB040; /* Mellow Orange - Used for cards, CTAs, and highlighted sections */
+  --muted-text: #B3B3B3; /* Light Gray - Used for less prominent information or secondary text */
+  --dark-text: #000000; /* Black - Used for primary text on light backgrounds */
 }
 
-
+/* ===================
+   General Reset & Utility Classes
+   =================== */
 
 /* General Styles */
 body {
   font-family: 'Roboto', Arial, sans-serif; /* Modern font */
   margin: 0;
   padding: 0;
-  background-color: var(--primary-bg);
-  color: var(--text-color);
+  background-color: var(--brand-highlight);
+  color: var(--light-text);
   line-height: 1.8;
   box-sizing: border-box;
 }
@@ -29,36 +28,64 @@ body {
   box-sizing: inherit;
 }
 
-/* Navigation Bar */
+/* Reset default browser styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Utility class for consistent padding */
+.padding-20 {
+  padding: 20px;
+}
+
+/* Utility class for centering text */
+.text-center {
+  text-align: center;
+}
+
+/* Utility container class for content width control */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+
+/* Utility button style */
+.button {
+  display: inline-block;
+  padding: 10px 20px;
+  color: var(--light-text);
+  background-color: var(--brand-highlight);
+  border-radius: 4px;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+/* Button hover effect */
+.button:hover {
+  background-color: var(--light-text);
+}
+/* ===================
+   Navbar Styles
+   =================== */
+
+/* Navbar Styles */
 .navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: var(--secondary-bg); /* Ensure solid background */
+  background-color: var(--dark-bg);
   padding: 10px 40px;
   position: sticky;
   top: 0;
   z-index: 1000;
   width: 100%;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Optional for slight depth */
-}
-.nav-links a.active {
-  font-weight: bold;
-  color: var(--accent-color);
-  text-decoration: underline; /* Optional for emphasis */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* Ensure background is not transparent */
-.navbar::after {
-  content: '';
-  background-color: var(--secondary-bg);
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -1; /* Keeps it behind the content */
-}
+/* Logo Container */
 .logo-container {
   display: flex;
   align-items: center;
@@ -69,58 +96,67 @@ body {
   margin-right: 10px;
 }
 
-/* Company Name in Navbar */
 .company-name {
-  font-size: 3em; /* Slightly larger for prominence *
-  font-weight: 500; /* Bold for emphasis */
-  color: var(--accent-color); /* Use accent color for contrast */
-  text-transform: uppercase; /* Adds a professional feel */
-  letter-spacing: 2px; /* Adds space between letters for clarity */
-font-family: 'Anton', sans-serif;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4); /* Subtle shadow for depth */
-  margin-left: 40px; /* Adds spacing from the logo */
+  font-size: 2.5em;
+  font-weight: 500;
+  color: var(--brand-highlight);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-family: 'Anton', sans-serif;
+  text-decoration: none; /* Remove underline */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
 }
-
-/* Optional Hover Effect */
-.company-name:hover {
-  color: #FFFFFF; /* Changes to white on hover */
-  transition: color 0.3s ease; /* Smooth transition */
-}
-
 
 .nav-links {
   list-style: none;
   display: flex;
-  justify-content: center; /* Center all links horizontally */
   gap: 20px;
 }
 
-.nav-links li {
-  display: inline-block; /* Ensure inline-block behavior for proper spacing */
-  text-align: center; /* Center the text inside each link */
-}
-
 .nav-links a {
-  display: inline-block; /* Allow wrapping and alignment within the link */
-  color: white;
-  text-decoration: none;
-  font-size: 1em;
-  text-align: center; /* Center-align the text */
-  line-height: 1.2; /* Reduce vertical spacing between lines */
-  padding: 5px; /* Add slight padding for touch targets */
-  white-space: normal; /* Allow wrapping of long text like "About Us" */
+  font-weight: 700; /* Ensures bold text */
+  color: var(--light-text); /* White text color for readability */
+  text-decoration: none; /* Removes underline */
 }
 
 .nav-links a:hover {
-  text-decoration: underline;
+  color: var(--brand-highlight); /* Highlight color on hover */
+  text-decoration: underline; /* Adds underline for hover */
 }
+
+.nav-links a.active {
+  font-weight: bold;
+  color: var(--brand-highlight);
+  text-decoration: underline; /* Optional for emphasis */
+}
+
+/* Mobile Adjustments */
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+  }
+
+  .nav-links {
+    flex-direction: row;
+    gap: 10px;
+    justify-content: center;
+    width: 100%;
+    margin-top: 10px;
+  }
+}
+
+/* ===================
+   Hero Section Styles
+   =================== */
 
 .hero {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: var(--secondary-bg);
-  padding: 20px;
+  background-color: var(--dark-bg);
+  padding: 20px 40px;
   margin: 20px auto;
   max-width: 1200px;
   width: 100%;
@@ -132,28 +168,53 @@ font-family: 'Anton', sans-serif;
 .hero-content {
   flex: 1;
   padding: 20px;
-  color: var(--text-color);
+  color: var(--light-text);
   z-index: 3;
   text-align: left;
 }
 
+.hero-content.text-center {
+  text-align: center;
+}
+
 .hero-content h2 {
-  font-size: 2.5em;
-  margin-bottom: 20px;
+  font-size: 3em;
   font-weight: 700;
-  color: var(--accent-color);
+  color: var(--brand-highlight);
+  margin-bottom: 15px;
 }
 
 .hero-content p {
-  font-size: 1.1em;
+  font-size: 1.2em;
   margin-bottom: 20px;
+  font-weight: 700;
+
 }
 
+.cta-button {
+  display: inline-block;
+  padding: 15px 30px;
+  color: var(--dark-text);
+  background-color: var(--accent-bg);
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.cta-button:hover {
+  background-color: var(--light-text);
+  color: var(--dark-bg);
+}
+
+/* Hero Image Section */
 .hero-image {
-  flex: 2; /* Slightly larger for the image */
-  position: relative; /* Important for overlay layering */
-  display: flex;
-  justify-content: center; /* Center image within the space */
+  flex: 1.5;
+  position: relative;
+  max-width: 100%;
+  overflow: hidden;
+  border-radius: 12px;
+  margin-left: 20px;
 }
 
 .banner-image {
@@ -162,334 +223,193 @@ font-family: 'Anton', sans-serif;
   object-fit: cover;
   border-radius: 12px;
   z-index: 1;
+
 }
 
 .blur-overlay {
   position: absolute;
   top: 0;
-  left: 0; /* Moves the gradient overlay to the right */
-  width: 50%; /* Covers right half of the image */
+  left: 0; /* Position to start from left */
+  width: 50%; /* Covers the left half of the image */
   height: 100%;
-  background: linear-gradient(to right, var(--secondary-bg), rgba(26, 26, 26, 0));
+  background: linear-gradient(to right, var(--dark-bg), rgba(26, 26, 26, 0));
   z-index: 2;
-  pointer-events: none;
-}
-
-/* About Section Centering */
-#overview {
-  text-align: center; /* Centers the text */
-}
-
-#overview h2 {
-  font-size: 2em; /* Maintain a large heading size */
-  color: var(--accent-color);
-  margin-bottom: 15px;
-}
-
-#overview p {
-  font-size: 1.1em;
-  color: var(--text-color);
-  margin: 0 auto; /* Center the paragraph with auto margins */
-  max-width: 700px; /* Limit width for better readability */
-  line-height: 1.6; /* Increase line spacing for better legibility */
+  pointer-events: none; /* Allows interaction through the overlay */
+  border-radius: 12px; /* Match the banner image border radius */
 }
 
 
-/* Section Styles */
-section {
-  background-color: var(--secondary-bg);
-  padding: 20px;
-  margin: 20px auto;
+/* Responsive Adjustments for Hero Section */
+@media (max-width: 768px) {
+  .hero {
+    flex-direction: column-reverse;
+    text-align: center;
+    padding: 20px;
+  }
+
+  .hero-content {
+    padding: 10px;
+    text-align: center;
+  }
+
+  .hero-image {
+    margin: 20px 0 0 0;
+    width: 100%;
+  }
+}
+
+
+
+/* ===================
+   Main Content Styles
+   =================== */
+
+main {
+  padding: 0px 10px;
+  background-color: var(--brand-highlight);
+}
+
+/* Section Container */
+.section-container {
   max-width: 1200px;
-  width: 100%;
+  margin: 20px auto;
+  padding: 40px;
+  background-color: var(--dark-bg);
   border-radius: 12px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Adds slight depth */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-section h2 {
-  color: var(--accent-color);
-  font-size: 2em;
-  margin-bottom: 10px;
+/* Headings in Main Sections */
+.section-container h2 {
+  font-size: 2.2em;
+  color: var(--brand-highlight);
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  text-align: left;
 }
 
-/* Services Section */
-#services {
-  text-align: center;
-  padding: 40px 20px;
-  background-color: var(--secondary-bg);
-  border-radius: 12px;
-  color: white;
-}
-
-#services h2 {
-  color: var(--accent-color);
-  font-size: 2em;
+/* Paragraphs in Main Sections */
+.section-container p {
+  font-size: 1.1em;
+  line-height: 1.6;
+  color: var(--light-text);
   margin-bottom: 20px;
 }
 
+/* Services Section Styling */
 .services-brief {
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 20px;
-  margin-bottom: 20px;
 }
 
 .brief-item {
+  display: block; /* Allow full link wrapping */
   width: 30%;
   min-width: 280px;
   padding: 20px;
-  background-color: var(--card-bg);
-  color: var(--text-color-2);
-  padding: 10px 20px;
-  text-decoration: none;
-  font-size: 1em;
+  background-color: var(--accent-bg);
+  color: var(--dark-text);
+  text-decoration: none; /* Remove underline from link */
   border-radius: 5px;
   transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
 
 .brief-item:hover {
-  background-color: #FFFFFF; /* White */
-  color: #1A1A1A;
+  background-color: var(--light-text);
+  color: var(--dark-bg);
   transform: translateY(-5px);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
 
+
 .brief-item h4 {
-  color: var(--text-color-2);
-  margin-bottom: 10px;
+  color: var(--dark-text);
+  margin-bottom: 15px;
 }
 
 .brief-item p {
-  font-size: 1em;
-  color: var(--text-color-2);
+  font-size: 1.1em;
+  line-height: 1.6;
+  color: var(--dark-text);
+  margin-bottom: 20px;
 }
 
-/* Call-to-Action Button */
+/* Call to Action (CTA) Button */
 .cta-container {
+  text-align: center;
   margin-top: 20px;
 }
 
 .cta-button {
-  background-color: #FBB040; /* Yellow */
-  color: #1A1A1A; /* Dark Gray */
+  color: var(--dark-bg);
+  background-color: var(--accent-bg);
   padding: 10px 20px;
-  text-decoration: none;
-  font-size: 1em;
   border-radius: 5px;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
 .cta-button:hover {
-  background-color: #FFFFFF; /* White */
-  color: #1A1A1A;
+  background-color: var(--light-text);
+  color: var(--dark-bg);
+  transform: translateY(-3px);
 }
 
-/* Contact Section Centering */
-#contact {
-  text-align: center; /* Centers all text and buttons */
-}
-
-#contact h2 {
-  font-size: 2em; /* Maintain consistent heading size */
-  color: var(--accent-color);
-  margin-bottom: 15px; /* Adds spacing below the heading */
-}
-
-.action-button {
-  display: inline-block; /* Inline-block allows buttons to be placed side-by-side */
-  background-color: var(--card-bg); /* Use your accent color */
-  color: var(--secondary-bg); /* Text color contrast */
-  padding: 10px 20px;
-  text-decoration: none;
-  font-size: 1em;
-  font-weight: bold;
-  border-radius: 5px;
-  transition: background-color 0.3s ease, transform 0.3s ease;
-  margin: 10px 5px; /* Space between buttons */
-}
-
-.action-button:hover {
-  background-color: #FFFFFF; /* White on hover */
-  color: #1A1A1A; /* Dark gray text on hover */
-  transform: translateY(-2px); /* Slight hover effect */
-}
-
-
-
-/* Footer */
-footer {
-  background-color: var(--secondary-bg);
-  color: white;
-  padding: 20px;
-  text-align: center;
-}
-
-.footer-icons img {
-  width: 24px;
-  margin: 0 10px;
-  transition: transform 0.3s;
-}
-
-.footer-icons img:hover {
-  transform: scale(1.1);
+/* Contact Section Buttons */
+.contact-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 20px;
 }
 
 .action-button {
-  display: inline-block;
-  background-color: var(--card-bg); /* Use your accent color */
-  color: var(--secondary-bg); /* Use contrasting text color */
+  color: var(--dark-bg);
+  background-color: var(--accent-bg);
   padding: 10px 20px;
   text-decoration: none;
-  font-size: 1em;
   font-weight: bold;
   border-radius: 5px;
   transition: background-color 0.3s ease, transform 0.3s ease;
-  margin: 10px 5px; /* Add some spacing between buttons */
 }
 
 .action-button:hover {
-  background-color: #FFFFFF; /* White */
-  color: #1A1A1A;
-  transform: translateY(-2px); /* Subtle lift effect on hover */
-  text-decoration: none; /* Ensures no underline on hover */
+  background-color: var(--light-text);
+  color: var(--dark-bg);
+  transform: translateY(-3px);
 }
 
-@media (max-width: 800px) {
-	
-  /* Navbar adjustments */
-  .navbar {
-    flex-direction: column;
-    align-items: center;
-    padding: 10px;
-  }
-
-  .company-name {
-    font-size: 1.5em;
-    margin-left: 0;
-  }
-
-  .nav-links {
-    flex-direction: row;
-    gap: 10px;
-    justify-content: center;
-    width: 100%;
-  }
-
-  .logo {
-    height: 60px;
-  }
-
-   /* Hero section adjustments for mobile */
-  .hero {
-    flex-direction: column-reverse; /* Stack image below the text */
-    align-items: center; /* Center-align items */
-    padding: 10px;
-    margin: 10px auto;
-  }
-
-  .hero-content {
-    text-align: center; /* Center-align text for better readability */
-    padding: 10px;
-  }
-
-  .hero-content h2 {
-    font-size: 1.8em;
-    margin: 10px 0;
-  }
-
-  .hero-content p {
-    font-size: 1em;
-    margin: 5px 0;
-  }
-
-  .cta-button {
-    padding: 8px 16px;
-    margin: 10px 0;
-  }
-
-  .hero-image {
-    width: 100%; /* Full width on mobile */
-    position: relative; /* Maintain positioning for overlay */
-    margin-bottom: 10px; /* Space below image */
-  }
-
-  .banner-image {
-    width: 100%; /* Ensure full width scaling */
-    height: auto; /* Maintain aspect ratio */
-    border-radius: 12px; /* Keep consistent rounded corners */
-  }
-
-  .blur-overlay {
-    position: absolute;
-    top: 0;
-    left: 0; /* Shift overlay to cover the left side of the image */
-    width: 100%; /* Cover the entire width for mobile */
-    height: 100%;
-    background: linear-gradient(to right, var(--secondary-bg), rgba(26, 26, 26, 0)); /* Left-to-right gradient */
-    z-index: 2; /* Overlay should remain above image */
-    pointer-events: none; /* No interaction */
-  }
-  
-  
-  /* Disable overlay on mobile */
-  .blur-overlay {
-    display: none; /* Hide the overlay */
-  }
-
-  /* Service section adjustments */
+/* Responsive Adjustments for Main Content */
+@media (max-width: 768px) {
   .services-brief {
     flex-direction: column;
   }
 
   .brief-item {
     width: 100%;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
   }
 
-  /* Section adjustments */
-  section {
-    padding: 15px;
-    margin: 10px auto;
+  .section-container h2 {
+    text-align: center;
   }
 }
 
-@media (max-width: 480px) {
-  /* Further adjustments for very small screens */
-  .company-name {
-    font-size: 1.2em;
-  }
 
-  .hero-content h2 {
-    font-size: 1.5em;
-  }
 
-  .hero-content p {
-    font-size: 0.9em;
-  }
+/* Form Styles */
 
-  .logo {
-    height: 50px;
-  }
-
-  .cta-button {
-    padding: 6px 12px;
-  }
-}
-/* Change hyperlink colors and make them bold */
-a {
-  color: var(--text-color); /* Matches your primary text color */
-  text-decoration: none; /* Removes underline */
-  font-weight: bold; /* Makes the text bold */
+/* Updated Section Heading */
+.form-heading {
+  text-align: center; /* Center the heading */
+  color: var(--brand-highlight);
+  margin-bottom: 20px;
 }
 
-a:hover {
-  color: var(--accent-color); /* Highlight color on hover */
-  text-decoration: underline; /* Adds underline on hover for accessibility */
-}
-
-
-
+/* Form Styles */
 form {
   display: flex;
   flex-direction: column;
@@ -497,47 +417,67 @@ form {
   max-width: 600px; /* Limit width for desktop */
   margin: 0 auto; /* Center the form horizontally */
   padding: 20px; /* Add padding for a better layout */
-  background-color: var(--secondary-bg); /* Ensure background matches the section */
+  background-color: var(--dark-bg); /* Ensure background matches the section */
   border-radius: 10px; /* Rounded corners for aesthetic */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add depth with shadow */
 }
+
 
 .form-group {
   display: flex;
   flex-direction: column;
   align-items: flex-start; /* Align labels and inputs */
+  width: 100%;
+}
+
+.form-container {
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 40px;
+  background-color: var(--dark-bg);
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.form-container h2 {
+  font-size: 2.2em;
+  color: var(--brand-highlight);
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  text-align: center;
 }
 
 label {
   font-size: 1em;
   font-weight: bold;
-  color: var(--text-color);
+  color: var(--light-text);
   margin-bottom: 5px; /* Add spacing between label and input */
 }
 
 input, select, textarea {
   width: 100%;
   padding: 10px;
-  border: 1px solid var(--text-muted); /* Subtle border for inputs */
+  border: 1px solid var(--muted-text); /* Subtle border for inputs */
   border-radius: 5px;
   font-size: 1em;
-  color: var(--text-color-2); /* Text color */
+  color: var(--dark-text); /* Text color */
   background-color: #FFFFFF; /* Set fields to white */
 }
 
 input:focus, select:focus, textarea:focus {
   outline: none; /* Remove default outline */
-  border-color: var(--accent-color); /* Add accent color for focus */
+  border-color: var(--brand-highlight); /* Add accent color for focus */
   box-shadow: 0 0 5px rgba(255, 191, 0, 0.8); /* Subtle glow effect */
 }
 
+/* Button Styles */
 button {
   width: 100%; /* Make the button full width */
   padding: 10px 20px;
   font-size: 1em;
   font-weight: bold;
-  background-color: var(--accent-color);
-  color: var(--text-color-2);
+  background-color: var(--brand-highlight);
+  color: var(--dark-text);
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -545,39 +485,115 @@ button {
 }
 
 button:hover {
-  background-color: var(--button-hover-bg);
-  color: var(--secondary-bg);
+  background-color: var(--light-text);
+  color: var(--dark-bg);
   transform: translateY(-2px); /* Subtle lift effect */
 }
-  /* Navbar adjustments for smaller devices */
-  .navbar {
-    flex-direction: column;
-    align-items: center; /* Center content horizontally */
-    padding: 10px;
+
+/* Social Media Section Styles */
+#social-media {
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 40px;
+  background-color: var(--dark-bg);
+  color: var(--light-text);
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+
+#social-media h2 {
+  font-size: 2em;
+  color: var(--brand-highlight);
+  margin-bottom: 20px;
+  text-align: center;
+
+}
+
+#social-media p {
+  margin-bottom: 20px;
+  font-size: 1.1em;
+}
+
+/* ===================
+   Footer Styles
+   =================== */
+
+footer {
+  background-color: var(--dark-bg);
+  color: var(--light-text);
+  padding: 20px;
+  text-align: center;
+}
+
+.footer-icons {
+  margin-top: 15px;
+}
+
+.footer-icons a {
+  margin: 0 10px;
+}
+
+.footer-icons img {
+  width: 30px;
+  height: 30px;
+  filter: brightness(0) invert(1);
+}
+
+/* ===================
+   Responsive Adjustments
+   =================== */
+
+@media (max-width: 768px) {
+  .hero {
+    padding: 40px 20px;
   }
 
-
-  .nav-links {
-    flex-direction: row; 
-    gap: 10px;
-    justify-content: center; /* Center the navigation links */
-    width: 100%; /* Ensures links spread across the full width */
-    margin-top: 10px; /* Adds space between logo and links */
+  section h2 {
+    font-size: 1.8em;
     text-align: center;
   }
 
-  .nav-links li {
-    display: inline-block;
+  section p {
+    font-size: 1em;
   }
 
-/* Responsive Styles */
-@media (max-width: 768px) {
-  form {
-    max-width: 100%; /* Full width on smaller screens */
-    padding: 10px; /* Reduce padding */
+  .content-section {
+    text-align: center; /* Center content for mobile if desired */
   }
 
-  button {
-    width: auto; /* Allow button to shrink on smaller screens */
+  .navbar {
+    padding: 10px;
+  }
+
+  .nav-links {
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero {
+    padding: 30px 15px;
+  }
+
+  section h2 {
+    font-size: 1.5em;
+    text-align: center;
+  }
+
+  section p {
+    font-size: 0.9em;
+  }
+
+  .navbar {
+    padding: 10px;
+  }
+
+  .nav-links {
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
   }
 }
