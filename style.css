@@ -355,7 +355,7 @@ footer {
   text-decoration: none; /* Ensures no underline on hover */
 }
 
-@media (max-width: 768px) {
+@media (max-width: 773px) {
 	
   /* Navbar adjustments */
   .navbar {
