@@ -37,47 +37,42 @@
   </header>
 
   <!-- Application Form Section -->
-<section>
+  <section>
     <h2 style="text-align: center; color: var(--accent-color);">Worker Application Form</h2>
     <form action="https://docs.google.com/forms/u/0/d/e/1FAIpQLSeK6gOhryYgeghFwb00VvCg2oG1gyF9pHZmqUsKTWazqreO8g/formResponse" method="POST" target="_self">
-        <div class="form-group">
-            <label for="firstName">First Name</label>
-            <input type="text" name="entry.720559030" id="firstName" placeholder="Enter your first name" required>
-        </div>
-        <div class="form-group">
-            <label for="lastName">Last Name</label>
-            <input type="text" name="entry.2052473747" id="lastName" placeholder="Enter your last name" required>
-        </div>
-        <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" name="entry.973171030" id="email" placeholder="Enter your email address" required>
-        </div>
-        <div class="form-group">
-            <label for="phone">Phone</label>
-            <input type="tel" name="entry.1559296403" id="phone" placeholder="Enter your phone number" required>
-        </div>
-        <div class="form-group">
-            <label for="role">Role</label>
-            <select name="entry.892708798" id="role" required>
-                <option value="Lumper">Lumper</option>
-                <option value="Supervisor">Supervisor</option>
-                <option value="Other">Other</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="experience">Experience</label>
-            <textarea name="entry.752181964" id="experience" rows="5" placeholder="Describe your work experience"></textarea>
-                <!-- File Upload -->
-      <label for="photoUpload">Upload Your Picture</label>
-      <input type="file" id="photoUpload" name="entry.FILE_FIELD_ID" accept="image/*" required>
-      <small style="color: var(--text-muted);">Upload a clear picture (JPG, PNG only)</small>
-
-        </div>
+      <div>
+        <label for="firstName">First Name</label>
+        <input type="text" id="firstName" name="entry.720559030" placeholder="Enter your first name" required>
+      </div>
+      <div>
+        <label for="lastName">Last Name</label>
+        <input type="text" id="lastName" name="entry.2052473747" placeholder="Enter your last name" required>
+      </div>
+      <div>
+        <label for="email">Email</label>
+        <input type="email" id="email" name="entry.973171030" placeholder="Enter your email address" required>
+      </div>
+      <div>
+        <label for="phone">Phone</label>
+        <input type="tel" id="phone" name="entry.1559296403" placeholder="Enter your phone number" required>
+      </div>
+      <div>
+        <label for="role">Role</label>
+        <select id="role" name="entry.892708798" required>
+          <option value="Lumper">Lumper</option>
+          <option value="Supervisor">Supervisor</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <div>
+        <label for="experience">Experience</label>
+        <textarea id="experience" name="entry.752181964" rows="5" placeholder="Describe your work experience"></textarea>
+      </div>
+      <div>
         <button type="submit">Submit Application</button>
+      </div>
     </form>
-</section>
-
-
+  </section>
 
 
 
