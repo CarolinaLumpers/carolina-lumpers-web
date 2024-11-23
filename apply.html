@@ -37,38 +37,34 @@
   </header>
 
   <!-- Application Form Section -->
+  <section>
+    <h2 style="text-align: center; color: var(--accent-color);">Worker Application Form</h2>
+    <form action="https://docs.google.com/forms/u/0/d/e/1FAIpQLSeK6gOhryYgeghFwb00VvCg2oG1gyF9pHZmqUsKTWazqreO8g/formResponse" method="POST" target="_self">
+      <label for="firstName">First Name</label>
+      <input type="text" name="entry.720559030" id="firstName" placeholder="Enter your first name" required>
 
-    <main>
-        <h2 style="text-align: center; color: var(--accent-color);">Worker Application Form</h2>
-        <form action="https://docs.google.com/forms/u/0/d/e/1FAIpQLSeK6gOhryYgeghFwb00VvCg2oG1gyF9pHZmqUsKTWazqreO8g/formResponse" method="POST" target="_self">
-            <label for="firstName">First Name</label>
-            <input type="text" name="entry.720559030" id="firstName" placeholder="Enter your first name" required>
+      <label for="lastName">Last Name</label>
+      <input type="text" name="entry.2052473747" id="lastName" placeholder="Enter your last name" required>
 
-            <label for="lastName">Last Name</label>
-            <input type="text" name="entry.2052473747" id="lastName" placeholder="Enter your last name" required>
+      <label for="email">Email</label>
+      <input type="email" name="entry.973171030" id="email" placeholder="Enter your email address" required>
 
-            <label for="email">Email</label>
-            <input type="email" name="entry.973171030" id="email" placeholder="Enter your email address" required>
+      <label for="phone">Phone</label>
+      <input type="tel" name="entry.1559296403" id="phone" placeholder="Enter your phone number" required>
 
-            <label for="phone">Phone</label>
-            <input type="tel" name="entry.1559296403" id="phone" placeholder="Enter your phone number" required>
+      <label for="role">Role</label>
+      <select name="entry.892708798" id="role" required>
+        <option value="Lumper">Lumper</option>
+        <option value="Supervisor">Supervisor</option>
+        <option value="Other">Other</option>
+      </select>
 
-            <label for="role">Role</label>
-            <select name="entry.892708798" id="role" required>
-                <option value="Lumper">Lumper</option>
-                <option value="Supervisor">Supervisor</option>
-                <option value="Other">Other</option>
-            </select>
+      <label for="experience">Experience</label>
+      <textarea name="entry.752181964" id="experience" rows="5" placeholder="Describe your work experience"></textarea>
 
-            <label for="experience">Experience</label>
-            <textarea name="entry.752181964" id="experience" rows="5" placeholder="Describe your work experience"></textarea>
-
-            <button type="submit">Submit Application</button>
-        </form>
-    </main>
-
-
-
+      <button type="submit">Submit Application</button>
+    </form>
+  </section>
 
 
 
