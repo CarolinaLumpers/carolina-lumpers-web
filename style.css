@@ -355,12 +355,12 @@ footer {
   text-decoration: none; /* Ensures no underline on hover */
 }
 
-@media (max-width: 773px) {
+@media (max-width: 800px) {
 	
   /* Navbar adjustments */
   .navbar {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
     padding: 10px;
   }
 
