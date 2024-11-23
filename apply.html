@@ -37,16 +37,56 @@
   </header>
 
   <!-- Application Form Section -->
-  <section>
-    <h2>Apply to Join Us</h2>
-    <p>Complete the form below to submit your application to Carolina Lumpers.</p>
-    <iframe 
-      src="https://docs.google.com/forms/d/e/1FAIpQLSeK6gOhryYgeghFwb00VvCg2oG1gyF9pHZmqUsKTWazqreO8g/viewform?usp=sf_link"
-      width="100%"
-      height="800px"
-      style="border: none; border-radius: 12px;">
-    </iframe>
-  </section>
+  <h2>Application Form</h2>
+  <form id="applicationForm">
+    <label for="firstName">First Name:</label>
+    <input type="text" id="firstName" name="firstName" required>
+
+    <label for="lastName">Last Name:</label>
+    <input type="text" id="lastName" name="lastName" required>
+
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required>
+
+    <label for="phone">Phone:</label>
+    <input type="tel" id="phone" name="phone" required>
+
+    <label for="role">Role:</label>
+    <input type="text" id="role" name="role">
+
+    <label for="experience">Experience:</label>
+    <textarea id="experience" name="experience"></textarea>
+
+    <button type="submit">Submit</button>
+  </form>
+
+  <script>
+    document.getElementById('applicationForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const data = Object.fromEntries(formData.entries());
+
+      try {
+        const response = await fetch('https://script.google.com/macros/s/AKfycbwoffogoyZ4NHsyj-m84T9RJSE1jelr55G0EJupb79s0Hc12T-lGyjFf3JgRl1fiFzf/exec', {
+          method: 'POST',
+          body: JSON.stringify(data),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        const result = await response.json();
+        if (result.success) {
+          alert('Application submitted successfully!');
+          e.target.reset();
+        } else {
+          alert('There was an issue submitting your application.');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred. Please try again later.');
+      }
+    });
+  </script>
 
   <!-- Footer -->
   <footer>
