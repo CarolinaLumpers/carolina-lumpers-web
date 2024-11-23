@@ -546,5 +546,8 @@ button:hover {
 
   button {
     width: auto; /* Allow button to shrink on smaller screens */
+    display: block; /* Make it a block element */
+    margin: 20px auto; /* Center horizontally and add some vertical spacing */
+    text-align: center; /* Ensure the text is centered */
   }
 }
