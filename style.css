@@ -518,6 +518,15 @@ input, select, textarea {
   background-color: var(--card-bg);
 }
 
+
+
+
+
+
+
+
+
+
 button {
   width: 100%; /* Make the button full width */
   padding: 10px 20px;
@@ -544,10 +553,15 @@ button:hover {
     padding: 10px; /* Reduce padding */
   }
 
-  button {
-    width: auto; /* Allow button to shrink on smaller screens */
-    display: block; /* Make it a block element */
-    margin: 20px auto; /* Center horizontally and add some vertical spacing */
-    text-align: center; /* Ensure the text is centered */
+  .button-container {
+    text-align: center; /* Centers content inside the container */
+    margin-top: 20px; /* Space above the button */
+    width: 100%; /* Ensures container spans full width */
+  }
+
+  .button-container button {
+    display: inline-block; /* Prevents button from stretching */
+    margin: 0 auto; /* Centers button horizontally */
   }
 }
+
