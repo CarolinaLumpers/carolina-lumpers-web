@@ -72,7 +72,7 @@ body {
 /* Company Name in Navbar */
 .company-name {
   font-size: 3em; /* Slightly larger for prominence *
-  font-weight: 700; /* Bold for emphasis */
+  font-weight: 500; /* Bold for emphasis */
   color: var(--accent-color); /* Use accent color for contrast */
   text-transform: uppercase; /* Adds a professional feel */
   letter-spacing: 2px; /* Adds space between letters for clarity */
