@@ -153,7 +153,6 @@ button:hover {
   }
   .nav-links {
     display: flex;
-    flex-direction: column; /* Stack links vertically */
     align-items: center; /* Center-align all links */
     gap: 10px; /* Add spacing between links */
     text-align: center;
