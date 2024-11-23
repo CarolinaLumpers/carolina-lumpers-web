@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Apply | Carolina Lumper Service (CLS)</title>
+  <title>Carolina Lumper Service (CLS)</title>
   <link rel="stylesheet" href="style.css">
   <link rel="icon" type="image/png" href="assets/CLS-favicon.png">
   <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
@@ -12,8 +12,10 @@
   <!-- Navigation Bar -->
   <nav class="navbar">
     <div class="logo-container">
-      <img src="assets/CLS_Nav_Logo.png" alt="CLS Logo" class="logo">
-    <a href="index.html" class="company-name">Carolina Lumper Service</a>
+      <a href="index.html" class="logo-link">
+        <img src="assets/CLS_Nav_Logo.png" alt="CLS Logo" class="logo">
+      </a>
+      <a href="index.html" class="company-name">Carolina Lumper Service</a>
     </div>
     <ul class="nav-links">
       <li><a href="index.html">Home</a></li>
@@ -26,37 +28,33 @@
 
   <!-- Hero Section -->
   <header class="hero">
-    <div class="hero-content">
-      <h2>Join the CLS Team</h2>
-      <p>We are looking for motivated individuals to join our team. Fill out the application below to get started!</p>
-    </div>
-    <div class="hero-image">
-      <div class="blur-overlay"></div>
-      <img src="assets/CLS-Cover-01.png" alt="Apply Hero Image" class="banner-image">
-    </div>
+    <div class="hero-content text-center container">
+	<h2>Join the CLS Team</h2>
+    <p>We are looking for motivated individuals to join our team. Fill out the application below to get started!</p>    </div>
   </header>
-
-
-  <section>
-    <h2 style="text-align: center; color: var(--accent-color);">Contact Form</h2>
+  <main class="container">
+<!-- Application Form Section -->
+<section class="form-container">
+  <div class="container">
+    <h2>Contact Form</h2>
     <form action="https://docs.google.com/forms/u/0/d/e/1FAIpQLSeK6gOhryYgeghFwb00VvCg2oG1gyF9pHZmqUsKTWazqreO8g/formResponse" method="POST" target="_self">
-      <div>
+      <div class="form-group">
         <label for="firstName">First Name</label>
         <input type="text" id="firstName" name="entry.720559030" placeholder="Enter your first name" required>
       </div>
-      <div>
+      <div class="form-group">
         <label for="lastName">Last Name</label>
         <input type="text" id="lastName" name="entry.2052473747" placeholder="Enter your last name" required>
       </div>
-      <div>
+      <div class="form-group">
         <label for="email">Email</label>
         <input type="email" id="email" name="entry.973171030" placeholder="Enter your email address" required>
       </div>
-      <div>
+      <div class="form-group">
         <label for="phone">Phone</label>
         <input type="tel" id="phone" name="entry.1559296403" placeholder="Enter your phone number" required>
       </div>
-      <div>
+      <div class="form-group">
         <label for="role">Role</label>
         <select id="role" name="entry.892708798" required>
           <option value="Lumper">Lumper</option>
@@ -64,16 +62,17 @@
           <option value="Other">Other</option>
         </select>
       </div>
-      <div>
+      <div class="form-group">
         <label for="experience">Experience</label>
         <textarea id="experience" name="entry.752181964" rows="5" placeholder="Describe your work experience"></textarea>
       </div>
-
       <div class="button-container">
         <button type="submit">Submit Application</button>
       </div>
     </form>
-  </section>  
+  </div>
+</section>
+</main>
 
   <!-- Footer -->
   <footer>
