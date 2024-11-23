@@ -480,18 +480,27 @@ a:hover {
   color: var(--accent-color); /* Highlight color on hover */
   text-decoration: underline; /* Adds underline on hover for accessibility */
 }
+
+
+
 form {
   display: flex;
-  flex-direction: column; /* Stacks the input fields */
-  gap: 15px; /* Adds space between elements */
+  flex-direction: column;
+  gap: 20px; /* Space between rows */
   max-width: 600px;
-  margin: 0 auto; /* Centers the form */
+  margin: 0 auto; /* Center the form horizontally */
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
 }
 
 label {
   font-size: 1em;
   font-weight: bold;
-  color: var(--text-color); /* Matches text color */
+  color: var(--text-color);
+  margin-bottom: 5px;
 }
 
 input, select, textarea {
