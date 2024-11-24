@@ -327,54 +327,51 @@ footer {
    Mobile-Specific Adjustments
    =================== */
 @media (max-width: 768px) {
+  /* ===================
+     Hero Section
+     =================== */
   .hero {
-    flex-direction: column-reverse;
+    flex-direction: column-reverse; /* Stack text below the image */
     align-items: center;
     padding: 20px;
-    gap: 10px;
+    gap: 10px; /* Add spacing between content */
   }
 
   .blur-overlay {
-    display: none;
+    display: none; /* Remove overlay for smaller screens */
   }
 
   .hero-image {
     position: relative;
     width: 100%;
     height: auto;
-    margin-bottom: 10px;
+    margin-bottom: 10px; /* Add spacing below image */
   }
 
   .banner-image {
     width: 100%;
     height: auto;
-    object-fit: cover;
+    object-fit: cover; /* Ensure the image scales without distortion */
   }
 
   .hero-content {
-    text-align: center;
+    text-align: center; /* Center-align text for readability */
     padding: 10px;
   }
 
   .hero-content h2 {
-    font-size: 1.8em;
+    font-size: 1.8em; /* Adjust heading size */
     margin-bottom: 10px;
   }
 
   .hero-content p {
-    font-size: 1em;
+    font-size: 1em; /* Adjust paragraph size */
     margin-bottom: 15px;
   }
 
-
-
-
-
-
-
-
-
-
+  /* ===================
+     Navbar
+     =================== */
   .navbar {
     display: flex;
     flex-direction: column; /* Stack rows vertically */
@@ -417,10 +414,9 @@ footer {
     justify-content: center; /* Center navigation links */
     align-items: center; /* Vertically align links */
     list-style: none;
-    gap: 1px; /* Add spacing between links */
+    gap: 10px; /* Add spacing between links */
     width: 100%; /* Full width */
     height: 40px; /* Fixed height for the second row */
-    white-space: nowrap; /* Prevent wrapping */
     margin: 0;
     padding: 0;
     background-color: var(--secondary-bg); /* Match navbar background */
@@ -436,13 +432,10 @@ footer {
   .nav-links a:hover {
     color: var(--accent-color); /* Highlight links on hover */
   }
-  
-  
-  
-  
-  
-  
-  
+
+  /* ===================
+     Footer Section
+     =================== */
   footer {
     padding: 15px; /* Reduce padding on smaller screens */
   }
@@ -460,6 +453,29 @@ footer {
   .footer-text {
     font-size: 0.8em; /* Reduce font size for mobile */
   }
-}
 
+  /* ===================
+     Section Adjustments
+     =================== */
+  section {
+    background-color: var(--secondary-bg);
+    padding: 20px; /* Add padding inside the section */
+    margin: 20px 10px; /* Add margin to avoid touching the screen edges */
+    border-radius: 12px; /* Maintain consistent rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add box shadow for depth */
+  }
+
+  section h2 {
+    font-size: 1.8em; /* Adjust heading size for smaller screens */
+    margin-bottom: 15px; /* Add space below headings */
+    text-align: center; /* Center-align text */
+  }
+
+  section p {
+    font-size: 1em; /* Adjust paragraph font size for readability */
+    line-height: 1.6; /* Increase line spacing */
+    margin: 0 auto; /* Center text */
+    max-width: 95%; /* Ensure paragraphs don't touch screen edges */
+  }
+}
 
