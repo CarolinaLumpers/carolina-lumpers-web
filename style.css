@@ -417,9 +417,10 @@ footer {
     justify-content: center; /* Center navigation links */
     align-items: center; /* Vertically align links */
     list-style: none;
-    gap: 10px; /* Add spacing between links */
+    gap: 1px; /* Add spacing between links */
     width: 100%; /* Full width */
     height: 40px; /* Fixed height for the second row */
+    white-space: nowrap; /* Prevent wrapping */
     margin: 0;
     padding: 0;
     background-color: var(--secondary-bg); /* Match navbar background */
