@@ -352,8 +352,8 @@ footer {
     flex-direction: column-reverse;
     align-items: center;
     padding: 20px;
+	  width: 90%;
     gap: 10px;
-	max-width: 90%;
   }
 
   .blur-overlay {
@@ -409,7 +409,7 @@ footer {
     justify-content: center;
     align-items: center;
     gap: 10px;
-    width: 90%;
+    width: 80%;
     height: auto;
   }
 
