@@ -323,6 +323,24 @@ footer {
   color: var(--text-muted); /* Use muted color for subtlety */
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /* ===================
    Mobile-Specific Adjustments
    =================== */
@@ -331,41 +349,41 @@ footer {
      Hero Section
      =================== */
   .hero {
-    flex-direction: column-reverse; /* Stack text below the image */
+    flex-direction: column-reverse;
     align-items: center;
     padding: 20px;
-    gap: 10px; /* Add spacing between content */
+    gap: 10px;
   }
 
   .blur-overlay {
-    display: none; /* Remove overlay for smaller screens */
+    display: none;
   }
 
   .hero-image {
     position: relative;
     width: 100%;
     height: auto;
-    margin-bottom: 10px; /* Add spacing below image */
+    margin-bottom: 10px;
   }
 
   .banner-image {
     width: 100%;
     height: auto;
-    object-fit: cover; /* Ensure the image scales without distortion */
+    object-fit: cover;
   }
 
   .hero-content {
-    text-align: center; /* Center-align text for readability */
+    text-align: center;
     padding: 10px;
   }
 
   .hero-content h2 {
-    font-size: 1.8em; /* Adjust heading size */
+    font-size: 1.8em;
     margin-bottom: 10px;
   }
 
   .hero-content p {
-    font-size: 1em; /* Adjust paragraph size */
+    font-size: 1em;
     margin-bottom: 15px;
   }
 
@@ -374,84 +392,84 @@ footer {
      =================== */
   .navbar {
     display: flex;
-    flex-direction: column; /* Stack rows vertically */
-    align-items: center; /* Center content */
-    background-color: var(--secondary-bg); /* Navbar background */
-    position: sticky; /* Lock the navbar at the top */
+    flex-direction: column;
+    align-items: center;
+    background-color: var(--secondary-bg);
+    position: sticky;
     top: 0;
-    z-index: 1000; /* Ensure visibility */
-    width: 100%; /* Full width */
+    z-index: 1000;
+    width: 100%;
   }
 
   /* First Row: Logo and Company Name */
   .logo-container {
     display: flex;
-    flex-direction: row; /* Place logo and name side by side */
-    justify-content: center; /* Center horizontally */
-    align-items: center; /* Align vertically */
-    gap: 10px; /* Space between logo and name */
-    width: 100%; /* Full width */
-    height: auto; /* Allow dynamic height based on content */
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    width: 90%;
+    height: auto;
   }
 
   .logo {
-    height: auto; /* Maintain aspect ratio */
-    max-height: 80px; /* Scale proportionally to match company name */
-    width: auto; /* Ensure width scales with height */
+    height: auto;
+    max-height: 80px;
+    width: auto;
   }
 
   .company-name {
-    font-size: calc(1.5em + 1vw); /* Responsive font size */
-    color: var(--accent-color); /* Accent color for name */
+    font-size: calc(1.5em + 1vw);
+    color: var(--accent-color);
     text-transform: uppercase;
-    white-space: nowrap; /* Prevent wrapping */
+    white-space: nowrap;
     text-align: center;
   }
 
   /* Second Row: Navigation Links */
   .nav-links {
     display: flex;
-    justify-content: center; /* Center navigation links */
-    align-items: center; /* Vertically align links */
+    justify-content: center;
+    align-items: center;
     list-style: none;
-    gap: 10px; /* Add spacing between links */
-    width: 100%; /* Full width */
-    height: 40px; /* Fixed height for the second row */
+    gap: 1px;
+    width: 90%;
+    height: 40px;
     margin: 0;
     padding: 0;
-    background-color: var(--secondary-bg); /* Match navbar background */
+    background-color: var(--secondary-bg);
   }
 
   .nav-links a {
-    font-size: 0.9em; /* Adjust font size for readability */
+    font-size: 0.9em;
     color: white;
-    text-decoration: none; /* Remove underlines */
-    padding: 5px 8px; /* Touch-friendly padding */
+    text-decoration: none;
+    padding: 5px 8px;
   }
 
   .nav-links a:hover {
-    color: var(--accent-color); /* Highlight links on hover */
+    color: var(--accent-color);
   }
 
   /* ===================
      Footer Section
      =================== */
   footer {
-    padding: 15px; /* Reduce padding on smaller screens */
+    padding: 15px;
   }
 
   .footer-content {
-    flex-direction: column; /* Stack content vertically */
-    gap: 15px; /* Adjust spacing */
+    flex-direction: column;
+    gap: 15px;
   }
 
   .footer-icons img {
-    width: 25px; /* Slightly smaller icons for mobile */
-    height: 25px; /* Maintain size consistency */
+    width: 25px;
+    height: 25px;
   }
 
   .footer-text {
-    font-size: 0.8em; /* Reduce font size for mobile */
+    font-size: 0.8em;
   }
 
   /* ===================
@@ -459,23 +477,23 @@ footer {
      =================== */
   section {
     background-color: var(--secondary-bg);
-    padding: 20px; /* Add padding inside the section */
-    margin: 20px 10px; /* Add margin to avoid touching the screen edges */
-    border-radius: 12px; /* Maintain consistent rounded corners */
+    padding: 20px;
+    margin: 20px auto; /* Center the section horizontally */
+    width: 80%; /* Set section width to 80% of the screen */
+    border-radius: 12px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add box shadow for depth */
   }
 
   section h2 {
-    font-size: 1.8em; /* Adjust heading size for smaller screens */
-    margin-bottom: 15px; /* Add space below headings */
-    text-align: center; /* Center-align text */
+    font-size: 1.8em;
+    margin-bottom: 15px;
+    text-align: center;
   }
 
   section p {
-    font-size: 1em; /* Adjust paragraph font size for readability */
-    line-height: 1.6; /* Increase line spacing */
-    margin: 0 auto; /* Center text */
-    max-width: 95%; /* Ensure paragraphs don't touch screen edges */
+    font-size: 1em;
+    line-height: 1.6;
+    margin: 0 auto;
+    max-width: 95%; /* Ensure paragraphs don’t touch edges inside the section */
   }
 }
-
