@@ -7,8 +7,14 @@
   <link rel="stylesheet" href="style.css">
   <link rel="icon" type="image/png" href="assets/CLS-favicon.png">
   <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
-  <script src="https://www.google.com/recaptcha/enterprise.js?render=6LfOIokqAAAAADCJDNUEFySO9uOCq263WGx7fyCG"></script>
-</head>
+    <script>
+        function switchLanguage(lang) {
+            const elements = document.querySelectorAll("[data-en], [data-es]");
+            elements.forEach(element => {
+                element.innerHTML = lang === "es" ? element.getAttribute("data-es") : element.getAttribute("data-en");
+            });
+        }
+    </script></head>
 <body>
   <!-- Navigation Bar -->
   <nav class="navbar">
@@ -34,46 +40,18 @@
     <p>We are looking for motivated individuals to join our team. Fill out the application below to get started!</p>    </div>
   </header>
 
-    <!-- Application Form Section -->
+    <!-- Application Section -->
     <section id="apply">
         <div class="form-container">
-            <h2>Apply for a Position</h2>
-            <p>Join our team and make a difference in freight handling.</p>
-            <form id="apply-form" action="https://docs.google.com/forms/u/0/d/e/1FAIpQLSeK6gOhryYgeghFwb00VvCg2oG1gyF9pHZmqUsKTWazqreO8g/formResponse" method="POST" target="_self">
-                <!-- Name Field -->
-                <div class="form-group">
-                    <label for="name">Full Name</label>
-                    <input type="text" id="name" name="entry.123456789" placeholder="Enter your full name" required>
-                </div>
-                
-                <!-- Email Field -->
-                <div class="form-group">
-                    <label for="email">Email Address</label>
-                    <input type="email" id="email" name="entry.987654321" placeholder="Enter your email" required>
-                </div>
-                
-                <!-- Phone Field -->
-                <div class="form-group">
-                    <label for="phone">Phone Number</label>
-                    <input type="tel" id="phone" name="entry.1112131415" placeholder="Enter your phone number" required>
-                </div>
-
-                <!-- Work Experience -->
-                <div class="form-group">
-                    <label for="experience">Work Experience</label>
-                    <textarea id="experience" name="entry.1617181920" rows="5" placeholder="Describe your work experience" required></textarea>
-                </div>
-
-                <!-- Submit Button -->
-                <div class="form-group">
-                    <button class="g-recaptcha"
-    data-sitekey="6LfOIokqAAAAADCJDNUEFySO9uOCq263WGx7fyCG"
-    data-callback='onSubmit'
-    data-action='submit'>
-  Submit
-</button>
-                </div>
-            </form>
+            <h2 data-en="Apply for a Position" data-es="Solicitar un Puesto">Apply for a Position</h2>
+            <p data-en="Interested in joining our team? Click the button below to complete your application:"
+               data-es="¿Interesado en unirte a nuestro equipo? Haz clic en el botón de abajo para completar tu solicitud:">
+               Interested in joining our team? Click the button below to complete your application:
+            </p>
+            <button onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLSeK6gOhryYgeghFwb00VvCg2oG1gyF9pHZmqUsKTWazqreO8g/viewform', '_blank')" 
+                    class="cta-button" data-en="Complete Application" data-es="Completar Solicitud">
+                Complete Application
+            </button>
         </div>
     </section>
 
@@ -88,11 +66,6 @@
         </div>
     </footer>
 
-    <!-- Callback for reCAPTCHA -->
-    <script>
-        function onSubmit(token) {
-            document.getElementById("apply-form").submit();
-        }
-    </script>
+
 </body>
 </html>
