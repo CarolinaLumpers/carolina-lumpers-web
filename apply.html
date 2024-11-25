@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="style.css">
   <link rel="icon" type="image/png" href="assets/CLS-favicon.png">
   <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 <body>
   <!-- Navigation Bar -->
@@ -33,11 +34,13 @@
     <p>We are looking for motivated individuals to join our team. Fill out the application below to get started!</p>    </div>
   </header>
   <main class="container">
-<!-- Application Form Section -->
 <section class="form-container">
   <div class="container">
     <h2>Contact Form</h2>
     <form action="https://docs.google.com/forms/u/0/d/e/1FAIpQLSeK6gOhryYgeghFwb00VvCg2oG1gyF9pHZmqUsKTWazqreO8g/formResponse" method="POST" target="_self">
+      <!-- Honeypot Field -->
+      <input type="text" name="honeypot" id="honeypot" style="display:none;" tabindex="-1">
+
       <div class="form-group">
         <label for="firstName">First Name</label>
         <input type="text" id="firstName" name="entry.720559030" placeholder="Enter your first name" required>
@@ -66,13 +69,16 @@
         <label for="experience">Experience</label>
         <textarea id="experience" name="entry.752181964" rows="5" placeholder="Describe your work experience"></textarea>
       </div>
+      <!-- reCAPTCHA -->
+      <div class="g-recaptcha" data-sitekey="6LfOIokqAAAAADCJDNUEFySO9uOCq263WGx7fyCG"></div>
       <div class="button-container">
         <button type="submit">Submit Application</button>
       </div>
     </form>
   </div>
 </section>
-</main>
+
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
   <!-- Footer -->
   <footer>
