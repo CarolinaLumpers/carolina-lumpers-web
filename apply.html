@@ -1,136 +1,89 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="description" content="Carolina Lumper Service provides reliable, efficient freight handling solutions tailored to your needs.">
-  <meta name="keywords" content="Lumper Services, Freight Handling, Warehouse Management, Reliable Freight Solutions">
-  <meta name="author" content="Carolina Lumper Service">
-  
-  <title>Carolina Lumper Service</title>
-  
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="favicon.png">
-
-  <!-- Stylesheets -->
-  <link rel="stylesheet" href="style.css">
-  
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Anton&display=swap" rel="stylesheet">
-  
-  <!-- reCAPTCHA -->
-  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-  
-  <!-- Social Media Meta Tags -->
-  <meta property="og:title" content="Carolina Lumper Service">
-  <meta property="og:description" content="Efficient freight handling solutions tailored to your needs.">
-  <meta property="og:image" content="logo.png">
-  <meta property="og:url" content="https://carolinalumpers.com">
-  <meta property="og:type" content="website">
-  
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Carolina Lumper Service">
-  <meta name="twitter:description" content="Efficient freight handling solutions tailored to your needs.">
-  <meta name="twitter:image" content="logo.png">
-  
-  <!-- Responsive Design Improvements -->
-  <style>
-    :root {
-      scroll-behavior: smooth;
-    }
-  </style>
-  
-  <!-- Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=YOUR_TRACKING_ID"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag() { dataLayer.push(arguments); }
-    gtag('js', new Date());
-    gtag('config', 'YOUR_TRACKING_ID');
-  </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Apply for a position at Carolina Lumper Service. Join our team and help streamline freight handling solutions.">
+    <title>Apply - Carolina Lumper Service</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Google reCAPTCHA API -->
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 <body>
-  <!-- Navigation Bar -->
-  <nav class="navbar">
-    <div class="logo-container">
-      <a href="index.html" class="logo-link">
-        <img src="assets/CLS_Nav_Logo.png" alt="CLS Logo" class="logo">
-      </a>
-      <a href="index.html" class="company-name">Carolina Lumper Service</a>
-    </div>
-    <ul class="nav-links">
-      <li><a href="index.html">Home</a></li>
-      <li><a href="about.html">About Us</a></li>
-      <li><a href="services.html">Services</a></li>
-      <li><a href="contact.html">Contact</a></li>
-      <li><a href="apply.html" class="active">Apply</a></li>
-    </ul>
-  </nav>
+    <!-- Header -->
+    <header class="navbar">
+        <div class="logo-container">
+            <img class="logo" src="logo.png" alt="Carolina Lumper Service Logo">
+            <h1 class="company-name">Carolina Lumper Service</h1>
+        </div>
+        <nav class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="about.html">About Us</a>
+            <a href="services.html">Services</a>
+            <a href="contact.html">Contact</a>
+            <a href="apply.html" class="active">Apply</a>
+        </nav>
+    </header>
 
-  <!-- Hero Section -->
-  <header class="hero">
-    <div class="hero-content text-center container">
-	<h2>Join the CLS Team</h2>
-    <p>We are looking for motivated individuals to join our team. Fill out the application below to get started!</p>    </div>
-  </header>
-  <main class="container">
+    <!-- Application Form Section -->
+    <section id="apply">
+        <div class="form-container">
+            <h2>Apply for a Position</h2>
+            <p>Join our team and make a difference in freight handling.</p>
+            <form id="apply-form" action="https://docs.google.com/forms/u/0/d/e/1FAIpQLSeK6gOhryYgeghFwb00VvCg2oG1gyF9pHZmqUsKTWazqreO8g/formResponse" method="POST" target="_self">
+                <!-- Name Field -->
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" name="entry.123456789" placeholder="Enter your full name" required>
+                </div>
+                
+                <!-- Email Field -->
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="entry.987654321" placeholder="Enter your email" required>
+                </div>
+                
+                <!-- Phone Field -->
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" name="entry.1112131415" placeholder="Enter your phone number" required>
+                </div>
 
+                <!-- Work Experience -->
+                <div class="form-group">
+                    <label for="experience">Work Experience</label>
+                    <textarea id="experience" name="entry.1617181920" rows="5" placeholder="Describe your work experience" required></textarea>
+                </div>
 
-	  
-<section class="form-container">
-  <div class="container">
-    <h2>Contact Form</h2>
-    <form action="https://docs.google.com/forms/u/0/d/e/1FAIpQLSeK6gOhryYgeghFwb00VvCg2oG1gyF9pHZmqUsKTWazqreO8g/formResponse" method="POST" target="_self">
-      <!-- Honeypot Field -->
-      <input type="text" name="honeypot" id="honeypot" style="display:none;" tabindex="-1">
+                <!-- Google reCAPTCHA -->
+                <div class="form-group">
+                    <div class="g-recaptcha" data-sitekey="6LfOlokqAAAAADCJDNUEFySO9uOCq263WGx7fyCG"></div>
+                </div>
 
-      <div class="form-group">
-        <label for="firstName">First Name</label>
-        <input type="text" id="firstName" name="entry.720559030" placeholder="Enter your first name" required>
-      </div>
-      <div class="form-group">
-        <label for="lastName">Last Name</label>
-        <input type="text" id="lastName" name="entry.2052473747" placeholder="Enter your last name" required>
-      </div>
-      <div class="form-group">
-        <label for="email">Email</label>
-        <input type="email" id="email" name="entry.973171030" placeholder="Enter your email address" required>
-      </div>
-      <div class="form-group">
-        <label for="phone">Phone</label>
-        <input type="tel" id="phone" name="entry.1559296403" placeholder="Enter your phone number" required>
-      </div>
-      <div class="form-group">
-        <label for="role">Role</label>
-        <select id="role" name="entry.892708798" required>
-          <option value="Lumper">Lumper</option>
-          <option value="Supervisor">Supervisor</option>
-          <option value="Other">Other</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label for="experience">Experience</label>
-        <textarea id="experience" name="entry.752181964" rows="5" placeholder="Describe your work experience"></textarea>
-      </div>
-      <!-- reCAPTCHA -->
-      <div class="g-recaptcha" data-sitekey="6LfOIokqAAAAADCJDNUEFySO9uOCq263WGx7fyCG"></div>
-      <div class="button-container">
-        <button type="submit">Submit Application</button>
-      </div>
-    </form>
-  </div>
-</section>
+                <!-- Submit Button -->
+                <div class="form-group">
+                    <button type="submit" class="cta-button">Submit Application</button>
+                </div>
+            </form>
+        </div>
+    </section>
 
-<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2024 Carolina Lumper Service, LLC. All rights reserved.</p>
+            <div class="footer-icons">
+                <a href="https://facebook.com"><img src="facebook-icon.png" alt="Facebook"></a>
+                <a href="https://linkedin.com"><img src="linkedin-icon.png" alt="LinkedIn"></a>
+            </div>
+        </div>
+    </footer>
 
-  <!-- Footer -->
-  <footer>
-    <p>© 2024 Carolina Lumper Service, LLC. All rights reserved.</p>
-    <div class="footer-icons">
-      <a href="#"><img src="assets/facebook-icon.png" alt="Facebook"></a>
-      <a href="#"><img src="assets/linkedin-icon.png" alt="LinkedIn"></a>
-    </div>
-  </footer>
+    <!-- Callback for reCAPTCHA -->
+    <script>
+        function onSubmit(token) {
+            document.getElementById("apply-form").submit();
+        }
+    </script>
 </body>
 </html>
