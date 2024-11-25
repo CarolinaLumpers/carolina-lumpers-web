@@ -1,29 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Apply for a position at Carolina Lumper Service. Join our team and help streamline freight handling solutions.">
-    <title>Apply - Carolina Lumper Service</title>
-    <link rel="stylesheet" href="style.css">
-    <!-- Google reCAPTCHA API -->
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carolina Lumper Service (CLS)</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/png" href="assets/CLS-favicon.png">
+  <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+  <script src="https://www.google.com/recaptcha/enterprise.js?render=6LfOIokqAAAAADCJDNUEFySO9uOCq263WGx7fyCG"></script>
 </head>
 <body>
-    <!-- Header -->
-    <header class="navbar">
-        <div class="logo-container">
-            <img class="logo" src="logo.png" alt="Carolina Lumper Service Logo">
-            <h1 class="company-name">Carolina Lumper Service</h1>
-        </div>
-        <nav class="nav-links">
-            <a href="index.html">Home</a>
-            <a href="about.html">About Us</a>
-            <a href="services.html">Services</a>
-            <a href="contact.html">Contact</a>
-            <a href="apply.html" class="active">Apply</a>
-        </nav>
-    </header>
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="logo-container">
+      <a href="index.html" class="logo-link">
+        <img src="assets/CLS_Nav_Logo.png" alt="CLS Logo" class="logo">
+      </a>
+      <a href="index.html" class="company-name">Carolina Lumper Service</a>
+    </div>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="about.html">About Us</a></li>
+      <li><a href="services.html">Services</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="apply.html" class="active">Apply</a></li>
+    </ul>
+  </nav>
+
+  <!-- Hero Section -->
+<header class="hero">
+  <div class="hero-content container text-center">
+	<h2>Join the CLS Team</h2>
+    <p>We are looking for motivated individuals to join our team. Fill out the application below to get started!</p>    </div>
+  </header>
 
     <!-- Application Form Section -->
     <section id="apply">
@@ -62,7 +71,12 @@
 
                 <!-- Submit Button -->
                 <div class="form-group">
-                    <button type="submit" class="cta-button">Submit Application</button>
+                    <button class="g-recaptcha"
+    data-sitekey="6LfOIokqAAAAADCJDNUEFySO9uOCq263WGx7fyCG"
+    data-callback='onSubmit'
+    data-action='submit'>
+  Submit
+</button>
                 </div>
             </form>
         </div>
