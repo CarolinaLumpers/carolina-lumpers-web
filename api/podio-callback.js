@@ -1,28 +1,19 @@
-export default async function handler(req, res) {
-    const { code } = req.query;
-
-    if (!code) {
-        return res.status(400).send("Missing authorization code");
-    }
-
-    // Exchange the authorization code for an access token
-    const response = await fetch("https://podio.com/oauth/token", {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams({
-            client_id: process.env.PODIO_CLIENT_ID,
-            client_secret: process.env.PODIO_CLIENT_SECRET,
-            code: code,
-            redirect_uri: "https://carolina-lumpers.vercel.app/api/podio-callback",
-            grant_type: "authorization_code",
-        }),
-    });
-
-    if (!response.ok) {
-        const error = await response.text();
-        return res.status(500).send(`Error exchanging token: ${error}`);
-    }
-
-    const data = await response.json();
-    res.status(200).json(data); // You can save the token to a database here
-}
+// OAuth2.0 authentication for Podio
+fetch('https://podio.com/oauth/token', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: new URLSearchParams({
+        'client_id': 'cls-integration',
+        'client_secret': 'bDXxvbXoG5v1M1yOJx6wsLZVQPsy4kyWTYLWNe3gx0XTvU7cbOVYYFh9YvZ71hiY',
+        'grant_type': 'client_credentials',
+    }),
+})
+.then(response => response.json())
+.then(data => {
+    console.log(data.access_token); // This is your access token
+})
+.catch(err => {
+    console.error('Error:', err);
+});
