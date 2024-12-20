@@ -1,22 +1,5 @@
 # TalkWise - Full Recap
 
-**Filename Recommendation:** `talkwise_language_courses_recap_2024-10-14-2024-12-20.md`
-
----
-
-## Variables
-```plaintext
-Project Name: TalkWise
-Topic: Language Learning Courses
-Start Date: 2024-10-14
-End Date: 2024-12-20
-Prepared By: Steve Garay
-Prepared For: Daniela Molina
-Version: 1.0
-```
-
----
-
 ## Overview
 This document provides a comprehensive summary of progress, discussions, decisions, and pending tasks related to **TalkWise**, the language learning courses business, from **October 14, 2024**, to **December 20, 2024**. The primary goal of TalkWise is to offer high-quality, structured, and interactive English language courses tailored to non-native speakers.
 
