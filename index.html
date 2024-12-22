@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Carolina Lumper Service (CLS)</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="minimal_black_container.css">
   <link rel="icon" type="image/png" href="assets/CLS-favicon.png">
   <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
 </head>
@@ -12,13 +12,16 @@
   <!-- Navigation Bar -->
   <nav class="navbar">
     <div class="logo-container">
+      <!-- Logo linking to the homepage -->
       <a href="index.html" class="logo-link">
         <img src="assets/CLS_Nav_Logo.png" alt="CLS Logo" class="logo">
       </a>
+      <!-- Company name styled as a link -->
       <a href="index.html" class="company-name">Carolina Lumper Service</a>
     </div>
     <ul class="nav-links">
-      <li><a href="index.html" class="active">Home</a></li>
+      <!-- Navigation links -->
+      <li><a href="index.html" id="home-link">Home</a></li>
       <li><a href="about.html">About Us</a></li>
       <li><a href="services.html">Services</a></li>
       <li><a href="contact.html">Contact</a></li>
@@ -26,77 +29,72 @@
     </ul>
   </nav>
 
-
-
   <!-- Hero Section -->
-  <header class="hero">
-    <div class="hero-content">
+  <header class="reusable-container">
+    <div class="hero-content center-text">
+      <!-- Hero headline and subtext -->
       <h2>Reliable Freight Solutions for Every Challenge</h2>
       <p>
         Carolina Lumper Service (CLS) provides efficient freight handling solutions, ensuring seamless operations tailored to your needs.
       </p>
-      <div class="cta-container">
-        <a href="#services" class="cta-button">Discover Our Services</a>
-      </div>
+      <a href="#services" class="cta-button">Discover Our Services</a>
     </div>
-    
-    <!-- Hero Image and Blur Overlay -->
-<div class="hero-image">
-  <img src="assets/CLS-Cover-01.png" alt="Hero Banner" class="banner-image">
-  <div class="blur-overlay"></div> <!-- Gradient overlay for the image -->
-</div>
-
   </header>
 
+  <!-- Main Content -->
+  <main class="container">
+    <!-- About CLS Section -->
+    <section id="overview" class="reusable-container">
+      <h2>About CLS</h2>
+      <p>
+        At Carolina Lumper Service, we pride ourselves on delivering reliable, efficient, and tailored freight handling solutions. From seamless container unloading to meticulous sorting and restocking, we help streamline your warehouse operations. Whether facing peak demand or maintaining everyday workflows, our experienced team ensures that your supply chain runs like clockwork, allowing you to focus on growing your business.
+      </p>
+    </section>
 
-<!-- Main Content -->
-<main class="container">
-  <!-- About CLS Section -->
-  <section id="overview" class="section-container">
-    <h2>About CLS</h2>
-    <p>At Carolina Lumper Service, we pride ourselves on delivering reliable, efficient, and tailored freight handling solutions. From seamless container unloading to meticulous sorting and restocking, we help streamline your warehouse operations. Whether facing peak demand or maintaining everyday workflows, our experienced team ensures that your supply chain runs like clockwork, allowing you to focus on growing your business. Trust CLS for unmatched precision, speed, and dedication to excellence in freight management.</p>
-  </section>
+    <!-- Services Section -->
+    <section id="services" class="reusable-container">
+      <h2>What We Offer</h2>
+      <div class="services-brief">
+        <div class="reusable-container">
+          <h4>Inbound Services</h4>
+          <p>Efficient unloading, sorting, and storage to streamline your supply chain.</p>
+        </div>
+        <div class="reusable-container">
+          <h4>Outbound Services</h4>
+          <p>Seamless loading, staging, and order picking to meet your delivery demands.</p>
+        </div>
+        <div class="reusable-container">
+          <h4>Additional Support</h4>
+          <p>Pallet management, sanitation, and custom projects tailored to your needs.</p>
+        </div>
+      </div>
+    </section>
 
-<!-- Services Section -->
-<section id="services" class="section-container">
-  <h2>What We Offer</h2>
-  <div class="services-brief">
-    <a href="services.html#inbound-services.html" class="brief-item">
-      <h4>Inbound Services</h4>
-      <p>Efficient unloading, sorting, and storage to streamline your supply chain.</p>
-    </a>
-    <a href="services.html#outbound-services" class="brief-item">
-      <h4>Outbound Services</h4>
-      <p>Seamless loading, staging, and order picking to meet your delivery demands.</p>
-    </a>
-    <a href="services.html#additional-services" class="brief-item">
-      <h4>Additional Support</h4>
-      <p>Pallet management, sanitation, and custom projects tailored to your needs.</p>
-    </a>
-  </div>
-  <div class="cta-container">
-    <a href="services.html" class="cta-button">Learn More</a>
-  </div>
-</section>
-
-  <!-- Contact Section -->
-  <section id="contact" class="section-container">
-    <h2>Contact Us</h2>
-    <div class="contact-buttons">
-      <a href="mailto:info@carolinalumpers.com" class="action-button">Email</a>
-      <a href="tel:+18287810002" class="action-button">Call Us</a>
-    </div>
-  </section>
-</main>
-
+    <!-- Contact Section -->
+    <section id="contact" class="reusable-container">
+      <h2>Contact Us</h2>
+      <div class="center-text">
+        <a href="mailto:info@carolinalumpers.com" class="action-button">Email</a>
+        <a href="tel:+18287810002" class="action-button">Call Us</a>
+      </div>
+    </section>
+  </main>
 
   <!-- Footer -->
-  <footer>
-    <p>© 2024 Carolina Lumper Service, LLC. All rights reserved.</p>
-    <div class="footer-icons">
+  <footer class="reusable-container center-text">
+    <p>&copy; <span id="current-year"></span> Carolina Lumper Service, LLC. All rights reserved.</p>
+    <div>
+      <!-- Social media icons -->
       <a href="#"><img src="assets/facebook-icon.png" alt="Facebook"></a>
       <a href="#"><img src="assets/linkedin-icon.png" alt="LinkedIn"></a>
     </div>
   </footer>
+
+  <script>
+    // Dynamically update the year in the footer.
+    const yearSpan = document.getElementById('current-year');
+    const currentYear = new Date().getFullYear();
+    yearSpan.textContent = currentYear; // Display the current year.
+  </script>
 </body>
 </html>
