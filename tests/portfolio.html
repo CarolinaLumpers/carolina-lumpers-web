@@ -10,9 +10,6 @@
             padding: 0;
             box-sizing: border-box;
         }
-        #protected-content {
-            display: none;
-        }
         .summary {
             margin-bottom: 20px;
         }
@@ -55,26 +52,9 @@
                 font-size: 14px;
             }
         }
-        .center {
-            text-align: center;
-            margin-top: 20%;
-        }
     </style>
     <script>
-        function checkPassword() {
-            const passwordInput = document.getElementById('password-input');
-            const password = passwordInput.value;
-            const correctPassword = 'yourpassword'; // Replace with your desired password
-            if (password === correctPassword) {
-                document.getElementById('login-form').style.display = 'none';
-                document.getElementById('protected-content').style.display = 'block';
-            } else {
-                alert('Incorrect password. Please try again.');
-                passwordInput.value = '';
-            }
-        }
-
-        document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function() {
             const portfolio = {
                 totalProperties: 8,
                 totalMortgage: 798906.31,
@@ -204,13 +184,6 @@
     </script>
 </head>
 <body>
-    <div id="login-form" class="center">
-        <h2>Enter Password to View Content</h2>
-        <input type="password" id="password-input" placeholder="Enter password" />
-        <button onclick="checkPassword()">Submit</button>
-    </div>
-    <div id="protected-content">
-        <div class="summary"></div>
-    </div>
+    <div class="summary"></div>
 </body>
 </html>
