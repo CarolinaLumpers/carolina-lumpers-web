@@ -3,8 +3,17 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
+        <script>
+        function checkPassword() {
+            var password = prompt("Enter the password:");
+            if (password !== "Hermogenes1") {
+                alert("Incorrect password. Access denied.");
+                window.location.href = "https://github.com"; // Redirect to another page
+            }
+        }
+    </script>
 </head>
-<body>
+<body onload="checkPassword()">
 <h2 style="text-align: center; font-weight: bold; color: black;">Real Estate Portfolio</h2>
 
     <!-- Summary Section -->
