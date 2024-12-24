@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.5;
+            margin: 10px;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        .summary {
+            margin-bottom: 20px;
+        }
+        .property-card {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .property-header {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .property-section {
+            margin-top: 10px;
+        }
+        .property-section span {
+            display: block;
+            margin: 5px 0;
+        }
+        .chart {
+            margin: 20px 0;
+            text-align: center;
+        }
+        .chart img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* Mobile-Friendly Design */
+        @media (max-width: 768px) {
+            .property-card {
+                padding: 10px;
+            }
+            .property-header {
+                font-size: 16px;
+            }
+            .property-section span {
+                font-size: 14px;
+            }
+        }
+    </style>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const portfolio = {
+                totalProperties: 8,
+                totalMortgage: 798906.31,
+                averageMonthlyRent: 868.34,
+                totalEstimatedValue: 1481000.00,
+                totalMonthlyRent: 6946.74,
+                totalProfit: 2100.00,
+                profitAndLoss: 13456.78,
+                properties: [
+                    {
+                        name: "608 E",
+                        purchasePrice: 14851.00,
+                        equity: 80500.00,
+                        mortgage: 119500.00,
+                        monthlyRent: 1300.00,
+                        monthlyPayment: 750.00
+                    },
+                    {
+                        name: "35 11th Ave",
+                        purchasePrice: 39966.00,
+                        equity: 71440.21,
+                        mortgage: 108559.79,
+                        monthlyRent: 1300.00,
+                        monthlyPayment: 866.74
+                    },
+                    {
+                        name: "206 G",
+                        purchasePrice: 48000.00,
+                        equity: 141440.21,
+                        mortgage: 108559.79,
+                        monthlyRent: 866.74,
+                        monthlyPayment: 866.74
+                    },
+                    {
+                        name: "6649 Mountain Grove",
+                        purchasePrice: 75000.00,
+                        equity: 11440.21,
+                        mortgage: 108559.79,
+                        monthlyRent: 1000.00,
+                        monthlyPayment: 866.74
+                    },
+                    {
+                        name: "6653 Mountain Grove",
+                        purchasePrice: 75000.00,
+                        equity: 11440.21,
+                        mortgage: 108559.79,
+                        monthlyRent: 980.00,
+                        monthlyPayment: 866.74
+                    },
+                    {
+                        name: "1604 Hedrick",
+                        purchasePrice: 115000.00,
+                        equity: 78832.85,
+                        mortgage: 171167.15,
+                        monthlyRent: 1500.00,
+                        monthlyPayment: 1387.14
+                    },
+                    {
+                        name: "1820 N Hewitt",
+                        purchasePrice: 84000.00,
+                        equity: 212000.00,
+                        mortgage: 74000.00,
+                        monthlyRent: 0.00,
+                        monthlyPayment: 691.29
+                    },
+                    {
+                        name: "2052 College",
+                        purchasePrice: 18000.00,
+                        equity: 75000.00,
+                        mortgage: 0.00,
+                        monthlyRent: 0.00,
+                        monthlyPayment: 0.00
+                    }
+                ]
+            };
+
+            const summaryDiv = document.querySelector('.summary');
+            summaryDiv.innerHTML = `
+                <h2>Portfolio Summary</h2>
+                <p><strong>Total Properties:</strong> ${portfolio.totalProperties}</p>
+                <p><strong>Total Mortgage:</strong> $${portfolio.totalMortgage.toLocaleString()}</p>
+                <p><strong>Average Monthly Rent:</strong> $${portfolio.averageMonthlyRent}</p>
+                <p><strong>Total Estimated Value:</strong> $${portfolio.totalEstimatedValue.toLocaleString()}</p>
+                <p><strong>Total Monthly Rent:</strong> $${portfolio.totalMonthlyRent.toLocaleString()}</p>
+                <p><strong>Total Profit:</strong> $${portfolio.totalProfit.toLocaleString()}</p>
+                <p><strong>Profit and Loss:</strong> $${portfolio.profitAndLoss.toLocaleString()}</p>
+            `;
+
+            const propertiesContainer = document.createElement('div');
+            portfolio.properties.forEach(property => {
+                const propertyCard = document.createElement('div');
+                propertyCard.className = 'property-card';
+                propertyCard.innerHTML = `
+                    <div class="property-header">${property.name}</div>
+                    <div class="property-section">
+                        <span><strong>Purchase Price:</strong> $${property.purchasePrice.toLocaleString()}</span>
+                        <span><strong>Equity:</strong> $${property.equity.toLocaleString()}</span>
+                        <span><strong>Mortgage:</strong> $${property.mortgage.toLocaleString()}</span>
+                    </div>
+                    <div class="property-section">
+                        <strong>Rental Info:</strong>
+                        <span><strong>Monthly Rent:</strong> $${property.monthlyRent.toLocaleString()}</span>
+                        <span><strong>Monthly Payment:</strong> $${property.monthlyPayment.toLocaleString()}</span>
+                    </div>
+                `;
+                propertiesContainer.appendChild(propertyCard);
+            });
+
+            const charts = [
+                { title: "Mortgages by Property", src: "mortgages_by_property.png" },
+                { title: "Rents by Property", src: "rents_by_property.png" },
+                { title: "Profit and Loss Overview", src: "profit_loss.png" }
+            ];
+
+            charts.forEach(chart => {
+                const chartDiv = document.createElement('div');
+                chartDiv.className = 'chart';
+                chartDiv.innerHTML = `
+                    <h3>${chart.title}</h3>
+                    <img src="${chart.src}" alt="${chart.title}">
+                `;
+                document.body.appendChild(chartDiv);
+            });
+
+            document.body.appendChild(propertiesContainer);
+        });
+    </script>
+</head>
+<body>
+    <div class="summary"></div>
+</body>
+</html>
