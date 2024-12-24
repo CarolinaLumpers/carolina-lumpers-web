@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+</head>
+<body>
+    <h2>Real Estate Portfolio Carousel</h2>
+
+    <!-- Swiper Container -->
+    <div class="swiper-container">
+        <div class="swiper-wrapper">
+            <div class="swiper-slide">
+                <h3>608 E</h3>
+                <p><strong>Purchase Date:</strong> 1/22/2019</p>
+                <p><strong>Purchase Price:</strong> $14,851.00</p>
+                <p><strong>Equity:</strong> $80,500.00</p>
+                <p><strong>Mortgage:</strong> $119,500.00</p>
+                <p><strong>Monthly Rent:</strong> $1,300.00</p>
+                <p><strong>Monthly Payment:</strong> $750.00</p>
+                <p><strong>Profit:</strong> $550.00</p>
+            </div>
+            <div class="swiper-slide">
+                <h3>35 11th Ave</h3>
+                <p><strong>Purchase Date:</strong> 10/30/2020</p>
+                <p><strong>Purchase Price:</strong> $39,966.00</p>
+                <p><strong>Equity:</strong> $71,440.21</p>
+                <p><strong>Mortgage:</strong> $108,559.79</p>
+                <p><strong>Monthly Rent:</strong> $1,300.00</p>
+                <p><strong>Monthly Payment:</strong> $866.74</p>
+                <p><strong>Profit:</strong> $433.26</p>
+            </div>
+            <div class="swiper-slide">
+                <h3>206 G</h3>
+                <p><strong>Purchase Date:</strong> 7/8/2021</p>
+                <p><strong>Purchase Price:</strong> $48,000.00</p>
+                <p><strong>Equity:</strong> $141,440.21</p>
+                <p><strong>Mortgage:</strong> $108,559.79</p>
+                <p><strong>Monthly Rent:</strong> $866.74</p>
+                <p><strong>Monthly Payment:</strong> $866.74</p>
+                <p><strong>Profit:</strong> $0.00</p>
+            </div>
+            <div class="swiper-slide">
+                <h3>6649 Mountain Grove</h3>
+                <p><strong>Purchase Date:</strong> 3/14/2023</p>
+                <p><strong>Purchase Price:</strong> $75,000.00</p>
+                <p><strong>Equity:</strong> $11,440.21</p>
+                <p><strong>Mortgage:</strong> $108,559.79</p>
+                <p><strong>Monthly Rent:</strong> $1,000.00</p>
+                <p><strong>Monthly Payment:</strong> $866.74</p>
+                <p><strong>Profit:</strong> $133.26</p>
+            </div>
+            <div class="swiper-slide">
+                <h3>6653 Mountain Grove</h3>
+                <p><strong>Purchase Date:</strong> 3/14/2023</p>
+                <p><strong>Purchase Price:</strong> $75,000.00</p>
+                <p><strong>Equity:</strong> $11,440.21</p>
+                <p><strong>Mortgage:</strong> $108,559.79</p>
+                <p><strong>Monthly Rent:</strong> $980.00</p>
+                <p><strong>Monthly Payment:</strong> $866.74</p>
+                <p><strong>Profit:</strong> $113.26</p>
+            </div>
+            <div class="swiper-slide">
+                <h3>1604 Hedrick</h3>
+                <p><strong>Purchase Date:</strong> 3/28/2023</p>
+                <p><strong>Purchase Price:</strong> $115,000.00</p>
+                <p><strong>Equity:</strong> $78,832.85</p>
+                <p><strong>Mortgage:</strong> $171,167.15</p>
+                <p><strong>Monthly Rent:</strong> $1,500.00</p>
+                <p><strong>Monthly Payment:</strong> $1,387.14</p>
+                <p><strong>Profit:</strong> $112.86</p>
+            </div>
+        </div>
+        <!-- Add Pagination -->
+        <div class="swiper-pagination"></div>
+
+        <!-- Add Navigation Buttons -->
+        <div class="swiper-button-prev"></div>
+        <div class="swiper-button-next"></div>
+    </div>
+
+    <!-- Swiper JS -->
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+
+    <!-- Initialize Swiper -->
+    <script>
+        var swiper = new Swiper('.swiper-container', {
+            loop: true,
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+            },
+            navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
+            },
+            autoplay: {
+                delay: 3000,
+            },
+        });
+    </script>
+</body>
+</html>

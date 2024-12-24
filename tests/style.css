@@ -2,10 +2,10 @@
    Color Variables
    =================== */
 :root {
-  --primary-bg: #FFBF00; /* Amber */
+  --primary-bg: #000000; /* Amber */
   --accent-color: #FFBF00; /* Amber */
   --secondary-bg: #1A1A1A; /* Dark background */
-  --text-color: #FFFFFF; /* White text */
+  --text-color: #c4c4c4; /* White text */
   --button-hover-bg: #FFFFFF; /* White on hover */
   --service-bg: #2E2E2E; /* Charcoal Gray */
   --card-bg: #FBB040; /* Mellow Orange */
