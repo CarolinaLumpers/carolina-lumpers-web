@@ -29,48 +29,25 @@
           margin: 0;
       }
   </style>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Carolina Lumper Service (CLS)</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="icon" type="image/png" href="assets/CLS-favicon.png">
-  <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
-  <style>
-      /* Centering the iframe */
-      .form-container {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          min-height: 80vh;
-          text-align: center;
-      }
+<script>
+    function switchLanguage(lang) {
+        const elements = document.querySelectorAll("[data-en], [data-es], [data-pt]");
+        elements.forEach(element => {
+            element.innerHTML = lang === "es" ? element.getAttribute("data-es") :
+                               lang === "pt" ? element.getAttribute("data-pt") :
+                               element.getAttribute("data-en");
+        });
+    }
 
-      iframe {
-          border: none;
-          width: 100%;
-          max-width: 800px; /* Adjust for your layout */
-          height: 1200px; /* Adjust to fit content without iframe scrollbar */
-      }
+    // Detect browser language and set the default language
+    document.addEventListener("DOMContentLoaded", () => {
+        const userLang = navigator.language || navigator.userLanguage;
+        const lang = userLang.startsWith("es") ? "es" : userLang.startsWith("pt") ? "pt" : "en";
+        switchLanguage(lang);
+    });
+</script>
 
-      body {
-          margin: 0;
-      }
-  </style>
-  <script>
-      function switchLanguage(lang) {
-          const elements = document.querySelectorAll("[data-en], [data-es], [data-pt]");
-          elements.forEach(element => {
-              element.innerHTML = lang === "es" ? element.getAttribute("data-es") : 
-                                 lang === "pt" ? element.getAttribute("data-pt") : 
-                                 element.getAttribute("data-en");
-          });
-      }
-  </script>
-</head>
+  </head>
 <body>
   <!-- Navigation Bar -->
   <nav class="navbar">
@@ -106,57 +83,6 @@
     <div class="form-container">
       <h2 data-en="Apply for a Position" data-es="Solicitar un Puesto" data-pt="Candidatar-se a uma Posição">Apply for a Position</h2>
       <p data-en="Interested in joining our team? Complete the form below:" data-es="¿Interesado en unirte a nuestro equipo? Completa el formulario abajo:" data-pt="Interessado em se juntar à nossa equipe? Complete o formulário abaixo:">
-        Interested in joining our team? Complete the form below:
-      </p>
-      <!-- Embedded Google Form -->
-      <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSeK6gOhryYgeghFwb00VvCg2oG1gyF9pHZmqUsKTWazqreO8g/viewform?embedded=true" 
-              allowfullscreen></iframe>
-    </div>
-  </section>
-
-  <!-- Footer -->
-  <footer>
-    <div class="footer-content">
-      <p>&copy; 2024 Carolina Lumper Service, LLC. All rights reserved.</p>
-      <div class="footer-icons">
-        <a href="https://facebook.com"><img src="facebook-icon.png" alt="Facebook"></a>
-        <a href="https://linkedin.com"><img src="linkedin-icon.png" alt="LinkedIn"></a>
-      </div>
-    </div>
-  </footer>
-</body>
-</html>
-  </head>
-<body>
-  <!-- Navigation Bar -->
-  <nav class="navbar">
-    <div class="logo-container">
-      <a href="index.html" class="logo-link">
-        <img src="assets/CLS_Nav_Logo.png" alt="CLS Logo" class="logo">
-      </a>
-      <a href="index.html" class="company-name">Carolina Lumper Service</a>
-    </div>
-    <ul class="nav-links">
-      <li><a href="index.html">Home</a></li>
-      <li><a href="about.html">About Us</a></li>
-      <li><a href="services.html">Services</a></li>
-      <li><a href="contact.html">Contact</a></li>
-      <li><a href="apply.html" class="active">Apply</a></li>
-    </ul>
-  </nav>
-
-  <!-- Hero Section -->
-<header class="hero">
-  <div class="hero-content container text-center">
-	<h2>Join the CLS Team</h2>
-    <p>We are looking for motivated individuals to join our team. Fill out the application below to get started!</p>    </div>
-  </header>
-
-  <!-- Application Section -->
-  <section id="apply">
-    <div class="form-container">
-      <h2 data-en="Apply for a Position" data-es="Solicitar un Puesto">Apply for a Position</h2>
-      <p data-en="Interested in joining our team? Complete the form below:" data-es="¿Interesado en unirte a nuestro equipo? Completa el formulario abajo:">
         Interested in joining our team? Complete the form below:
       </p>
       <!-- Embedded Google Form -->
