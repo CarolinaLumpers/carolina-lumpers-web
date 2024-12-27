@@ -516,7 +516,6 @@ button:hover {
     list-style: none;
     gap: 10px;
     width: 100%;
-    height: 40px;
     margin: 0;
     padding: 0;
     background-color: var(--secondary-bg);
