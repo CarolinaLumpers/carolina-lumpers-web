@@ -511,6 +511,7 @@ button:hover {
   /* Second Row: Navigation Links */
   .nav-links {
     display: flex;
+    flex-wrap: wrap;  /* Allow wrapping */
     justify-content: center;
     align-items: center;
     list-style: none;
