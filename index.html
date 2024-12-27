@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,7 +8,62 @@
   <link rel="stylesheet" href="style.css">
   <link rel="icon" type="image/png" href="assets/CLS-favicon.png">
   <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+  <style>
+    /* Centering the iframe */
+    .form-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 80vh;
+      text-align: center;
+    }
+
+    iframe {
+      border: none;
+      width: 100%;
+      max-width: 800px;
+      /* Adjust for your layout */
+      height: 2400px;
+      /* Adjust to fit content without iframe scrollbar */
+    }
+
+    body {
+      margin: 0;
+    }
+
+    .language-toggle {
+      margin: 10px;
+      text-align: center;
+    }
+
+    .language-toggle button {
+      margin: 5px;
+      padding: 10px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+  </style>
+  <script>
+    function switchLanguage(lang) {
+      const elements = document.querySelectorAll("[data-en], [data-es], [data-pt]");
+      elements.forEach(element => {
+        element.innerHTML = lang === "es" ? element.getAttribute("data-es") :
+          lang === "pt" ? element.getAttribute("data-pt") :
+            element.getAttribute("data-en");
+      });
+    }
+
+    // Detect browser language and set the default language
+    document.addEventListener("DOMContentLoaded", () => {
+      const userLang = navigator.language || navigator.userLanguage;
+      const lang = userLang.startsWith("es") ? "es" : userLang.startsWith("pt") ? "pt" : "en";
+      switchLanguage(lang);
+    });
+  </script>
+
 </head>
+
 <body>
   <!-- Navigation Bar -->
   <nav class="navbar">
@@ -18,11 +74,11 @@
       <a href="index.html" class="company-name">Carolina Lumper Service</a>
     </div>
     <ul class="nav-links">
-      <li><a href="index.html" class="active">Home</a></li>
-      <li><a href="about.html">About Us</a></li>
-      <li><a href="services.html">Services</a></li>
-      <li><a href="contact.html">Contact</a></li>
-      <li><a href="apply.html">Apply</a></li>
+      <li><a href="index.html" class="active" data-en="Home" data-es="Inicio" data-pt="Início">Home</a></li>
+      <li><a href="about.html" data-en="About Us" data-es="Sobre Nosotros" data-pt="Sobre Nós">About Us</a></li>
+      <li><a href="services.html" data-en="Services" data-es="Servicios" data-pt="Serviços">Services</a></li>
+      <li><a href="contact.html" data-en="Contact" data-es="Contacto" data-pt="Contato">Contact</a></li>
+      <li><a href="apply.html" data-en="Apply" data-es="Solicitar" data-pt="Candidatar">Apply</a></li>
     </ul>
   </nav>
 
@@ -31,12 +87,14 @@
   <!-- Hero Section -->
   <header class="hero">
     <div class="hero-content">
-      <h2>Reliable Freight Solutions for Every Challenge</h2>
-      <p>
-        Carolina Lumper Service (CLS) provides efficient freight handling solutions, ensuring seamless operations tailored to your needs.
+      <h2 data-en="Reliable Freight Solutions for Every Challenge" data-es="Soluciones de Carga Confiables para Cada Desafío" data-pt="Soluções Confiáveis de Carga para Cada Desafio">Reliable Freight Solutions for Every Challenge</h2>
+      <p data-en="Carolina Lumper Service (CLS) provides efficient freight handling solutions, ensuring seamless operations tailored to your needs."
+         data-es="Carolina Lumper Service (CLS) ofrece soluciones eficientes de manejo de carga, garantizando operaciones fluidas adaptadas a sus necesidades."
+         data-pt="Carolina Lumper Service (CLS) oferece soluções eficientes de manuseio de carga, garantindo operações sem interrupções adaptadas às suas necessidades.">
+         Carolina Lumper Service (CLS) provides efficient freight handling solutions, ensuring seamless operations tailored to your needs.
       </p>
       <div class="cta-container">
-        <a href="#services" class="cta-button">Discover Our Services</a>
+        <a href="#services" class="cta-button" data-en="Discover Our Services" data-es="Descubra Nuestros Servicios" data-pt="Descubra Nossos Serviços">Discover Our Services</a>
       </div>
     </div>
     
@@ -49,55 +107,78 @@
   </header>
 
 
-<!-- Main Content -->
-<main class="container">
-  <!-- About CLS Section -->
-  <section id="overview" class="section-container">
-    <h2>About CLS</h2>
-    <p>At Carolina Lumper Service, we pride ourselves on delivering reliable, efficient, and tailored freight handling solutions. From seamless container unloading to meticulous sorting and restocking, we help streamline your warehouse operations. Whether facing peak demand or maintaining everyday workflows, our experienced team ensures that your supply chain runs like clockwork, allowing you to focus on growing your business. Trust CLS for unmatched precision, speed, and dedication to excellence in freight management.</p>
-  </section>
+  <!-- Main Content -->
+  <main class="container">
+    <!-- About CLS Section -->
+    <section id="overview" class="section-container">
+      <h2 data-en="About CLS" data-es="Sobre CLS" data-pt="Sobre a CLS">About CLS</h2>
+      <p data-en="At Carolina Lumper Service, we pride ourselves on delivering reliable, efficient, and tailored freight handling solutions. From seamless container unloading to meticulous sorting and restocking, we help streamline your warehouse operations. Whether facing peak demand or maintaining everyday workflows, our experienced team ensures that your supply chain runs like clockwork, allowing you to focus on growing your business. Trust CLS for unmatched precision, speed, and dedication to excellence in freight management."
+         data-es="En Carolina Lumper Service, nos enorgullecemos de ofrecer soluciones confiables, eficientes y adaptadas de manejo de carga. Desde la descarga fluida de contenedores hasta la clasificación y reabastecimiento meticulosos, ayudamos a optimizar las operaciones de su almacén. Ya sea enfrentando picos de demanda o manteniendo flujos de trabajo diarios, nuestro equipo experimentado asegura que su cadena de suministro funcione perfectamente, permitiéndole enfocarse en hacer crecer su negocio. Confíe en CLS para obtener precisión, rapidez y dedicación inigualables a la excelencia en la gestión de carga."
+         data-pt="Na Carolina Lumper Service, temos orgulho em oferecer soluções confiáveis, eficientes e personalizadas de manuseio de carga. Desde o descarregamento perfeito de contêineres até a classificação e reposição meticulosas, ajudamos a otimizar as operações do seu armazém. Seja enfrentando picos de demanda ou mantendo fluxos de trabalho diários, nossa equipe experiente garante que sua cadeia de suprimentos funcione perfeitamente, permitindo que você se concentre no crescimento do seu negócio. Confie na CLS para obter precisão, rapidez e dedicação incomparáveis à excelência na gestão de carga.">
+         At Carolina Lumper Service, we pride ourselves on delivering reliable, efficient, and tailored freight handling solutions. From seamless container unloading to meticulous sorting and restocking, we help streamline your warehouse operations. Whether facing peak demand or maintaining everyday workflows, our experienced team ensures that your supply chain runs like clockwork, allowing you to focus on growing your business. Trust CLS for unmatched precision, speed, and dedication to excellence in freight management.
+      </p>
+    </section>
 
-<!-- Services Section -->
-<section id="services" class="section-container">
-  <h2>What We Offer</h2>
-  <div class="services-brief">
-    <a href="services.html#inbound-services.html" class="brief-item">
-      <h4>Inbound Services</h4>
-      <p>Efficient unloading, sorting, and storage to streamline your supply chain.</p>
-    </a>
-    <a href="services.html#outbound-services" class="brief-item">
-      <h4>Outbound Services</h4>
-      <p>Seamless loading, staging, and order picking to meet your delivery demands.</p>
-    </a>
-    <a href="services.html#additional-services" class="brief-item">
-      <h4>Additional Support</h4>
-      <p>Pallet management, sanitation, and custom projects tailored to your needs.</p>
-    </a>
-  </div>
-  <div class="cta-container">
-    <a href="services.html" class="cta-button">Learn More</a>
-  </div>
-</section>
+    <!-- Services Section -->
+    <section id="services" class="section-container">
+      <h2 data-en="What We Offer" data-es="Lo Que Ofrecemos" data-pt="O Que Oferecemos">What We Offer</h2>
+      <div class="services-brief">
+        <a href="services.html#inbound-services" class="brief-item">
+          <h4 data-en="Inbound Services" data-es="Servicios de Entrada" data-pt="Serviços de Entrada">Inbound Services</h4>
+          <p data-en="Efficient unloading, sorting, and storage to streamline your supply chain."
+             data-es="Descarga eficiente, clasificación y almacenamiento para optimizar su cadena de suministro."
+             data-pt="Descarga eficiente, classificação e armazenamento para otimizar sua cadeia de suprimentos.">
+             Efficient unloading, sorting, and storage to streamline your supply chain.
+          </p>
+        </a>
+        <a href="services.html#outbound-services" class="brief-item">
+          <h4 data-en="Outbound Services" data-es="Servicios de Salida" data-pt="Serviços de Saída">Outbound Services</h4>
+          <p data-en="Seamless loading, staging, and order picking to meet your delivery demands."
+             data-es="Carga sin problemas, preparación y selección de pedidos para satisfacer sus demandas de entrega."
+             data-pt="Carregamento sem problemas, preparação e seleção de pedidos para atender às suas demandas de entrega.">
+             Seamless loading, staging, and order picking to meet your delivery demands.
+          </p>
+        </a>
+        <a href="services.html#additional-services" class="brief-item">
+          <h4 data-en="Additional Support" data-es="Soporte Adicional" data-pt="Suporte Adicional">Additional Support</h4>
+          <p data-en="Pallet management, sanitation, and custom projects tailored to your needs."
+             data-es="Gestión de palés, saneamiento y proyectos personalizados adaptados a sus necesidades."
+             data-pt="Gestão de paletes, saneamento e projetos personalizados adaptados às suas necessidades.">
+             Pallet management, sanitation, and custom projects tailored to your needs.
+          </p>
+        </a>
+      </div>
+      <div class="cta-container">
+        <a href="services.html" class="cta-button" data-en="Learn More" data-es="Aprender Más" data-pt="Saiba Mais">Learn More</a>
+      </div>
+    </section>
 
-  <!-- Contact Section -->
-  <section id="contact" class="section-container">
-    <h2>Contact Us</h2>
-    <div class="contact-buttons">
-      <a href="mailto:info@carolinalumpers.com" class="action-button">Email</a>
-      <a href="tel:+18287810002" class="action-button">Call Us</a>
-    </div>
-  </section>
-</main>
-
+    <!-- Contact Section -->
+    <section id="contact" class="section-container">
+      <h2 data-en="Contact Us" data-es="Contáctenos" data-pt="Contate-nos">Contact Us</h2>
+      <div class="contact-buttons">
+        <a href="mailto:info@carolinalumpers.com" class="action-button" data-en="Email" data-es="Correo Electrónico" data-pt="Email">Email</a>
+        <a href="tel:+18287810002" class="action-button" data-en="Call Us" data-es="Llamar" data-pt="Ligue">Call Us</a>
+      </div>
+    </section>
+  </main>
 
   <!-- Footer -->
   <footer>
-    <p>© 2024 Carolina Lumper Service. All rights reserved.</p>
+    <p data-en="© 2024 Carolina Lumper Service. All rights reserved." data-es="© 2024 Carolina Lumper Service. Todos los derechos reservados." data-pt="© 2024 Carolina Lumper Service. Todos os direitos reservados.">© 2024 Carolina Lumper Service. All rights reserved.</p>
     <div class="footer-icons">
-      <a href="https://www.facebook.com/profile.php?id=
-61569872795390"><img src="assets/facebook-icon.png" alt="Facebook"></a>
+      <a href="https://www.facebook.com/profile.php?id=61569872795390"><img src="assets/facebook-icon.png" alt="Facebook"></a>
       <a href="#"><img src="assets/linkedin-icon.png" alt="LinkedIn"></a>
     </div>
+        <div class="language-toggle">
+      <button onclick="switchLanguage('en')">English</button>
+      <button onclick="switchLanguage('es')">Español</button>
+      <button onclick="switchLanguage('pt')">Português</button>
+    </div>
+
+  </footer>
+</body>
+</html>
   </footer>
 </body>
 </html>

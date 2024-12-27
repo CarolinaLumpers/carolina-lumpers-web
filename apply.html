@@ -1,65 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Carolina Lumper Service (CLS)</title>
+  <title>Apply to Carolina Lumper Service (CLS)</title>
   <link rel="stylesheet" href="style.css">
   <link rel="icon" type="image/png" href="assets/CLS-favicon.png">
   <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
   <style>
-      /* Centering the iframe */
-      .form-container {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          min-height: 80vh;
-          text-align: center;
-      }
+    /* Centering the iframe */
+    .form-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 80vh;
+      text-align: center;
+    }
 
-      iframe {
-          border: none;
-          width: 100%;
-          max-width: 800px; /* Adjust for your layout */
-          height: 2400px; /* Adjust to fit content without iframe scrollbar */
-      }
+    iframe {
+      border: none;
+      width: 100%;
+      max-width: 800px;
+      /* Adjust for your layout */
+      height: 2400px;
+      /* Adjust to fit content without iframe scrollbar */
+    }
 
-      body {
-          margin: 0;
-      }
+    body {
+      margin: 0;
+    }
 
     .language-toggle {
-        margin: 10px;
-        text-align: center;
-    }
-    .language-toggle button {
-        margin: 5px;
-        padding: 10px;
-        font-size: 14px;
-        cursor: pointer;
+      margin: 10px;
+      text-align: center;
     }
 
+    .language-toggle button {
+      margin: 5px;
+      padding: 10px;
+      font-size: 14px;
+      cursor: pointer;
+    }
   </style>
-<script>
+  <script>
     function switchLanguage(lang) {
-        const elements = document.querySelectorAll("[data-en], [data-es], [data-pt]");
-        elements.forEach(element => {
-            element.innerHTML = lang === "es" ? element.getAttribute("data-es") :
-                               lang === "pt" ? element.getAttribute("data-pt") :
-                               element.getAttribute("data-en");
-        });
+      const elements = document.querySelectorAll("[data-en], [data-es], [data-pt]");
+      elements.forEach(element => {
+        element.innerHTML = lang === "es" ? element.getAttribute("data-es") :
+          lang === "pt" ? element.getAttribute("data-pt") :
+            element.getAttribute("data-en");
+      });
     }
 
     // Detect browser language and set the default language
     document.addEventListener("DOMContentLoaded", () => {
-        const userLang = navigator.language || navigator.userLanguage;
-        const lang = userLang.startsWith("es") ? "es" : userLang.startsWith("pt") ? "pt" : "en";
-        switchLanguage(lang);
+      const userLang = navigator.language || navigator.userLanguage;
+      const lang = userLang.startsWith("es") ? "es" : userLang.startsWith("pt") ? "pt" : "en";
+      switchLanguage(lang);
     });
-</script>
+  </script>
 
-  </head>
+</head>
 <body>
   <!-- Navigation Bar -->
   <nav class="navbar">
@@ -71,11 +74,11 @@
     </div>
     
     <ul class="nav-links">
-      <li><a href="index.html">Home</a></li>
-      <li><a href="about.html">About Us</a></li>
-      <li><a href="services.html">Services</a></li>
-      <li><a href="contact.html">Contact</a></li>
-      <li><a href="apply.html" class="active">Apply</a></li>
+      <li><a href="index.html" data-en="Home" data-es="Inicio" data-pt="Início">Home</a></li>
+      <li><a href="about.html" data-en="About Us" data-es="Sobre Nosotros" data-pt="Sobre Nós">About Us</a></li>
+      <li><a href="services.html" data-en="Services" data-es="Servicios" data-pt="Serviços">Services</a></li>
+      <li><a href="contact.html" data-en="Contact" data-es="Contacto" data-pt="Contato">Contact</a></li>
+      <li><a href="apply.html" class="active" data-en="Apply" data-es="Solicitar" data-pt="Candidatar">Apply</a></li>
     </ul>
   </nav>
 
@@ -113,18 +116,20 @@
 
   <!-- Footer -->
   <footer>
-    <p>© 2024 Carolina Lumper Service. All rights reserved.</p>
+    <p data-en="© 2024 Carolina Lumper Service. All rights reserved." data-es="© 2024 Carolina Lumper Service. Todos los derechos reservados." data-pt="© 2024 Carolina Lumper Service. Todos os direitos reservados.">© 2024 Carolina Lumper Service. All rights reserved.</p>
     <div class="footer-icons">
-      <a href="https://www.facebook.com/profile.php?id=61569872795390"><img src="assets/facebook-icon.png"
-          alt="Facebook"></a>
+      <a href="https://www.facebook.com/profile.php?id=61569872795390"><img src="assets/facebook-icon.png" alt="Facebook"></a>
       <a href="#"><img src="assets/linkedin-icon.png" alt="LinkedIn"></a>
     </div>
-    <div class="language-toggle">
+        <div class="language-toggle">
       <button onclick="switchLanguage('en')">English</button>
       <button onclick="switchLanguage('es')">Español</button>
       <button onclick="switchLanguage('pt')">Português</button>
     </div>
 
+  </footer>
+</body>
+</html>
   </footer>
 </body>
 </html>
