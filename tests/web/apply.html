@@ -7,28 +7,6 @@
   <link rel="stylesheet" href="style.css">
   <link rel="icon" type="image/png" href="assets/CLS-favicon.png">
   <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
-  <style>
-      /* Centering the iframe */
-      .form-container {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          min-height: 80vh;
-          text-align: center;
-      }
-
-      iframe {
-          border: none;
-          width: 100%;
-          max-width: 800px; /* Adjust for your layout */
-          height: 2600px; /* Adjust to fit content without iframe scrollbar */
-      }
-
-      body {
-          margin: 0;
-      }
-  </style>
     <script>
         function switchLanguage(lang) {
             const elements = document.querySelectorAll("[data-en], [data-es]");
@@ -36,8 +14,7 @@
                 element.innerHTML = lang === "es" ? element.getAttribute("data-es") : element.getAttribute("data-en");
             });
         }
-    </script>
-  </head>
+    </script></head>
 <body>
   <!-- Navigation Bar -->
   <nav class="navbar">
@@ -63,27 +40,32 @@
     <p>We are looking for motivated individuals to join our team. Fill out the application below to get started!</p>    </div>
   </header>
 
-  <!-- Application Section -->
-  <section id="apply">
-    <div class="form-container">
-      <h2 data-en="Apply for a Position" data-es="Solicitar un Puesto">Apply for a Position</h2>
-      <p data-en="Interested in joining our team? Complete the form below:" data-es="¿Interesado en unirte a nuestro equipo? Completa el formulario abajo:">
-        Interested in joining our team? Complete the form below:
-      </p>
-      <!-- Embedded Google Form -->
-      <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSeK6gOhryYgeghFwb00VvCg2oG1gyF9pHZmqUsKTWazqreO8g/viewform?embedded=true" 
-              allowfullscreen></iframe>
-    </div>
-  </section>
+    <!-- Application Section -->
+    <section id="apply">
+        <div class="form-container">
+            <h2 data-en="Apply for a Position" data-es="Solicitar un Puesto">Apply for a Position</h2>
+            <p data-en="Interested in joining our team? Click the button below to complete your application:"
+               data-es="¿Interesado en unirte a nuestro equipo? Haz clic en el botón de abajo para completar tu solicitud:">
+               Interested in joining our team? Click the button below to complete your application:
+            </p>
+            <button onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLSeK6gOhryYgeghFwb00VvCg2oG1gyF9pHZmqUsKTWazqreO8g/viewform', '_blank')" 
+                    class="cta-button" data-en="Complete Application" data-es="Completar Solicitud">
+                Complete Application
+            </button>
+        </div>
+    </section>
 
-  <!-- Footer -->
-  <footer>
-    <p>© 2024 Carolina Lumper Service. All rights reserved.</p>
-    <div class="footer-icons">
-      <a href="#"><img src="assets/facebook-icon.png" alt="Facebook"></a>
-      <a href="#"><img src="assets/linkedin-icon.png" alt="LinkedIn"></a>
-    </div>
-  </footer>
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2024 Carolina Lumper Service, LLC. All rights reserved.</p>
+            <div class="footer-icons">
+                <a href="https://facebook.com"><img src="facebook-icon.png" alt="Facebook"></a>
+                <a href="https://linkedin.com"><img src="linkedin-icon.png" alt="LinkedIn"></a>
+            </div>
+        </div>
+    </footer>
+
+
 </body>
 </html>
-
