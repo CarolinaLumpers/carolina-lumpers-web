@@ -511,22 +511,23 @@ button:hover {
   /* Second Row: Navigation Links */
   .nav-links {
     display: flex;
-    flex-wrap: wrap;  /* Allow wrapping */
     justify-content: center;
     align-items: center;
     list-style: none;
     gap: 10px;
     width: 100%;
+    height: 40px; /* Maintain fixed height */
     margin: 0;
     padding: 0;
     background-color: var(--secondary-bg);
   }
 
   .nav-links a {
-    font-size: clamp(0.7em, 2vw, 1em);  /* Adjust min, preferred, and max as needed */
+    font-size: 0.9em; /* or adjust as needed */
     color: white;
     text-decoration: none;
-    padding: 5px 5px;
+    padding: 5px 5px; /*  Slight horizontal padding for better tap targets */
+    white-space: nowrap;  /* Prevent wrapping */
   }
 
   .nav-links a:hover {
