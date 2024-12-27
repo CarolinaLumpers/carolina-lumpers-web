@@ -523,10 +523,10 @@ button:hover {
   }
 
   .nav-links a {
-    font-size: 0.9em;
+    font-size: clamp(0.7em, 2vw, 1em);  /* Adjust min, preferred, and max as needed */
     color: white;
     text-decoration: none;
-    padding: 5px 8px;
+    padding: 5px 5px;
   }
 
   .nav-links a:hover {
