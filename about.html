@@ -44,7 +44,30 @@
       cursor: pointer;
     }
   </style>
+ <script src="script.js" defer></script>  </head>
+
   <script>
+  //Existing script.js functionality moved inline.
+
+    function adjustNavbarFontSize() {
+      const navLinks = document.querySelector('.nav-links');
+      const links = navLinks.querySelectorAll('a');
+      const maxWidth = navLinks.offsetWidth;
+
+      let totalWidth = 0;
+      for (const link of links) {
+        totalWidth += link.offsetWidth;
+      }
+
+      if (totalWidth > maxWidth) {
+        const scaleFactor = maxWidth / totalWidth;
+        navLinks.style.fontSize = scaleFactor * 0.9 + 'em';
+      } else {
+        navLinks.style.fontSize = '0.9em';
+      }
+    }
+
+
     function switchLanguage(lang) {
       const elements = document.querySelectorAll("[data-en], [data-es], [data-pt]");
       elements.forEach(element => {
@@ -52,17 +75,18 @@
           lang === "pt" ? element.getAttribute("data-pt") :
             element.getAttribute("data-en");
       });
+      adjustNavbarFontSize(); // Call after language switch
     }
 
-    // Detect browser language and set the default language
     document.addEventListener("DOMContentLoaded", () => {
       const userLang = navigator.language || navigator.userLanguage;
       const lang = userLang.startsWith("es") ? "es" : userLang.startsWith("pt") ? "pt" : "en";
       switchLanguage(lang);
+      adjustNavbarFontSize(); // Call on initial load
     });
   </script>
-
 </head>
+
 <body>
   <!-- Navigation Bar -->
   <nav class="navbar">
