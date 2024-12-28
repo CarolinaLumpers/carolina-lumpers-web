@@ -580,3 +580,18 @@ button:hover {
     max-width: 95%; /* Ensure paragraphs don’t touch edges inside the section */
   }
 }
+
+.white-overlay {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 200px; /* Adjust height as needed */
+  background-color: white;
+  z-index: 1;
+}
+
+@media (max-width: 768px) {
+  .white-overlay {
+    height: 300px; /* Taller for mobile */
+  }
+}

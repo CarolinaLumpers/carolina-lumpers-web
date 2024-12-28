@@ -27,6 +27,12 @@
       height: 2400px;
       /* Adjust to fit content without iframe scrollbar */
     }
+    @media (max-width: 768px) {
+      iframe {
+        height: 3200px;
+      }
+    }
+
 
     body {
       margin: 0;
@@ -44,10 +50,22 @@
       cursor: pointer;
     }
   </style>
- <script src="script.js" defer></script>  </head>
+   <script>
+    const forms = {
+      en: "https://docs.google.com/forms/d/e/1FAIpQLSeUYOtYITXgyUoIetp-bDiM_3uI2LSBNPvb6DHuf_v7viZ9-A/viewform?embedded=true",
+      es: "https://docs.google.com/forms/d/e/1FAIpQLSeK6gOhryYgeghFwb00VvCg2oG1gyF9pHZmqUsKTWazqreO8g/viewform?embedded=true"
+    };
 
-  <script>
-  //Existing script.js functionality moved inline.
+    function switchLanguageForm(lang) {
+      const iframe = document.querySelector("iframe");
+      iframe.src = forms[lang] || forms["en"];
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const userLang = navigator.language || navigator.userLanguage;
+      const lang = userLang.startsWith("es") ? "es" : "en";
+      switchLanguageForm(lang);
+    });
 
     function adjustNavbarFontSize() {
       const navLinks = document.querySelector('.nav-links');
@@ -67,7 +85,6 @@
       }
     }
 
-
     function switchLanguage(lang) {
       const elements = document.querySelectorAll("[data-en], [data-es], [data-pt]");
       elements.forEach(element => {
@@ -75,14 +92,15 @@
           lang === "pt" ? element.getAttribute("data-pt") :
             element.getAttribute("data-en");
       });
-      adjustNavbarFontSize(); // Call after language switch
+      adjustNavbarFontSize();
+      switchLanguageForm(lang); // Update the form based on selected language
     }
 
     document.addEventListener("DOMContentLoaded", () => {
       const userLang = navigator.language || navigator.userLanguage;
       const lang = userLang.startsWith("es") ? "es" : userLang.startsWith("pt") ? "pt" : "en";
       switchLanguage(lang);
-      adjustNavbarFontSize(); // Call on initial load
+      adjustNavbarFontSize();
     });
   </script>
 </head>
@@ -132,9 +150,8 @@
       <p data-en="Interested in joining our team? Complete the form below:" data-es="¿Interesado en unirte a nuestro equipo? Completa el formulario abajo:" data-pt="Interessado em se juntar à nossa equipe? Complete o formulário abaixo:">
         Interested in joining our team? Complete the form below:
       </p>
-      <!-- Embedded Google Form -->
-      <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSeK6gOhryYgeghFwb00VvCg2oG1gyF9pHZmqUsKTWazqreO8g/viewform?embedded=true" 
-              allowfullscreen></iframe>
+      <!-- Dynamic Embedded Google Form -->
+      <iframe src="" allowfullscreen></iframe>
     </div>
   </section>
 
