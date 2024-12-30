@@ -76,5 +76,5 @@
 Esta lista de verificación le ayudará a prepararse para los siguientes pasos en el proceso de contratación. ¡Estamos aquí para apoyarlo!  
 
 **Atentamente,**  
-**[Nombre de la Empresa]**  
-**[Información de Contacto]**
+**Carolina Lumper Service**  
+**https://wa.me/19802552061**
