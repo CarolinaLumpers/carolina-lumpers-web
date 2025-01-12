@@ -1,4 +1,4 @@
-### **QuickBooks Online Integration Plan for Weekly Invoice Automation**
+# **QuickBooks Online Integration Plan for Weekly Invoice Automation**
 
 ---
 
@@ -104,4 +104,3 @@ To create a comprehensive system designed to automate the generation of weekly i
 4. Proceed to **Module 2: Fetching Data from QuickBooks**, where you’ll build scripts to retrieve and process customer and product data.
 
 Once Modules 1 and 2 are completed, move on to Modules 3 and 4 to implement invoice creation and automation, achieving a streamlined weekly invoicing system.
-
