@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuickBooks Integration Checklist</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        h1 {
+            color: #0077c5;
+        }
+        h2 {
+            color: #005a9e;
+        }
+        ul {
+            margin: 10px 0;
+            padding: 0 20px;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .code {
+            font-family: "Courier New", Courier, monospace;
+            background-color: #f4f4f4;
+            padding: 5px 10px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+        .highlight {
+            color: #d9534f;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>QuickBooks Integration Checklist</h1>
+        <p>Follow this checklist to set up and integrate with QuickBooks Online (QBO) API.</p>
+
+        <h2>1. App Credentials</h2>
+        <ul>
+            <li><strong>Client ID:</strong> Your app's unique identifier from the Intuit Developer Portal.</li>
+            <li><strong>Client Secret:</strong> A secret key for authenticating your app.</li>
+            <li><strong>Where to find:</strong> 
+                <ul>
+                    <li>Log in to the <a href="https://developer.intuit.com/" target="_blank">Intuit Developer Portal</a>.</li>
+                    <li>Go to <strong>Dashboard > Your App > Keys & OAuth</strong>.</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h2>2. Redirect URI</h2>
+        <ul>
+            <li><strong>Purpose:</strong> Specifies where QuickBooks redirects users after authorization.</li>
+            <li><strong>Example:</strong> <span class="code">https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/usercallback</span></li>
+            <li><strong>Configuration:</strong> Add this to the Redirect URI section in the Intuit Developer Portal.</li>
+        </ul>
+
+        <h2>3. Scopes</h2>
+        <ul>
+            <li><strong>Purpose:</strong> Define the level of access your app requires.</li>
+            <li><strong>Common Scopes:</strong>
+                <ul>
+                    <li><span class="code">com.intuit.quickbooks.accounting</span>: Access accounting data.</li>
+                    <li><span class="code">com.intuit.quickbooks.payroll</span>: Access payroll data.</li>
+                    <li><span class="code">openid</span>: Access user profile information.</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h2>4. Realm ID (Company ID)</h2>
+        <ul>
+            <li><strong>Purpose:</strong> Identifies the QuickBooks company you're working with.</li>
+            <li><strong>How to get:</strong> 
+                <span class="code">https://YOUR_REDIRECT_URI?code=AUTH_CODE&realmId=REALM_ID</span>
+                (found in the callback URL after authorization).
+            </li>
+        </ul>
+
+        <h2>5. Access and Refresh Tokens</h2>
+        <ul>
+            <li><strong>Access Token:</strong> Used for making API calls.</li>
+            <li><strong>Refresh Token:</strong> Used to refresh the access token when it expires.</li>
+            <li><strong>Retrieve Tokens:</strong> Use the <span class="code">/oauth2/v1/tokens/bearer</span> endpoint.</li>
+        </ul>
+
+        <h2>6. Base API URLs</h2>
+        <ul>
+            <li><strong>Sandbox Environment:</strong> 
+                <span class="code">https://sandbox-quickbooks.api.intuit.com/v3/company/{realmId}</span>
+            </li>
+            <li><strong>Production Environment:</strong> 
+                <span class="code">https://quickbooks.api.intuit.com/v3/company/{realmId}</span>
+            </li>
+        </ul>
+
+        <h2>7. API Endpoints</h2>
+        <ul>
+            <li><strong>Customers:</strong> <span class="code">/customer</span> (GET, POST, PUT, DELETE)</li>
+            <li><strong>Invoices:</strong> <span class="code">/invoice</span> (GET, POST, PUT, DELETE)</li>
+            <li><strong>Payroll:</strong> <span class="code">/payroll</span> (if enabled)</li>
+            <li><strong>Reports:</strong> <span class="code">/reports/{reportName}</span></li>
+            <li>For more details, visit the <a href="https://developer.intuit.com/app/developer/qbo/docs/api/accounting/most-commonly-used" target="_blank">QuickBooks API Documentation</a>.</li>
+        </ul>
+
+        <h2>8. Sandbox Testing</h2>
+        <ul>
+            <li><strong>Purpose:</strong> Use the sandbox to test API requests without affecting live data.</li>
+            <li><strong>Base URL:</strong> 
+                <span class="code">https://sandbox-quickbooks.api.intuit.com/v3/company/{realmId}</span>
+            </li>
+        </ul>
+
+        <h2>Checklist Summary</h2>
+        <ul>
+            <li>Configure your app in the Intuit Developer Portal.</li>
+            <li>Set up a Redirect URI and select the required scopes.</li>
+            <li>Test the OAuth2 flow and retrieve tokens.</li>
+            <li>Validate API connectivity using sandbox endpoints.</li>
+            <li>Log API requests and responses for debugging.</li>
+        </ul>
+    </div>
+</body>
+</html>
