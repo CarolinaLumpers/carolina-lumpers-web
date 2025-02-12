@@ -44,47 +44,7 @@
       cursor: pointer;
     }
   </style>
- <script src="script.js" defer></script>  </head>
-
-  <script>
-  //Existing script.js functionality moved inline.
-
-    function adjustNavbarFontSize() {
-      const navLinks = document.querySelector('.nav-links');
-      const links = navLinks.querySelectorAll('a');
-      const maxWidth = navLinks.offsetWidth;
-
-      let totalWidth = 0;
-      for (const link of links) {
-        totalWidth += link.offsetWidth;
-      }
-
-      if (totalWidth > maxWidth) {
-        const scaleFactor = maxWidth / totalWidth;
-        navLinks.style.fontSize = scaleFactor * 0.9 + 'em';
-      } else {
-        navLinks.style.fontSize = '0.9em';
-      }
-    }
-
-
-    function switchLanguage(lang) {
-      const elements = document.querySelectorAll("[data-en], [data-es], [data-pt]");
-      elements.forEach(element => {
-        element.innerHTML = lang === "es" ? element.getAttribute("data-es") :
-          lang === "pt" ? element.getAttribute("data-pt") :
-            element.getAttribute("data-en");
-      });
-      adjustNavbarFontSize(); // Call after language switch
-    }
-
-    document.addEventListener("DOMContentLoaded", () => {
-      const userLang = navigator.language || navigator.userLanguage;
-      const lang = userLang.startsWith("es") ? "es" : userLang.startsWith("pt") ? "pt" : "en";
-      switchLanguage(lang);
-      adjustNavbarFontSize(); // Call on initial load
-    });
-  </script>
+  <script src="script.js" defer></script>
 </head>
 
 <body>
@@ -97,121 +57,81 @@
       <a href="index.html" class="company-name">Carolina Lumper Service</a>
     </div>
     <ul class="nav-links">
-      <li><a href="index.html" data-en="Home" data-es="Inicio" data-pt="Início">Home</a></li>
-      <li><a href="about.html" class="active" data-en="About Us" data-es="Sobre Nosotros" data-pt="Sobre Nós">About Us</a></li>
-      <li><a href="services.html" data-en="Services" data-es="Servicios" data-pt="Serviços">Services</a></li>
-      <li><a href="contact.html" data-en="Contact" data-es="Contacto" data-pt="Contato">Contact</a></li>
-      <li><a href="apply.html" data-en="Apply" data-es="Solicitar" data-pt="Candidatar">Apply</a></li>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="about.html" class="active">About Us</a></li>
+      <li><a href="services.html">Services</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="apply.html">Apply</a></li>
     </ul>
   </nav>
 
   <header class="hero">
     <div class="hero-content text-center container">
-      <h2 data-en="About Carolina Lumper Service" data-es="Acerca de Carolina Lumper Service" data-pt="Sobre o Carolina Lumper Service">About Carolina Lumper Service</h2>
-      <p data-en="Learn more about our mission, our values, and how we strive to provide the best freight handling solutions in the industry."
-         data-es="Conozca más sobre nuestra misión, nuestros valores y cómo nos esforzamos por ofrecer las mejores soluciones de manejo de carga en la industria."
-         data-pt="Saiba mais sobre nossa missão, nossos valores e como nos esforçamos para oferecer as melhores soluções de manuseio de carga do setor.">
-         Learn more about our mission, our values, and how we strive to provide the best freight handling solutions in the industry.
-      </p>
+      <h2>About Us – Carolina Lumper Service</h2>
+     <p>Your Trusted Partner in Warehouse Labor & Logistics Solutions</p>
     </div>
     <!-- Hero Image and Blur Overlay -->
-<div class="hero-image">
-  <img src="assets/CLS-Cover-01.png" alt="Hero Banner" class="banner-image">
-  <div class="blur-overlay"></div> <!-- Gradient overlay for the image -->
-</div>
-
+    <div class="hero-image">
+      <img src="assets/CLS-Cover-01.png" alt="Hero Banner" class="banner-image">
+      <div class="blur-overlay"></div> <!-- Gradient overlay for the image -->
+    </div>
   </header>
 
   <!-- Main Content -->
   <main class="container">
-    <!-- Company Overview Section -->
     <section class="section-container">
-      <h2 data-en="Who We Are" data-es="Quiénes Somos" data-pt="Quem Somos">Who We Are</h2>
-      <p data-en="Carolina Lumper Service (CLS) was founded with the goal of providing efficient, reliable, and high-quality freight handling services. With over 15 years of experience in the industry, our team has built a reputation for precision, professionalism, and dedication."
-         data-es="Carolina Lumper Service (CLS) se fundó con el objetivo de brindar servicios de manejo de carga eficientes, confiables y de alta calidad. Con más de 15 años de experiencia en la industria, nuestro equipo ha construido una reputación de precisión, profesionalismo y dedicación."
-         data-pt="A Carolina Lumper Service (CLS) foi fundada com o objetivo de fornecer serviços de manuseio de carga eficientes, confiáveis e de alta qualidade. Com mais de 15 anos de experiência no setor, nossa equipe construiu uma reputação de precisão, profissionalismo e dedicação.">
-         Carolina Lumper Service (CLS) was founded with the goal of providing efficient, reliable, and high-quality freight handling services. With over 15 years of experience in the industry, our team has built a reputation for precision, professionalism, and dedication.
-      </p>
-      <p data-en="We pride ourselves on our ability to deliver flexible and tailored solutions to meet the needs of warehouses and distribution centers, whether during peak periods or throughout everyday operations."
-         data-es="Nos enorgullecemos de nuestra capacidad para ofrecer soluciones flexibles y personalizadas que satisfagan las necesidades de almacenes y centros de distribución, ya sea durante periodos de alta demanda o a lo largo de las operaciones cotidianas."
-         data-pt="Temos orgulho de nossa capacidade de oferecer soluções flexíveis e personalizadas para atender às necessidades de armazéns e centros de distribuição, seja durante períodos de alta demanda ou ao longo das operações diárias.">
-         We pride ourselves on our ability to deliver flexible and tailored solutions to meet the needs of warehouses and distribution centers, whether during peak periods or throughout everyday operations.
-      </p>
+      <h2>Our Story</h2>
+      <p>At Carolina Lumper Service (CLS), we provide more than just labor—we offer efficiency, reliability, and strategic workforce solutions to keep warehouse operations running at peak performance. Founded in November 2024 by Steve Garay and Daniela Molina, CLS was built on the principle that strong client partnerships lead to better productivity, smoother operations, and long-term success.</p>
+      <p>Before launching CLS, Steve Garay co-founded and managed a company specializing in container unloading and warehouse staffing on a national scale. While the business grew quickly, it became clear that expansion often came at the cost of client relationships and operational focus. Recognizing the need for a more personalized, partnership-driven approach, Steve stepped away from the national model to create CLS—a company dedicated to prioritizing quality service, efficiency, and strong client relationships over rapid expansion.</p>
+        <p>With years of experience in logistics, workforce management, and automation, Steve and Dani have built CLS into a trusted provider of high-quality labor solutions, offering flexibility, precision, and accountability to warehouses, distribution centers, and supply chain operations.</p>
     </section>
 
-    <!-- Our Mission Section -->
     <section class="section-container">
-      <h2 data-en="Our Mission" data-es="Nuestra Misión" data-pt="Nossa Missão">Our Mission</h2>
-      <p data-en="Our mission is simple: to provide seamless freight handling that allows our clients to focus on growing their business. We aim to make supply chains more efficient through our range of services—from unloading and sorting to custom project support—while maintaining the highest standards of accuracy and speed."
-         data-es="Nuestra misión es simple: proporcionar un manejo de carga fluido que permita a nuestros clientes centrarse en hacer crecer su negocio. Nuestro objetivo es hacer que las cadenas de suministro sean más eficientes a través de nuestra gama de servicios—desde la descarga y clasificación hasta el soporte de proyectos personalizados—manteniendo los más altos estándares de precisión y velocidad."
-         data-pt="Nossa missão é simples: fornecer manuseio de carga sem interrupções que permita aos nossos clientes se concentrarem no crescimento de seus negócios. Nosso objetivo é tornar as cadeias de suprimentos mais eficientes por meio de nossa gama de serviços—desde descarregamento e classificação até suporte a projetos personalizados—mantendo os mais altos padrões de precisão e velocidade.">
-         Our mission is simple: to provide seamless freight handling that allows our clients to focus on growing their business. We aim to make supply chains more efficient through our range of services—from unloading and sorting to custom project support—while maintaining the highest standards of accuracy and speed.
-      </p>
+      <h2>What We Do</h2>
+      <p>CLS specializes in customized workforce solutions, ensuring seamless operations in even the most demanding warehouse environments. Our services include:</p>
+      <ul>
+        <li>✅ Container Unloading & Freight Handling – Fast, efficient, and damage-free unloading services to keep inventory moving.</li>
+        <li>✅ Inventory Cycle Counts – Ensuring accurate stock levels with detailed tracking and verification.</li>
+        <li>✅ Custom Warehouse Staffing Solutions – Flexible workforce planning to match your operational needs.</li>
+        <li>✅ Process Automation & Tracking – Utilizing technology-driven solutions to enhance reporting and labor management.</li>
+        <li>✅ Partnership-Driven Support – We don’t just send workers—we become an extension of your team, committed to your success.</li>
+      </ul>
     </section>
 
-    <!-- Our Values Section -->
     <section class="section-container">
-      <h2 data-en="Our Values" data-es="Nuestros Valores" data-pt="Nossos Valores">Our Values</h2>
-      <div class="services-brief">
-        <div class="brief-item">
-          <h4 data-en="Reliability" data-es="Confiabilidad" data-pt="Confiabilidade">Reliability</h4>
-          <p data-en="Our clients rely on us for timely, precise services, and we consistently deliver without compromise."
-             data-es="Nuestros clientes confían en nosotros para servicios puntuales y precisos, y cumplimos constantemente sin comprometer la calidad."
-             data-pt="Nossos clientes confiam em nós para serviços pontuais e precisos, e sempre entregamos sem comprometer a qualidade.">
-             Our clients rely on us for timely, precise services, and we consistently deliver without compromise.
-          </p>
-        </div>
-        <div class="brief-item">
-          <h4 data-en="Integrity" data-es="Integridad" data-pt="Integridade">Integrity</h4>
-          <p data-en="We operate transparently and are committed to maintaining trust through honest communication and quality work."
-             data-es="Operamos con transparencia y estamos comprometidos a mantener la confianza a través de una comunicación honesta y un trabajo de calidad."
-             data-pt="Operamos com transparência e estamos comprometidos em manter a confiança por meio de comunicação honesta e trabalho de qualidade.">
-             We operate transparently and are committed to maintaining trust through honest communication and quality work.
-          </p>
-        </div>
-        <div class="brief-item">
-          <h4 data-en="Flexibility" data-es="Flexibilidad" data-pt="Flexibilidade">Flexibility</h4>
-          <p data-en="Every client has unique needs, and our team is always ready to tailor our services to exceed expectations."
-             data-es="Cada cliente tiene necesidades únicas, y nuestro equipo siempre está listo para adaptar nuestros servicios y superar las expectativas."
-             data-pt="Cada cliente tem necessidades únicas, e nossa equipe está sempre pronta para adaptar nossos serviços e superar as expectativas.">
-             Every client has unique needs, and our team is always ready to tailor our services to exceed expectations.
-          </p>
-        </div>
-      </div>
+      <h2>Why Choose CLS?</h2>
+      <ul>
+        <li>🔹 Reliability & Accountability – Our team is built on professionalism, hard work, and a commitment to getting the job done right.</li>
+        <li>🔹 Efficiency & Speed – We prioritize optimized workflows to maximize productivity and minimize downtime.</li>
+        <li>🔹 Technology-Driven Solutions – Our integrations with real-time tracking, automation, and labor analytics set us apart from traditional staffing agencies.</li>
+        <li>🔹 Long-Term Partnerships – We focus on building trust and consistency, ensuring that our clients receive customized workforce solutions rather than a one-size-fits-all approach.</li>
+      </ul>
     </section>
 
-    <!-- Team Section -->
     <section class="section-container">
-      <h2 data-en="Meet Our Team" data-es="Conozca a Nuestro Equipo" data-pt="Conheça Nossa Equipe">Meet Our Team</h2>
-      <p data-en="Our team is comprised of experienced professionals who understand the demands of warehouse operations and logistics. Our employees and contractors are trained to handle various aspects of freight logistics with precision, ensuring a seamless workflow for our clients."
-         data-es="Nuestro equipo está compuesto por profesionales experimentados que entienden las demandas de las operaciones de almacenes y logística. Nuestros empleados y contratistas están capacitados para manejar varios aspectos de la logística de carga con precisión, asegurando un flujo de trabajo sin problemas para nuestros clientes."
-         data-pt="Nossa equipe é composta por profissionais experientes que entendem as demandas das operações de armazém e logística. Nossos funcionários e contratados são treinados para lidar com vários aspectos da logística de carga com precisão, garantindo um fluxo de trabalho perfeito para nossos clientes.">
-         Our team is comprised of experienced professionals who understand the demands of warehouse operations and logistics. Our employees and contractors are trained to handle various aspects of freight logistics with precision, ensuring a seamless workflow for our clients.
-      </p>
-      <p data-en="From our reliable lumpers to our dedicated supervisors, we work together to ensure that every job is completed on time and to the highest quality standards."
-         data-es="Desde nuestros descargadores confiables hasta nuestros supervisores dedicados, trabajamos juntos para asegurar que cada trabajo se complete a tiempo y con los más altos estándares de calidad."
-         data-pt="De nossos descarregadores confiáveis aos nossos supervisores dedicados, trabalhamos juntos para garantir que cada trabalho seja concluído no prazo e com os mais altos padrões de qualidade.">
-         From our reliable lumpers to our dedicated supervisors, we work together to ensure that every job is completed on time and to the highest quality standards.
-      </p>
+      <h2>Our Vision</h2>
+      <p>At CLS, our goal is to be more than just a labor provider—we aim to be a strategic partner that helps warehouses streamline operations, improve accuracy, and scale efficiently. By combining skilled labor with smart technology, we empower our clients to meet demand, reduce costs, and stay ahead of the competition.</p>
+    </section>
+
+    <section class="section-container">
+      <p>📍 Serving North Carolina & Beyond | 🏢 Your Logistics Partner for Smart Staffing & Efficient Warehousing</p>
+      <p>Ready to take your warehouse operations to the next level? Let’s build a smarter, more efficient supply chain—together.</p>
     </section>
   </main>
 
   <!-- Footer -->
   <footer>
-    <p data-en="© 2024 Carolina Lumper Service. All rights reserved." data-es="© 2024 Carolina Lumper Service. Todos los derechos reservados." data-pt="© 2024 Carolina Lumper Service. Todos os direitos reservados.">© 2024 Carolina Lumper Service. All rights reserved.</p>
+    <p>© 2024 Carolina Lumper Service. All rights reserved.</p>
     <div class="footer-icons">
       <a href="https://www.facebook.com/profile.php?id=61569872795390"><img src="assets/facebook-icon.png" alt="Facebook"></a>
       <a href="#"><img src="assets/linkedin-icon.png" alt="LinkedIn"></a>
     </div>
-        <div class="language-toggle">
+    <div class="language-toggle">
       <button onclick="switchLanguage('en')">English</button>
       <button onclick="switchLanguage('es')">Español</button>
       <button onclick="switchLanguage('pt')">Português</button>
     </div>
+  </footer>
+</body>
 
-  </footer>
-</body>
-</html>
-  </footer>
-</body>
 </html>
