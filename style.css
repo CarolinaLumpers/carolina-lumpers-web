@@ -122,6 +122,10 @@ a:focus {
    Global Section Styles
    =================== */
 section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
   background-color: var(--secondary-bg);
   padding: 20px;
   margin: 20px auto;
@@ -141,6 +145,10 @@ section h2 {
    About Section
    =================== */
 #overview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
   text-align: left;
   padding: 60px 40px;
   background-color: var(--secondary-bg);
@@ -169,6 +177,10 @@ section h2 {
    Services Section
    =================== */
 #services {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
   text-align: center;
   padding: 40px 20px;
   background-color: var(--secondary-bg);
@@ -323,15 +335,6 @@ footer {
   color: var(--text-muted); /* Use muted color for subtlety */
 }
 
-
-
-
-
-
-
-
-
-
 /* ===================
    Form Section
    =================== */
@@ -415,13 +418,6 @@ button:hover {
     padding: 10px; /* Adjust button size */
   }
 }
-
-
-
-
-
-
-
 
 /* ===================
    Mobile-Specific Adjustments
