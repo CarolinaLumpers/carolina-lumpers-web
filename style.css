@@ -224,17 +224,25 @@ section h2 {
 }
 
 .service-image {
-  max-width: 100%; /* Ensure images are responsive */
+  width: 100%; /* Make the image span the full width of its container */
   height: auto; /* Maintain aspect ratio */
-  margin: 20px 0; /* Add spacing around images */
-  border-radius: 8px; /* Match section styling */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add depth */
+  display: block; /* Ensure the image behaves like a block element */
+  margin: 0; /* Remove any extra margins */
+  object-fit: cover; /* Ensure the image scales properly without distortion */
+  border-radius: 0; /* Remove rounded corners to match the hero banner */
 }
 
 /* Responsive adjustments for smaller screens */
 @media (max-width: 768px) {
   .service-image {
     margin: 15px 0; /* Reduce spacing for smaller screens */
+  }
+}
+
+@media (max-width: 768px) {
+  .service-image {
+    width: 100%; /* Ensure the image spans the full width on mobile */
+    height: auto; /* Maintain aspect ratio */
   }
 }
 
