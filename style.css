@@ -223,6 +223,21 @@ section h2 {
   outline: 2px solid var(--button-hover-bg); /* Focus style */
 }
 
+.service-image {
+  max-width: 100%; /* Ensure images are responsive */
+  height: auto; /* Maintain aspect ratio */
+  margin: 20px 0; /* Add spacing around images */
+  border-radius: 8px; /* Match section styling */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add depth */
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 768px) {
+  .service-image {
+    margin: 15px 0; /* Reduce spacing for smaller screens */
+  }
+}
+
 /* ===================
    Hero Section
    =================== */
