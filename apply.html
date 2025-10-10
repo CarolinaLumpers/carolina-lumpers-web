@@ -221,28 +221,29 @@
           <label for="first_name" data-en="First name" data-es="Nombre" data-pt="Nome">First name</label>
           <input id="first_name" name="first_name" required minlength="2" autocomplete="given-name"
                  data-ph-en="First name" data-ph-es="Nombre" data-ph-pt="Nome">
-
+        
           <label for="last_name" data-en="Last name" data-es="Apellido" data-pt="Sobrenome">Last name</label>
           <input id="last_name" name="last_name" required minlength="2" autocomplete="family-name"
                  data-ph-en="Last name" data-ph-es="Apellido" data-ph-pt="Sobrenome">
-
+        
           <label for="dob" data-en="Date of Birth" data-es="Fecha de nacimiento" data-pt="Data de nascimento">Date of Birth</label>
-          <input id="dob" name="dob" type="date" inputmode="numeric" placeholder="YYYY-MM-DD">
-
+          <input id="dob" name="dob" type="text" inputmode="numeric" placeholder="YYYY-MM-DD"
+                 pattern="\d{4}-\d{2}-\d{2}" title="Enter date in YYYY-MM-DD format">
+        
           <label for="email" data-en="Email" data-es="Correo electrónico" data-pt="E-mail">Email</label>
           <input id="email" name="email" type="email" required autocomplete="email"
                  data-ph-en="you@example.com" data-ph-es="tu@ejemplo.com" data-ph-pt="voce@exemplo.com">
-
+        
           <label for="phone" data-en="Phone" data-es="Teléfono" data-pt="Telefone">Phone</label>
-          <input id="phone" name="phone" inputmode="tel" autocomplete="tel"
+          <input id="phone" name="phone" type="tel" inputmode="tel" required autocomplete="tel"
                  data-ph-en="(555) 555-1212" data-ph-es="(555) 555-1212" data-ph-pt="(11) 5555-1212">
-
+        
           <label for="city" data-en="City" data-es="Ciudad" data-pt="Cidade">City</label>
-          <input id="city" name="city" autocomplete="address-level2"
+          <input id="city" name="city" required autocomplete="address-level2"
                  data-ph-en="City" data-ph-es="Ciudad" data-ph-pt="Cidade">
 
           <label for="state" data-en="State" data-es="Estado" data-pt="Estado">State</label>
-          <select id="state" name="state" autocomplete="address-level1">
+          <select id="state" name="state" required autocomplete="address-level1">
             <option value=""></option>
             <option value="AL">Alabama</option>
             <option value="AK">Alaska</option>
@@ -297,16 +298,15 @@
           </select>
 
 
-
-
           <label for="shift_preference" data-en="Preferred shift" data-es="Turno preferido" data-pt="Turno preferido">Preferred shift</label>
           <select id="shift_preference" name="shift_preference">
             <option value=""></option>
-            <option value="Day">Day</option>
-            <option value="Evening">Evening</option>
-            <option value="Night">Night</option>
-            <option value="Weekends">Weekends</option>
+            <option value="Day" data-en="Day" data-es="Diurno" data-pt="Diurno">Day</option>
+            <option value="Evening" data-en="Evening" data-es="Vespertino" data-pt="Vespertino">Evening</option>
+            <option value="Night" data-en="Night" data-es="Nocturno" data-pt="Noturno">Night</option>
+            <option value="Weekends" data-en="Weekends" data-es="Fines de semana" data-pt="Fins de semana">Weekends</option>
           </select>
+
 
           <label for="experience_level" data-en="Experience level" data-es="Experiencia" data-pt="Experiência">Experience level</label>
           <select id="experience_level" name="experience_level">
@@ -319,7 +319,7 @@
           </select>
 
           <label for="work_authorization" data-en="Work authorization" data-es="Autorización de trabajo" data-pt="Autorização de trabalho">Work authorization</label>
-          <select id="work_authorization" name="work_authorization">
+          <select id="work_authorization" name="work_authorization" required>
             <option value=""></option>
             <option value="Citizen" data-en="Citizen" data-es="Ciudadano" data-pt="Cidadão">Citizen</option>
             <option value="Permanent Resident" data-en="Permanent Resident" data-es="Residente permanente" data-pt="Residente permanente">Permanent Resident</option>
@@ -336,7 +336,7 @@
           </select>
 
           <label for="language_preference" data-en="Language preference" data-es="Idioma preferido" data-pt="Idioma preferido">Language preference</label>
-          <select id="language_preference" name="language_preference">
+          <select id="language_preference" name="language_preference" required>
             <option value=""></option>
             <option value="English" data-en="English" data-es="Inglés" data-pt="Inglês">English</option>
             <option value="Spanish" data-en="Spanish" data-es="Español" data-pt="Espanhol">Spanish</option>
@@ -345,12 +345,12 @@
           </select>
 
           <label for="english_proficiency" data-en="English proficiency" data-es="Dominio del inglés" data-pt="Proficiência em inglês">English proficiency</label>
-          <select id="english_proficiency" name="english_proficiency">
+          <select id="english_proficiency" name="english_proficiency" required>
             <option value=""></option>
-            <option value="Basic">Basic</option>
-            <option value="Conversational">Conversational</option>
-            <option value="Fluent">Fluent</option>
-            <option value="Native">Native</option>
+            <option value="Basic" data-en="Basic" data-es="Básico" data-pt="Básico">Basic</option>
+            <option value="Conversational" data-en="Conversational" data-es="Conversacional" data-pt="Conversacional">Conversational</option>
+            <option value="Fluent" data-en="Fluent" data-es="Fluido" data-pt="Fluente">Fluent</option>
+            <option value="Native" data-en="Native" data-es="Nativo" data-pt="Nativo">Native</option>
           </select>
 
           <label for="notes" data-en="Notes" data-es="Notas" data-pt="Observações">Notes</label>
