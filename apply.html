@@ -1,59 +1,313 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Apply to Carolina Lumper Service (CLS)</title>
-<link rel="stylesheet" href="style.css">
-<link rel="icon" type="image/png" href="assets/CLS-favicon.png">
-<link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
-<style>
-.form-container{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:80vh;text-align:center;padding:20px;}
-.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));width:100%;}
-form{max-width:800px;width:100%;text-align:left;}
-input,select,textarea{width:100%;padding:8px;border:1px solid #ccc;border-radius:4px;font-size:14px;}
-button[type="submit"]{background-color:#002e63;color:#fff;border:none;padding:10px 16px;border-radius:4px;font-size:16px;cursor:pointer;}
-button[type="submit"]:hover{background-color:#004b99;}
-#status{margin-top:10px;font-weight:600;min-height:1.5em;}
-@media(max-width:768px){form{padding:0 10px;}}
-body{margin:0;font-family:Arial,sans-serif;}
-.language-toggle{margin:10px;text-align:center;}
-.language-toggle button{margin:5px;padding:10px 14px;font-size:14px;cursor:pointer;}
-</style>
-<script>
-const I18N={en:{"form.title":"Apply for a Position","form.subtitle":"Interested in joining our team? Complete the form below:","btn.submit":"Submit application","msg.sending":"Sending...","msg.success":"Thanks. We received your application.","msg.error":"Error. Please try again."}};
-function switchLanguage(lang){document.querySelector('[data-i18n="form.title"]').textContent=I18N[lang]["form.title"]||I18N.en["form.title"];document.querySelector('[data-i18n="form.subtitle"]').textContent=I18N[lang]["form.subtitle"]||I18N.en["form.subtitle"];document.querySelector('[data-i18n="btn.submit"]').textContent=I18N[lang]["btn.submit"]||I18N.en["btn.submit"];}
-window.addEventListener('DOMContentLoaded',()=>{const form=document.getElementById('cls-apply');const statusEl=document.getElementById('status');form.addEventListener('submit',async e=>{e.preventDefault();statusEl.textContent=I18N.en["msg.sending"];const res=await fetch(form.action,{method:'POST',body:new URLSearchParams(new FormData(form))});statusEl.textContent=res.ok?I18N.en["msg.success"]:I18N.en["msg.error"];if(res.ok)form.reset();});});
-</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apply to Carolina Lumper Service (CLS)</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/png" href="assets/CLS-favicon.png">
+  <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+  <style>
+    .form-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 80vh;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      width: 100%;
+    }
+
+    form {
+      max-width: 800px;
+      width: 100%;
+      text-align: left;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    button[type="submit"] {
+      background-color: #002e63;
+      color: #fff;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button[type="submit"]:hover {
+      background-color: #004b99;
+    }
+
+    #status {
+      margin-top: 10px;
+      font-weight: 600;
+      min-height: 1.5em;
+    }
+
+    @media (max-width: 768px) {
+      form {
+        padding: 0 10px;
+      }
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    .language-toggle {
+      margin: 10px;
+      text-align: center;
+    }
+
+    .language-toggle button {
+      margin: 5px;
+      padding: 10px 14px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #002e63;
+      padding: 10px 20px;
+    }
+
+    .navbar .nav-links {
+      list-style: none;
+      display: flex;
+      gap: 20px;
+    }
+
+    .navbar .nav-links a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .navbar .nav-links a.active {
+      border-bottom: 2px solid #fff;
+    }
+
+    .hero {
+      position: relative;
+      text-align: center;
+      color: white;
+    }
+
+    .hero-image {
+      position: relative;
+      overflow: hidden;
+      max-height: 300px;
+    }
+
+    .banner-image {
+      width: 100%;
+      object-fit: cover;
+      height: 300px;
+      filter: brightness(70%);
+    }
+
+    .hero-content {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    footer {
+      background-color: #002e63;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+
+    footer img {
+      width: 24px;
+      margin: 0 5px;
+    }
+  </style>
+
+  <script>
+    const I18N = {
+      en: {
+        "form.title": "Apply for a Position",
+        "form.subtitle": "Interested in joining our team? Complete the form below:",
+        "btn.submit": "Submit application",
+        "msg.sending": "Sending...",
+        "msg.success": "Thanks. We received your application.",
+        "msg.error": "Error. Please try again."
+      },
+      es: {
+        "form.title": "Solicitud de empleo",
+        "form.subtitle": "Nos comunicaremos si hay una coincidencia.",
+        "btn.submit": "Enviar solicitud",
+        "msg.sending": "Enviando...",
+        "msg.success": "Gracias. Recibimos su solicitud.",
+        "msg.error": "Error. Intente de nuevo."
+      },
+      pt: {
+        "form.title": "Candidatura",
+        "form.subtitle": "Entraremos em contato se houver compatibilidade.",
+        "btn.submit": "Enviar candidatura",
+        "msg.sending": "Enviando...",
+        "msg.success": "Obrigado. Recebemos sua candidatura.",
+        "msg.error": "Erro. Tente novamente."
+      }
+    };
+
+    function applyI18n(lang) {
+      const set = I18N[lang] || I18N.en;
+      document.querySelectorAll("[data-i18n]").forEach(el => {
+        const key = el.getAttribute("data-i18n");
+        if (set[key]) el.textContent = set[key];
+      });
+    }
+
+    function switchLanguage(lang) {
+      applyI18n(lang);
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      const userLang = (navigator.language || "en").slice(0, 2);
+      const initial = ["es", "pt"].includes(userLang) ? userLang : "en";
+      applyI18n(initial);
+
+      const form = document.getElementById("cls-apply");
+      const statusEl = document.getElementById("status");
+
+      form.addEventListener("submit", async e => {
+        e.preventDefault();
+        statusEl.textContent = I18N.en["msg.sending"];
+        const res = await fetch(form.action, {
+          method: "POST",
+          body: new URLSearchParams(new FormData(form))
+        });
+        statusEl.textContent = res.ok
+          ? I18N.en["msg.success"]
+          : I18N.en["msg.error"];
+        if (res.ok) form.reset();
+      });
+    });
+  </script>
 </head>
+
 <body>
-<section id="apply">
-<div class="form-container">
-<h2 data-i18n="form.title">Apply for a Position</h2>
-<p data-i18n="form.subtitle">Interested in joining our team? Complete the form below:</p>
-<form id="cls-apply" action="https://script.google.com/macros/s/AKfycbxdD80YrBa6wa271_TtCpwWnQJbQfeRjZVe0iRkAdO36D_t3E44foSn11IdCEq1iJ6OSg/exec" method="POST" novalidate>
-<div class="grid">
-<label>First Name<input name="first_name" required></label>
-<label>Last Name<input name="last_name" required></label>
-</div>
-<div class="grid">
-<label>Email<input name="email" type="email" required></label>
-<label>Phone<input name="phone" type="tel"></label>
-</div>
-<div class="grid">
-<label>City<input name="city"></label>
-<label>State<input name="state"></label>
-</div>
-<label>Preferred Shift<select name="shift_preference"><option value="Day">Day</option><option value="Evening">Evening</option><option value="Night">Night</option><option value="Weekends">Weekends</option></select></label>
-<label>Experience<select name="experience_level"><option value="None">None</option><option value="0–6 months">0–6 months</option><option value="6–12 months">6–12 months</option><option value="1+ years">1+ years</option></select></label>
-<label>Work Authorization<select name="work_authorization"><option value="Citizen">Citizen</option><option value="Permanent Resident">Permanent Resident</option><option value="Work Visa">Work Visa</option><option value="Other">Other</option></select></label>
-<label>Preferred Location<input name="preferred_location"></label>
-<label>Notes<textarea name="notes" rows="4"></textarea></label>
-<label><input type="checkbox" name="consent" required> I agree to the privacy policy</label>
-<button type="submit" data-i18n="btn.submit">Submit application</button>
-<p id="status"></p>
-</form>
-</div>
-</section>
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="logo-container">
+      <a href="index.html" class="logo-link">
+        <img src="assets/CLS_Nav_Logo.png" alt="CLS Logo" class="logo" style="height: 40px;">
+      </a>
+      <a href="index.html" class="company-name" style="color:white;font-weight:bold;">Carolina Lumper Service</a>
+    </div>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="about.html">About Us</a></li>
+      <li><a href="services.html">Services</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="apply.html" class="active">Apply</a></li>
+    </ul>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="hero">
+    <div class="hero-image">
+      <img src="assets/CLS-Cover-01web.webp" alt="Hero Banner" class="banner-image">
+    </div>
+    <div class="hero-content">
+      <h2>Join the CLS Team</h2>
+      <p>We are looking for motivated individuals to join our team. Fill out the application below to get started!</p>
+    </div>
+  </header>
+
+  <!-- Application Form -->
+  <section id="apply">
+    <div class="form-container">
+      <h2 data-i18n="form.title">Apply for a Position</h2>
+      <p data-i18n="form.subtitle">Interested in joining our team? Complete the form below:</p>
+
+      <form id="cls-apply"
+        action="https://script.google.com/macros/s/AKfycbxdD80YrBa6wa271_TtCpwWnQJbQfeRjZVe0iRkAdO36D_t3E44foSn11IdCEq1iJ6OSg/exec"
+        method="POST" novalidate>
+        <div class="grid">
+          <label>First Name<input name="first_name" required></label>
+          <label>Last Name<input name="last_name" required></label>
+        </div>
+        <div class="grid">
+          <label>Email<input name="email" type="email" required></label>
+          <label>Phone<input name="phone" type="tel"></label>
+        </div>
+        <div class="grid">
+          <label>City<input name="city"></label>
+          <label>State<input name="state"></label>
+        </div>
+        <label>Preferred Shift
+          <select name="shift_preference">
+            <option value="Day">Day</option>
+            <option value="Evening">Evening</option>
+            <option value="Night">Night</option>
+            <option value="Weekends">Weekends</option>
+          </select>
+        </label>
+        <label>Experience
+          <select name="experience_level">
+            <option value="None">None</option>
+            <option value="0–6 months">0–6 months</option>
+            <option value="6–12 months">6–12 months</option>
+            <option value="1+ years">1+ years</option>
+          </select>
+        </label>
+        <label>Work Authorization
+          <select name="work_authorization">
+            <option value="Citizen">Citizen</option>
+            <option value="Permanent Resident">Permanent Resident</option>
+            <option value="Work Visa">Work Visa</option>
+            <option value="Other">Other</option>
+          </select>
+        </label>
+        <label>Preferred Location<input name="preferred_location"></label>
+        <label>Notes<textarea name="notes" rows="4"></textarea></label>
+        <label><input type="checkbox" name="consent" required> I agree to the privacy policy</label>
+        <button type="submit" data-i18n="btn.submit">Submit application</button>
+        <p id="status"></p>
+      </form>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>© 2024 Carolina Lumper Service. All rights reserved.</p>
+    <div class="footer-icons">
+      <a href="https://www.facebook.com/profile.php?id=61569872795390"><img src="assets/facebook-icon.png"
+          alt="Facebook"></a>
+      <a href="#"><img src="assets/linkedin-icon.png" alt="LinkedIn"></a>
+    </div>
+    <div class="language-toggle">
+      <button onclick="switchLanguage('en')">English</button>
+      <button onclick="switchLanguage('es')">Español</button>
+      <button onclick="switchLanguage('pt')">Português</button>
+    </div>
+  </footer>
 </body>
 </html>
