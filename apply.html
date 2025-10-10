@@ -23,25 +23,18 @@
       border: none;
       width: 100%;
       max-width: 800px;
-      /* Adjust for your layout */
       height: 2400px;
-      /* Adjust to fit content without iframe scrollbar */
     }
     @media (max-width: 768px) {
-      iframe {
-        height: 3200px;
-      }
+      iframe { height: 3200px; }
     }
 
-    body {
-      margin: 0;
-    }
+    body { margin: 0; }
 
     .language-toggle {
       margin: 10px;
       text-align: center;
     }
-
     .language-toggle button {
       margin: 5px;
       padding: 10px;
@@ -58,19 +51,16 @@
 
     function adjustNavbarFontSize() {
       const navLinks = document.querySelector('.nav-links');
-      const links = navLinks.querySelectorAll('a');
-      const maxWidth = navLinks.offsetWidth;
+      const links = navLinks ? navLinks.querySelectorAll('a') : [];
+      const maxWidth = navLinks ? navLinks.offsetWidth : 0;
 
       let totalWidth = 0;
-      for (const link of links) {
-        totalWidth += link.offsetWidth;
-      }
+      links.forEach(link => { totalWidth += link.offsetWidth; });
 
-      if (totalWidth > maxWidth) {
-        const scaleFactor = maxWidth / totalWidth;
-        navLinks.style.fontSize = scaleFactor * 0.9 + 'em';
-      } else {
-        navLinks.style.fontSize = '0.9em';
+      if (navLinks) {
+        navLinks.style.fontSize = (totalWidth > maxWidth)
+          ? (maxWidth / totalWidth) * 0.9 + 'em'
+          : '0.9em';
       }
     }
 
@@ -87,10 +77,17 @@
     function switchLanguage(lang) {
       const elements = document.querySelectorAll("[data-en], [data-es], [data-pt]");
       elements.forEach(element => {
-        element.innerHTML = lang === "es" ? element.getAttribute("data-es") :
+        // Skip elements that contain form controls so we don't delete inputs
+        if (element.querySelector && element.querySelector('input, select, textarea')) return;
+
+        const text =
+          lang === "es" ? element.getAttribute("data-es") :
           lang === "pt" ? element.getAttribute("data-pt") :
-            element.getAttribute("data-en");
+          element.getAttribute("data-en");
+
+        if (text != null) element.innerHTML = text;
       });
+
       const form = document.getElementById('cls-apply');
       if (form) {
         const langField = form.querySelector('input[name="ui_lang"]');
