@@ -33,7 +33,6 @@
       }
     }
 
-
     body {
       margin: 0;
     }
@@ -50,22 +49,12 @@
       cursor: pointer;
     }
   </style>
-   <script>
-    const forms = {
-      en: "https://docs.google.com/forms/d/e/1FAIpQLSelVPVia2JSeYwFlVogA1aN_M6B-3l07KWNknh9x3bFIDIYlQ/viewform?embedded=true",
-      es: "https://docs.google.com/forms/d/e/1FAIpQLSelVPVia2JSeYwFlVogA1aN_M6B-3l07KWNknh9x3bFIDIYlQ/viewform?embedded=true"
+  <script>
+    const MESSAGES = {
+      en: { sending: "Sending...", success: "Thanks. We received your application.", error: "Error. Please try again." },
+      es: { sending: "Enviando...", success: "Gracias. Recibimos su solicitud.", error: "Error. Intente de nuevo." },
+      pt: { sending: "Enviando...", success: "Obrigado. Recebemos sua candidatura.", error: "Erro. Tente novamente." }
     };
-
-    function switchLanguageForm(lang) {
-      const iframe = document.querySelector("iframe");
-      iframe.src = forms[lang] || forms["en"];
-    }
-
-    document.addEventListener("DOMContentLoaded", () => {
-      const userLang = navigator.language || navigator.userLanguage;
-      const lang = userLang.startsWith("es") ? "es" : "en";
-      switchLanguageForm(lang);
-    });
 
     function adjustNavbarFontSize() {
       const navLinks = document.querySelector('.nav-links');
@@ -85,6 +74,16 @@
       }
     }
 
+    function applyPlaceholders(lang) {
+      document.querySelectorAll('[data-ph-en]').forEach(el => {
+        const val =
+          lang === 'es' ? el.getAttribute('data-ph-es') :
+          lang === 'pt' ? el.getAttribute('data-ph-pt') :
+          el.getAttribute('data-ph-en');
+        if (val) el.setAttribute('placeholder', val);
+      });
+    }
+
     function switchLanguage(lang) {
       const elements = document.querySelectorAll("[data-en], [data-es], [data-pt]");
       elements.forEach(element => {
@@ -92,15 +91,53 @@
           lang === "pt" ? element.getAttribute("data-pt") :
             element.getAttribute("data-en");
       });
+      const form = document.getElementById('cls-apply');
+      if (form) {
+        const langField = form.querySelector('input[name="ui_lang"]');
+        if (langField) langField.value = lang;
+      }
+      applyPlaceholders(lang);
       adjustNavbarFontSize();
-      switchLanguageForm(lang); // Update the form based on selected language
     }
 
     document.addEventListener("DOMContentLoaded", () => {
-      const userLang = navigator.language || navigator.userLanguage;
+      const userLang = navigator.language || navigator.userLanguage || 'en';
       const lang = userLang.startsWith("es") ? "es" : userLang.startsWith("pt") ? "pt" : "en";
       switchLanguage(lang);
       adjustNavbarFontSize();
+
+      const form = document.getElementById('cls-apply');
+      if (form) {
+        const startedAt = form.querySelector('input[name="startedAt"]');
+        if (startedAt) startedAt.value = String(Date.now());
+
+        const statusEl = document.getElementById('status');
+
+        form.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const currentLang = form.querySelector('input[name="ui_lang"]')?.value || 'en';
+          if (statusEl) statusEl.textContent = MESSAGES[currentLang].sending;
+
+          try {
+            const body = new URLSearchParams(new FormData(form));
+            const res = await fetch(form.action, { method: 'POST', body });
+            let msg = MESSAGES[currentLang][res.ok ? 'success' : 'error'];
+            try {
+              const j = await res.json();
+              if (j && j.message) msg = j.message;
+            } catch {}
+            if (statusEl) statusEl.textContent = msg;
+            if (res.ok) {
+              form.reset();
+              const langField = form.querySelector('input[name="ui_lang"]');
+              if (langField) langField.value = currentLang;
+              applyPlaceholders(currentLang);
+            }
+          } catch (err) {
+            if (statusEl) statusEl.textContent = MESSAGES[currentLang].error;
+          }
+        });
+      }
     });
   </script>
 </head>
@@ -134,13 +171,10 @@
          We are looking for motivated individuals to join our team. Fill out the application below to get started!
       </p>
     </div>
-    
-    <!-- Hero Image and Blur Overlay -->
-<div class="hero-image">
-  <img src="assets/CLS-Cover-01web.webp" alt="Hero Banner" class="banner-image">
-  <div class="blur-overlay"></div> <!-- Gradient overlay for the image -->
-</div>
-
+    <div class="hero-image">
+      <img src="assets/CLS-Cover-01web.webp" alt="Hero Banner" class="banner-image">
+      <div class="blur-overlay"></div>
+    </div>
   </header>
 
   <!-- Application Section -->
@@ -150,8 +184,111 @@
       <p data-en="Interested in joining our team? Complete the form below:" data-es="¿Interesado en unirte a nuestro equipo? Completa el formulario abajo:" data-pt="Interessado em se juntar à nossa equipe? Complete o formulário abaixo:">
         Interested in joining our team? Complete the form below:
       </p>
-      <!-- Dynamic Embedded Google Form -->
-      <iframe src="" allowfullscreen></iframe>
+
+      <!-- Custom form (replaces Google Form iframe) -->
+      <form id="cls-apply"
+            action="https://script.google.com/macros/s/AKfycbxdD80YrBa6wa271_TtCpwWnQJbQfeRjZVe0iRkAdO36D_t3E44foSn11IdCEq1iJ6OSg/exec"
+            method="POST" novalidate>
+        <input type="hidden" name="startedAt" value="">
+        <input type="hidden" name="ui_lang" value="en">
+        <div style="position:absolute;left:-10000px" aria-hidden="true">
+          <label data-en="Website" data-es="Sitio web" data-pt="Site">Website
+            <input name="website" tabindex="-1" autocomplete="off">
+          </label>
+        </div>
+
+        <div>
+          <label data-en="First name" data-es="Nombre" data-pt="Nome">
+            <input name="first_name" required minlength="2" autocomplete="given-name"
+                   data-ph-en="First name" data-ph-es="Nombre" data-ph-pt="Nome">
+          </label>
+        </div>
+        <div>
+          <label data-en="Last name" data-es="Apellido" data-pt="Sobrenome">
+            <input name="last_name" required minlength="2" autocomplete="family-name"
+                   data-ph-en="Last name" data-ph-es="Apellido" data-ph-pt="Sobrenome">
+          </label>
+        </div>
+        <div>
+          <label data-en="Email" data-es="Correo electrónico" data-pt="E-mail">
+            <input name="email" type="email" required autocomplete="email"
+                   data-ph-en="you@example.com" data-ph-es="tu@ejemplo.com" data-ph-pt="voce@exemplo.com">
+          </label>
+        </div>
+        <div>
+          <label data-en="Phone" data-es="Teléfono" data-pt="Telefone">
+            <input name="phone" inputmode="tel" autocomplete="tel"
+                   data-ph-en="(555) 555-1212" data-ph-es="(555) 555-1212" data-ph-pt="(11) 5555-1212">
+          </label>
+        </div>
+        <div>
+          <label data-en="City" data-es="Ciudad" data-pt="Cidade">
+            <input name="city" autocomplete="address-level2"
+                   data-ph-en="City" data-ph-es="Ciudad" data-ph-pt="Cidade">
+          </label>
+        </div>
+        <div>
+          <label data-en="State" data-es="Estado" data-pt="Estado">
+            <input name="state" autocomplete="address-level1"
+                   data-ph-en="State or Province" data-ph-es="Estado o provincia" data-ph-pt="Estado ou província">
+          </label>
+        </div>
+        <div>
+          <label data-en="Preferred shift" data-es="Turno preferido" data-pt="Turno preferido">
+            <select name="shift_preference">
+              <option value=""></option>
+              <option value="Day" data-en="Day" data-es="Diurno" data-pt="Diurno">Day</option>
+              <option value="Evening" data-en="Evening" data-es="Vespertino" data-pt="Vespertino">Evening</option>
+              <option value="Night" data-en="Night" data-es="Nocturno" data-pt="Noturno">Night</option>
+              <option value="Weekends" data-en="Weekends" data-es="Fines de semana" data-pt="Fins de semana">Weekends</option>
+            </select>
+          </label>
+        </div>
+        <div>
+          <label data-en="Experience level" data-es="Experiencia" data-pt="Experiência">
+            <select name="experience_level">
+              <option value=""></option>
+              <option value="None" data-en="None" data-es="Ninguna" data-pt="Nenhuma">None</option>
+              <option value="0–6 months" data-en="0–6 months" data-es="0–6 meses" data-pt="0–6 meses">0–6 months</option>
+              <option value="6–12 months" data-en="6–12 months" data-es="6–12 meses" data-pt="6–12 meses">6–12 months</option>
+              <option value="1+ years" data-en="1+ years" data-es="Más de 1 año" data-pt="1+ anos">1+ years</option>
+            </select>
+          </label>
+        </div>
+        <div>
+          <label data-en="Work authorization" data-es="Autorización de trabajo" data-pt="Autorização de trabalho">
+            <select name="work_authorization">
+              <option value=""></option>
+              <option value="Citizen" data-en="Citizen" data-es="Ciudadano" data-pt="Cidadão">Citizen</option>
+              <option value="Permanent Resident" data-en="Permanent Resident" data-es="Residente permanente" data-pt="Residente permanente">Permanent Resident</option>
+              <option value="Work Visa" data-en="Work Visa" data-es="Visa de trabajo" data-pt="Visto de trabalho">Work Visa</option>
+              <option value="Other" data-en="Other" data-es="Otro" data-pt="Outro">Other</option>
+            </select>
+          </label>
+        </div>
+        <div>
+          <label data-en="Preferred location" data-es="Ubicación preferida" data-pt="Local preferido">
+            <input name="preferred_location" data-ph-en="Example: CLT-DC1" data-ph-es="Ejemplo: CLT-DC1" data-ph-pt="Ex.: CLT-DC1">
+          </label>
+        </div>
+        <div>
+          <label data-en="Notes" data-es="Notas" data-pt="Observações">
+            <textarea name="notes" rows="4"
+              data-ph-en="Forklift certs, availability, locations"
+              data-ph-es="Certificados, disponibilidad, ubicaciones"
+              data-ph-pt="Certificados, disponibilidade, locais"></textarea>
+          </label>
+        </div>
+
+        <label><input type="checkbox" name="consent" required>
+          <span data-en="I agree to the privacy policy"
+                data-es="Acepto la política de privacidad"
+                data-pt="Concordo com a política de privacidade">I agree to the privacy policy</span>
+        </label>
+
+        <button type="submit" data-en="Submit application" data-es="Enviar solicitud" data-pt="Enviar candidatura">Submit application</button>
+        <p id="status" role="status" aria-live="polite"></p>
+      </form>
     </div>
   </section>
 
@@ -162,15 +299,11 @@
       <a href="https://www.facebook.com/profile.php?id=61569872795390"><img src="assets/facebook-icon.png" alt="Facebook"></a>
       <a href="#"><img src="assets/linkedin-icon.png" alt="LinkedIn"></a>
     </div>
-        <div class="language-toggle">
+    <div class="language-toggle">
       <button onclick="switchLanguage('en')">English</button>
       <button onclick="switchLanguage('es')">Español</button>
       <button onclick="switchLanguage('pt')">Português</button>
     </div>
-
-  </footer>
-</body>
-</html>
   </footer>
 </body>
 </html>
