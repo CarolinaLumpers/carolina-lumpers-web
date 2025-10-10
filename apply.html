@@ -78,6 +78,14 @@
       min-height: 1.5em;
     }
 
+        /* Add red asterisk to required field labels */
+    .form-grid label.required::after {
+      content: " *";
+      color: #d00;
+      font-weight: bold;
+    }
+
+
     @media (max-width: 768px) {
       .form-grid { grid-template-columns: 1fr; }
       .actions { text-align: center; }
@@ -218,31 +226,31 @@
         </div>
 
         <div class="form-grid">
-          <label for="first_name" data-en="First name" data-es="Nombre" data-pt="Nome">First name</label>
+          <label for="first_name" data-en="First name" data-es="Nombre" data-pt="Nome" class="required">First name</label>
           <input id="first_name" name="first_name" required minlength="2" autocomplete="given-name"
                  data-ph-en="First name" data-ph-es="Nombre" data-ph-pt="Nome">
         
-          <label for="last_name" data-en="Last name" data-es="Apellido" data-pt="Sobrenome">Last name</label>
+          <label for="last_name" data-en="Last name" data-es="Apellido" data-pt="Sobrenome" class="required">Last name</label>
           <input id="last_name" name="last_name" required minlength="2" autocomplete="family-name"
                  data-ph-en="Last name" data-ph-es="Apellido" data-ph-pt="Sobrenome">
         
-          <label for="dob" data-en="Date of Birth" data-es="Fecha de nacimiento" data-pt="Data de nascimento">Date of Birth</label>
+          <label for="dob" data-en="Date of Birth" data-es="Fecha de nacimiento" data-pt="Data de nascimento" class="required">Date of Birth</label>
           <input id="dob" name="dob" type="text" inputmode="numeric" placeholder="YYYY-MM-DD"
                  pattern="\d{4}-\d{2}-\d{2}" title="Enter date in YYYY-MM-DD format">
         
-          <label for="email" data-en="Email" data-es="Correo electrónico" data-pt="E-mail">Email</label>
+          <label for="email" data-en="Email" data-es="Correo electrónico" data-pt="E-mail" class="required">Email</label>
           <input id="email" name="email" type="email" required autocomplete="email"
                  data-ph-en="you@example.com" data-ph-es="tu@ejemplo.com" data-ph-pt="voce@exemplo.com">
         
-          <label for="phone" data-en="Phone" data-es="Teléfono" data-pt="Telefone">Phone</label>
+          <label for="phone" data-en="Phone" data-es="Teléfono" data-pt="Telefone" class="required">Phone</label>
           <input id="phone" name="phone" type="tel" inputmode="tel" required autocomplete="tel"
                  data-ph-en="(555) 555-1212" data-ph-es="(555) 555-1212" data-ph-pt="(11) 5555-1212">
         
-          <label for="city" data-en="City" data-es="Ciudad" data-pt="Cidade">City</label>
+          <label for="city" data-en="City" data-es="Ciudad" data-pt="Cidade" class="required">City</label>
           <input id="city" name="city" required autocomplete="address-level2"
                  data-ph-en="City" data-ph-es="Ciudad" data-ph-pt="Cidade">
 
-          <label for="state" data-en="State" data-es="Estado" data-pt="Estado">State</label>
+          <label for="state" data-en="State" data-es="Estado" data-pt="Estado" class="required">State</label>
           <select id="state" name="state" required autocomplete="address-level1">
             <option value=""></option>
             <option value="AL">Alabama</option>
@@ -318,7 +326,7 @@
             <option value="3+ years">3+ years</option>
           </select>
 
-          <label for="work_authorization" data-en="Work authorization" data-es="Autorización de trabajo" data-pt="Autorização de trabalho">Work authorization</label>
+          <label for="work_authorization" data-en="Work authorization" data-es="Autorización de trabajo" data-pt="Autorização de trabalho" class="required">Work authorization</label>
           <select id="work_authorization" name="work_authorization" required>
             <option value=""></option>
             <option value="Citizen" data-en="Citizen" data-es="Ciudadano" data-pt="Cidadão">Citizen</option>
@@ -335,7 +343,7 @@
             <option value="Steel Creek">CLT - Steel Creek</option>
           </select>
 
-          <label for="language_preference" data-en="Language preference" data-es="Idioma preferido" data-pt="Idioma preferido">Language preference</label>
+          <label for="language_preference" data-en="Language preference" data-es="Idioma preferido" data-pt="Idioma preferido" class="required">Language preference</label>
           <select id="language_preference" name="language_preference" required>
             <option value=""></option>
             <option value="English" data-en="English" data-es="Inglés" data-pt="Inglês">English</option>
@@ -344,7 +352,7 @@
             <option value="Other" data-en="Other" data-es="Otro" data-pt="Outro">Other</option>
           </select>
 
-          <label for="english_proficiency" data-en="English proficiency" data-es="Dominio del inglés" data-pt="Proficiência em inglês">English proficiency</label>
+          <label for="english_proficiency" data-en="English proficiency" data-es="Dominio del inglés" data-pt="Proficiência em inglês" class="required">English proficiency</label>
           <select id="english_proficiency" name="english_proficiency" required>
             <option value=""></option>
             <option value="Basic" data-en="Basic" data-es="Básico" data-pt="Básico">Basic</option>
