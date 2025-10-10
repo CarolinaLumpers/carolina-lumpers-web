@@ -18,196 +18,105 @@
       text-align: center;
       padding: 20px;
     }
-
     .grid {
       display: grid;
       gap: 12px;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       width: 100%;
     }
-
-    form {
-      max-width: 800px;
-      width: 100%;
-      text-align: left;
+    form { max-width: 800px; width: 100%; text-align: left; }
+    input, select, textarea {
+      width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px;
     }
-
-    input,
-    select,
-    textarea {
-      width: 100%;
-      padding: 8px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      font-size: 14px;
-    }
-
     button[type="submit"] {
-      background-color: #002e63;
-      color: #fff;
-      border: none;
-      padding: 10px 16px;
-      border-radius: 4px;
-      font-size: 16px;
-      cursor: pointer;
+      background-color: #002e63; color: #fff; border: none; padding: 10px 16px;
+      border-radius: 4px; font-size: 16px; cursor: pointer;
     }
-
-    button[type="submit"]:hover {
-      background-color: #004b99;
-    }
-
-    #status {
-      margin-top: 10px;
-      font-weight: 600;
-      min-height: 1.5em;
-    }
-
-    @media (max-width: 768px) {
-      form {
-        padding: 0 10px;
-      }
-    }
-
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-    }
-
-    .language-toggle {
-      margin: 10px;
-      text-align: center;
-    }
-
-    .language-toggle button {
-      margin: 5px;
-      padding: 10px 14px;
-      font-size: 14px;
-      cursor: pointer;
-    }
-
-    .navbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background-color: #002e63;
-      padding: 10px 20px;
-    }
-
-    .navbar .nav-links {
-      list-style: none;
-      display: flex;
-      gap: 20px;
-    }
-
-    .navbar .nav-links a {
-      color: white;
-      text-decoration: none;
-      font-weight: bold;
-    }
-
-    .navbar .nav-links a.active {
-      border-bottom: 2px solid #fff;
-    }
-
-    .hero {
-      position: relative;
-      text-align: center;
-      color: white;
-    }
-
-    .hero-image {
-      position: relative;
-      overflow: hidden;
-      max-height: 300px;
-    }
-
-    .banner-image {
-      width: 100%;
-      object-fit: cover;
-      height: 300px;
-      filter: brightness(70%);
-    }
-
-    .hero-content {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    }
-
-    footer {
-      background-color: #002e63;
-      color: white;
-      text-align: center;
-      padding: 20px;
-    }
-
-    footer img {
-      width: 24px;
-      margin: 0 5px;
-    }
+    button[type="submit"]:hover { background-color: #004b99; }
+    #status { margin-top: 10px; font-weight: 600; min-height: 1.5em; }
+    @media (max-width: 768px) { form { padding: 0 10px; } }
+    body { margin: 0; }
+    .language-toggle { margin: 10px; text-align: center; }
+    .language-toggle button { margin: 5px; padding: 10px; font-size: 14px; cursor: pointer; }
   </style>
 
   <script>
-    const I18N = {
-      en: {
-        "form.title": "Apply for a Position",
-        "form.subtitle": "Interested in joining our team? Complete the form below:",
-        "btn.submit": "Submit application",
-        "msg.sending": "Sending...",
-        "msg.success": "Thanks. We received your application.",
-        "msg.error": "Error. Please try again."
-      },
-      es: {
-        "form.title": "Solicitud de empleo",
-        "form.subtitle": "Nos comunicaremos si hay una coincidencia.",
-        "btn.submit": "Enviar solicitud",
-        "msg.sending": "Enviando...",
-        "msg.success": "Gracias. Recibimos su solicitud.",
-        "msg.error": "Error. Intente de nuevo."
-      },
-      pt: {
-        "form.title": "Candidatura",
-        "form.subtitle": "Entraremos em contato se houver compatibilidade.",
-        "btn.submit": "Enviar candidatura",
-        "msg.sending": "Enviando...",
-        "msg.success": "Obrigado. Recebemos sua candidatura.",
-        "msg.error": "Erro. Tente novamente."
-      }
+    const MESSAGES = {
+      en: { sending: "Sending...", success: "Thanks. We received your application.", error: "Error. Please try again." },
+      es: { sending: "Enviando...", success: "Gracias. Recibimos su solicitud.", error: "Error. Intente de nuevo." },
+      pt: { sending: "Enviando...", success: "Obrigado. Recebemos sua candidatura.", error: "Erro. Tente novamente." }
     };
 
-    function applyI18n(lang) {
-      const set = I18N[lang] || I18N.en;
-      document.querySelectorAll("[data-i18n]").forEach(el => {
-        const key = el.getAttribute("data-i18n");
-        if (set[key]) el.textContent = set[key];
+    function adjustNavbarFontSize() {
+      const navLinks = document.querySelector('.nav-links');
+      if (!navLinks) return;
+      const links = navLinks.querySelectorAll('a');
+      const maxWidth = navLinks.offsetWidth;
+      let totalWidth = 0;
+      links.forEach(link => totalWidth += link.offsetWidth);
+      navLinks.style.fontSize = (totalWidth > maxWidth) ? (maxWidth / totalWidth) * 0.9 + 'em' : '0.9em';
+    }
+
+    function applyPlaceholders(lang) {
+      document.querySelectorAll('[data-ph-en]').forEach(el => {
+        const ph = el.getAttribute(`data-ph-${lang}`) || el.getAttribute('data-ph-en') || '';
+        el.setAttribute('placeholder', ph);
       });
     }
 
     function switchLanguage(lang) {
-      applyI18n(lang);
+      const elements = document.querySelectorAll("[data-en], [data-es], [data-pt]");
+      elements.forEach(el => {
+        el.innerHTML =
+          lang === "es" ? el.getAttribute("data-es") :
+          lang === "pt" ? el.getAttribute("data-pt") :
+          el.getAttribute("data-en");
+      });
+      const form = document.getElementById('cls-apply');
+      if (form) {
+        const langField = form.querySelector('input[name="ui_lang"]');
+        if (langField) langField.value = lang;
+      }
+      applyPlaceholders(lang);
+      adjustNavbarFontSize();
     }
 
-    window.addEventListener("DOMContentLoaded", () => {
-      const userLang = (navigator.language || "en").slice(0, 2);
-      const initial = ["es", "pt"].includes(userLang) ? userLang : "en";
-      applyI18n(initial);
+    document.addEventListener("DOMContentLoaded", () => {
+      const userLang = navigator.language || navigator.userLanguage || 'en';
+      const initial = userLang.startsWith("es") ? "es" : userLang.startsWith("pt") ? "pt" : "en";
+      switchLanguage(initial);
 
-      const form = document.getElementById("cls-apply");
-      const statusEl = document.getElementById("status");
+      const form = document.getElementById('cls-apply');
+      const statusEl = document.getElementById('status');
+      if (form) {
+        const startedAt = form.querySelector('input[name="startedAt"]');
+        if (startedAt) startedAt.value = String(Date.now());
 
-      form.addEventListener("submit", async e => {
-        e.preventDefault();
-        statusEl.textContent = I18N.en["msg.sending"];
-        const res = await fetch(form.action, {
-          method: "POST",
-          body: new URLSearchParams(new FormData(form))
+        form.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const lang = (form.querySelector('input[name="ui_lang"]')?.value) || 'en';
+          if (statusEl) statusEl.textContent = MESSAGES[lang].sending;
+          const body = new URLSearchParams(new FormData(form));
+          try {
+            const res = await fetch(form.action, { method: 'POST', body });
+            let msg = MESSAGES[lang][res.ok ? 'success' : 'error'];
+            try {
+              const j = await res.json();
+              if (j && j.message) msg = j.message;
+            } catch {}
+            if (statusEl) statusEl.textContent = msg;
+            if (res.ok) {
+              form.reset();
+              // restore hidden language value after reset
+              const langField = form.querySelector('input[name="ui_lang"]');
+              if (langField) langField.value = lang;
+              applyPlaceholders(lang);
+            }
+          } catch {
+            if (statusEl) statusEl.textContent = MESSAGES[lang].error;
+          }
         });
-        statusEl.textContent = res.ok
-          ? I18N.en["msg.success"]
-          : I18N.en["msg.error"];
-        if (res.ok) form.reset();
-      });
+      }
     });
   </script>
 </head>
@@ -217,90 +126,154 @@
   <nav class="navbar">
     <div class="logo-container">
       <a href="index.html" class="logo-link">
-        <img src="assets/CLS_Nav_Logo.png" alt="CLS Logo" class="logo" style="height: 40px;">
+        <img src="assets/CLS_Nav_Logo.png" alt="CLS Logo" class="logo">
       </a>
-      <a href="index.html" class="company-name" style="color:white;font-weight:bold;">Carolina Lumper Service</a>
+      <a href="index.html" class="company-name">Carolina Lumper Service</a>
     </div>
     <ul class="nav-links">
-      <li><a href="index.html">Home</a></li>
-      <li><a href="about.html">About Us</a></li>
-      <li><a href="services.html">Services</a></li>
-      <li><a href="contact.html">Contact</a></li>
-      <li><a href="apply.html" class="active">Apply</a></li>
+      <li><a href="index.html" data-en="Home" data-es="Inicio" data-pt="Início">Home</a></li>
+      <li><a href="about.html" data-en="About Us" data-es="Sobre Nosotros" data-pt="Sobre Nós">About Us</a></li>
+      <li><a href="services.html" data-en="Services" data-es="Servicios" data-pt="Serviços">Services</a></li>
+      <li><a href="contact.html" data-en="Contact" data-es="Contacto" data-pt="Contato">Contact</a></li>
+      <li><a href="apply.html" class="active" data-en="Apply" data-es="Solicitar" data-pt="Candidatar">Apply</a></li>
     </ul>
   </nav>
 
   <!-- Hero Section -->
   <header class="hero">
+    <div class="hero-content container text-center">
+      <h2 data-en="Join the CLS Team" data-es="Únete al Equipo CLS" data-pt="Junte-se à Equipe CLS">Join the CLS Team</h2>
+      <p
+        data-en="We are looking for motivated individuals to join our team. Fill out the application below to get started!"
+        data-es="Estamos buscando personas motivadas para unirse a nuestro equipo. ¡Complete la solicitud abajo para comenzar!"
+        data-pt="Estamos procurando pessoas motivadas para se juntar à nossa equipe. Preencha o formulário abaixo para começar!">
+        We are looking for motivated individuals to join our team. Fill out the application below to get started!
+      </p>
+    </div>
     <div class="hero-image">
       <img src="assets/CLS-Cover-01web.webp" alt="Hero Banner" class="banner-image">
-    </div>
-    <div class="hero-content">
-      <h2>Join the CLS Team</h2>
-      <p>We are looking for motivated individuals to join our team. Fill out the application below to get started!</p>
+      <div class="blur-overlay"></div>
     </div>
   </header>
 
-  <!-- Application Form -->
+  <!-- Application Section -->
   <section id="apply">
     <div class="form-container">
-      <h2 data-i18n="form.title">Apply for a Position</h2>
-      <p data-i18n="form.subtitle">Interested in joining our team? Complete the form below:</p>
+      <h2 data-en="Apply for a Position" data-es="Solicitar un Puesto" data-pt="Candidatar-se a uma Posição">Apply for a Position</h2>
+      <p data-en="Interested in joining our team? Complete the form below:"
+         data-es="¿Interesado en unirte a nuestro equipo? Completa el formulario abajo:"
+         data-pt="Interessado em se juntar à nossa equipe? Complete o formulário abaixo:">
+         Interested in joining our team? Complete the form below:
+      </p>
 
       <form id="cls-apply"
-        action="https://script.google.com/macros/s/AKfycbxdD80YrBa6wa271_TtCpwWnQJbQfeRjZVe0iRkAdO36D_t3E44foSn11IdCEq1iJ6OSg/exec"
-        method="POST" novalidate>
-        <div class="grid">
-          <label>First Name<input name="first_name" required></label>
-          <label>Last Name<input name="last_name" required></label>
+            action="https://script.google.com/macros/s/AKfycbxdD80YrBa6wa271_TtCpwWnQJbQfeRjZVe0iRkAdO36D_t3E44foSn11IdCEq1iJ6OSg/exec"
+            method="POST" novalidate>
+        <input type="hidden" name="startedAt" value="">
+        <input type="hidden" name="ui_lang" value="en">
+        <div style="position:absolute;left:-10000px" aria-hidden="true">
+          <label data-en="Website" data-es="Sitio web" data-pt="Site">Website
+            <input name="website" tabindex="-1" autocomplete="off">
+          </label>
         </div>
+
         <div class="grid">
-          <label>Email<input name="email" type="email" required></label>
-          <label>Phone<input name="phone" type="tel"></label>
+          <label data-en="First name" data-es="Nombre" data-pt="Nome">
+            <input name="first_name" required minlength="2" autocomplete="given-name"
+                   data-ph-en="First name" data-ph-es="Nombre" data-ph-pt="Nome">
+          </label>
+          <label data-en="Last name" data-es="Apellido" data-pt="Sobrenome">
+            <input name="last_name" required minlength="2" autocomplete="family-name"
+                   data-ph-en="Last name" data-ph-es="Apellido" data-ph-pt="Sobrenome">
+          </label>
         </div>
+
         <div class="grid">
-          <label>City<input name="city"></label>
-          <label>State<input name="state"></label>
+          <label data-en="Email" data-es="Correo electrónico" data-pt="E-mail">
+            <input name="email" type="email" required autocomplete="email"
+                   data-ph-en="you@example.com" data-ph-es="tu@ejemplo.com" data-ph-pt="voce@exemplo.com">
+          </label>
+          <label data-en="Phone" data-es="Teléfono" data-pt="Telefone">
+            <input name="phone" inputmode="tel" autocomplete="tel"
+                   data-ph-en="(555) 555-1212" data-ph-es="(555) 555-1212" data-ph-pt="(11) 5555-1212">
+          </label>
         </div>
-        <label>Preferred Shift
-          <select name="shift_preference">
-            <option value="Day">Day</option>
-            <option value="Evening">Evening</option>
-            <option value="Night">Night</option>
-            <option value="Weekends">Weekends</option>
-          </select>
-        </label>
-        <label>Experience
-          <select name="experience_level">
-            <option value="None">None</option>
-            <option value="0–6 months">0–6 months</option>
-            <option value="6–12 months">6–12 months</option>
-            <option value="1+ years">1+ years</option>
-          </select>
-        </label>
-        <label>Work Authorization
+
+        <div class="grid">
+          <label data-en="City" data-es="Ciudad" data-pt="Cidade">
+            <input name="city" autocomplete="address-level2"
+                   data-ph-en="City" data-ph-es="Ciudad" data-ph-pt="Cidade">
+          </label>
+          <label data-en="State" data-es="Estado" data-pt="Estado">
+            <input name="state" autocomplete="address-level1"
+                   data-ph-en="State or Province" data-ph-es="Estado o provincia" data-ph-pt="Estado ou província">
+          </label>
+        </div>
+
+        <div class="grid">
+          <label data-en="Preferred shift" data-es="Turno preferido" data-pt="Turno preferido">
+            <select name="shift_preference">
+              <option value=""></option>
+              <option value="Day" data-en="Day" data-es="Diurno" data-pt="Diurno">Day</option>
+              <option value="Evening" data-en="Evening" data-es="Vespertino" data-pt="Vespertino">Evening</option>
+              <option value="Night" data-en="Night" data-es="Nocturno" data-pt="Noturno">Night</option>
+              <option value="Weekends" data-en="Weekends" data-es="Fines de semana" data-pt="Fins de semana">Weekends</option>
+            </select>
+          </label>
+
+          <label data-en="Experience level" data-es="Experiencia" data-pt="Experiência">
+            <select name="experience_level">
+              <option value=""></option>
+              <option value="None" data-en="None" data-es="Ninguna" data-pt="Nenhuma">None</option>
+              <option value="0–6 months" data-en="0–6 months" data-es="0–6 meses" data-pt="0–6 meses">0–6 months</option>
+              <option value="6–12 months" data-en="6–12 months" data-es="6–12 meses" data-pt="6–12 meses">6–12 months</option>
+              <option value="1+ years" data-en="1+ years" data-es="Más de 1 año" data-pt="1+ anos">1+ years</option>
+            </select>
+          </label>
+        </div>
+
+        <label data-en="Work authorization" data-es="Autorización de trabajo" data-pt="Autorização de trabalho">
           <select name="work_authorization">
-            <option value="Citizen">Citizen</option>
-            <option value="Permanent Resident">Permanent Resident</option>
-            <option value="Work Visa">Work Visa</option>
-            <option value="Other">Other</option>
+            <option value=""></option>
+            <option value="Citizen" data-en="Citizen" data-es="Ciudadano" data-pt="Cidadão">Citizen</option>
+            <option value="Permanent Resident" data-en="Permanent Resident" data-es="Residente permanente" data-pt="Residente permanente">Permanent Resident</option>
+            <option value="Work Visa" data-en="Work Visa" data-es="Visa de trabajo" data-pt="Visto de trabalho">Work Visa</option>
+            <option value="Other" data-en="Other" data-es="Otro" data-pt="Outro">Other</option>
           </select>
         </label>
-        <label>Preferred Location<input name="preferred_location"></label>
-        <label>Notes<textarea name="notes" rows="4"></textarea></label>
-        <label><input type="checkbox" name="consent" required> I agree to the privacy policy</label>
-        <button type="submit" data-i18n="btn.submit">Submit application</button>
-        <p id="status"></p>
+
+        <label data-en="Preferred location" data-es="Ubicación preferida" data-pt="Local preferido">
+          <input name="preferred_location" data-ph-en="Example: CLT-DC1" data-ph-es="Ejemplo: CLT-DC1" data-ph-pt="Ex.: CLT-DC1">
+        </label>
+
+        <label data-en="Notes" data-es="Notas" data-pt="Observações">
+          <textarea name="notes" rows="4"
+            data-ph-en="Forklift certs, availability, locations"
+            data-ph-es="Certificados, disponibilidad, ubicaciones"
+            data-ph-pt="Certificados, disponibilidade, locais"></textarea>
+        </label>
+
+        <label><input type="checkbox" name="consent" required>
+          <span data-en="I agree to the privacy policy"
+                data-es="Acepto la política de privacidad"
+                data-pt="Concordo com a política de privacidade">I agree to the privacy policy</span>
+        </label>
+
+        <button type="submit" data-en="Submit application" data-es="Enviar solicitud" data-pt="Enviar candidatura">Submit application</button>
+        <p id="status" role="status" aria-live="polite"></p>
       </form>
     </div>
   </section>
 
   <!-- Footer -->
   <footer>
-    <p>© 2024 Carolina Lumper Service. All rights reserved.</p>
+    <p data-en="© 2024 Carolina Lumper Service. All rights reserved."
+       data-es="© 2024 Carolina Lumper Service. Todos los derechos reservados."
+       data-pt="© 2024 Carolina Lumper Service. Todos os direitos reservados.">
+       © 2024 Carolina Lumper Service. All rights reserved.
+    </p>
     <div class="footer-icons">
-      <a href="https://www.facebook.com/profile.php?id=61569872795390"><img src="assets/facebook-icon.png"
-          alt="Facebook"></a>
+      <a href="https://www.facebook.com/profile.php?id=61569872795390"><img src="assets/facebook-icon.png" alt="Facebook"></a>
       <a href="#"><img src="assets/linkedin-icon.png" alt="LinkedIn"></a>
     </div>
     <div class="language-toggle">
