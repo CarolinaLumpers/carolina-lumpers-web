@@ -20,17 +20,20 @@
     }
 
     iframe {
-      border: none;
-      width: 100%;
-      max-width: 800px;
-      /* Adjust for your layout */
-      height: 2400px;
-      /* Adjust to fit content without iframe scrollbar */
-    }
-    @media (max-width: 768px) {
-      iframe {
-        height: 3200px;
-      }
+  border: none;
+  width: 100%;
+  max-width: 800px;
+  height: 2400px;
+}
+@media (max-width: 768px) {
+  iframe { height: 3200px; }
+}
+
+/* Added for custom form layout */
+.grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); }
+form { max-width: 800px; width: 100%; text-align: left; }
+input, select, textarea { width: 100%; }
+}
     }
 
 
@@ -50,59 +53,149 @@
       cursor: pointer;
     }
   </style>
-   <script>
-    const forms = {
-      en: "https://docs.google.com/forms/d/e/1FAIpQLSelVPVia2JSeYwFlVogA1aN_M6B-3l07KWNknh9x3bFIDIYlQ/viewform?embedded=true",
-      es: "https://docs.google.com/forms/d/e/1FAIpQLSelVPVia2JSeYwFlVogA1aN_M6B-3l07KWNknh9x3bFIDIYlQ/viewform?embedded=true"
-    };
+<script>
+/* ===== Multilingual + Submit Logic (replaces Google Form embed logic) ===== */
+const I18N = {
+  en: {
+    "form.title":"Apply for a Position",
+    "form.subtitle":"Interested in joining our team? Complete the form below:",
+    "hp.label":"Website",
+    "field.first_name.label":"First name","field.first_name.ph":"First name",
+    "field.last_name.label":"Last name","field.last_name.ph":"Last name",
+    "field.email.label":"Email","field.email.ph":"you@example.com",
+    "field.phone.label":"Phone","field.phone.ph":"(555) 555-1212",
+    "field.city.label":"City","field.city.ph":"City",
+    "field.state.label":"State","field.state.ph":"State or Province",
+    "field.shift.label":"Preferred shift",
+    "option.shift.day":"Day","option.shift.evening":"Evening",
+    "option.shift.night":"Night","option.shift.weekends":"Weekends",
+    "field.experience.label":"Experience level",
+    "option.exp.none":"None","option.exp.0_6":"0–6 months",
+    "option.exp.6_12":"6–12 months","option.exp.1p":"1+ years",
+    "field.work_auth.label":"Work authorization",
+    "option.auth.citizen":"Citizen","option.auth.pr":"Permanent Resident",
+    "option.auth.visa":"Work Visa","option.auth.other":"Other",
+    "field.pref_location.label":"Preferred location","field.pref_location.ph":"Example: CLT-DC1",
+    "field.notes.label":"Notes","field.notes.ph":"Forklift certs, availability, locations",
+    "field.consent":"I agree to the privacy policy",
+    "btn.submit":"Submit application",
+    "msg.sending":"Sending...","msg.success":"Thanks. We received your application.","msg.error":"Error. Please try again."
+  },
+  es: {
+    "form.title":"Solicitud de empleo",
+    "form.subtitle":"Nos comunicaremos si hay una coincidencia.",
+    "hp.label":"Sitio web",
+    "field.first_name.label":"Nombre","field.first_name.ph":"Nombre",
+    "field.last_name.label":"Apellido","field.last_name.ph":"Apellido",
+    "field.email.label":"Correo electrónico","field.email.ph":"tu@ejemplo.com",
+    "field.phone.label":"Teléfono","field.phone.ph":"(555) 555-1212",
+    "field.city.label":"Ciudad","field.city.ph":"Ciudad",
+    "field.state.label":"Estado","field.state.ph":"Estado o provincia",
+    "field.shift.label":"Turno preferido",
+    "option.shift.day":"Diurno","option.shift.evening":"Vespertino",
+    "option.shift.night":"Nocturno","option.shift.weekends":"Fines de semana",
+    "field.experience.label":"Experiencia",
+    "option.exp.none":"Ninguna","option.exp.0_6":"0–6 meses",
+    "option.exp.6_12":"6–12 meses","option.exp.1p":"Más de 1 año",
+    "field.work_auth.label":"Autorización de trabajo",
+    "option.auth.citizen":"Ciudadano","option.auth.pr":"Residente permanente",
+    "option.auth.visa":"Visa de trabajo","option.auth.other":"Otro",
+    "field.pref_location.label":"Ubicación preferida","field.pref_location.ph":"Ejemplo: CLT-DC1",
+    "field.notes.label":"Notas","field.notes.ph":"Certificados, disponibilidad, ubicaciones",
+    "field.consent":"Acepto la política de privacidad",
+    "btn.submit":"Enviar solicitud",
+    "msg.sending":"Enviando...","msg.success":"Gracias. Recibimos su solicitud.","msg.error":"Error. Intente de nuevo."
+  },
+  pt: {
+    "form.title":"Candidatura",
+    "form.subtitle":"Entraremos em contato se houver compatibilidade.",
+    "hp.label":"Site",
+    "field.first_name.label":"Nome","field.first_name.ph":"Nome",
+    "field.last_name.label":"Sobrenome","field.last_name.ph":"Sobrenome",
+    "field.email.label":"E-mail","field.email.ph":"voce@exemplo.com",
+    "field.phone.label":"Telefone","field.phone.ph":"(11) 5555-1212",
+    "field.city.label":"Cidade","field.city.ph":"Cidade",
+    "field.state.label":"Estado","field.state.ph":"Estado ou província",
+    "field.shift.label":"Turno preferido",
+    "option.shift.day":"Diurno","option.shift.evening":"Vespertino",
+    "option.shift.night":"Noturno","option.shift.weekends":"Fins de semana",
+    "field.experience.label":"Experiência",
+    "option.exp.none":"Nenhuma","option.exp.0_6":"0–6 meses",
+    "option.exp.6_12":"6–12 meses","option.exp.1p":"1+ anos",
+    "field.work_auth.label":"Autorização de trabalho",
+    "option.auth.citizen":"Cidadão","option.auth.pr":"Residente permanente",
+    "option.auth.visa":"Visto de trabalho","option.auth.other":"Outro",
+    "field.pref_location.label":"Local preferido","field.pref_location.ph":"Ex.: CLT-DC1",
+    "field.notes.label":"Observações","field.notes.ph":"Certificados, disponibilidade, locais",
+    "field.consent":"Concordo com a política de privacidade",
+    "btn.submit":"Enviar candidatura",
+    "msg.sending":"Enviando...","msg.success":"Obrigado. Recebemos sua candidatura.","msg.error":"Erro. Tente novamente."
+  }
+};
 
-    function switchLanguageForm(lang) {
-      const iframe = document.querySelector("iframe");
-      iframe.src = forms[lang] || forms["en"];
-    }
+function applyI18n(lang) {
+  document.documentElement.lang = lang;
+  const set = I18N[lang] || I18N.en;
+  const form = document.getElementById('cls-apply');
+  if (form) {
+    const langField = form.querySelector('[name="ui_lang"]');
+    if (langField) langField.value = lang;
+  }
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (set[key]) el.textContent = set[key];
+  });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    const key = el.getAttribute('data-i18n-placeholder');
+    if (set[key]) el.setAttribute('placeholder', set[key]);
+  });
+}
 
-    document.addEventListener("DOMContentLoaded", () => {
-      const userLang = navigator.language || navigator.userLanguage;
-      const lang = userLang.startsWith("es") ? "es" : "en";
-      switchLanguageForm(lang);
+/* Keep your navbar sizing helper */
+function adjustNavbarFontSize() {
+  const navLinks = document.querySelector('.nav-links');
+  if (!navLinks) return;
+  const links = navLinks.querySelectorAll('a');
+  const maxWidth = navLinks.offsetWidth;
+  let totalWidth = 0;
+  for (const link of links) totalWidth += link.offsetWidth;
+  navLinks.style.fontSize = (totalWidth > maxWidth)
+    ? (maxWidth / totalWidth) * 0.9 + 'em'
+    : '0.9em';
+}
+
+/* Expose the language switcher used by your footer buttons */
+function switchLanguage(lang) {
+  applyI18n(lang);
+  adjustNavbarFontSize();
+}
+
+/* Initialize on load */
+window.addEventListener('DOMContentLoaded', () => {
+  const userLang = (navigator.language || 'en').slice(0,2);
+  const initial = userLang === 'es' ? 'es' : (userLang === 'pt' ? 'pt' : 'en');
+  applyI18n(initial);
+  adjustNavbarFontSize();
+  const form = document.getElementById('cls-apply');
+  if (form && form.startedAt) form.startedAt.value = String(Date.now());
+
+  // Submit handler: simple POST to avoid CORS preflight
+  if (form) {
+    const statusEl = document.getElementById('status');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const lang = document.documentElement.lang || 'en';
+      if (statusEl) statusEl.textContent = I18N[lang]["msg.sending"];
+      const body = new URLSearchParams(new FormData(form));
+      const res = await fetch(form.action, { method: 'POST', body });
+      let msg = I18N[lang][res.ok ? 'msg.success' : 'msg.error'];
+      try { const j = await res.json(); if (j && j.message) msg = j.message; } catch {}
+      if (statusEl) statusEl.textContent = msg;
+      if (res.ok) form.reset();
     });
-
-    function adjustNavbarFontSize() {
-      const navLinks = document.querySelector('.nav-links');
-      const links = navLinks.querySelectorAll('a');
-      const maxWidth = navLinks.offsetWidth;
-
-      let totalWidth = 0;
-      for (const link of links) {
-        totalWidth += link.offsetWidth;
-      }
-
-      if (totalWidth > maxWidth) {
-        const scaleFactor = maxWidth / totalWidth;
-        navLinks.style.fontSize = scaleFactor * 0.9 + 'em';
-      } else {
-        navLinks.style.fontSize = '0.9em';
-      }
-    }
-
-    function switchLanguage(lang) {
-      const elements = document.querySelectorAll("[data-en], [data-es], [data-pt]");
-      elements.forEach(element => {
-        element.innerHTML = lang === "es" ? element.getAttribute("data-es") :
-          lang === "pt" ? element.getAttribute("data-pt") :
-            element.getAttribute("data-en");
-      });
-      adjustNavbarFontSize();
-      switchLanguageForm(lang); // Update the form based on selected language
-    }
-
-    document.addEventListener("DOMContentLoaded", () => {
-      const userLang = navigator.language || navigator.userLanguage;
-      const lang = userLang.startsWith("es") ? "es" : userLang.startsWith("pt") ? "pt" : "en";
-      switchLanguage(lang);
-      adjustNavbarFontSize();
-    });
-  </script>
+  }
+});
+</script>
 </head>
 
 <body>
@@ -144,16 +237,99 @@
   </header>
 
   <!-- Application Section -->
-  <section id="apply">
-    <div class="form-container">
-      <h2 data-en="Apply for a Position" data-es="Solicitar un Puesto" data-pt="Candidatar-se a uma Posição">Apply for a Position</h2>
-      <p data-en="Interested in joining our team? Complete the form below:" data-es="¿Interesado en unirte a nuestro equipo? Completa el formulario abajo:" data-pt="Interessado em se juntar à nossa equipe? Complete o formulário abaixo:">
-        Interested in joining our team? Complete the form below:
-      </p>
-      <!-- Dynamic Embedded Google Form -->
-      <iframe src="" allowfullscreen></iframe>
-    </div>
-  </section>
+<section id="apply">
+  <div class="form-container">
+    <h2 data-i18n="form.title">Apply for a Position</h2>
+    <p data-i18n="form.subtitle">Interested in joining our team? Complete the form below:</p>
+
+    <form id="cls-apply" action="https://script.google.com/macros/s/AKfycbxdD80YrBa6wa271_TtCpwWnQJbQfeRjZVe0iRkAdO36D_t3E44foSn11IdCEq1iJ6OSg/exec" method="POST" novalidate>
+      <!-- Anti-spam and language -->
+      <input type="hidden" name="startedAt" value="">
+      <input type="hidden" name="ui_lang" value="en">
+      <div style="position:absolute;left:-10000px" aria-hidden="true">
+        <label data-i18n="hp.label">Website <input name="website" tabindex="-1" autocomplete="off"></label>
+      </div>
+
+      <div class="grid">
+        <label data-i18n="field.first_name.label">
+          <input name="first_name" required minlength="2" autocomplete="given-name"
+                 placeholder="" data-i18n-placeholder="field.first_name.ph">
+        </label>
+        <label data-i18n="field.last_name.label">
+          <input name="last_name" required minlength="2" autocomplete="family-name"
+                 placeholder="" data-i18n-placeholder="field.last_name.ph">
+        </label>
+      </div>
+
+      <div class="grid">
+        <label data-i18n="field.email.label">
+          <input name="email" type="email" required autocomplete="email"
+                 placeholder="" data-i18n-placeholder="field.email.ph">
+        </label>
+        <label data-i18n="field.phone.label">
+          <input name="phone" inputmode="tel" autocomplete="tel"
+                 placeholder="" data-i18n-placeholder="field.phone.ph">
+        </label>
+      </div>
+
+      <div class="grid">
+        <label data-i18n="field.city.label">
+          <input name="city" autocomplete="address-level2"
+                 placeholder="" data-i18n-placeholder="field.city.ph">
+        </label>
+        <label data-i18n="field.state.label">
+          <input name="state" autocomplete="address-level1"
+                 placeholder="" data-i18n-placeholder="field.state.ph">
+        </label>
+      </div>
+
+      <div class="grid">
+        <label data-i18n="field.shift.label">
+          <select name="shift_preference">
+            <option value=""></option>
+            <option value="Day"      data-i18n="option.shift.day">Day</option>
+            <option value="Evening"  data-i18n="option.shift.evening">Evening</option>
+            <option value="Night"    data-i18n="option.shift.night">Night</option>
+            <option value="Weekends" data-i18n="option.shift.weekends">Weekends</option>
+          </select>
+        </label>
+
+        <label data-i18n="field.experience.label">
+          <select name="experience_level">
+            <option value=""></option>
+            <option value="None"        data-i18n="option.exp.none">None</option>
+            <option value="0–6 months"  data-i18n="option.exp.0_6">0–6 months</option>
+            <option value="6–12 months" data-i18n="option.exp.6_12">6–12 months</option>
+            <option value="1+ years"    data-i18n="option.exp.1p">1+ years</option>
+          </select>
+        </label>
+      </div>
+
+      <label data-i18n="field.work_auth.label">
+        <select name="work_authorization">
+          <option value=""></option>
+          <option value="Citizen"            data-i18n="option.auth.citizen">Citizen</option>
+          <option value="Permanent Resident" data-i18n="option.auth.pr">Permanent Resident</option>
+          <option value="Work Visa"          data-i18n="option.auth.visa">Work Visa</option>
+          <option value="Other"              data-i18n="option.auth.other">Other</option>
+        </select>
+      </label>
+
+      <label data-i18n="field.pref_location.label">
+        <input name="preferred_location" placeholder="" data-i18n-placeholder="field.pref_location.ph">
+      </label>
+
+      <label data-i18n="field.notes.label">
+        <textarea name="notes" rows="4" placeholder="" data-i18n-placeholder="field.notes.ph"></textarea>
+      </label>
+
+      <label><input type="checkbox" name="consent" required> <span data-i18n="field.consent">I agree to the privacy policy</span></label>
+
+      <button type="submit" data-i18n="btn.submit">Submit application</button>
+      <p id="status" role="status" aria-live="polite"></p>
+    </form>
+  </div>
+</section>
 
   <!-- Footer -->
   <footer>
@@ -168,9 +344,6 @@
       <button onclick="switchLanguage('pt')">Português</button>
     </div>
 
-  </footer>
-</body>
-</html>
   </footer>
 </body>
 </html>
