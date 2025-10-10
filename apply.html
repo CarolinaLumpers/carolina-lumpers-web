@@ -1,384 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Apply to Carolina Lumper Service (CLS)</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="icon" type="image/png" href="assets/CLS-favicon.png">
-  <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apply to Carolina Lumper Service (CLS)</title>
+<link rel="stylesheet" href="style.css">
+<link rel="icon" type="image/png" href="assets/CLS-favicon.png">
+<link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
 <style>
-  /* ===== Form Container ===== */
-  .form-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 80vh;
-    text-align: center;
-    padding: 20px;
-  }
-
-  /* ===== Responsive Form Layout ===== */
-  .grid {
-    display: grid;
-    gap: 12px;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    width: 100%;
-  }
-
-  form {
-    max-width: 800px;
-    width: 100%;
-    text-align: left;
-  }
-
-  input, select, textarea {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 14px;
-  }
-
-  button[type="submit"] {
-    background-color: #002e63;
-    color: #fff;
-    border: none;
-    padding: 10px 16px;
-    border-radius: 4px;
-    font-size: 16px;
-    cursor: pointer;
-  }
-
-  button[type="submit"]:hover {
-    background-color: #004b99;
-  }
-
-  #status {
-    margin-top: 10px;
-    font-weight: 600;
-    min-height: 1.5em;
-  }
-
-  /* ===== Responsive adjustments ===== */
-  @media (max-width: 768px) {
-    form {
-      padding: 0 10px;
-    }
-  }
-
-  /* ===== General Page Styles ===== */
-  body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-  }
-
-  .language-toggle {
-    margin: 10px;
-    text-align: center;
-  }
-
-  .language-toggle button {
-    margin: 5px;
-    padding: 10px 14px;
-    font-size: 14px;
-    cursor: pointer;
-  }
+.form-container{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:80vh;text-align:center;padding:20px;}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));width:100%;}
+form{max-width:800px;width:100%;text-align:left;}
+input,select,textarea{width:100%;padding:8px;border:1px solid #ccc;border-radius:4px;font-size:14px;}
+button[type="submit"]{background-color:#002e63;color:#fff;border:none;padding:10px 16px;border-radius:4px;font-size:16px;cursor:pointer;}
+button[type="submit"]:hover{background-color:#004b99;}
+#status{margin-top:10px;font-weight:600;min-height:1.5em;}
+@media(max-width:768px){form{padding:0 10px;}}
+body{margin:0;font-family:Arial,sans-serif;}
+.language-toggle{margin:10px;text-align:center;}
+.language-toggle button{margin:5px;padding:10px 14px;font-size:14px;cursor:pointer;}
 </style>
-
 <script>
-/* ===== Multilingual + Submit Logic (replaces Google Form embed logic) ===== */
-const I18N = {
-  en: {
-    "form.title":"Apply for a Position",
-    "form.subtitle":"Interested in joining our team? Complete the form below:",
-    "hp.label":"Website",
-    "field.first_name.label":"First name","field.first_name.ph":"First name",
-    "field.last_name.label":"Last name","field.last_name.ph":"Last name",
-    "field.email.label":"Email","field.email.ph":"you@example.com",
-    "field.phone.label":"Phone","field.phone.ph":"(555) 555-1212",
-    "field.city.label":"City","field.city.ph":"City",
-    "field.state.label":"State","field.state.ph":"State or Province",
-    "field.shift.label":"Preferred shift",
-    "option.shift.day":"Day","option.shift.evening":"Evening",
-    "option.shift.night":"Night","option.shift.weekends":"Weekends",
-    "field.experience.label":"Experience level",
-    "option.exp.none":"None","option.exp.0_6":"0–6 months",
-    "option.exp.6_12":"6–12 months","option.exp.1p":"1+ years",
-    "field.work_auth.label":"Work authorization",
-    "option.auth.citizen":"Citizen","option.auth.pr":"Permanent Resident",
-    "option.auth.visa":"Work Visa","option.auth.other":"Other",
-    "field.pref_location.label":"Preferred location","field.pref_location.ph":"Example: CLT-DC1",
-    "field.notes.label":"Notes","field.notes.ph":"Forklift certs, availability, locations",
-    "field.consent":"I agree to the privacy policy",
-    "btn.submit":"Submit application",
-    "msg.sending":"Sending...","msg.success":"Thanks. We received your application.","msg.error":"Error. Please try again."
-  },
-  es: {
-    "form.title":"Solicitud de empleo",
-    "form.subtitle":"Nos comunicaremos si hay una coincidencia.",
-    "hp.label":"Sitio web",
-    "field.first_name.label":"Nombre","field.first_name.ph":"Nombre",
-    "field.last_name.label":"Apellido","field.last_name.ph":"Apellido",
-    "field.email.label":"Correo electrónico","field.email.ph":"tu@ejemplo.com",
-    "field.phone.label":"Teléfono","field.phone.ph":"(555) 555-1212",
-    "field.city.label":"Ciudad","field.city.ph":"Ciudad",
-    "field.state.label":"Estado","field.state.ph":"Estado o provincia",
-    "field.shift.label":"Turno preferido",
-    "option.shift.day":"Diurno","option.shift.evening":"Vespertino",
-    "option.shift.night":"Nocturno","option.shift.weekends":"Fines de semana",
-    "field.experience.label":"Experiencia",
-    "option.exp.none":"Ninguna","option.exp.0_6":"0–6 meses",
-    "option.exp.6_12":"6–12 meses","option.exp.1p":"Más de 1 año",
-    "field.work_auth.label":"Autorización de trabajo",
-    "option.auth.citizen":"Ciudadano","option.auth.pr":"Residente permanente",
-    "option.auth.visa":"Visa de trabajo","option.auth.other":"Otro",
-    "field.pref_location.label":"Ubicación preferida","field.pref_location.ph":"Ejemplo: CLT-DC1",
-    "field.notes.label":"Notas","field.notes.ph":"Certificados, disponibilidad, ubicaciones",
-    "field.consent":"Acepto la política de privacidad",
-    "btn.submit":"Enviar solicitud",
-    "msg.sending":"Enviando...","msg.success":"Gracias. Recibimos su solicitud.","msg.error":"Error. Intente de nuevo."
-  },
-  pt: {
-    "form.title":"Candidatura",
-    "form.subtitle":"Entraremos em contato se houver compatibilidade.",
-    "hp.label":"Site",
-    "field.first_name.label":"Nome","field.first_name.ph":"Nome",
-    "field.last_name.label":"Sobrenome","field.last_name.ph":"Sobrenome",
-    "field.email.label":"E-mail","field.email.ph":"voce@exemplo.com",
-    "field.phone.label":"Telefone","field.phone.ph":"(11) 5555-1212",
-    "field.city.label":"Cidade","field.city.ph":"Cidade",
-    "field.state.label":"Estado","field.state.ph":"Estado ou província",
-    "field.shift.label":"Turno preferido",
-    "option.shift.day":"Diurno","option.shift.evening":"Vespertino",
-    "option.shift.night":"Noturno","option.shift.weekends":"Fins de semana",
-    "field.experience.label":"Experiência",
-    "option.exp.none":"Nenhuma","option.exp.0_6":"0–6 meses",
-    "option.exp.6_12":"6–12 meses","option.exp.1p":"1+ anos",
-    "field.work_auth.label":"Autorização de trabalho",
-    "option.auth.citizen":"Cidadão","option.auth.pr":"Residente permanente",
-    "option.auth.visa":"Visto de trabalho","option.auth.other":"Outro",
-    "field.pref_location.label":"Local preferido","field.pref_location.ph":"Ex.: CLT-DC1",
-    "field.notes.label":"Observações","field.notes.ph":"Certificados, disponibilidade, locais",
-    "field.consent":"Concordo com a política de privacidade",
-    "btn.submit":"Enviar candidatura",
-    "msg.sending":"Enviando...","msg.success":"Obrigado. Recebemos sua candidatura.","msg.error":"Erro. Tente novamente."
-  }
-};
-
-function applyI18n(lang) {
-  document.documentElement.lang = lang;
-  const set = I18N[lang] || I18N.en;
-  const form = document.getElementById('cls-apply');
-  if (form) {
-    const langField = form.querySelector('[name="ui_lang"]');
-    if (langField) langField.value = lang;
-  }
-  document.querySelectorAll('[data-i18n]').forEach(el => {
-    const key = el.getAttribute('data-i18n');
-    if (set[key]) el.textContent = set[key];
-  });
-  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
-    const key = el.getAttribute('data-i18n-placeholder');
-    if (set[key]) el.setAttribute('placeholder', set[key]);
-  });
-}
-
-/* Keep your navbar sizing helper */
-function adjustNavbarFontSize() {
-  const navLinks = document.querySelector('.nav-links');
-  if (!navLinks) return;
-  const links = navLinks.querySelectorAll('a');
-  const maxWidth = navLinks.offsetWidth;
-  let totalWidth = 0;
-  for (const link of links) totalWidth += link.offsetWidth;
-  navLinks.style.fontSize = (totalWidth > maxWidth)
-    ? (maxWidth / totalWidth) * 0.9 + 'em'
-    : '0.9em';
-}
-
-/* Expose the language switcher used by your footer buttons */
-function switchLanguage(lang) {
-  applyI18n(lang);
-  adjustNavbarFontSize();
-}
-
-/* Initialize on load */
-window.addEventListener('DOMContentLoaded', () => {
-  const userLang = (navigator.language || 'en').slice(0,2);
-  const initial = userLang === 'es' ? 'es' : (userLang === 'pt' ? 'pt' : 'en');
-  applyI18n(initial);
-  adjustNavbarFontSize();
-  const form = document.getElementById('cls-apply');
-  if (form && form.startedAt) form.startedAt.value = String(Date.now());
-
-  // Submit handler: simple POST to avoid CORS preflight
-  if (form) {
-    const statusEl = document.getElementById('status');
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const lang = document.documentElement.lang || 'en';
-      if (statusEl) statusEl.textContent = I18N[lang]["msg.sending"];
-      const body = new URLSearchParams(new FormData(form));
-      const res = await fetch(form.action, { method: 'POST', body });
-      let msg = I18N[lang][res.ok ? 'msg.success' : 'msg.error'];
-      try { const j = await res.json(); if (j && j.message) msg = j.message; } catch {}
-      if (statusEl) statusEl.textContent = msg;
-      if (res.ok) form.reset();
-    });
-  }
-});
+const I18N={en:{"form.title":"Apply for a Position","form.subtitle":"Interested in joining our team? Complete the form below:","btn.submit":"Submit application","msg.sending":"Sending...","msg.success":"Thanks. We received your application.","msg.error":"Error. Please try again."}};
+function switchLanguage(lang){document.querySelector('[data-i18n="form.title"]').textContent=I18N[lang]["form.title"]||I18N.en["form.title"];document.querySelector('[data-i18n="form.subtitle"]').textContent=I18N[lang]["form.subtitle"]||I18N.en["form.subtitle"];document.querySelector('[data-i18n="btn.submit"]').textContent=I18N[lang]["btn.submit"]||I18N.en["btn.submit"];}
+window.addEventListener('DOMContentLoaded',()=>{const form=document.getElementById('cls-apply');const statusEl=document.getElementById('status');form.addEventListener('submit',async e=>{e.preventDefault();statusEl.textContent=I18N.en["msg.sending"];const res=await fetch(form.action,{method:'POST',body:new URLSearchParams(new FormData(form))});statusEl.textContent=res.ok?I18N.en["msg.success"]:I18N.en["msg.error"];if(res.ok)form.reset();});});
 </script>
 </head>
-
 <body>
-  <!-- Navigation Bar -->
-  <nav class="navbar">
-    <div class="logo-container">
-      <a href="index.html" class="logo-link">
-        <img src="assets/CLS_Nav_Logo.png" alt="CLS Logo" class="logo">
-      </a>
-      <a href="index.html" class="company-name">Carolina Lumper Service</a>
-    </div>
-    
-    <ul class="nav-links">
-      <li><a href="index.html" data-en="Home" data-es="Inicio" data-pt="Início">Home</a></li>
-      <li><a href="about.html" data-en="About Us" data-es="Sobre Nosotros" data-pt="Sobre Nós">About Us</a></li>
-      <li><a href="services.html" data-en="Services" data-es="Servicios" data-pt="Serviços">Services</a></li>
-      <li><a href="contact.html" data-en="Contact" data-es="Contacto" data-pt="Contato">Contact</a></li>
-      <li><a href="apply.html" class="active" data-en="Apply" data-es="Solicitar" data-pt="Candidatar">Apply</a></li>
-    </ul>
-  </nav>
-
-  <!-- Hero Section -->
-  <header class="hero">
-    <div class="hero-content container text-center">
-      <h2 data-en="Join the CLS Team" data-es="Únete al Equipo CLS" data-pt="Junte-se à Equipe CLS">Join the CLS Team</h2>
-      <p data-en="We are looking for motivated individuals to join our team. Fill out the application below to get started!" 
-         data-es="Estamos buscando personas motivadas para unirse a nuestro equipo. ¡Complete la solicitud abajo para comenzar!"
-         data-pt="Estamos procurando pessoas motivadas para se juntar à nossa equipe. Preencha o formulário abaixo para começar!">
-         We are looking for motivated individuals to join our team. Fill out the application below to get started!
-      </p>
-    </div>
-    
-    <!-- Hero Image and Blur Overlay -->
-<div class="hero-image">
-  <img src="assets/CLS-Cover-01web.webp" alt="Hero Banner" class="banner-image">
-  <div class="blur-overlay"></div> <!-- Gradient overlay for the image -->
-</div>
-
-  </header>
-
-  <!-- Application Section -->
 <section id="apply">
-  <div class="form-container">
-    <h2 data-i18n="form.title">Apply for a Position</h2>
-    <p data-i18n="form.subtitle">Interested in joining our team? Complete the form below:</p>
-
-    <form id="cls-apply" action="https://script.google.com/macros/s/AKfycbxdD80YrBa6wa271_TtCpwWnQJbQfeRjZVe0iRkAdO36D_t3E44foSn11IdCEq1iJ6OSg/exec" method="POST" novalidate>
-      <!-- Anti-spam and language -->
-      <input type="hidden" name="startedAt" value="">
-      <input type="hidden" name="ui_lang" value="en">
-      <div style="position:absolute;left:-10000px" aria-hidden="true">
-        <label data-i18n="hp.label">Website <input name="website" tabindex="-1" autocomplete="off"></label>
-      </div>
-
-      <div class="grid">
-        <label data-i18n="field.first_name.label">
-          <input name="first_name" required minlength="2" autocomplete="given-name"
-                 placeholder="" data-i18n-placeholder="field.first_name.ph">
-        </label>
-        <label data-i18n="field.last_name.label">
-          <input name="last_name" required minlength="2" autocomplete="family-name"
-                 placeholder="" data-i18n-placeholder="field.last_name.ph">
-        </label>
-      </div>
-
-      <div class="grid">
-        <label data-i18n="field.email.label">
-          <input name="email" type="email" required autocomplete="email"
-                 placeholder="" data-i18n-placeholder="field.email.ph">
-        </label>
-        <label data-i18n="field.phone.label">
-          <input name="phone" inputmode="tel" autocomplete="tel"
-                 placeholder="" data-i18n-placeholder="field.phone.ph">
-        </label>
-      </div>
-
-      <div class="grid">
-        <label data-i18n="field.city.label">
-          <input name="city" autocomplete="address-level2"
-                 placeholder="" data-i18n-placeholder="field.city.ph">
-        </label>
-        <label data-i18n="field.state.label">
-          <input name="state" autocomplete="address-level1"
-                 placeholder="" data-i18n-placeholder="field.state.ph">
-        </label>
-      </div>
-
-      <div class="grid">
-        <label data-i18n="field.shift.label">
-          <select name="shift_preference">
-            <option value=""></option>
-            <option value="Day"      data-i18n="option.shift.day">Day</option>
-            <option value="Evening"  data-i18n="option.shift.evening">Evening</option>
-            <option value="Night"    data-i18n="option.shift.night">Night</option>
-            <option value="Weekends" data-i18n="option.shift.weekends">Weekends</option>
-          </select>
-        </label>
-
-        <label data-i18n="field.experience.label">
-          <select name="experience_level">
-            <option value=""></option>
-            <option value="None"        data-i18n="option.exp.none">None</option>
-            <option value="0–6 months"  data-i18n="option.exp.0_6">0–6 months</option>
-            <option value="6–12 months" data-i18n="option.exp.6_12">6–12 months</option>
-            <option value="1+ years"    data-i18n="option.exp.1p">1+ years</option>
-          </select>
-        </label>
-      </div>
-
-      <label data-i18n="field.work_auth.label">
-        <select name="work_authorization">
-          <option value=""></option>
-          <option value="Citizen"            data-i18n="option.auth.citizen">Citizen</option>
-          <option value="Permanent Resident" data-i18n="option.auth.pr">Permanent Resident</option>
-          <option value="Work Visa"          data-i18n="option.auth.visa">Work Visa</option>
-          <option value="Other"              data-i18n="option.auth.other">Other</option>
-        </select>
-      </label>
-
-      <label data-i18n="field.pref_location.label">
-        <input name="preferred_location" placeholder="" data-i18n-placeholder="field.pref_location.ph">
-      </label>
-
-      <label data-i18n="field.notes.label">
-        <textarea name="notes" rows="4" placeholder="" data-i18n-placeholder="field.notes.ph"></textarea>
-      </label>
-
-      <label><input type="checkbox" name="consent" required> <span data-i18n="field.consent">I agree to the privacy policy</span></label>
-
-      <button type="submit" data-i18n="btn.submit">Submit application</button>
-      <p id="status" role="status" aria-live="polite"></p>
-    </form>
-  </div>
+<div class="form-container">
+<h2 data-i18n="form.title">Apply for a Position</h2>
+<p data-i18n="form.subtitle">Interested in joining our team? Complete the form below:</p>
+<form id="cls-apply" action="https://script.google.com/macros/s/AKfycbxdD80YrBa6wa271_TtCpwWnQJbQfeRjZVe0iRkAdO36D_t3E44foSn11IdCEq1iJ6OSg/exec" method="POST" novalidate>
+<div class="grid">
+<label>First Name<input name="first_name" required></label>
+<label>Last Name<input name="last_name" required></label>
+</div>
+<div class="grid">
+<label>Email<input name="email" type="email" required></label>
+<label>Phone<input name="phone" type="tel"></label>
+</div>
+<div class="grid">
+<label>City<input name="city"></label>
+<label>State<input name="state"></label>
+</div>
+<label>Preferred Shift<select name="shift_preference"><option value="Day">Day</option><option value="Evening">Evening</option><option value="Night">Night</option><option value="Weekends">Weekends</option></select></label>
+<label>Experience<select name="experience_level"><option value="None">None</option><option value="0–6 months">0–6 months</option><option value="6–12 months">6–12 months</option><option value="1+ years">1+ years</option></select></label>
+<label>Work Authorization<select name="work_authorization"><option value="Citizen">Citizen</option><option value="Permanent Resident">Permanent Resident</option><option value="Work Visa">Work Visa</option><option value="Other">Other</option></select></label>
+<label>Preferred Location<input name="preferred_location"></label>
+<label>Notes<textarea name="notes" rows="4"></textarea></label>
+<label><input type="checkbox" name="consent" required> I agree to the privacy policy</label>
+<button type="submit" data-i18n="btn.submit">Submit application</button>
+<p id="status"></p>
+</form>
+</div>
 </section>
-
-  <!-- Footer -->
-  <footer>
-    <p data-en="© 2024 Carolina Lumper Service. All rights reserved." data-es="© 2024 Carolina Lumper Service. Todos los derechos reservados." data-pt="© 2024 Carolina Lumper Service. Todos os direitos reservados.">© 2024 Carolina Lumper Service. All rights reserved.</p>
-    <div class="footer-icons">
-      <a href="https://www.facebook.com/profile.php?id=61569872795390"><img src="assets/facebook-icon.png" alt="Facebook"></a>
-      <a href="#"><img src="assets/linkedin-icon.png" alt="LinkedIn"></a>
-    </div>
-        <div class="language-toggle">
-      <button onclick="switchLanguage('en')">English</button>
-      <button onclick="switchLanguage('es')">Español</button>
-      <button onclick="switchLanguage('pt')">Português</button>
-    </div>
-
-  </footer>
 </body>
 </html>
