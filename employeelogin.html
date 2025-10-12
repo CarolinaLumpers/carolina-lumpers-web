@@ -1,93 +1,86 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-JPETF03TJ0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-JPETF03TJ0');
+  </script>
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Employee Login | Carolina Lumper Service</title>
   <link rel="icon" type="image/png" href="assets/CLS-favicon.png">
   <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 
   <style>
     body {
-      font-family: Arial, sans-serif;
       background-color: #000;
-      color: #f2f2f2;
-      text-align: center;
+      color: #fff;
+      font-family: Arial, sans-serif;
       margin: 0;
-      padding: 0;
-    }
-
-    .navbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background-color: #111;
-      padding: 10px 20px;
-    }
-
-    .logo {
-      height: 40px;
-      margin-right: 10px;
-    }
-
-    .company-name {
-      color: #ffcc00;
-      text-decoration: none;
-      font-weight: bold;
-      font-size: 1.2em;
-    }
-
-    .nav-links {
-      list-style: none;
-      display: flex;
-      gap: 20px;
-    }
-
-    .nav-links a {
-      color: #f2f2f2;
-      text-decoration: none;
-    }
-
-    .nav-links a:hover, .nav-links a.active {
-      color: #ffcc00;
+      text-align: center;
     }
 
     h2 {
       color: #ffcc00;
       font-family: "Anton", sans-serif;
-      margin-top: 40px;
+      margin-top: 50px;
+      margin-bottom: 40px;
+      font-size: 1.8em;
+    }
+
+    .login-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 60px;
+      flex-wrap: wrap;
+      margin: 40px auto 100px;
     }
 
     form {
       background-color: #111;
-      display: inline-block;
-      text-align: left;
-      padding: 20px 30px;
-      margin: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(255, 204, 0, 0.2);
+      padding: 30px 40px;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(255, 204, 0, 0.2);
+      width: 320px;
+    }
+
+    form h3 {
+      color: #ffcc00;
+      font-family: "Anton", sans-serif;
+      text-align: center;
+      margin-bottom: 15px;
+      letter-spacing: 0.5px;
     }
 
     input {
       width: 100%;
       padding: 10px;
-      margin: 8px 0;
+      margin: 10px 0;
       border-radius: 5px;
       border: 1px solid #333;
       background-color: #222;
-      color: #f2f2f2;
+      color: #fff;
+      font-size: 1em;
     }
 
     button {
+      width: 100%;
       background-color: #ffcc00;
       color: #000;
       border: none;
       border-radius: 5px;
-      padding: 10px 20px;
-      font-size: 1em;
+      padding: 10px;
       cursor: pointer;
+      font-weight: bold;
       transition: background-color 0.2s;
-      width: 100%;
     }
 
     button:hover {
@@ -95,7 +88,8 @@
     }
 
     #message {
-      margin-top: 15px;
+      text-align: center;
+      margin-top: 20px;
       color: #ffcc00;
       font-weight: bold;
     }
@@ -106,7 +100,7 @@
       text-align: center;
       padding: 20px;
       font-size: 0.9em;
-      margin-top: 40px;
+      margin-top: 80px;
     }
 
     footer a img {
@@ -120,37 +114,44 @@
   <!-- NAVBAR -->
   <nav class="navbar">
     <div class="logo-container">
-      <a href="index.html"><img src="assets/CLS_Nav_Logo.png" alt="CLS Logo" class="logo"></a>
-      <a href="index.html" class="company-name">Carolina Lumper Service</a>
+      <a href="index.html" class="logo-link">
+        <img src="assets/CLS_Nav_Logo.png" alt="CLS Logo" class="logo">
+      </a>
+      <a href="index.html" class="company-name">CAROLINA LUMPER SERVICE</a>
     </div>
     <ul class="nav-links">
-      <li><a href="index.html">Home</a></li>
-      <li><a href="about.html">About</a></li>
+      <li><a href="index.html" class="active">Home</a></li>
+      <li><a href="about.html">About Us</a></li>
       <li><a href="services.html">Services</a></li>
       <li><a href="contact.html">Contact</a></li>
       <li><a href="apply.html">Apply</a></li>
     </ul>
   </nav>
 
-  <!-- LOGIN AREA -->
+  <!-- LOGIN SECTION -->
   <h2>Employee Login / Signup</h2>
 
-  <form id="signupForm">
-    <h3>Sign Up</h3>
-    <input type="email" id="signupEmail" placeholder="Work Email" required>
-    <input type="password" id="signupPassword" placeholder="New Password" required>
-    <button type="submit">Create Account</button>
-  </form>
+  <div class="login-wrapper">
+    <!-- Sign Up Form -->
+    <form id="signupForm">
+      <h3>Sign Up</h3>
+      <input type="email" id="signupEmail" placeholder="Work Email" required>
+      <input type="password" id="signupPassword" placeholder="New Password" required>
+      <button type="submit">Create Account</button>
+    </form>
 
-  <form id="loginForm">
-    <h3>Login</h3>
-    <input type="email" id="loginEmail" placeholder="Email" required>
-    <input type="password" id="loginPassword" placeholder="Password" required>
-    <button type="submit">Login</button>
-  </form>
+    <!-- Login Form -->
+    <form id="loginForm">
+      <h3>Login</h3>
+      <input type="email" id="loginEmail" placeholder="Email" required>
+      <input type="password" id="loginPassword" placeholder="Password" required>
+      <button type="submit">Login</button>
+    </form>
+  </div>
 
   <div id="message"></div>
 
+  <!-- FOOTER -->
   <footer>
     <p>© 2024 Carolina Lumper Service. All rights reserved.</p>
     <div class="footer-icons">
@@ -159,12 +160,13 @@
     </div>
   </footer>
 
+  <!-- LOGIN SCRIPT -->
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbwHBLEQ5QHuhD-O4uI4hRN_5_yS9YsFgtn_dMAdoAO2C7zHLoi3qfHO82vas3Uv0wXXpg/exec";
     const messageBox = document.getElementById("message");
 
     // --- SIGN UP ---
-    document.getElementById("signupForm").onsubmit = async function(e) {
+    document.getElementById("signupForm").onsubmit = async function (e) {
       e.preventDefault();
       const email = document.getElementById("signupEmail").value.trim();
       const password = document.getElementById("signupPassword").value.trim();
@@ -176,7 +178,7 @@
     };
 
     // --- LOGIN ---
-    document.getElementById("loginForm").onsubmit = async function(e) {
+    document.getElementById("loginForm").onsubmit = async function (e) {
       e.preventDefault();
       const email = document.getElementById("loginEmail").value.trim();
       const password = document.getElementById("loginPassword").value.trim();
