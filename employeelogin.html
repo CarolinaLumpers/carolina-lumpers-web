@@ -17,21 +17,34 @@
 <div id="message"></div>
 
 <script>
-const apiBase = "https://script.google.com/macros/s/AKfycbwHBLEQ5QHuhD-O4uI4hRN_5_yS9YsFgtn_dMAdoAO2C7zHLoi3qfHO82vas3Uv0wXXpg/exec";
-
-document.getElementById("signupForm").onsubmit = async e => {
+document.getElementById("loginForm").onsubmit = async function(e) {
   e.preventDefault();
-  const email = signupEmail.value;
-  const password = signupPassword.value;
-  const res = await fetch(`${apiBase}?action=signup&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`);
-  message.innerText = await res.text();
+  const email = document.getElementById("loginEmail").value;
+  const password = document.getElementById("loginPassword").value;
+
+  const apiBase = "https://script.google.com/macros/s/AKfycbwHBLEQ5QHuhD-O4uI4hRN_5_yS9YsFgtn_dMAdoAO2C7zHLoi3qfHO82vas3Uv0wXXpg/exec";
+  const url = `${apiBase}?action=login&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`;
+
+  const res = await fetch(url);
+  const text = await res.text();
+
+  if (text.includes("✅ Login successful")) {
+    // get worker ID and redirect to dashboard
+    const workerId = await getWorkerIdByEmail(email);
+    if (workerId) {
+      window.location.href = `employeeDashboard.html?workerId=${workerId}&email=${encodeURIComponent(email)}`;
+    } else {
+      alert("Could not find your worker ID.");
+    }
+  } else {
+    alert(text);
+  }
 };
 
-document.getElementById("loginForm").onsubmit = async e => {
-  e.preventDefault();
-  const email = loginEmail.value;
-  const password = loginPassword.value;
-  const res = await fetch(`${apiBase}?action=login&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`);
-  message.innerText = await res.text();
-};
+async function getWorkerIdByEmail(email) {
+  const lookupUrl = "https://script.google.com/macros/s/AKfycbwHBLEQ5QHuhD-O4uI4hRN_5_yS9YsFgtn_dMAdoAO2C7zHLoi3qfHO82vas3Uv0wXXpg/exec";
+  const res = await fetch(`${lookupUrl}?action=getWorkerId&email=${encodeURIComponent(email)}`);
+  return (await res.text()).trim();
+}
 </script>
+
