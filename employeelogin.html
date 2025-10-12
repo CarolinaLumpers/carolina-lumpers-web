@@ -185,8 +185,11 @@
       message.textContent = "⏳ Logging in...";
 
       try {
-        const res = await fetch(`${API_URL}?action=login&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`);
-        const text = await res.text();
+        const res = await fetch(`${LOGIN_API}?action=login&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}&callback=callback`);
+        const script = await res.text();
+        const json = JSON.parse(script.replace(/^callback\(|\);$/g, ""));
+        const text = json.result;
+
 
         if (text.includes("✅ Login successful")) {
           const idRes = await fetch(`${API_URL}?action=getworkerid&email=${encodeURIComponent(email)}`);
