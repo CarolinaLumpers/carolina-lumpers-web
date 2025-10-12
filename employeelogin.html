@@ -146,8 +146,21 @@
     }
   };
 
+  // --- JSONP Helper ---
+  async function jsonp(url) {
+    return new Promise((resolve, reject) => {
+      const cb = "cb_" + Math.random().toString(36).slice(2);
+      const s = document.createElement("script");
+      s.src = `${url}&callback=${cb}`;
+      s.async = true;
+      window[cb] = (data) => { resolve(data); delete window[cb]; s.remove(); };
+      s.onerror = () => reject(new Error("Network error"));
+      document.body.appendChild(s);
+    });
+  }
+
   // --- Auto-redirect if already logged in ---
-  (function() {
+  (function(){
     let u = sessionStorage.getItem(SESSION_KEY) || localStorage.getItem(SESSION_KEY);
     if (u) {
       try { u = JSON.parse(u); } catch { u = null; }
@@ -161,7 +174,7 @@
     }
   })();
 
-  // --- Handle Login ---
+  // --- Login Handler ---
   document.getElementById("loginBtn").addEventListener("click", async () => {
     const email = document.getElementById("loginEmail").value.trim();
     const password = document.getElementById("loginPassword").value.trim();
@@ -176,10 +189,7 @@
     msg.textContent = MSG.loggingIn[LANG];
 
     try {
-      const res = await fetch(`${API_URL}?action=login&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`);
-      const text = await res.text();
-      let data;
-      try { data = JSON.parse(text); } catch { data = null; }
+      const data = await jsonp(`${API_URL}?action=login&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`);
 
       if (data && data.success) {
         msg.textContent = MSG.success[LANG];
@@ -191,11 +201,13 @@
           timestamp: Date.now(),
           persistent: stay
         };
+
         const storage = stay ? localStorage : sessionStorage;
         storage.setItem(SESSION_KEY, JSON.stringify(session));
         window.location.href = "employeeDashboard.html";
+
       } else {
-        // Choose localized error based on backend message
+        // Choose localized message
         if (data && data.message && data.message.includes("password")) msg.textContent = MSG.wrongPassword[LANG];
         else if (data && data.message && data.message.includes("Worker not found")) msg.textContent = MSG.userNotFound[LANG];
         else msg.textContent = MSG.loginFailed[LANG];
@@ -206,6 +218,7 @@
     }
   });
 </script>
+
 
   <!-- INLINE MULTILINGUAL SYSTEM -->
   <script>
