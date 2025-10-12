@@ -1,0 +1,37 @@
+<h2>Employee Login / Signup</h2>
+
+<form id="signupForm">
+  <h3>Sign Up</h3>
+  <input type="email" id="signupEmail" placeholder="Work Email" required><br>
+  <input type="password" id="signupPassword" placeholder="New Password" required><br>
+  <button type="submit">Create Account</button>
+</form>
+
+<form id="loginForm">
+  <h3>Login</h3>
+  <input type="email" id="loginEmail" placeholder="Email" required><br>
+  <input type="password" id="loginPassword" placeholder="Password" required><br>
+  <button type="submit">Login</button>
+</form>
+
+<div id="message"></div>
+
+<script>
+const apiBase = "https://script.google.com/macros/s/AKfycbxFRO7ukN_Y0LbNZYuuhhcz073Z40j4CQcUyl6xn7Ue13JLfBmHQbzhE-skyaZrnyQ-/exec";
+
+document.getElementById("signupForm").onsubmit = async e => {
+  e.preventDefault();
+  const email = signupEmail.value;
+  const password = signupPassword.value;
+  const res = await fetch(`${apiBase}?action=signup&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`);
+  message.innerText = await res.text();
+};
+
+document.getElementById("loginForm").onsubmit = async e => {
+  e.preventDefault();
+  const email = loginEmail.value;
+  const password = loginPassword.value;
+  const res = await fetch(`${apiBase}?action=login&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`);
+  message.innerText = await res.text();
+};
+</script>
