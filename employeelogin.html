@@ -185,15 +185,9 @@ document.getElementById("loginBtn").addEventListener("click", async () => {
   message.textContent = "⏳ Logging in...";
 
   try {
-    const res = await fetch(`${API_URL}?action=login&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}&callback=callback`);
-    const script = await res.text();
-    
-    // Safely extract content between callback(...)
-    const match = script.match(/^callback\((.*)\);?$/);
-    if (!match || !match[1]) throw new Error("Invalid server response");
-    
-    const json = JSON.parse(match[1]);
-    const text = json.result;
+    const res = await fetch(`${API_URL}?action=login&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`);
+    const text = await res.text();
+
 
 
     if (text.includes("✅ Login successful")) {
