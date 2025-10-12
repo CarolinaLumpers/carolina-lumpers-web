@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Google tag (gtag.js) -->
+  <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-JPETF03TJ0"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -165,27 +165,51 @@
   <script>
     const LOGIN_API = "https://script.google.com/macros/s/AKfycbwHBLEQ5QHuhD-O4uI4hRN_5_yS9YsFgtn_dMAdoAO2C7zHLoi3qfHO82vas3Uv0wXXpg/exec";
     const CLOCKIN_API = "https://script.google.com/macros/s/AKfycbxFRO7ukN_Y0LbNZYuuhhcz073Z40j4CQcUyl6xn7Ue13JLfBmHQbzhE-skyaZrnyQ-/exec";
+    const SESSION_KEY = "CLS_User";
+    const LOGIN_PAGE = "employeeLogin.html";
+    const MAX_SESSION_AGE = 7 * 24 * 60 * 60 * 1000; // 7 days
 
-    const params = new URLSearchParams(window.location.search);
-    const workerId = params.get("workerId");
-    const name = params.get("name");
-    const email = params.get("email");
+    // Load stored session (from either storage)
+    let userData = sessionStorage.getItem(SESSION_KEY) || localStorage.getItem(SESSION_KEY);
+    if (userData) userData = JSON.parse(userData);
 
-    // Redirect if missing info
-    if (!workerId || !email) {
-      alert("Session expired. Please log in again.");
-      window.location.href = "employeeLogin.html";
+    // Session validation
+    function isSessionExpired(data) {
+      if (!data || !data.timestamp) return true;
+      return Date.now() - data.timestamp > MAX_SESSION_AGE;
     }
 
-    // Display header info
-    document.getElementById("welcomeMessage").textContent = name
-      ? `Welcome, ${decodeURIComponent(name)}!`
+    if (!userData || !userData.workerId || !userData.email || isSessionExpired(userData)) {
+      localStorage.removeItem(SESSION_KEY);
+      sessionStorage.removeItem(SESSION_KEY);
+      alert("Session expired. Please log in again.");
+      window.location.href = LOGIN_PAGE;
+    }
+
+    // Refresh timestamp if valid
+    userData.timestamp = Date.now();
+    if (userData.persistent) {
+      localStorage.setItem(SESSION_KEY, JSON.stringify(userData));
+    } else {
+      sessionStorage.setItem(SESSION_KEY, JSON.stringify(userData));
+    }
+
+    const { workerId, displayName, email } = userData;
+
+    // Display info
+    document.getElementById("welcomeMessage").textContent = displayName
+      ? `Welcome, ${displayName}!`
       : "Employee Dashboard";
+    document.getElementById("userInfo").textContent = `Worker ID: ${workerId} | ${email}`;
 
-    document.getElementById("userInfo").textContent =
-      `Worker ID: ${workerId} | ${decodeURIComponent(email)}`;
+    // Logout clears all
+    function logout() {
+      localStorage.removeItem(SESSION_KEY);
+      sessionStorage.removeItem(SESSION_KEY);
+      window.location.href = LOGIN_PAGE;
+    }
 
-    // CLOCK IN
+    // Clock-In
     document.getElementById("clockInBtn").addEventListener("click", async () => {
       const btn = document.getElementById("clockInBtn");
       const status = document.getElementById("clockInStatus");
@@ -195,6 +219,7 @@
       try {
         const res = await fetch(`${CLOCKIN_API}?action=clockin&workerId=${encodeURIComponent(workerId)}`);
         const text = await res.text();
+
         if (text.includes("Clock-in recorded")) {
           status.textContent = "✅ Clock-in successful!";
           loadReport();
@@ -208,7 +233,7 @@
       }
     });
 
-    // WEEKLY REPORT
+    // Weekly report
     async function loadReport() {
       const body = document.getElementById("reportBody");
       body.innerHTML = "<tr><td colspan='2'>Loading...</td></tr>";
@@ -230,12 +255,6 @@
       } catch (err) {
         body.innerHTML = `<tr><td colspan="2">⚠️ Error loading report: ${err.message}</td></tr>`;
       }
-    }
-
-    // LOGOUT
-    function logout() {
-      localStorage.clear();
-      window.location.href = "employeeLogin.html";
     }
 
     loadReport();
