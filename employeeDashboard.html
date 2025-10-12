@@ -23,113 +23,23 @@
   <link rel="stylesheet" href="style.css">
 
   <style>
-    body {
-      background-color: #000;
-      color: #fff;
-      font-family: Arial, sans-serif;
-      margin: 0;
-      text-align: center;
-    }
-
-    .dashboard {
-      padding: 50px 20px;
-    }
-
-    h1 {
-      color: #ffcc00;
-      font-family: "Anton", sans-serif;
-      font-size: 2.4em;
-      margin-bottom: 10px;
-    }
-
-    .info {
-      margin-bottom: 25px;
-      font-size: 1.1em;
-    }
-
-    #clockInBtn {
-      background-color: #ffcc00;
-      color: #000;
-      border: none;
-      border-radius: 8px;
-      padding: 15px 40px;
-      font-size: 1.2em;
-      cursor: pointer;
-      transition: background-color 0.2s ease-in-out;
-    }
-
-    #clockInBtn:hover {
-      background-color: #ffd633;
-    }
-
-    #clockInStatus {
-      margin-top: 15px;
-      font-size: 1.1em;
-      min-height: 30px;
-    }
-
-    table {
-      margin: 30px auto;
-      width: 90%;
-      max-width: 700px;
-      border-collapse: collapse;
-      color: #f2f2f2;
-    }
-
-    th, td {
-      padding: 10px;
-      border: 1px solid #333;
-    }
-
-    th {
-      background-color: #222;
-    }
-
-    tr:nth-child(even) {
-      background-color: #111;
-    }
-
-    .logout {
-      margin-top: 30px;
-      color: #888;
-      cursor: pointer;
-      text-decoration: underline;
-      font-size: 1em;
-    }
-
-    footer {
-      background-color: #111;
-      color: #aaa;
-      text-align: center;
-      padding: 20px;
-      font-size: 0.9em;
-      margin-top: 60px;
-    }
-
-    footer a img {
-      width: 24px;
-      margin: 0 5px;
-    }
-
-    .language-toggle {
-      margin-top: 10px;
-      text-align: center;
-    }
-
-    .language-toggle button {
-      margin: 4px;
-      padding: 8px 12px;
-      border: none;
-      background: #111;
-      color: #ffcc00;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-
-    .language-toggle button.active {
-      background: #ffcc00;
-      color: #000;
-    }
+    body { background-color:#000;color:#fff;font-family:Arial,sans-serif;margin:0;text-align:center;}
+    .dashboard { padding:50px 20px;}
+    h1 { color:#ffcc00;font-family:"Anton",sans-serif;font-size:2.4em;margin-bottom:10px;}
+    .info { margin-bottom:25px;font-size:1.1em;}
+    #clockInBtn { background-color:#ffcc00;color:#000;border:none;border-radius:8px;padding:15px 40px;font-size:1.2em;cursor:pointer;transition:background-color .2s;}
+    #clockInBtn:hover { background-color:#ffd633;}
+    #clockInStatus { margin-top:15px;font-size:1.1em;min-height:30px;}
+    table { margin:30px auto;width:90%;max-width:700px;border-collapse:collapse;color:#f2f2f2;}
+    th,td { padding:10px;border:1px solid #333;}
+    th { background-color:#222;}
+    tr:nth-child(even){background-color:#111;}
+    .logout { margin-top:30px;color:#888;cursor:pointer;text-decoration:underline;font-size:1em;}
+    footer { background-color:#111;color:#aaa;text-align:center;padding:20px;font-size:0.9em;margin-top:60px;}
+    footer a img { width:24px;margin:0 5px;}
+    .language-toggle { margin-top:10px;text-align:center;}
+    .language-toggle button { margin:4px;padding:8px 12px;border:none;background:#111;color:#ffcc00;border-radius:6px;cursor:pointer;transition:all .2s;}
+    .language-toggle button:hover, .language-toggle button.active { background:#ffcc00;color:#000;}
   </style>
 </head>
 
@@ -162,9 +72,7 @@
     <div class="report-section">
       <h2 style="color:#ffcc00;" data-en="This Week’s Clock-In Report"
           data-es="Reporte de Entradas de la Semana"
-          data-pt="Relatório Semanal de Entradas">
-          This Week’s Clock-In Report
-      </h2>
+          data-pt="Relatório Semanal de Entradas">This Week’s Clock-In Report</h2>
       <table id="reportTable">
         <thead>
           <tr>
@@ -201,86 +109,35 @@
 
   <!-- DASHBOARD SCRIPT -->
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbwHBLEQ5QHuhD-O4uI4hRN_5_yS9YsFgtn_dMAdoAO2C7zHLoi3qfHO82vas3Uv0wXXpg/exec";
-    const CLOCKIN_API = "https://script.google.com/macros/s/AKfycbxFRO7ukN_Y0LbNZYuuhhcz073Z40j4CQcUyl6xn7Ue13JLfBmHQbzhE-skyaZrnyQ-/exec";
-    const SESSION_KEY = "CLS_User";
-    const LOGIN_PAGE = "employeelogin.html";
-    const MAX_SESSION_AGE = 7 * 24 * 60 * 60 * 1000;
-
-    // Load session
-    let userData = sessionStorage.getItem(SESSION_KEY) || localStorage.getItem(SESSION_KEY);
-    if (userData) userData = JSON.parse(userData);
-
-    if (!userData || !userData.workerId) {
-      alert("Session expired. Please log in again.");
-      window.location.href = LOGIN_PAGE;
-    }
-
-    const { workerId, displayName, email } = userData;
-    document.getElementById("welcomeMessage").textContent = `Welcome, ${displayName || "Employee"}!`;
-    document.getElementById("userInfo").textContent = `Worker ID: ${workerId} | ${email}`;
-
-    // Logout
-    function logout() {
-      localStorage.removeItem(SESSION_KEY);
-      sessionStorage.removeItem(SESSION_KEY);
-      window.location.href = LOGIN_PAGE;
-    }
-
-    // Clock-In
-    document.getElementById("clockInBtn").addEventListener("click", async () => {
-      const btn = document.getElementById("clockInBtn");
-      const status = document.getElementById("clockInStatus");
-      btn.disabled = true;
-      status.textContent = "Recording clock-in...";
-
-      try {
-        const res = await fetch(`${CLOCKIN_API}?action=clockin&workerId=${encodeURIComponent(workerId)}`);
-        const text = await res.text();
-
-        if (text.includes("✅ Clock-in recorded")) {
-          status.textContent = "✅ Clock-in successful!";
-          loadReport();
-        } else {
-          status.textContent = text;
-        }
-      } catch (err) {
-        status.textContent = "⚠️ Error: " + err.message;
-      } finally {
-        btn.disabled = false;
-      }
-    });
-
-    // Weekly Report
-    async function loadReport() {
-      const body = document.getElementById("reportBody");
-      body.innerHTML = "<tr><td colspan='2'>Loading...</td></tr>";
-
-      try {
-        const res = await fetch(`${API_URL}?action=report&workerId=${encodeURIComponent(workerId)}`);
-        const data = await res.json();
-        body.innerHTML = "";
-
-        if (data.records && data.records.length > 0) {
-          data.records.forEach(r => {
-            const formattedDate = new Date(r.date).toLocaleDateString("en-US", { timeZone: "America/New_York" });
-            const formattedTime = r.time ? new Date(`1970-01-01T${r.time}`).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" }) : "";
-            const row = document.createElement("tr");
-            row.innerHTML = `<td>${formattedDate}</td><td>${formattedTime}</td>`;
-            body.appendChild(row);
-          });
-        } else {
-          body.innerHTML = `<tr><td colspan="2">No clock-ins this week.</td></tr>`;
-        }
-      } catch (err) {
-        body.innerHTML = `<tr><td colspan="2">⚠️ Error loading report: ${err.message}</td></tr>`;
-      }
-    }
-
+    const API_URL="https://script.google.com/macros/s/AKfycbwHBLEQ5QHuhD-O4uI4hRN_5_yS9YsFgtn_dMAdoAO2C7zHLoi3qfHO82vas3Uv0wXXpg/exec";
+    const CLOCKIN_API="https://script.google.com/macros/s/AKfycbxFRO7ukN_Y0LbNZYuuhhcz073Z40j4CQcUyl6xn7Ue13JLfBmHQbzhE-skyaZrnyQ-/exec";
+    const SESSION_KEY="CLS_User",LOGIN_PAGE="employeelogin.html",MAX_SESSION_AGE=6048e5;
+    let userData=sessionStorage.getItem(SESSION_KEY)||localStorage.getItem(SESSION_KEY);
+    if(userData)userData=JSON.parse(userData);
+    if(!userData||!userData.workerId){alert("Session expired. Please log in again.");window.location.href=LOGIN_PAGE;}
+    const{workerId,displayName,email}=userData;
+    document.getElementById("welcomeMessage").textContent=`Welcome, ${displayName||"Employee"}!`;
+    document.getElementById("userInfo").textContent=`Worker ID: ${workerId} | ${email}`;
+    function logout(){localStorage.removeItem(SESSION_KEY);sessionStorage.removeItem(SESSION_KEY);window.location.href=LOGIN_PAGE;}
+    document.getElementById("clockInBtn").addEventListener("click",async()=>{const btn=document.getElementById("clockInBtn"),status=document.getElementById("clockInStatus");btn.disabled=!0;status.textContent="Recording clock-in...";try{const res=await fetch(`${CLOCKIN_API}?action=clockin&workerId=${encodeURIComponent(workerId)}`);const text=await res.text();if(text.includes("✅ Clock-in recorded")){status.textContent="✅ Clock-in successful!";loadReport();}else status.textContent=text;}catch(err){status.textContent="⚠️ Error: "+err.message;}finally{btn.disabled=!1;}});
+    async function loadReport(){const body=document.getElementById("reportBody");body.innerHTML="<tr><td colspan='2'>Loading...</td></tr>";try{const res=await fetch(`${API_URL}?action=report&workerId=${encodeURIComponent(workerId)}`);const data=await res.json();body.innerHTML="";if(data.records&&data.records.length>0){data.records.forEach(r=>{const formattedDate=new Date(r.date).toLocaleDateString("en-US",{timeZone:"America/New_York"});const formattedTime=r.time?new Date(`1970-01-01T${r.time}`).toLocaleTimeString("en-US",{hour:"2-digit",minute:"2-digit"}):"";const row=document.createElement("tr");row.innerHTML=`<td>${formattedDate}</td><td>${formattedTime}</td>`;body.appendChild(row);});}else body.innerHTML='<tr><td colspan="2">No clock-ins this week.</td></tr>';}catch(err){body.innerHTML=`<tr><td colspan="2">⚠️ Error loading report: ${err.message}</td></tr>`;}}
     loadReport();
   </script>
 
-  <!-- AUTO LANGUAGE SCRIPT -->
-  <script src="assets/lang-auto.js"></script>
+  <!-- INLINE MINIFIED LANGUAGE SYSTEM -->
+  <script>
+    function switchLanguage(lang){localStorage.setItem("CLS_Lang",lang);
+      document.querySelectorAll("[data-en]").forEach(el=>{
+        const t=el.getAttribute(`data-${lang}`)||el.getAttribute("data-en");
+        if(t)el.innerHTML=t;
+      });
+      document.querySelectorAll(".language-toggle button").forEach(b=>b.classList.toggle("active",b.dataset.lang===lang));
+    }
+    document.addEventListener("DOMContentLoaded",()=>{
+      const s=localStorage.getItem("CLS_Lang"),b=navigator.language||navigator.userLanguage;
+      const l=s||(b.startsWith("es")?"es":b.startsWith("pt")?"pt":"en");
+      switchLanguage(l);
+    });
+  </script>
 </body>
 </html>
