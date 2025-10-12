@@ -149,7 +149,7 @@
       });
     }
 
-    // --- Session Management ---
+    // --- Session ---
     let userData = sessionStorage.getItem(SESSION_KEY) || localStorage.getItem(SESSION_KEY);
     if (userData) {
       try { userData = JSON.parse(userData); } catch { userData = null; }
@@ -161,41 +161,50 @@
 
     const { workerId, displayName, email } = userData;
 
-    // --- Init on Load ---
     window.addEventListener("DOMContentLoaded", () => {
-      // ✅ Ensure display name shows
       document.getElementById("welcomeMessage").textContent = `Welcome, ${displayName || "Employee"}!`;
       document.getElementById("userInfo").textContent = `Worker ID: ${workerId} | ${email}`;
-
       document.getElementById("clockInBtn").addEventListener("click", handleClockIn);
       loadReport();
       initLanguage();
     });
 
+    // --- Logout ---
     function logout() {
       localStorage.removeItem(SESSION_KEY);
       sessionStorage.removeItem(SESSION_KEY);
       window.location.href = LOGIN_PAGE;
     }
 
-    // --- Clock-In ---
+    // --- GPS Clock-In ---
     async function handleClockIn() {
       const btn = document.getElementById("clockInBtn");
       const status = document.getElementById("clockInStatus");
       btn.disabled = true;
-      status.textContent = "Recording clock-in...";
+      status.textContent = "📍 Getting your location...";
 
       try {
-        const res = await jsonp(`${API_URL}?action=clockin&workerId=${encodeURIComponent(workerId)}`);
+        const pos = await new Promise((resolve, reject) =>
+          navigator.geolocation.getCurrentPosition(resolve, reject, { enableHighAccuracy: true, timeout: 10000 })
+        );
+
+        const { latitude, longitude } = pos.coords;
+        status.textContent = "Recording clock-in...";
+
+        const res = await jsonp(`${API_URL}?action=clockin&workerId=${encodeURIComponent(workerId)}&lat=${latitude}&lng=${longitude}`);
         const text = typeof res === "string" ? res : JSON.stringify(res);
-        if (text.includes("Clock-in recorded")) {
+
+        if (text.includes("✅")) {
           status.textContent = "✅ Clock-in successful!";
           await loadReport();
         } else {
-          status.textContent = text || "⚠️ Unexpected response.";
+          status.textContent = text;
         }
       } catch (err) {
-        status.textContent = "⚠️ Error: " + err.message;
+        if (err.code === 1) status.textContent = "⚠️ Location access denied. Please enable GPS.";
+        else if (err.code === 2) status.textContent = "⚠️ Location unavailable. Try again.";
+        else if (err.code === 3) status.textContent = "⚠️ Location request timed out.";
+        else status.textContent = "⚠️ Error: " + err.message;
       } finally {
         btn.disabled = false;
       }
