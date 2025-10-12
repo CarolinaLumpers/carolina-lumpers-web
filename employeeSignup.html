@@ -89,6 +89,7 @@
 
     .language-toggle {
       margin-top: 10px;
+      text-align: center;
     }
 
     .language-toggle button {
@@ -99,8 +100,10 @@
       color: #ffcc00;
       border-radius: 6px;
       cursor: pointer;
+      transition: all 0.2s;
     }
 
+    .language-toggle button:hover,
     .language-toggle button.active {
       background: #ffcc00;
       color: #000;
@@ -130,10 +133,10 @@
   <!-- SIGN UP FORM -->
   <div class="signup-container">
     <h1 data-en="Employee Sign Up" data-es="Registro de Empleado" data-pt="Cadastro de Funcionário">Employee Sign Up</h1>
-    <input type="email" id="email" placeholder="Work Email"
-           data-en="Work Email" data-es="Correo de Trabajo" data-pt="Email de Trabalho" required>
-    <input type="password" id="password" placeholder="Create Password"
-           data-en="Create Password" data-es="Crear Contraseña" data-pt="Criar Senha" required>
+    <input type="email" id="email" placeholder="Work Email" required
+           data-en="Work Email" data-es="Correo de Trabajo" data-pt="Email de Trabalho">
+    <input type="password" id="password" placeholder="Create Password" required
+           data-en="Create Password" data-es="Crear Contraseña" data-pt="Criar Senha">
     <button id="signupBtn" data-en="Create Account" data-es="Crear Cuenta" data-pt="Criar Conta">Create Account</button>
     <div class="message" id="message"></div>
 
@@ -150,12 +153,10 @@
        data-pt="© 2024 Carolina Lumper Service. Todos os direitos reservados.">
        © 2024 Carolina Lumper Service. All rights reserved.
     </p>
-
     <div class="footer-icons">
       <a href="https://www.facebook.com/profile.php?id=61569872795390"><img src="assets/facebook-icon.png" alt="Facebook"></a>
       <a href="#"><img src="assets/linkedin-icon.png" alt="LinkedIn"></a>
     </div>
-
     <div class="language-toggle">
       <button data-lang="en" onclick="switchLanguage('en')">English</button>
       <button data-lang="es" onclick="switchLanguage('es')">Español</button>
@@ -191,21 +192,21 @@
     });
   </script>
 
-  <!-- ✅ AUTO LANGUAGE SYSTEM -->
+  <!-- ✅ INLINE LANGUAGE SCRIPT -->
   <script>
-    function switchLanguage(lang) {
-      localStorage.setItem("CLS_Lang", lang);
-      document.querySelectorAll("[data-en]").forEach(el => {
-        el.innerHTML = el.getAttribute(`data-${lang}`) || el.getAttribute("data-en");
+    function switchLanguage(lang){
+      localStorage.setItem("CLS_Lang",lang);
+      document.querySelectorAll("[data-en]").forEach(el=>{
+        const t=el.getAttribute(`data-${lang}`)||el.getAttribute("data-en");
+        if(t)el.innerHTML=t;
       });
-      document.querySelectorAll(".language-toggle button").forEach(b => b.classList.toggle("active", b.dataset.lang === lang));
+      document.querySelectorAll(".language-toggle button").forEach(b=>b.classList.toggle("active",b.dataset.lang===lang));
     }
-
-    document.addEventListener("DOMContentLoaded", () => {
-      const savedLang = localStorage.getItem("CLS_Lang");
-      const browserLang = navigator.language.startsWith("es") ? "es" : navigator.language.startsWith("pt") ? "pt" : "en";
-      const lang = savedLang || browserLang;
-      switchLanguage(lang);
+    document.addEventListener("DOMContentLoaded",()=>{
+      const s=localStorage.getItem("CLS_Lang");
+      const b=navigator.language||navigator.userLanguage;
+      const l=s||(b.startsWith("es")?"es":b.startsWith("pt")?"pt":"en");
+      switchLanguage(l);
     });
   </script>
 </body>
