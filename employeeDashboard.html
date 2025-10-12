@@ -12,7 +12,12 @@
 
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Employee Dashboard | Carolina Lumper Service</title>
+  <title data-en="Employee Dashboard | Carolina Lumper Service"
+          data-es="Panel del Empleado | Carolina Lumper Service"
+          data-pt="Painel do Funcionário | Carolina Lumper Service">
+          Employee Dashboard | Carolina Lumper Service
+  </title>
+
   <link rel="icon" type="image/png" href="assets/CLS-favicon.png">
   <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
@@ -105,6 +110,26 @@
       width: 24px;
       margin: 0 5px;
     }
+
+    .language-toggle {
+      margin-top: 10px;
+      text-align: center;
+    }
+
+    .language-toggle button {
+      margin: 4px;
+      padding: 8px 12px;
+      border: none;
+      background: #111;
+      color: #ffcc00;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .language-toggle button.active {
+      background: #ffcc00;
+      color: #000;
+    }
   </style>
 </head>
 
@@ -118,29 +143,33 @@
       <a href="index.html" class="company-name">CAROLINA LUMPER SERVICE</a>
     </div>
     <ul class="nav-links">
-      <li><a href="index.html" class="active">Home</a></li>
-      <li><a href="about.html">About Us</a></li>
-      <li><a href="services.html">Services</a></li>
-      <li><a href="contact.html">Contact</a></li>
-      <li><a href="apply.html">Apply</a></li>
+      <li><a href="index.html" data-en="Home" data-es="Inicio" data-pt="Início">Home</a></li>
+      <li><a href="about.html" data-en="About" data-es="Sobre" data-pt="Sobre">About</a></li>
+      <li><a href="services.html" data-en="Services" data-es="Servicios" data-pt="Serviços">Services</a></li>
+      <li><a href="contact.html" data-en="Contact" data-es="Contacto" data-pt="Contato">Contact</a></li>
+      <li><a href="apply.html" data-en="Apply" data-es="Solicitar" data-pt="Candidatar">Apply</a></li>
     </ul>
   </nav>
 
   <!-- DASHBOARD -->
   <div class="dashboard">
-    <h1 id="welcomeMessage">Employee Dashboard</h1>
+    <h1 id="welcomeMessage" data-en="Employee Dashboard" data-es="Panel del Empleado" data-pt="Painel do Funcionário">Employee Dashboard</h1>
     <div class="info" id="userInfo"></div>
 
-    <button id="clockInBtn">Clock In</button>
+    <button id="clockInBtn" data-en="Clock In" data-es="Registrar Entrada" data-pt="Registrar Entrada">Clock In</button>
     <div id="clockInStatus"></div>
 
     <div class="report-section">
-      <h2 style="color:#ffcc00; margin-top:40px;">This Week’s Clock-In Report</h2>
+      <h2 style="color:#ffcc00;" data-en="This Week’s Clock-In Report"
+          data-es="Reporte de Entradas de la Semana"
+          data-pt="Relatório Semanal de Entradas">
+          This Week’s Clock-In Report
+      </h2>
       <table id="reportTable">
         <thead>
           <tr>
-            <th>Date</th>
-            <th>Time</th>
+            <th data-en="Date" data-es="Fecha" data-pt="Data">Date</th>
+            <th data-en="Time" data-es="Hora" data-pt="Hora">Time</th>
           </tr>
         </thead>
         <tbody id="reportBody">
@@ -149,60 +178,56 @@
       </table>
     </div>
 
-    <div class="logout" onclick="logout()">Logout</div>
+    <div class="logout" onclick="logout()" data-en="Logout" data-es="Cerrar Sesión" data-pt="Sair">Logout</div>
   </div>
 
   <!-- FOOTER -->
   <footer>
-    <p>© 2024 Carolina Lumper Service. All rights reserved.</p>
+    <p data-en="© 2024 Carolina Lumper Service. All rights reserved."
+       data-es="© 2024 Carolina Lumper Service. Todos los derechos reservados."
+       data-pt="© 2024 Carolina Lumper Service. Todos os direitos reservados.">
+       © 2024 Carolina Lumper Service. All rights reserved.
+    </p>
     <div class="footer-icons">
       <a href="https://www.facebook.com/profile.php?id=61569872795390"><img src="assets/facebook-icon.png" alt="Facebook"></a>
       <a href="#"><img src="assets/linkedin-icon.png" alt="LinkedIn"></a>
     </div>
+    <div class="language-toggle">
+      <button data-lang="en" onclick="switchLanguage('en')">English</button>
+      <button data-lang="es" onclick="switchLanguage('es')">Español</button>
+      <button data-lang="pt" onclick="switchLanguage('pt')">Português</button>
+    </div>
   </footer>
 
-  <!-- SCRIPT -->
+  <!-- DASHBOARD SCRIPT -->
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbwHBLEQ5QHuhD-O4uI4hRN_5_yS9YsFgtn_dMAdoAO2C7zHLoi3qfHO82vas3Uv0wXXpg/exec";
+    const CLOCKIN_API = "https://script.google.com/macros/s/AKfycbxFRO7ukN_Y0LbNZYuuhhcz073Z40j4CQcUyl6xn7Ue13JLfBmHQbzhE-skyaZrnyQ-/exec";
     const SESSION_KEY = "CLS_User";
     const LOGIN_PAGE = "employeelogin.html";
-    const MAX_SESSION_AGE = 7 * 24 * 60 * 60 * 1000; // 7 days
+    const MAX_SESSION_AGE = 7 * 24 * 60 * 60 * 1000;
 
+    // Load session
     let userData = sessionStorage.getItem(SESSION_KEY) || localStorage.getItem(SESSION_KEY);
     if (userData) userData = JSON.parse(userData);
 
-    function isSessionExpired(data) {
-      if (!data || !data.timestamp) return true;
-      return Date.now() - data.timestamp > MAX_SESSION_AGE;
-    }
-
-    if (!userData || !userData.workerId || !userData.email || isSessionExpired(userData)) {
-      localStorage.removeItem(SESSION_KEY);
-      sessionStorage.removeItem(SESSION_KEY);
+    if (!userData || !userData.workerId) {
       alert("Session expired. Please log in again.");
       window.location.href = LOGIN_PAGE;
     }
 
-    userData.timestamp = Date.now();
-    if (userData.persistent) {
-      localStorage.setItem(SESSION_KEY, JSON.stringify(userData));
-    } else {
-      sessionStorage.setItem(SESSION_KEY, JSON.stringify(userData));
-    }
-
     const { workerId, displayName, email } = userData;
-    document.getElementById("welcomeMessage").textContent = displayName
-      ? `Welcome, ${displayName}!`
-      : "Employee Dashboard";
+    document.getElementById("welcomeMessage").textContent = `Welcome, ${displayName || "Employee"}!`;
     document.getElementById("userInfo").textContent = `Worker ID: ${workerId} | ${email}`;
 
+    // Logout
     function logout() {
       localStorage.removeItem(SESSION_KEY);
       sessionStorage.removeItem(SESSION_KEY);
       window.location.href = LOGIN_PAGE;
     }
 
-    // ✅ Clock-In now handled through the unified API
+    // Clock-In
     document.getElementById("clockInBtn").addEventListener("click", async () => {
       const btn = document.getElementById("clockInBtn");
       const status = document.getElementById("clockInStatus");
@@ -210,10 +235,10 @@
       status.textContent = "Recording clock-in...";
 
       try {
-        const res = await fetch(`${API_URL}?action=clockin&workerId=${encodeURIComponent(workerId)}`);
+        const res = await fetch(`${CLOCKIN_API}?action=clockin&workerId=${encodeURIComponent(workerId)}`);
         const text = await res.text();
 
-        if (text.includes("Clock-in recorded")) {
+        if (text.includes("✅ Clock-in recorded")) {
           status.textContent = "✅ Clock-in successful!";
           loadReport();
         } else {
@@ -226,7 +251,7 @@
       }
     });
 
-    // ✅ Weekly report from same API
+    // Weekly Report
     async function loadReport() {
       const body = document.getElementById("reportBody");
       body.innerHTML = "<tr><td colspan='2'>Loading...</td></tr>";
@@ -238,8 +263,10 @@
 
         if (data.records && data.records.length > 0) {
           data.records.forEach(r => {
+            const formattedDate = new Date(r.date).toLocaleDateString("en-US", { timeZone: "America/New_York" });
+            const formattedTime = r.time ? new Date(`1970-01-01T${r.time}`).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" }) : "";
             const row = document.createElement("tr");
-            row.innerHTML = `<td>${r.date}</td><td>${r.time}</td>`;
+            row.innerHTML = `<td>${formattedDate}</td><td>${formattedTime}</td>`;
             body.appendChild(row);
           });
         } else {
@@ -252,5 +279,8 @@
 
     loadReport();
   </script>
+
+  <!-- AUTO LANGUAGE SCRIPT -->
+  <script src="assets/lang-auto.js"></script>
 </body>
 </html>
