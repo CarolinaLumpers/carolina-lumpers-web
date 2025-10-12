@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Google tag (gtag.js) -->
+  <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-JPETF03TJ0"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -127,6 +127,11 @@
     <h1>Employee Login</h1>
     <input type="email" id="loginEmail" placeholder="Work Email" required>
     <input type="password" id="loginPassword" placeholder="Password" required>
+
+    <label style="display:block; margin-top:10px; color:#ccc; font-size:0.9em;">
+      <input type="checkbox" id="stayLoggedIn"> Stay logged in
+    </label>
+
     <button id="loginBtn">Login</button>
     <div class="message" id="message"></div>
 
@@ -147,10 +152,29 @@
   <!-- SCRIPT -->
   <script>
     const LOGIN_API = "https://script.google.com/macros/s/AKfycbwHBLEQ5QHuhD-O4uI4hRN_5_yS9YsFgtn_dMAdoAO2C7zHLoi3qfHO82vas3Uv0wXXpg/exec";
+    const SESSION_KEY = "CLS_User";
+    const MAX_SESSION_AGE = 7 * 24 * 60 * 60 * 1000; // 7 days
 
+    // Auto-redirect if valid session exists
+    (function checkExistingSession() {
+      let userData = sessionStorage.getItem(SESSION_KEY) || localStorage.getItem(SESSION_KEY);
+      if (userData) {
+        userData = JSON.parse(userData);
+        const expired = Date.now() - userData.timestamp > MAX_SESSION_AGE;
+        if (!expired && userData.workerId) {
+          window.location.href = "employeeDashboard.html";
+        } else {
+          localStorage.removeItem(SESSION_KEY);
+          sessionStorage.removeItem(SESSION_KEY);
+        }
+      }
+    })();
+
+    // LOGIN HANDLER
     document.getElementById("loginBtn").addEventListener("click", async () => {
       const email = document.getElementById("loginEmail").value.trim();
       const password = document.getElementById("loginPassword").value.trim();
+      const stayLoggedIn = document.getElementById("stayLoggedIn").checked;
       const message = document.getElementById("message");
 
       if (!email || !password) {
@@ -169,7 +193,18 @@
           const data = await idRes.json();
 
           if (data.workerId) {
-            window.location.href = `employeeDashboard.html?workerId=${encodeURIComponent(data.workerId)}&name=${encodeURIComponent(data.displayName)}&email=${encodeURIComponent(email)}`;
+            const sessionData = {
+              workerId: data.workerId,
+              displayName: data.displayName,
+              email,
+              timestamp: Date.now(),
+              persistent: stayLoggedIn
+            };
+
+            const storage = stayLoggedIn ? localStorage : sessionStorage;
+            storage.setItem(SESSION_KEY, JSON.stringify(sessionData));
+
+            window.location.href = "employeeDashboard.html";
           } else {
             message.textContent = "⚠️ Could not find your worker ID.";
           }
