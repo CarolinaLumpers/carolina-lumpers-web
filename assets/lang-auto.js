@@ -1,8 +1,9 @@
 /* ============================================
-   Multi-language system with auto-detect
-   Used across all CLS pages
+   CLS Multi-language System with Auto-detect
+   Shared across all CLS pages
    ============================================ */
 
+// Adjusts font size of navbar links when text width changes
 function adjustNavbarFontSize() {
   const navLinks = document.querySelector('.nav-links');
   if (!navLinks) return;
@@ -21,29 +22,30 @@ function adjustNavbarFontSize() {
   }
 }
 
-// Switch visible language text
+// Switches visible language text sitewide
 function switchLanguage(lang) {
-  localStorage.setItem("lang", lang); // persist choice
-  const elements = document.querySelectorAll("[data-en], [data-es], [data-pt]");
-  elements.forEach(el => {
-    const text =
-      lang === "es" ? el.getAttribute("data-es") :
-      lang === "pt" ? el.getAttribute("data-pt") :
-      el.getAttribute("data-en");
-    if (text) el.innerHTML = text;
+  localStorage.setItem("CLS_Lang", lang); // Persist user choice
+
+  document.querySelectorAll("[data-en]").forEach(el => {
+    const newText = el.getAttribute(`data-${lang}`) || el.getAttribute("data-en");
+    if (newText) el.innerHTML = newText;
   });
+
+  // Highlight active language button if present
+  document.querySelectorAll(".language-toggle button").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.lang === lang);
+  });
+
   adjustNavbarFontSize();
 }
 
-// Initialize on load
+// Initialize on page load
 document.addEventListener("DOMContentLoaded", () => {
-  const storedLang = localStorage.getItem("lang");
-  const userLang = navigator.language || navigator.userLanguage;
-  const detectedLang = storedLang || (userLang.startsWith("es") ? "es" : userLang.startsWith("pt") ? "pt" : "en");
-  switchLanguage(detectedLang);
-  adjustNavbarFontSize();
+  const storedLang = localStorage.getItem("CLS_Lang");
+  const browserLang = navigator.language || navigator.userLanguage;
+  const detectedLang =
+    storedLang ||
+    (browserLang.startsWith("es") ? "es" : browserLang.startsWith("pt") ? "pt" : "en");
 
-  // Highlight selected language button if present
-  const activeBtn = document.querySelector(`.language-toggle button[data-lang='${detectedLang}']`);
-  if (activeBtn) activeBtn.classList.add("active");
+  switchLanguage(detectedLang);
 });
