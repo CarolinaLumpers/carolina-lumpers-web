@@ -68,8 +68,27 @@
       color: #ffcc00;
       text-decoration: none;
     }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    footer {
+      background-color: #111;
+      color: #aaa;
+      text-align: center;
+      padding: 20px;
+      font-size: 0.9em;
+      margin-top: 60px;
+    }
+
+    footer a img {
+      width: 24px;
+      margin: 0 5px;
+    }
   </style>
 </head>
+
 <body>
   <!-- NAVBAR -->
   <nav class="navbar">
@@ -97,15 +116,17 @@
     <button id="signupBtn">Create Account</button>
     <div class="message" id="message"></div>
 
-    <p style="margin-top:20px;">Already have an account? <a href="employeeLogin.html">Login here</a>.</p>
+    <p style="margin-top:20px;">Already have an account? <a href="employeelogin.html">Login here</a>.</p>
   </div>
 
   <footer>
     <p>© 2024 Carolina Lumper Service. All rights reserved.</p>
   </footer>
 
+  <!-- SCRIPT -->
   <script>
-    const LOGIN_API = "https://script.google.com/macros/s/AKfycbwHBLEQ5QHuhD-O4uI4hRN_5_yS9YsFgtn_dMAdoAO2C7zHLoi3qfHO82vas3Uv0wXXpg/exec";
+    // ✅ Use the same unified API URL as login and dashboard
+    const API_URL = "https://script.google.com/macros/s/AKfycbwHBLEQ5QHuhD-O4uI4hRN_5_yS9YsFgtn_dMAdoAO2C7zHLoi3qfHO82vas3Uv0wXXpg/exec";
 
     document.getElementById("signupBtn").addEventListener("click", async () => {
       const email = document.getElementById("email").value.trim();
@@ -120,11 +141,15 @@
       message.textContent = "⏳ Creating account...";
 
       try {
-        const res = await fetch(`${LOGIN_API}?action=signup&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`);
+        const res = await fetch(`${API_URL}?action=signup&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`);
         const text = await res.text();
-        message.textContent = text.includes("✅")
-          ? "✅ Account created! You can now log in."
-          : text;
+
+        if (text.includes("✅")) {
+          message.textContent = "✅ Account created! You can now log in.";
+          setTimeout(() => window.location.href = "employeelogin.html", 2000);
+        } else {
+          message.textContent = text;
+        }
       } catch (err) {
         message.textContent = "⚠️ Error: " + err.message;
       }
