@@ -1,40 +1,131 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>My Work Report</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Employee Dashboard | Carolina Lumpers</title>
 <style>
-  body { font-family: Arial, sans-serif; color: #f2f2f2; background: #000; text-align: center; margin: 0; padding: 20px; }
-  h1 { color: #ffcc00; }
-  #clockInBtn { background:#ffcc00; border:none; color:#000; padding:15px 30px; font-size:1.2em; border-radius:10px; cursor:pointer; }
-  #clockInBtn:hover { background:#ffd633; }
-  iframe { width:100%; height:80vh; border:none; margin-top:20px; }
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #000;
+    color: #f2f2f2;
+    text-align: center;
+    margin: 0;
+    padding: 20px;
+  }
+  h1 {
+    color: #ffcc00;
+    margin-bottom: 5px;
+  }
+  h2 {
+    color: #ccc;
+    font-weight: normal;
+  }
+  #clockInBtn {
+    background-color: #ffcc00;
+    color: #000;
+    border: none;
+    border-radius: 10px;
+    padding: 15px 30px;
+    font-size: 1.2em;
+    cursor: pointer;
+    margin-top: 20px;
+  }
+  #clockInBtn:hover {
+    background-color: #ffd633;
+  }
+  #clockInStatus {
+    margin-top: 10px;
+    font-size: 1.2em;
+  }
+  .report {
+    margin-top: 40px;
+  }
+  iframe {
+    width: 100%;
+    height: 80vh;
+    border: none;
+    margin-top: 10px;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .logout {
+    margin-top: 30px;
+    font-size: 0.9em;
+    color: #888;
+    cursor: pointer;
+    text-decoration: underline;
+  }
 </style>
 </head>
 <body>
 
-<h1>My Weekly Report</h1>
-<p id="userEmail"></p>
-<button id="clockInBtn">Clock In</button>
-<iframe id="reportFrame"></iframe>
+  <h1>Welcome to Carolina Lumpers</h1>
+  <h2 id="userName"></h2>
+  <p id="userEmail"></p>
 
-<script>
-const params = new URLSearchParams(window.location.search);
-const workerId = params.get("workerId");
-const email = params.get("email");
-const reportUrl = "https://script.google.com/macros/s/AKfycbxFRO7ukN_Y0LbNZYuuhhcz073Z40j4CQcUyl6xn7Ue13JLfBmHQbzhE-skyaZrnyQ-/exec";
+  <button id="clockInBtn">Clock In</button>
+  <div id="clockInStatus"></div>
 
-document.getElementById("userEmail").textContent = email;
-document.getElementById("reportFrame").src = `${reportUrl}?action=report&workerId=${workerId}`;
+  <div class="report">
+    <h2>This Week's Clock-In Report</h2>
+    <iframe id="reportFrame" title="Clock-In Report"></iframe>
+  </div>
 
-document.getElementById("clockInBtn").onclick = async () => {
-  const url = `${reportUrl}?action=clockin&workerId=${workerId}`;
-  const res = await fetch(url);
-  const html = await res.text();
-  document.getElementById("reportFrame").srcdoc = html; // refresh report view
-  alert("Clock-in recorded (refreshing report).");
-};
-</script>
+  <div class="logout" onclick="logout()">Logout</div>
 
+  <script>
+    // ===== CONFIGURATION =====
+    const LOGIN_API = "https://script.google.com/macros/s/AKfycbwHBLEQ5QHuhD-O4uI4hRN_5_yS9YsFgtn_dMAdoAO2C7zHLoi3qfHO82vas3Uv0wXXpg/exec";
+    const CLOCKIN_API = "https://script.google.com/macros/s/AKfycbxFRO7ukN_Y0LbNZYuuhhcz073Z40j4CQcUyl6xn7Ue13JLfBmHQbzhE-skyaZrnyQ-/exec";
+
+    // ===== LOAD QUERY PARAMS =====
+    const params = new URLSearchParams(window.location.search);
+    const workerId = params.get("workerId");
+    const email = params.get("email");
+
+    if (!workerId || !email) {
+      alert("Session invalid. Please log in again.");
+      window.location.href = "employeeLogin.html";
+    }
+
+    // ===== DISPLAY INFO =====
+    document.getElementById("userEmail").textContent = email;
+    fetch(`${LOGIN_API}?action=getWorkerId&email=${encodeURIComponent(email)}`)
+      .then(() => { document.getElementById("userName").textContent = "Employee ID: " + workerId; });
+
+    // ===== LOAD REPORT =====
+    const reportFrame = document.getElementById("reportFrame");
+    reportFrame.src = `${CLOCKIN_API}?action=report&workerId=${workerId}`;
+
+    // ===== CLOCK-IN FUNCTION =====
+    document.getElementById("clockInBtn").addEventListener("click", async () => {
+      const btn = document.getElementById("clockInBtn");
+      const status = document.getElementById("clockInStatus");
+      btn.disabled = true;
+      status.textContent = "Recording clock-in...";
+
+      try {
+        const res = await fetch(`${CLOCKIN_API}?action=clockin&workerId=${workerId}`);
+        const text = await res.text();
+        status.textContent = text.includes("Clock-in recorded")
+          ? "✅ Clock-in successful!"
+          : text;
+        // refresh embedded report
+        setTimeout(() => {
+          reportFrame.src = `${CLOCKIN_API}?action=report&workerId=${workerId}&t=${Date.now()}`;
+          btn.disabled = false;
+        }, 2000);
+      } catch (err) {
+        status.textContent = "⚠️ Error: " + err.message;
+        btn.disabled = false;
+      }
+    });
+
+    // ===== LOGOUT =====
+    function logout() {
+      window.location.href = "employeeLogin.html";
+    }
+  </script>
 </body>
 </html>
