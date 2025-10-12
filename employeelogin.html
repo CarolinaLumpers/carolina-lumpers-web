@@ -102,43 +102,110 @@
   </footer>
 
   <!-- LOGIN SCRIPT -->
-  <script>
-    const API_URL="https://script.google.com/macros/s/AKfycbwHBLEQ5QHuhD-O4uI4hRN_5_yS9YsFgtn_dMAdoAO2C7zHLoi3qfHO82vas3Uv0wXXpg/exec";
-    const SESSION_KEY="CLS_User",MAX_SESSION_AGE=6048e5;
+<script>
+  const API_URL = "https://script.google.com/macros/s/AKfycbwHBLEQ5QHuhD-O4uI4hRN_5_yS9YsFgtn_dMAdoAO2C7zHLoi3qfHO82vas3Uv0wXXpg/exec";
+  const SESSION_KEY = "CLS_User", MAX_SESSION_AGE = 6048e5; // 7 days
 
-    // Auto-redirect if session valid
-    (function(){
-      let u=sessionStorage.getItem(SESSION_KEY)||localStorage.getItem(SESSION_KEY);
-      if(u){u=JSON.parse(u);
-        const expired=Date.now()-u.timestamp>MAX_SESSION_AGE;
-        if(!expired&&u.workerId){window.location.href="employeeDashboard.html";}
-        else{localStorage.removeItem(SESSION_KEY);sessionStorage.removeItem(SESSION_KEY);}
+  // --- Multilingual message dictionary ---
+  const LANG = localStorage.getItem("CLS_Lang") || "en";
+  const MSG = {
+    missingFields: {
+      en: "❌ Please fill in both fields.",
+      es: "❌ Por favor completa ambos campos.",
+      pt: "❌ Por favor preencha ambos os campos."
+    },
+    loggingIn: {
+      en: "⏳ Logging in...",
+      es: "⏳ Iniciando sesión...",
+      pt: "⏳ Entrando..."
+    },
+    loginFailed: {
+      en: "⚠️ Login failed.",
+      es: "⚠️ Error al iniciar sesión.",
+      pt: "⚠️ Falha no login."
+    },
+    wrongPassword: {
+      en: "❌ Incorrect password.",
+      es: "❌ Contraseña incorrecta.",
+      pt: "❌ Senha incorreta."
+    },
+    userNotFound: {
+      en: "⚠️ Worker not found.",
+      es: "⚠️ Empleado no encontrado.",
+      pt: "⚠️ Funcionário não encontrado."
+    },
+    success: {
+      en: "✅ Login successful!",
+      es: "✅ ¡Inicio de sesión exitoso!",
+      pt: "✅ Login realizado com sucesso!"
+    },
+    serverError: {
+      en: "⚠️ Error:",
+      es: "⚠️ Error:",
+      pt: "⚠️ Erro:"
+    }
+  };
+
+  // --- Auto-redirect if already logged in ---
+  (function() {
+    let u = sessionStorage.getItem(SESSION_KEY) || localStorage.getItem(SESSION_KEY);
+    if (u) {
+      try { u = JSON.parse(u); } catch { u = null; }
+      const expired = !u || Date.now() - u.timestamp > MAX_SESSION_AGE;
+      if (!expired && u.workerId) {
+        window.location.href = "employeeDashboard.html";
+      } else {
+        localStorage.removeItem(SESSION_KEY);
+        sessionStorage.removeItem(SESSION_KEY);
       }
-    })();
+    }
+  })();
 
-    document.getElementById("loginBtn").addEventListener("click",async()=>{
-      const email=document.getElementById("loginEmail").value.trim(),
-            password=document.getElementById("loginPassword").value.trim(),
-            stay=document.getElementById("stayLoggedIn").checked,
-            msg=document.getElementById("message");
-      if(!email||!password){msg.textContent="❌ Please fill in both fields.";return;}
-      msg.textContent="⏳ Logging in...";
-      try{
-        const res=await fetch(`${API_URL}?action=login&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`);
-        const text=await res.text();
-        if(text.includes("✅ Login successful")){
-          const idRes=await fetch(`${API_URL}?action=getworkerid&email=${encodeURIComponent(email)}`);
-          const data=await idRes.json();
-          if(data.workerId){
-            const session={workerId:data.workerId,displayName:data.displayName,email,timestamp:Date.now(),persistent:stay};
-            const storage=stay?localStorage:sessionStorage;
-            storage.setItem(SESSION_KEY,JSON.stringify(session));
-            window.location.href="employeeDashboard.html";
-          }else msg.textContent="⚠️ Could not find your worker ID.";
-        }else msg.textContent=text;
-      }catch(e){msg.textContent="⚠️ Error: "+e.message;}
-    });
-  </script>
+  // --- Handle Login ---
+  document.getElementById("loginBtn").addEventListener("click", async () => {
+    const email = document.getElementById("loginEmail").value.trim();
+    const password = document.getElementById("loginPassword").value.trim();
+    const stay = document.getElementById("stayLoggedIn").checked;
+    const msg = document.getElementById("message");
+
+    if (!email || !password) {
+      msg.textContent = MSG.missingFields[LANG];
+      return;
+    }
+
+    msg.textContent = MSG.loggingIn[LANG];
+
+    try {
+      const res = await fetch(`${API_URL}?action=login&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`);
+      const text = await res.text();
+      let data;
+      try { data = JSON.parse(text); } catch { data = null; }
+
+      if (data && data.success) {
+        msg.textContent = MSG.success[LANG];
+
+        const session = {
+          workerId: data.workerId,
+          displayName: data.displayName || "Employee",
+          email: data.email || email,
+          timestamp: Date.now(),
+          persistent: stay
+        };
+        const storage = stay ? localStorage : sessionStorage;
+        storage.setItem(SESSION_KEY, JSON.stringify(session));
+        window.location.href = "employeeDashboard.html";
+      } else {
+        // Choose localized error based on backend message
+        if (data && data.message && data.message.includes("password")) msg.textContent = MSG.wrongPassword[LANG];
+        else if (data && data.message && data.message.includes("Worker not found")) msg.textContent = MSG.userNotFound[LANG];
+        else msg.textContent = MSG.loginFailed[LANG];
+      }
+
+    } catch (e) {
+      msg.textContent = `${MSG.serverError[LANG]} ${e.message}`;
+    }
+  });
+</script>
 
   <!-- INLINE MULTILINGUAL SYSTEM -->
   <script>
