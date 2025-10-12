@@ -149,7 +149,7 @@
       });
     }
 
-    // Load session
+    // --- Session Management ---
     let userData = sessionStorage.getItem(SESSION_KEY) || localStorage.getItem(SESSION_KEY);
     if (userData) {
       try { userData = JSON.parse(userData); } catch { userData = null; }
@@ -161,11 +161,15 @@
 
     const { workerId, displayName, email } = userData;
 
-    document.addEventListener("DOMContentLoaded", () => {
+    // --- Init on Load ---
+    window.addEventListener("DOMContentLoaded", () => {
+      // ✅ Ensure display name shows
       document.getElementById("welcomeMessage").textContent = `Welcome, ${displayName || "Employee"}!`;
       document.getElementById("userInfo").textContent = `Worker ID: ${workerId} | ${email}`;
+
       document.getElementById("clockInBtn").addEventListener("click", handleClockIn);
       loadReport();
+      initLanguage();
     });
 
     function logout() {
@@ -174,12 +178,13 @@
       window.location.href = LOGIN_PAGE;
     }
 
-    // --- Clock-In via JSONP ---
+    // --- Clock-In ---
     async function handleClockIn() {
       const btn = document.getElementById("clockInBtn");
       const status = document.getElementById("clockInStatus");
       btn.disabled = true;
       status.textContent = "Recording clock-in...";
+
       try {
         const res = await jsonp(`${API_URL}?action=clockin&workerId=${encodeURIComponent(workerId)}`);
         const text = typeof res === "string" ? res : JSON.stringify(res);
@@ -196,7 +201,7 @@
       }
     }
 
-    // --- Weekly Report via JSONP ---
+    // --- Weekly Report ---
     async function loadReport() {
       const body = document.getElementById("reportBody");
       body.innerHTML = "<tr><td colspan='2'>Loading...</td></tr>";
@@ -229,12 +234,12 @@
       );
     }
 
-    document.addEventListener("DOMContentLoaded", () => {
+    function initLanguage() {
       const s = localStorage.getItem("CLS_Lang");
       const b = navigator.language || navigator.userLanguage;
       const l = s || (b.startsWith("es") ? "es" : b.startsWith("pt") ? "pt" : "en");
       switchLanguage(l);
-    });
+    }
   </script>
 </body>
 </html>
