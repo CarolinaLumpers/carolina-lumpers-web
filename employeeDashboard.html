@@ -117,13 +117,32 @@
       margin-top: 50px;
     }
 
-    iframe {
-      width: 100%;
-      max-width: 900px;
-      height: 80vh;
-      border: none;
-      border-radius: 12px;
+    /* Table styling */
+    #reportTable {
+      margin: 20px auto;
+      width: 90%;
+      max-width: 700px;
+      border-collapse: collapse;
+      color: #f2f2f2;
       box-shadow: 0 0 10px rgba(255, 204, 0, 0.2);
+    }
+
+    #reportTable th, #reportTable td {
+      padding: 10px;
+      border: 1px solid #333;
+    }
+
+    #reportTable tr:nth-child(even) {
+      background-color: #111;
+    }
+
+    #reportTable tr:nth-child(odd) {
+      background-color: #1a1a1a;
+    }
+
+    #reportTable th {
+      background-color: #222;
+      color: #ffcc00;
     }
 
     .logout {
@@ -177,7 +196,17 @@
 
     <div class="report-section">
       <h2>This Week's Clock-In Report</h2>
-      <iframe id="reportFrame" title="Clock-In Report"></iframe>
+      <table id="reportTable">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Time</th>
+          </tr>
+        </thead>
+        <tbody id="reportBody">
+          <tr><td colspan="2" style="text-align:center;">Loading...</td></tr>
+        </tbody>
+      </table>
     </div>
 
     <div class="logout" onclick="logout()">Logout</div>
@@ -206,14 +235,31 @@
       window.location.href = "employeeLogin.html";
     }
 
-    // Display user info
     document.getElementById("userInfo").textContent = `Worker ID: ${workerId} | ${email}`;
 
-    // Load weekly report
-    const reportFrame = document.getElementById("reportFrame");
-    reportFrame.src = `${CLOCKIN_API}?action=report&workerId=${encodeURIComponent(workerId)}`;
+    // Load Weekly Report
+    async function loadReport() {
+      const res = await fetch(`${LOGIN_API}?action=report&workerId=${encodeURIComponent(workerId)}`);
+      const data = await res.json();
+      const body = document.getElementById("reportBody");
+      body.innerHTML = "";
 
-    // Clock In button
+      if (data.records && data.records.length > 0) {
+        data.records.forEach(r => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td>${r.date}</td>
+            <td>${r.time}</td>
+          `;
+          body.appendChild(row);
+        });
+      } else {
+        body.innerHTML = `<tr><td colspan="2" style="text-align:center;">No records found for this week.</td></tr>`;
+      }
+    }
+    loadReport();
+
+    // Clock In Button
     document.getElementById("clockInBtn").addEventListener("click", async () => {
       const btn = document.getElementById("clockInBtn");
       const status = document.getElementById("clockInStatus");
@@ -223,14 +269,23 @@
       try {
         const res = await fetch(`${CLOCKIN_API}?action=clockin&workerId=${encodeURIComponent(workerId)}`);
         const text = await res.text();
-        if (text.includes("Clock-in recorded")) {
+        if (text.includes("Clock-in") || text.includes("success")) {
           status.textContent = "✅ Clock-in successful!";
-          setTimeout(() => {
-            reportFrame.src = `${CLOCKIN_API}?action=report&workerId=${workerId}&t=${Date.now()}`;
-          }, 2000);
+          await loadReport();
         } else {
           status.textContent = text;
         }
       } catch (err) {
         status.textContent = "⚠️ Error: " + err.message;
       } finally {
+        btn.disabled = false;
+      }
+    });
+
+    // Logout
+    function logout() {
+      window.location.href = "employeeLogin.html";
+    }
+  </script>
+</body>
+</html>
