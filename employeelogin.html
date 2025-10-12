@@ -1,50 +1,239 @@
-<h2>Employee Login / Signup</h2>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-JPETF03TJ0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-JPETF03TJ0');
+  </script>
 
-<form id="signupForm">
-  <h3>Sign Up</h3>
-  <input type="email" id="signupEmail" placeholder="Work Email" required><br>
-  <input type="password" id="signupPassword" placeholder="New Password" required><br>
-  <button type="submit">Create Account</button>
-</form>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Employee Login | Carolina Lumper Service</title>
+  <link rel="icon" type="image/png" href="assets/CLS-favicon.png">
+  <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
 
-<form id="loginForm">
-  <h3>Login</h3>
-  <input type="email" id="loginEmail" placeholder="Email" required><br>
-  <input type="password" id="loginPassword" placeholder="Password" required><br>
-  <button type="submit">Login</button>
-</form>
-
-<div id="message"></div>
-
-<script>
-document.getElementById("loginForm").onsubmit = async function(e) {
-  e.preventDefault();
-  const email = document.getElementById("loginEmail").value;
-  const password = document.getElementById("loginPassword").value;
-
-  const apiBase = "https://script.google.com/macros/s/AKfycbwHBLEQ5QHuhD-O4uI4hRN_5_yS9YsFgtn_dMAdoAO2C7zHLoi3qfHO82vas3Uv0wXXpg/exec";
-  const url = `${apiBase}?action=login&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`;
-
-  const res = await fetch(url);
-  const text = await res.text();
-
-  if (text.includes("✅ Login successful")) {
-    // get worker ID and redirect to dashboard
-    const workerId = await getWorkerIdByEmail(email);
-    if (workerId) {
-      window.location.href = `employeeDashboard.html?workerId=${workerId}&email=${encodeURIComponent(email)}`;
-    } else {
-      alert("Could not find your worker ID.");
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #000;
+      color: #f2f2f2;
     }
-  } else {
-    alert(text);
-  }
-};
 
-async function getWorkerIdByEmail(email) {
-  const lookupUrl = "https://script.google.com/macros/s/AKfycbwHBLEQ5QHuhD-O4uI4hRN_5_yS9YsFgtn_dMAdoAO2C7zHLoi3qfHO82vas3Uv0wXXpg/exec";
-  const res = await fetch(`${lookupUrl}?action=getWorkerId&email=${encodeURIComponent(email)}`);
-  return (await res.text()).trim();
-}
-</script>
+    /* Navbar */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #111;
+      padding: 10px 20px;
+    }
 
+    .logo-container {
+      display: flex;
+      align-items: center;
+    }
+
+    .logo {
+      height: 40px;
+      margin-right: 10px;
+    }
+
+    .company-name {
+      color: #ffcc00;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1.2em;
+    }
+
+    .nav-links {
+      list-style: none;
+      display: flex;
+      gap: 20px;
+      margin: 0;
+      padding: 0;
+    }
+
+    .nav-links a {
+      color: #f2f2f2;
+      text-decoration: none;
+      font-size: 0.9em;
+    }
+
+    .nav-links a:hover, .nav-links a.active {
+      color: #ffcc00;
+    }
+
+    /* Form Container */
+    .form-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 80vh;
+      text-align: center;
+    }
+
+    h1 {
+      color: #ffcc00;
+      font-family: "Anton", sans-serif;
+      margin-bottom: 30px;
+      font-size: 2.5em;
+    }
+
+    form {
+      background-color: #111;
+      padding: 30px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 400px;
+      margin-bottom: 20px;
+      box-shadow: 0 0 10px rgba(255, 204, 0, 0.3);
+    }
+
+    form h3 {
+      color: #ffcc00;
+      margin-bottom: 15px;
+    }
+
+    input[type="email"], input[type="password"] {
+      width: 90%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: none;
+      font-size: 1em;
+    }
+
+    button {
+      background-color: #ffcc00;
+      border: none;
+      color: #000;
+      padding: 10px 20px;
+      font-size: 1em;
+      cursor: pointer;
+      border-radius: 5px;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background-color: #ffd633;
+    }
+
+    #message {
+      margin-top: 20px;
+      font-size: 1em;
+    }
+
+    footer {
+      background-color: #111;
+      color: #aaa;
+      text-align: center;
+      padding: 20px;
+      font-size: 0.9em;
+      margin-top: 40px;
+    }
+
+    footer a img {
+      width: 24px;
+      margin: 0 5px;
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="logo-container">
+      <a href="index.html"><img src="assets/CLS_Nav_Logo.png" alt="CLS Logo" class="logo"></a>
+      <a href="index.html" class="company-name">Carolina Lumper Service</a>
+    </div>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="services.html">Services</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="apply.html">Apply</a></li>
+    </ul>
+  </nav>
+
+  <!-- MAIN FORM -->
+  <div class="form-container">
+    <h1>Employee Portal</h1>
+
+    <form id="signupForm">
+      <h3>Create Account</h3>
+      <input type="email" id="signupEmail" placeholder="Work Email" required>
+      <input type="password" id="signupPassword" placeholder="New Password" required>
+      <button type="submit">Sign Up</button>
+    </form>
+
+    <form id="loginForm">
+      <h3>Login</h3>
+      <input type="email" id="loginEmail" placeholder="Email" required>
+      <input type="password" id="loginPassword" placeholder="Password" required>
+      <button type="submit">Login</button>
+    </form>
+
+    <div id="message"></div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>© 2024 Carolina Lumper Service. All rights reserved.</p>
+    <div class="footer-icons">
+      <a href="https://www.facebook.com/profile.php?id=61569872795390"><img src="assets/facebook-icon.png" alt="Facebook"></a>
+      <a href="#"><img src="assets/linkedin-icon.png" alt="LinkedIn"></a>
+    </div>
+  </footer>
+
+  <!-- SCRIPT -->
+  <script>
+    const API_BASE = "https://script.google.com/macros/s/AKfycbwHBLEQ5QHuhD-O4uI4hRN_5_yS9YsFgtn_dMAdoAO2C7zHLoi3qfHO82vas3Uv0wXXpg/exec";
+
+    // SIGNUP
+    document.getElementById("signupForm").onsubmit = async function(e) {
+      e.preventDefault();
+      const email = document.getElementById("signupEmail").value.trim();
+      const password = document.getElementById("signupPassword").value.trim();
+      const msg = document.getElementById("message");
+      msg.textContent = "Creating account...";
+
+      const res = await fetch(`${API_BASE}?action=signup&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`);
+      msg.textContent = await res.text();
+    };
+
+    // LOGIN
+    document.getElementById("loginForm").onsubmit = async function(e) {
+      e.preventDefault();
+      const email = document.getElementById("loginEmail").value.trim();
+      const password = document.getElementById("loginPassword").value.trim();
+      const msg = document.getElementById("message");
+      msg.textContent = "Verifying...";
+
+      const res = await fetch(`${API_BASE}?action=login&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`);
+      const text = await res.text();
+
+      if (text.includes("✅ Login successful")) {
+        const idRes = await fetch(`${API_BASE}?action=getWorkerId&email=${encodeURIComponent(email)}`);
+        const workerId = (await idRes.text()).trim();
+
+        if (workerId) {
+          window.location.href = `employeeDashboard.html?workerId=${workerId}&email=${encodeURIComponent(email)}`;
+        } else {
+          msg.textContent = "⚠️ Could not find your worker ID.";
+        }
+      } else {
+        msg.textContent = text;
+      }
+    };
+  </script>
+
+</body>
+</html>
