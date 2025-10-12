@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Employee Sign Up | Carolina Lumper Service</title>
+  <link rel="icon" type="image/png" href="assets/CLS-favicon.png">
+  <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    body {
+      background-color: #000;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
+
+    .signup-container {
+      max-width: 400px;
+      margin: 80px auto;
+      background-color: #111;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(255, 204, 0, 0.2);
+    }
+
+    h1 {
+      font-family: "Anton", sans-serif;
+      color: #ffcc00;
+      margin-bottom: 20px;
+    }
+
+    input {
+      width: 90%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 6px;
+      border: none;
+      font-size: 1em;
+    }
+
+    button {
+      background-color: #ffcc00;
+      color: #000;
+      border: none;
+      border-radius: 6px;
+      padding: 12px 30px;
+      font-size: 1em;
+      cursor: pointer;
+      transition: background-color 0.2s ease-in-out;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background-color: #ffd633;
+    }
+
+    .message {
+      margin-top: 15px;
+      font-size: 0.95em;
+      min-height: 20px;
+    }
+
+    a {
+      color: #ffcc00;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="logo-container">
+      <a href="index.html" class="logo-link">
+        <img src="assets/CLS_Nav_Logo.png" alt="CLS Logo" class="logo">
+      </a>
+      <a href="index.html" class="company-name">CAROLINA LUMPER SERVICE</a>
+    </div>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="services.html">Services</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="apply.html">Apply</a></li>
+      <li><a href="employeeLogin.html" class="active">Login</a></li>
+    </ul>
+  </nav>
+
+  <!-- SIGN UP FORM -->
+  <div class="signup-container">
+    <h1>Employee Sign Up</h1>
+    <input type="email" id="email" placeholder="Work Email" required>
+    <input type="password" id="password" placeholder="Create Password" required>
+    <button id="signupBtn">Create Account</button>
+    <div class="message" id="message"></div>
+
+    <p style="margin-top:20px;">Already have an account? <a href="employeeLogin.html">Login here</a>.</p>
+  </div>
+
+  <footer>
+    <p>© 2024 Carolina Lumper Service. All rights reserved.</p>
+  </footer>
+
+  <script>
+    const LOGIN_API = "https://script.google.com/macros/s/AKfycbwHBLEQ5QHuhD-O4uI4hRN_5_yS9YsFgtn_dMAdoAO2C7zHLoi3qfHO82vas3Uv0wXXpg/exec";
+
+    document.getElementById("signupBtn").addEventListener("click", async () => {
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+      const message = document.getElementById("message");
+
+      if (!email || !password) {
+        message.textContent = "❌ Please fill in all fields.";
+        return;
+      }
+
+      message.textContent = "⏳ Creating account...";
+
+      try {
+        const res = await fetch(`${LOGIN_API}?action=signup&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`);
+        const text = await res.text();
+        message.textContent = text.includes("✅")
+          ? "✅ Account created! You can now log in."
+          : text;
+      } catch (err) {
+        message.textContent = "⚠️ Error: " + err.message;
+      }
+    });
+  </script>
+</body>
+</html>
