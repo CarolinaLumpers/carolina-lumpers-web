@@ -163,17 +163,14 @@
 
   <!-- SCRIPT -->
   <script>
-    const LOGIN_API = "https://script.google.com/macros/s/AKfycbwHBLEQ5QHuhD-O4uI4hRN_5_yS9YsFgtn_dMAdoAO2C7zHLoi3qfHO82vas3Uv0wXXpg/exec";
-    const CLOCKIN_API = "https://script.google.com/macros/s/AKfycbxFRO7ukN_Y0LbNZYuuhhcz073Z40j4CQcUyl6xn7Ue13JLfBmHQbzhE-skyaZrnyQ-/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbwHBLEQ5QHuhD-O4uI4hRN_5_yS9YsFgtn_dMAdoAO2C7zHLoi3qfHO82vas3Uv0wXXpg/exec";
     const SESSION_KEY = "CLS_User";
     const LOGIN_PAGE = "employeelogin.html";
     const MAX_SESSION_AGE = 7 * 24 * 60 * 60 * 1000; // 7 days
 
-    // Load stored session (from either storage)
     let userData = sessionStorage.getItem(SESSION_KEY) || localStorage.getItem(SESSION_KEY);
     if (userData) userData = JSON.parse(userData);
 
-    // Session validation
     function isSessionExpired(data) {
       if (!data || !data.timestamp) return true;
       return Date.now() - data.timestamp > MAX_SESSION_AGE;
@@ -186,7 +183,6 @@
       window.location.href = LOGIN_PAGE;
     }
 
-    // Refresh timestamp if valid
     userData.timestamp = Date.now();
     if (userData.persistent) {
       localStorage.setItem(SESSION_KEY, JSON.stringify(userData));
@@ -195,21 +191,18 @@
     }
 
     const { workerId, displayName, email } = userData;
-
-    // Display info
     document.getElementById("welcomeMessage").textContent = displayName
       ? `Welcome, ${displayName}!`
       : "Employee Dashboard";
     document.getElementById("userInfo").textContent = `Worker ID: ${workerId} | ${email}`;
 
-    // Logout clears all
     function logout() {
       localStorage.removeItem(SESSION_KEY);
       sessionStorage.removeItem(SESSION_KEY);
       window.location.href = LOGIN_PAGE;
     }
 
-    // Clock-In
+    // ✅ Clock-In now handled through the unified API
     document.getElementById("clockInBtn").addEventListener("click", async () => {
       const btn = document.getElementById("clockInBtn");
       const status = document.getElementById("clockInStatus");
@@ -217,7 +210,7 @@
       status.textContent = "Recording clock-in...";
 
       try {
-        const res = await fetch(`${CLOCKIN_API}?action=clockin&workerId=${encodeURIComponent(workerId)}`);
+        const res = await fetch(`${API_URL}?action=clockin&workerId=${encodeURIComponent(workerId)}`);
         const text = await res.text();
 
         if (text.includes("Clock-in recorded")) {
@@ -233,13 +226,13 @@
       }
     });
 
-    // Weekly report
+    // ✅ Weekly report from same API
     async function loadReport() {
       const body = document.getElementById("reportBody");
       body.innerHTML = "<tr><td colspan='2'>Loading...</td></tr>";
 
       try {
-        const res = await fetch(`${LOGIN_API}?action=report&workerId=${encodeURIComponent(workerId)}`);
+        const res = await fetch(`${API_URL}?action=report&workerId=${encodeURIComponent(workerId)}`);
         const data = await res.json();
         body.innerHTML = "";
 
