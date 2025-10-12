@@ -12,7 +12,12 @@
 
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Employee Login | Carolina Lumper Service</title>
+  <title data-en="Employee Login | Carolina Lumper Service"
+          data-es="Inicio de Sesión | Carolina Lumper Service"
+          data-pt="Login de Funcionário | Carolina Lumper Service">
+          Employee Login | Carolina Lumper Service
+  </title>
+
   <link rel="icon" type="image/png" href="assets/CLS-favicon.png">
   <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
@@ -100,6 +105,26 @@
       width: 24px;
       margin: 0 5px;
     }
+
+    .language-toggle {
+      margin-top: 10px;
+      text-align: center;
+    }
+
+    .language-toggle button {
+      margin: 4px;
+      padding: 8px 12px;
+      border: none;
+      background: #111;
+      color: #ffcc00;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .language-toggle button.active {
+      background: #ffcc00;
+      color: #000;
+    }
   </style>
 </head>
 
@@ -110,46 +135,67 @@
       <a href="index.html" class="logo-link">
         <img src="assets/CLS_Nav_Logo.png" alt="CLS Logo" class="logo">
       </a>
-      <a href="index.html" class="company-name">CAROLINA LUMPER SERVICE</a>
+      <a href="index.html" class="company-name" data-en="CAROLINA LUMPER SERVICE" data-es="CAROLINA LUMPER SERVICE" data-pt="CAROLINA LUMPER SERVICE">
+        CAROLINA LUMPER SERVICE
+      </a>
     </div>
     <ul class="nav-links">
-      <li><a href="index.html">Home</a></li>
-      <li><a href="about.html">About</a></li>
-      <li><a href="services.html">Services</a></li>
-      <li><a href="contact.html">Contact</a></li>
-      <li><a href="apply.html">Apply</a></li>
-      <li><a href="employeeSignup.html">Sign Up</a></li>
+      <li><a href="index.html" data-en="Home" data-es="Inicio" data-pt="Início">Home</a></li>
+      <li><a href="about.html" data-en="About" data-es="Sobre" data-pt="Sobre">About</a></li>
+      <li><a href="services.html" data-en="Services" data-es="Servicios" data-pt="Serviços">Services</a></li>
+      <li><a href="contact.html" data-en="Contact" data-es="Contacto" data-pt="Contato">Contact</a></li>
+      <li><a href="apply.html" data-en="Apply" data-es="Solicitar" data-pt="Candidatar">Apply</a></li>
+      <li><a href="employeeSignup.html" data-en="Sign Up" data-es="Regístrate" data-pt="Cadastre-se">Sign Up</a></li>
     </ul>
   </nav>
 
   <!-- LOGIN FORM -->
   <div class="login-container">
-    <h1>Employee Login</h1>
-    <input type="email" id="loginEmail" placeholder="Work Email" required>
-    <input type="password" id="loginPassword" placeholder="Password" required>
+    <h1 data-en="Employee Login" data-es="Inicio de Sesión de Empleado" data-pt="Login de Funcionário">Employee Login</h1>
+
+    <input type="email" id="loginEmail" placeholder="Work Email" 
+           data-en="Work Email" data-es="Correo de Trabajo" data-pt="Email de Trabalho" required>
+
+    <input type="password" id="loginPassword" placeholder="Password"
+           data-en="Password" data-es="Contraseña" data-pt="Senha" required>
 
     <label style="display:block; margin-top:10px; color:#ccc; font-size:0.9em;">
-      <input type="checkbox" id="stayLoggedIn"> Stay logged in
+      <input type="checkbox" id="stayLoggedIn"> 
+      <span data-en="Stay logged in" data-es="Mantener sesión iniciada" data-pt="Manter-se conectado">
+        Stay logged in
+      </span>
     </label>
 
-    <button id="loginBtn">Login</button>
+    <button id="loginBtn" data-en="Login" data-es="Iniciar Sesión" data-pt="Entrar">Login</button>
     <div class="message" id="message"></div>
 
     <div class="link">
-      Don’t have an account? <a href="employeeSignup.html">Sign Up</a>
+      <span data-en="Don’t have an account?" data-es="¿No tienes una cuenta?" data-pt="Não tem uma conta?">Don’t have an account?</span>
+      <a href="employeeSignup.html" data-en="Sign Up" data-es="Regístrate" data-pt="Cadastre-se">Sign Up</a>
     </div>
   </div>
 
   <!-- FOOTER -->
   <footer>
-    <p>© 2024 Carolina Lumper Service. All rights reserved.</p>
+    <p data-en="© 2024 Carolina Lumper Service. All rights reserved."
+       data-es="© 2024 Carolina Lumper Service. Todos los derechos reservados."
+       data-pt="© 2024 Carolina Lumper Service. Todos os direitos reservados.">
+       © 2024 Carolina Lumper Service. All rights reserved.
+    </p>
+
     <div class="footer-icons">
       <a href="https://www.facebook.com/profile.php?id=61569872795390"><img src="assets/facebook-icon.png" alt="Facebook"></a>
       <a href="#"><img src="assets/linkedin-icon.png" alt="LinkedIn"></a>
     </div>
+
+    <div class="language-toggle">
+      <button data-lang="en" onclick="switchLanguage('en')">English</button>
+      <button data-lang="es" onclick="switchLanguage('es')">Español</button>
+      <button data-lang="pt" onclick="switchLanguage('pt')">Português</button>
+    </div>
   </footer>
 
-  <!-- SCRIPT -->
+  <!-- LOGIN SCRIPT -->
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbwHBLEQ5QHuhD-O4uI4hRN_5_yS9YsFgtn_dMAdoAO2C7zHLoi3qfHO82vas3Uv0wXXpg/exec";
     const SESSION_KEY = "CLS_User";
@@ -170,54 +216,54 @@
       }
     })();
 
-// LOGIN HANDLER
-document.getElementById("loginBtn").addEventListener("click", async () => {
-  const email = document.getElementById("loginEmail").value.trim();
-  const password = document.getElementById("loginPassword").value.trim();
-  const stayLoggedIn = document.getElementById("stayLoggedIn").checked;
-  const message = document.getElementById("message");
+    // LOGIN HANDLER
+    document.getElementById("loginBtn").addEventListener("click", async () => {
+      const email = document.getElementById("loginEmail").value.trim();
+      const password = document.getElementById("loginPassword").value.trim();
+      const stayLoggedIn = document.getElementById("stayLoggedIn").checked;
+      const message = document.getElementById("message");
 
-  if (!email || !password) {
-    message.textContent = "❌ Please fill in both fields.";
-    return;
-  }
-
-  message.textContent = "⏳ Logging in...";
-
-  try {
-    const res = await fetch(`${API_URL}?action=login&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`);
-    const text = await res.text();
-
-
-
-    if (text.includes("✅ Login successful")) {
-      const idRes = await fetch(`${API_URL}?action=getworkerid&email=${encodeURIComponent(email)}`);
-      const data = await idRes.json();
-
-      if (data.workerId) {
-        const sessionData = {
-          workerId: data.workerId,
-          displayName: data.displayName,
-          email,
-          timestamp: Date.now(),
-          persistent: stayLoggedIn
-        };
-
-        const storage = stayLoggedIn ? localStorage : sessionStorage;
-        storage.setItem(SESSION_KEY, JSON.stringify(sessionData));
-
-        window.location.href = "employeeDashboard.html";
-      } else {
-        message.textContent = "⚠️ Could not find your worker ID.";
+      if (!email || !password) {
+        message.textContent = "❌ Please fill in both fields.";
+        return;
       }
-    } else {
-      message.textContent = text;
-    }
-  } catch (err) {
-    message.textContent = "⚠️ Error: " + err.message;
-  }
-});
 
+      message.textContent = "⏳ Logging in...";
+
+      try {
+        const res = await fetch(`${API_URL}?action=login&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`);
+        const text = await res.text();
+
+        if (text.includes("✅ Login successful")) {
+          const idRes = await fetch(`${API_URL}?action=getworkerid&email=${encodeURIComponent(email)}`);
+          const data = await idRes.json();
+
+          if (data.workerId) {
+            const sessionData = {
+              workerId: data.workerId,
+              displayName: data.displayName,
+              email,
+              timestamp: Date.now(),
+              persistent: stayLoggedIn
+            };
+
+            const storage = stayLoggedIn ? localStorage : sessionStorage;
+            storage.setItem(SESSION_KEY, JSON.stringify(sessionData));
+
+            window.location.href = "employeeDashboard.html";
+          } else {
+            message.textContent = "⚠️ Could not find your worker ID.";
+          }
+        } else {
+          message.textContent = text;
+        }
+      } catch (err) {
+        message.textContent = "⚠️ Error: " + err.message;
+      }
+    });
   </script>
+
+  <!-- AUTO LANGUAGE SCRIPT -->
+  <script src="assets/lang-auto.js"></script>
 </body>
 </html>
