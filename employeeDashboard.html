@@ -25,7 +25,8 @@
   <style>
     body { background-color:#000;color:#fff;font-family:Arial,sans-serif;margin:0;text-align:center;}
     .dashboard { padding:50px 20px;}
-    h1 { color:#ffcc00;font-family:"Anton",sans-serif;font-size:2.4em;margin-bottom:10px;}
+    h1 { color:#ffcc00;font-family:"Anton",sans-serif;font-size:2.4em;margin-bottom:5px;}
+    h2#welcomeName { color:#ffcc00;font-weight:normal;font-size:1.4em;margin-top:0;margin-bottom:20px; }
     .info { margin-bottom:25px;font-size:1.1em;}
     #clockInBtn { background-color:#ffcc00;color:#000;border:none;border-radius:8px;padding:15px 40px;font-size:1.2em;cursor:pointer;transition:background-color .2s;}
     #clockInBtn:hover { background-color:#ffd633;}
@@ -64,13 +65,14 @@
       <li><a href="about.html" data-en="About" data-es="Sobre" data-pt="Sobre">About</a></li>
       <li><a href="services.html" data-en="Services" data-es="Servicios" data-pt="Serviços">Services</a></li>
       <li><a href="contact.html" data-en="Contact" data-es="Contacto" data-pt="Contato">Contact</a></li>
-      <li><a href="apply.html" data-en="Apply" data-es="Solicitar" data-pt="Candidatar">Apply</a></li>
     </ul>
   </nav>
 
   <!-- DASHBOARD -->
   <div class="dashboard">
     <h1 id="welcomeMessage" data-en="Employee Dashboard" data-es="Panel del Empleado" data-pt="Painel do Funcionário">Employee Dashboard</h1>
+    <h2 id="welcomeName"></h2>
+
     <div class="info" id="userInfo"></div>
 
     <button id="clockInBtn" data-en="Clock In" data-es="Registrar Entrada" data-pt="Registrar Entrada">Clock In</button>
@@ -120,67 +122,25 @@
   const SESSION_KEY = "CLS_User";
   const LOGIN_PAGE = "employeelogin.html";
 
-  // --- Multilingual message dictionary ---
   const LANG = localStorage.getItem("CLS_Lang") || "en";
+  const GREETINGS = { en: "Welcome", es: "¡Bienvenido", pt: "Bem-vindo" };
+
+  // --- Multilingual status messages ---
   const MSG = {
-    gettingLocation: {
-      en: "📍 Getting your location...",
-      es: "📍 Obteniendo tu ubicación...",
-      pt: "📍 Obtendo sua localização..."
-    },
-    recordingClockIn: {
-      en: "Recording clock-in...",
-      es: "Registrando entrada...",
-      pt: "Registrando entrada..."
-    },
-    clockInSuccess: {
-      en: "✅ Clock-in successful at",
-      es: "✅ ¡Registro exitoso en",
-      pt: "✅ Registro bem-sucedido em"
-    },
-    clockInFailed: {
-      en: "⚠️ Clock-in failed.",
-      es: "⚠️ Error al registrar entrada.",
-      pt: "⚠️ Falha ao registrar entrada."
-    },
-    locationDenied: {
-      en: "⚠️ Location access denied. Please enable GPS.",
-      es: "⚠️ Acceso a la ubicación denegado. Activa el GPS.",
-      pt: "⚠️ Acesso à localização negado. Ative o GPS."
-    },
-    locationUnavailable: {
-      en: "⚠️ Location unavailable. Try again.",
-      es: "⚠️ Ubicación no disponible. Inténtalo de nuevo.",
-      pt: "⚠️ Localização indisponível. Tente novamente."
-    },
-    locationTimeout: {
-      en: "⚠️ Location request timed out.",
-      es: "⚠️ Solicitud de ubicación agotó el tiempo.",
-      pt: "⚠️ Solicitação de localização expirou."
-    },
-    errorPrefix: {
-      en: "⚠️ Error:",
-      es: "⚠️ Error:",
-      pt: "⚠️ Erro:"
-    },
-    loadingReport: {
-      en: "Loading...",
-      es: "Cargando...",
-      pt: "Carregando..."
-    },
-    noClockIns: {
-      en: "No clock-ins this week.",
-      es: "No hay registros esta semana.",
-      pt: "Sem registros esta semana."
-    },
-    reportError: {
-      en: "⚠️ Error loading report:",
-      es: "⚠️ Error al cargar el informe:",
-      pt: "⚠️ Erro ao carregar o relatório:"
-    }
+    gettingLocation: { en: "📍 Getting your location...", es: "📍 Obteniendo tu ubicación...", pt: "📍 Obtendo sua localização..." },
+    recordingClockIn: { en: "Recording clock-in...", es: "Registrando entrada...", pt: "Registrando entrada..." },
+    clockInSuccess: { en: "✅ Clock-in successful at", es: "✅ ¡Registro exitoso en", pt: "✅ Registro bem-sucedido em" },
+    clockInFailed: { en: "⚠️ Clock-in failed.", es: "⚠️ Error al registrar entrada.", pt: "⚠️ Falha ao registrar entrada." },
+    locationDenied: { en: "⚠️ Location access denied. Please enable GPS.", es: "⚠️ Acceso a la ubicación denegado. Activa el GPS.", pt: "⚠️ Acesso à localização negado. Ative o GPS." },
+    locationUnavailable: { en: "⚠️ Location unavailable. Try again.", es: "⚠️ Ubicación no disponible. Inténtalo de nuevo.", pt: "⚠️ Localização indisponível. Tente novamente." },
+    locationTimeout: { en: "⚠️ Location request timed out.", es: "⚠️ Solicitud de ubicación agotó el tiempo.", pt: "⚠️ Solicitação de localização expirou." },
+    errorPrefix: { en: "⚠️ Error:", es: "⚠️ Error:", pt: "⚠️ Erro:" },
+    loadingReport: { en: "Loading...", es: "Cargando...", pt: "Carregando..." },
+    noClockIns: { en: "No clock-ins this week.", es: "No hay registros esta semana.", pt: "Sem registros esta semana." },
+    reportError: { en: "⚠️ Error loading report:", es: "⚠️ Error al cargar el informe:", pt: "⚠️ Erro ao carregar o relatório:" }
   };
 
-  // --- JSONP helper ---
+  // --- JSONP Helper ---
   function jsonp(url) {
     return new Promise((resolve, reject) => {
       const cb = "cb_" + Math.random().toString(36).slice(2);
@@ -188,41 +148,26 @@
       const sep = url.includes("?") ? "&" : "?";
       s.src = `${url}${sep}callback=${cb}`;
       s.async = true;
-      const timeout = setTimeout(() => {
-        delete window[cb];
-        s.remove();
-        reject(new Error("Request timed out"));
-      }, 10000);
-      window[cb] = (data) => {
-        clearTimeout(timeout);
-        delete window[cb];
-        s.remove();
-        resolve(data);
-      };
-      s.onerror = () => {
-        clearTimeout(timeout);
-        delete window[cb];
-        s.remove();
-        reject(new Error("Network error"));
-      };
+      const timeout = setTimeout(() => { delete window[cb]; s.remove(); reject(new Error("Request timed out")); }, 10000);
+      window[cb] = (data) => { clearTimeout(timeout); delete window[cb]; s.remove(); resolve(data); };
+      s.onerror = () => { clearTimeout(timeout); delete window[cb]; s.remove(); reject(new Error("Network error")); };
       document.body.appendChild(s);
     });
   }
 
   // --- Session ---
   let userData = sessionStorage.getItem(SESSION_KEY) || localStorage.getItem(SESSION_KEY);
-  if (userData) {
-    try { userData = JSON.parse(userData); } catch { userData = null; }
-  }
+  if (userData) { try { userData = JSON.parse(userData); } catch { userData = null; } }
   if (!userData || !userData.workerId) {
-    alert("Session expired. Please log in again.");
-    window.location.href = LOGIN_PAGE;
+    alert("Session expired. Please log in again."); window.location.href = LOGIN_PAGE;
   }
 
   const { workerId, displayName, email } = userData;
 
+  // --- Initialize UI ---
   window.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("welcomeMessage").textContent = `Welcome, ${displayName || "Employee"}!`;
+    const greeting = GREETINGS[LANG] || GREETINGS.en;
+    document.getElementById("welcomeName").textContent = `${greeting}, ${displayName || "Employee"}!`;
     document.getElementById("userInfo").textContent = `Worker ID: ${workerId} | ${email}`;
     document.getElementById("clockInBtn").addEventListener("click", handleClockIn);
     loadReport();
@@ -242,16 +187,11 @@
     const status = document.getElementById("clockInStatus");
     btn.disabled = true;
     status.textContent = MSG.gettingLocation[LANG];
-
     try {
-      const pos = await new Promise((resolve, reject) =>
-        navigator.geolocation.getCurrentPosition(resolve, reject, { enableHighAccuracy: true, timeout: 10000 })
-      );
+      const pos = await new Promise((resolve, reject) => navigator.geolocation.getCurrentPosition(resolve, reject, { enableHighAccuracy: true, timeout: 10000 }));
       const { latitude, longitude } = pos.coords;
       status.textContent = MSG.recordingClockIn[LANG];
-
       const res = await jsonp(`${API_URL}?action=clockin&workerId=${encodeURIComponent(workerId)}&lat=${latitude}&lng=${longitude}`);
-
       if (res && res.success) {
         const site = res.site || "Job Site";
         const dist = res.distance ? ` (${res.distance} mi)` : "";
@@ -260,18 +200,13 @@
       } else if (res && res.message) {
         const site = res.site ? ` (${res.site} - ${res.distance} mi)` : "";
         status.textContent = `${MSG.clockInFailed[LANG]} ${site}. ${res.message}`;
-      } else {
-        status.textContent = MSG.clockInFailed[LANG];
-      }
-
+      } else status.textContent = MSG.clockInFailed[LANG];
     } catch (err) {
       if (err.code === 1) status.textContent = MSG.locationDenied[LANG];
       else if (err.code === 2) status.textContent = MSG.locationUnavailable[LANG];
       else if (err.code === 3) status.textContent = MSG.locationTimeout[LANG];
       else status.textContent = `${MSG.errorPrefix[LANG]} ${err.message}`;
-    } finally {
-      btn.disabled = false;
-    }
+    } finally { btn.disabled = false; }
   }
 
   // --- Weekly Report ---
@@ -287,9 +222,7 @@
           row.innerHTML = `<td>${r.date || ""}</td><td>${r.time || ""}</td>`;
           body.appendChild(row);
         });
-      } else {
-        body.innerHTML = `<tr><td colspan="2">${MSG.noClockIns[LANG]}</td></tr>`;
-      }
+      } else body.innerHTML = `<tr><td colspan="2">${MSG.noClockIns[LANG]}</td></tr>`;
     } catch (err) {
       body.innerHTML = `<tr><td colspan="2">${MSG.reportError[LANG]} ${err.message}</td></tr>`;
     }
@@ -302,9 +235,14 @@
       const t = el.getAttribute(`data-${lang}`) || el.getAttribute("data-en");
       if (t) el.innerHTML = t;
     });
-    document.querySelectorAll(".language-toggle button").forEach(b =>
-      b.classList.toggle("active", b.dataset.lang === lang)
-    );
+    document.querySelectorAll(".language-toggle button").forEach(b => b.classList.toggle("active", b.dataset.lang === lang));
+
+    // update greeting dynamically
+    const user = JSON.parse(localStorage.getItem(SESSION_KEY) || sessionStorage.getItem(SESSION_KEY) || "{}");
+    if (user.displayName) {
+      const greeting = GREETINGS[lang] || GREETINGS.en;
+      document.getElementById("welcomeName").textContent = `${greeting}, ${user.displayName}!`;
+    }
   }
 
   function initLanguage() {
@@ -314,6 +252,5 @@
     switchLanguage(l);
   }
 </script>
-
 </body>
 </html>
