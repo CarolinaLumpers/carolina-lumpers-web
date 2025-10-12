@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-JPETF03TJ0"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
-    function gtag() { dataLayer.push(arguments); }
+    function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
     gtag('config', 'G-JPETF03TJ0');
   </script>
@@ -23,75 +22,69 @@
       background-color: #000;
       color: #fff;
       font-family: Arial, sans-serif;
+      text-align: center;
       margin: 0;
-      text-align: center;
+      padding: 0;
     }
 
-    h2 {
-      color: #ffcc00;
-      font-family: "Anton", sans-serif;
-      margin-top: 50px;
-      margin-bottom: 40px;
-      font-size: 1.8em;
-    }
-
-    .login-wrapper {
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      gap: 60px;
-      flex-wrap: wrap;
-      margin: 40px auto 100px;
-    }
-
-    form {
+    .login-container {
+      max-width: 400px;
+      margin: 100px auto;
       background-color: #111;
-      padding: 30px 40px;
-      border-radius: 12px;
-      box-shadow: 0 0 15px rgba(255, 204, 0, 0.2);
-      width: 320px;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(255, 204, 0, 0.2);
     }
 
-    form h3 {
-      color: #ffcc00;
+    h1 {
       font-family: "Anton", sans-serif;
-      text-align: center;
-      margin-bottom: 15px;
-      letter-spacing: 0.5px;
+      color: #ffcc00;
+      margin-bottom: 20px;
     }
 
     input {
-      width: 100%;
-      padding: 10px;
+      width: 90%;
+      padding: 12px;
       margin: 10px 0;
-      border-radius: 5px;
-      border: 1px solid #333;
-      background-color: #222;
-      color: #fff;
+      border-radius: 6px;
+      border: none;
       font-size: 1em;
     }
 
     button {
-      width: 100%;
       background-color: #ffcc00;
       color: #000;
       border: none;
-      border-radius: 5px;
-      padding: 10px;
+      border-radius: 6px;
+      padding: 12px 30px;
+      font-size: 1em;
       cursor: pointer;
-      font-weight: bold;
-      transition: background-color 0.2s;
+      transition: background-color 0.2s ease-in-out;
+      margin-top: 10px;
     }
 
     button:hover {
       background-color: #ffd633;
     }
 
-    #message {
-      text-align: center;
+    .message {
+      margin-top: 15px;
+      font-size: 0.95em;
+      min-height: 20px;
+    }
+
+    .link {
       margin-top: 20px;
+      font-size: 0.95em;
+    }
+
+    .link a {
       color: #ffcc00;
-      font-weight: bold;
+      text-decoration: none;
+    }
+
+    .link a:hover {
+      text-decoration: underline;
     }
 
     footer {
@@ -100,7 +93,7 @@
       text-align: center;
       padding: 20px;
       font-size: 0.9em;
-      margin-top: 80px;
+      margin-top: 60px;
     }
 
     footer a img {
@@ -120,36 +113,27 @@
       <a href="index.html" class="company-name">CAROLINA LUMPER SERVICE</a>
     </div>
     <ul class="nav-links">
-      <li><a href="index.html" class="active">Home</a></li>
-      <li><a href="about.html">About Us</a></li>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="about.html">About</a></li>
       <li><a href="services.html">Services</a></li>
       <li><a href="contact.html">Contact</a></li>
       <li><a href="apply.html">Apply</a></li>
+      <li><a href="employeeSignup.html">Sign Up</a></li>
     </ul>
   </nav>
 
-  <!-- LOGIN SECTION -->
-  <h2>Employee Login / Signup</h2>
+  <!-- LOGIN FORM -->
+  <div class="login-container">
+    <h1>Employee Login</h1>
+    <input type="email" id="loginEmail" placeholder="Work Email" required>
+    <input type="password" id="loginPassword" placeholder="Password" required>
+    <button id="loginBtn">Login</button>
+    <div class="message" id="message"></div>
 
-  <div class="login-wrapper">
-    <!-- Sign Up Form -->
-    <form id="signupForm">
-      <h3>Sign Up</h3>
-      <input type="email" id="signupEmail" placeholder="Work Email" required>
-      <input type="password" id="signupPassword" placeholder="New Password" required>
-      <button type="submit">Create Account</button>
-    </form>
-
-    <!-- Login Form -->
-    <form id="loginForm">
-      <h3>Login</h3>
-      <input type="email" id="loginEmail" placeholder="Email" required>
-      <input type="password" id="loginPassword" placeholder="Password" required>
-      <button type="submit">Login</button>
-    </form>
+    <div class="link">
+      Don’t have an account? <a href="employeeSignup.html">Sign Up</a>
+    </div>
   </div>
-
-  <div id="message"></div>
 
   <!-- FOOTER -->
   <footer>
@@ -160,63 +144,42 @@
     </div>
   </footer>
 
-  <!-- LOGIN SCRIPT -->
+  <!-- SCRIPT -->
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbwHBLEQ5QHuhD-O4uI4hRN_5_yS9YsFgtn_dMAdoAO2C7zHLoi3qfHO82vas3Uv0wXXpg/exec";
-    const messageBox = document.getElementById("message");
+    const LOGIN_API = "https://script.google.com/macros/s/AKfycbwHBLEQ5QHuhD-O4uI4hRN_5_yS9YsFgtn_dMAdoAO2C7zHLoi3qfHO82vas3Uv0wXXpg/exec";
 
-    // --- SIGN UP ---
-    document.getElementById("signupForm").onsubmit = async function (e) {
-      e.preventDefault();
-      const email = document.getElementById("signupEmail").value.trim();
-      const password = document.getElementById("signupPassword").value.trim();
-      messageBox.textContent = "Creating account...";
-
-      const res = await fetch(`${API_URL}?action=signup&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`);
-      const text = await res.text();
-      messageBox.textContent = text;
-    };
-
-    // --- LOGIN ---
-    document.getElementById("loginForm").onsubmit = async function (e) {
-      e.preventDefault();
+    document.getElementById("loginBtn").addEventListener("click", async () => {
       const email = document.getElementById("loginEmail").value.trim();
       const password = document.getElementById("loginPassword").value.trim();
-      messageBox.textContent = "Verifying credentials...";
+      const message = document.getElementById("message");
 
-      const loginRes = await fetch(`${API_URL}?action=login&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`);
-      const text = await loginRes.text();
-
-      if (text.includes("✅ Login successful")) {
-        messageBox.textContent = "Login successful. Redirecting...";
-
-        const workerData = await getWorkerIdByEmail(email);
-        if (workerData && workerData.workerId) {
-          window.location.href = `employeeDashboard.html?workerId=${encodeURIComponent(workerData.workerId)}&name=${encodeURIComponent(workerData.displayName)}&email=${encodeURIComponent(email)}`;
-        } else {
-          messageBox.textContent = "Could not retrieve worker information.";
-        }
-      } else {
-        messageBox.textContent = text;
+      if (!email || !password) {
+        message.textContent = "❌ Please fill in both fields.";
+        return;
       }
-    };
 
-    // --- GET WORKER INFO (ID + NAME) ---
-    async function getWorkerIdByEmail(email) {
-      const res = await fetch(`${API_URL}?action=getWorkerId&email=${encodeURIComponent(email)}`);
-      const result = await res.text();
+      message.textContent = "⏳ Logging in...";
 
       try {
-        const data = JSON.parse(result);
-        if (data.error) {
-          messageBox.textContent = data.error;
-          return null;
+        const res = await fetch(`${LOGIN_API}?action=login&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`);
+        const text = await res.text();
+
+        if (text.includes("✅ Login successful")) {
+          const idRes = await fetch(`${LOGIN_API}?action=getworkerid&email=${encodeURIComponent(email)}`);
+          const data = await idRes.json();
+
+          if (data.workerId) {
+            window.location.href = `employeeDashboard.html?workerId=${encodeURIComponent(data.workerId)}&name=${encodeURIComponent(data.displayName)}&email=${encodeURIComponent(email)}`;
+          } else {
+            message.textContent = "⚠️ Could not find your worker ID.";
+          }
+        } else {
+          message.textContent = text;
         }
-        return data; // { workerId, displayName }
-      } catch {
-        return { workerId: result.trim(), displayName: "" };
+      } catch (err) {
+        message.textContent = "⚠️ Error: " + err.message;
       }
-    }
+    });
   </script>
 </body>
 </html>
