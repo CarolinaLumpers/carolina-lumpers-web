@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>My Work Report</title>
+<style>
+  body { font-family: Arial, sans-serif; color: #f2f2f2; background: #000; text-align: center; margin: 0; padding: 20px; }
+  h1 { color: #ffcc00; }
+  #clockInBtn { background:#ffcc00; border:none; color:#000; padding:15px 30px; font-size:1.2em; border-radius:10px; cursor:pointer; }
+  #clockInBtn:hover { background:#ffd633; }
+  iframe { width:100%; height:80vh; border:none; margin-top:20px; }
+</style>
+</head>
+<body>
+
+<h1>My Weekly Report</h1>
+<p id="userEmail"></p>
+<button id="clockInBtn">Clock In</button>
+<iframe id="reportFrame"></iframe>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const workerId = params.get("workerId");
+const email = params.get("email");
+const reportUrl = "https://script.google.com/macros/s/AKfycbxFRO7ukN_Y0LbNZYuuhhcz073Z40j4CQcUyl6xn7Ue13JLfBmHQbzhE-skyaZrnyQ-/exec";
+
+document.getElementById("userEmail").textContent = email;
+document.getElementById("reportFrame").src = `${reportUrl}?action=report&workerId=${workerId}`;
+
+document.getElementById("clockInBtn").onclick = async () => {
+  const url = `${reportUrl}?action=clockin&workerId=${workerId}`;
+  const res = await fetch(url);
+  const html = await res.text();
+  document.getElementById("reportFrame").srcdoc = html; // refresh report view
+  alert("Clock-in recorded (refreshing report).");
+};
+</script>
+
+</body>
+</html>
