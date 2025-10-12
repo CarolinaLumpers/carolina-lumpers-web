@@ -151,7 +151,7 @@
 
   <!-- SCRIPT -->
   <script>
-    const LOGIN_API = "https://script.google.com/macros/s/AKfycbwHBLEQ5QHuhD-O4uI4hRN_5_yS9YsFgtn_dMAdoAO2C7zHLoi3qfHO82vas3Uv0wXXpg/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbwHBLEQ5QHuhD-O4uI4hRN_5_yS9YsFgtn_dMAdoAO2C7zHLoi3qfHO82vas3Uv0wXXpg/exec";
     const SESSION_KEY = "CLS_User";
     const MAX_SESSION_AGE = 7 * 24 * 60 * 60 * 1000; // 7 days
 
@@ -185,11 +185,11 @@
       message.textContent = "⏳ Logging in...";
 
       try {
-        const res = await fetch(`${LOGIN_API}?action=login&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`);
+        const res = await fetch(`${API_URL}?action=login&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`);
         const text = await res.text();
 
         if (text.includes("✅ Login successful")) {
-          const idRes = await fetch(`${LOGIN_API}?action=getworkerid&email=${encodeURIComponent(email)}`);
+          const idRes = await fetch(`${API_URL}?action=getworkerid&email=${encodeURIComponent(email)}`);
           const data = await idRes.json();
 
           if (data.workerId) {
