@@ -1,15 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-JPETF03TJ0"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-JPETF03TJ0');
-  </script>
-
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Employee Dashboard | Carolina Lumper Service</title>
@@ -18,13 +9,14 @@
 
   <style>
     body {
-      margin: 0;
       font-family: Arial, sans-serif;
       background-color: #000;
       color: #f2f2f2;
+      margin: 0;
+      text-align: center;
     }
 
-    /* Navbar */
+    /* NAVBAR */
     .navbar {
       display: flex;
       justify-content: space-between;
@@ -61,35 +53,27 @@
     .nav-links a {
       color: #f2f2f2;
       text-decoration: none;
-      font-size: 0.9em;
     }
 
     .nav-links a:hover, .nav-links a.active {
       color: #ffcc00;
     }
 
-    /* Dashboard */
+    /* DASHBOARD */
     .dashboard {
-      text-align: center;
       padding: 40px 20px;
     }
 
     h1 {
       color: #ffcc00;
       font-family: "Anton", sans-serif;
-      font-size: 2.5em;
+      font-size: 2.4em;
       margin-bottom: 10px;
     }
 
-    h2 {
-      color: #ccc;
-      font-weight: normal;
-      margin-bottom: 30px;
-    }
-
     .info {
-      font-size: 1.1em;
       margin-bottom: 20px;
+      font-size: 1.1em;
     }
 
     #clockInBtn {
@@ -113,43 +97,36 @@
       min-height: 30px;
     }
 
+    /* REPORT */
     .report-section {
       margin-top: 50px;
     }
 
-    /* Table styling */
-    #reportTable {
+    table {
       margin: 20px auto;
       width: 90%;
       max-width: 700px;
       border-collapse: collapse;
       color: #f2f2f2;
-      box-shadow: 0 0 10px rgba(255, 204, 0, 0.2);
     }
 
-    #reportTable th, #reportTable td {
+    th, td {
       padding: 10px;
       border: 1px solid #333;
     }
 
-    #reportTable tr:nth-child(even) {
+    th {
+      background-color: #222;
+    }
+
+    tr:nth-child(even) {
       background-color: #111;
     }
 
-    #reportTable tr:nth-child(odd) {
-      background-color: #1a1a1a;
-    }
-
-    #reportTable th {
-      background-color: #222;
-      color: #ffcc00;
-    }
-
     .logout {
-      margin-top: 25px;
+      margin-top: 30px;
       color: #888;
       cursor: pointer;
-      font-size: 1em;
       text-decoration: underline;
     }
 
@@ -159,14 +136,13 @@
       text-align: center;
       padding: 20px;
       font-size: 0.9em;
-      margin-top: 40px;
+      margin-top: 60px;
     }
 
     footer a img {
       width: 24px;
       margin: 0 5px;
     }
-
   </style>
 </head>
 
@@ -188,14 +164,14 @@
 
   <!-- DASHBOARD -->
   <div class="dashboard">
-    <h1>Employee Dashboard</h1>
+    <h1 id="welcomeMessage">Employee Dashboard</h1>
     <div class="info" id="userInfo"></div>
 
     <button id="clockInBtn">Clock In</button>
     <div id="clockInStatus"></div>
 
     <div class="report-section">
-      <h2>This Week's Clock-In Report</h2>
+      <h2>This Week’s Clock-In Report</h2>
       <table id="reportTable">
         <thead>
           <tr>
@@ -204,7 +180,7 @@
           </tr>
         </thead>
         <tbody id="reportBody">
-          <tr><td colspan="2" style="text-align:center;">Loading...</td></tr>
+          <tr><td colspan="2">Loading...</td></tr>
         </tbody>
       </table>
     </div>
@@ -221,45 +197,30 @@
     </div>
   </footer>
 
-  <!-- SCRIPT -->
   <script>
     const LOGIN_API = "https://script.google.com/macros/s/AKfycbwHBLEQ5QHuhD-O4uI4hRN_5_yS9YsFgtn_dMAdoAO2C7zHLoi3qfHO82vas3Uv0wXXpg/exec";
     const CLOCKIN_API = "https://script.google.com/macros/s/AKfycbxFRO7ukN_Y0LbNZYuuhhcz073Z40j4CQcUyl6xn7Ue13JLfBmHQbzhE-skyaZrnyQ-/exec";
 
     const params = new URLSearchParams(window.location.search);
     const workerId = params.get("workerId");
+    const name = params.get("name");
     const email = params.get("email");
 
+    // Redirect if missing data
     if (!workerId || !email) {
       alert("Session expired. Please log in again.");
       window.location.href = "employeeLogin.html";
     }
 
-    document.getElementById("userInfo").textContent = `Worker ID: ${workerId} | ${email}`;
+    // Display info
+    document.getElementById("welcomeMessage").textContent = name
+      ? `Welcome, ${decodeURIComponent(name)}!`
+      : "Employee Dashboard";
 
-    // Load Weekly Report
-    async function loadReport() {
-      const res = await fetch(`${LOGIN_API}?action=report&workerId=${encodeURIComponent(workerId)}`);
-      const data = await res.json();
-      const body = document.getElementById("reportBody");
-      body.innerHTML = "";
+    document.getElementById("userInfo").textContent =
+      `Worker ID: ${workerId} | ${decodeURIComponent(email)}`;
 
-      if (data.records && data.records.length > 0) {
-        data.records.forEach(r => {
-          const row = document.createElement("tr");
-          row.innerHTML = `
-            <td>${r.date}</td>
-            <td>${r.time}</td>
-          `;
-          body.appendChild(row);
-        });
-      } else {
-        body.innerHTML = `<tr><td colspan="2" style="text-align:center;">No records found for this week.</td></tr>`;
-      }
-    }
-    loadReport();
-
-    // Clock In Button
+    // CLOCK-IN BUTTON
     document.getElementById("clockInBtn").addEventListener("click", async () => {
       const btn = document.getElementById("clockInBtn");
       const status = document.getElementById("clockInStatus");
@@ -269,9 +230,9 @@
       try {
         const res = await fetch(`${CLOCKIN_API}?action=clockin&workerId=${encodeURIComponent(workerId)}`);
         const text = await res.text();
-        if (text.includes("Clock-in") || text.includes("success")) {
+        if (text.includes("Clock-in recorded")) {
           status.textContent = "✅ Clock-in successful!";
-          await loadReport();
+          loadReport();
         } else {
           status.textContent = text;
         }
@@ -282,10 +243,41 @@
       }
     });
 
-    // Logout
+    // WEEKLY REPORT
+    async function loadReport() {
+      const body = document.getElementById("reportBody");
+      body.innerHTML = "<tr><td colspan='2'>Loading...</td></tr>";
+
+      try {
+        const res = await fetch(`${LOGIN_API}?action=report&workerId=${encodeURIComponent(workerId)}`);
+        const data = await res.json();
+        body.innerHTML = "";
+
+        if (data.records && data.records.length > 0) {
+          data.records.forEach(r => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+              <td>${r.date}</td>
+              <td>${r.time}</td>
+            `;
+            body.appendChild(row);
+          });
+        } else {
+          body.innerHTML = `<tr><td colspan="2" style="text-align:center;">No records for this week.</td></tr>`;
+        }
+      } catch (err) {
+        body.innerHTML = `<tr><td colspan="2">⚠️ Error loading report: ${err.message}</td></tr>`;
+      }
+    }
+
+    // LOGOUT
     function logout() {
+      localStorage.clear();
       window.location.href = "employeeLogin.html";
     }
+
+    // Load report on start
+    loadReport();
   </script>
 </body>
 </html>
