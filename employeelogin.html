@@ -23,108 +23,21 @@
   <link rel="stylesheet" href="style.css">
 
   <style>
-    body {
-      background-color: #000;
-      color: #fff;
-      font-family: Arial, sans-serif;
-      text-align: center;
-      margin: 0;
-      padding: 0;
-    }
-
-    .login-container {
-      max-width: 400px;
-      margin: 100px auto;
-      background-color: #111;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(255, 204, 0, 0.2);
-    }
-
-    h1 {
-      font-family: "Anton", sans-serif;
-      color: #ffcc00;
-      margin-bottom: 20px;
-    }
-
-    input {
-      width: 90%;
-      padding: 12px;
-      margin: 10px 0;
-      border-radius: 6px;
-      border: none;
-      font-size: 1em;
-    }
-
-    button {
-      background-color: #ffcc00;
-      color: #000;
-      border: none;
-      border-radius: 6px;
-      padding: 12px 30px;
-      font-size: 1em;
-      cursor: pointer;
-      transition: background-color 0.2s ease-in-out;
-      margin-top: 10px;
-    }
-
-    button:hover {
-      background-color: #ffd633;
-    }
-
-    .message {
-      margin-top: 15px;
-      font-size: 0.95em;
-      min-height: 20px;
-    }
-
-    .link {
-      margin-top: 20px;
-      font-size: 0.95em;
-    }
-
-    .link a {
-      color: #ffcc00;
-      text-decoration: none;
-    }
-
-    .link a:hover {
-      text-decoration: underline;
-    }
-
-    footer {
-      background-color: #111;
-      color: #aaa;
-      text-align: center;
-      padding: 20px;
-      font-size: 0.9em;
-      margin-top: 60px;
-    }
-
-    footer a img {
-      width: 24px;
-      margin: 0 5px;
-    }
-
-    .language-toggle {
-      margin-top: 10px;
-      text-align: center;
-    }
-
-    .language-toggle button {
-      margin: 4px;
-      padding: 8px 12px;
-      border: none;
-      background: #111;
-      color: #ffcc00;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-
-    .language-toggle button.active {
-      background: #ffcc00;
-      color: #000;
-    }
+    body {background:#000;color:#fff;font-family:Arial,sans-serif;text-align:center;margin:0;padding:0;}
+    .login-container{max-width:400px;margin:100px auto;background:#111;padding:30px;border-radius:10px;box-shadow:0 0 10px rgba(255,204,0,.2);}
+    h1{font-family:"Anton",sans-serif;color:#ffcc00;margin-bottom:20px;}
+    input{width:90%;padding:12px;margin:10px 0;border-radius:6px;border:none;font-size:1em;}
+    button{background:#ffcc00;color:#000;border:none;border-radius:6px;padding:12px 30px;font-size:1em;cursor:pointer;transition:.2s;margin-top:10px;}
+    button:hover{background:#ffd633;}
+    .message{margin-top:15px;font-size:.95em;min-height:20px;}
+    .link{margin-top:20px;font-size:.95em;}
+    .link a{color:#ffcc00;text-decoration:none;}
+    .link a:hover{text-decoration:underline;}
+    footer{background:#111;color:#aaa;text-align:center;padding:20px;font-size:.9em;margin-top:60px;}
+    footer a img{width:24px;margin:0 5px;}
+    .language-toggle{text-align:center;margin-top:10px;}
+    .language-toggle button{margin:4px;padding:8px 12px;border:none;background:#111;color:#ffcc00;border-radius:6px;cursor:pointer;transition:.2s;}
+    .language-toggle button:hover,.language-toggle button.active{background:#ffcc00;color:#000;}
   </style>
 </head>
 
@@ -135,9 +48,7 @@
       <a href="index.html" class="logo-link">
         <img src="assets/CLS_Nav_Logo.png" alt="CLS Logo" class="logo">
       </a>
-      <a href="index.html" class="company-name" data-en="CAROLINA LUMPER SERVICE" data-es="CAROLINA LUMPER SERVICE" data-pt="CAROLINA LUMPER SERVICE">
-        CAROLINA LUMPER SERVICE
-      </a>
+      <a href="index.html" class="company-name">CAROLINA LUMPER SERVICE</a>
     </div>
     <ul class="nav-links">
       <li><a href="index.html" data-en="Home" data-es="Inicio" data-pt="Início">Home</a></li>
@@ -155,15 +66,12 @@
 
     <input type="email" id="loginEmail" placeholder="Work Email" 
            data-en="Work Email" data-es="Correo de Trabajo" data-pt="Email de Trabalho" required>
-
     <input type="password" id="loginPassword" placeholder="Password"
            data-en="Password" data-es="Contraseña" data-pt="Senha" required>
 
-    <label style="display:block; margin-top:10px; color:#ccc; font-size:0.9em;">
-      <input type="checkbox" id="stayLoggedIn"> 
-      <span data-en="Stay logged in" data-es="Mantener sesión iniciada" data-pt="Manter-se conectado">
-        Stay logged in
-      </span>
+    <label style="display:block;margin-top:10px;color:#ccc;font-size:0.9em;">
+      <input type="checkbox" id="stayLoggedIn">
+      <span data-en="Stay logged in" data-es="Mantener sesión iniciada" data-pt="Manter-se conectado">Stay logged in</span>
     </label>
 
     <button id="loginBtn" data-en="Login" data-es="Iniciar Sesión" data-pt="Entrar">Login</button>
@@ -182,12 +90,10 @@
        data-pt="© 2024 Carolina Lumper Service. Todos os direitos reservados.">
        © 2024 Carolina Lumper Service. All rights reserved.
     </p>
-
     <div class="footer-icons">
       <a href="https://www.facebook.com/profile.php?id=61569872795390"><img src="assets/facebook-icon.png" alt="Facebook"></a>
       <a href="#"><img src="assets/linkedin-icon.png" alt="LinkedIn"></a>
     </div>
-
     <div class="language-toggle">
       <button data-lang="en" onclick="switchLanguage('en')">English</button>
       <button data-lang="es" onclick="switchLanguage('es')">Español</button>
@@ -197,73 +103,59 @@
 
   <!-- LOGIN SCRIPT -->
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbwHBLEQ5QHuhD-O4uI4hRN_5_yS9YsFgtn_dMAdoAO2C7zHLoi3qfHO82vas3Uv0wXXpg/exec";
-    const SESSION_KEY = "CLS_User";
-    const MAX_SESSION_AGE = 7 * 24 * 60 * 60 * 1000; // 7 days
+    const API_URL="https://script.google.com/macros/s/AKfycbwHBLEQ5QHuhD-O4uI4hRN_5_yS9YsFgtn_dMAdoAO2C7zHLoi3qfHO82vas3Uv0wXXpg/exec";
+    const SESSION_KEY="CLS_User",MAX_SESSION_AGE=6048e5;
 
-    // Auto-redirect if valid session exists
-    (function checkExistingSession() {
-      let userData = sessionStorage.getItem(SESSION_KEY) || localStorage.getItem(SESSION_KEY);
-      if (userData) {
-        userData = JSON.parse(userData);
-        const expired = Date.now() - userData.timestamp > MAX_SESSION_AGE;
-        if (!expired && userData.workerId) {
-          window.location.href = "employeeDashboard.html";
-        } else {
-          localStorage.removeItem(SESSION_KEY);
-          sessionStorage.removeItem(SESSION_KEY);
-        }
+    // Auto-redirect if session valid
+    (function(){
+      let u=sessionStorage.getItem(SESSION_KEY)||localStorage.getItem(SESSION_KEY);
+      if(u){u=JSON.parse(u);
+        const expired=Date.now()-u.timestamp>MAX_SESSION_AGE;
+        if(!expired&&u.workerId){window.location.href="employeeDashboard.html";}
+        else{localStorage.removeItem(SESSION_KEY);sessionStorage.removeItem(SESSION_KEY);}
       }
     })();
 
-    // LOGIN HANDLER
-    document.getElementById("loginBtn").addEventListener("click", async () => {
-      const email = document.getElementById("loginEmail").value.trim();
-      const password = document.getElementById("loginPassword").value.trim();
-      const stayLoggedIn = document.getElementById("stayLoggedIn").checked;
-      const message = document.getElementById("message");
-
-      if (!email || !password) {
-        message.textContent = "❌ Please fill in both fields.";
-        return;
-      }
-
-      message.textContent = "⏳ Logging in...";
-
-      try {
-        const res = await fetch(`${API_URL}?action=login&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`);
-        const text = await res.text();
-
-        if (text.includes("✅ Login successful")) {
-          const idRes = await fetch(`${API_URL}?action=getworkerid&email=${encodeURIComponent(email)}`);
-          const data = await idRes.json();
-
-          if (data.workerId) {
-            const sessionData = {
-              workerId: data.workerId,
-              displayName: data.displayName,
-              email,
-              timestamp: Date.now(),
-              persistent: stayLoggedIn
-            };
-
-            const storage = stayLoggedIn ? localStorage : sessionStorage;
-            storage.setItem(SESSION_KEY, JSON.stringify(sessionData));
-
-            window.location.href = "employeeDashboard.html";
-          } else {
-            message.textContent = "⚠️ Could not find your worker ID.";
-          }
-        } else {
-          message.textContent = text;
-        }
-      } catch (err) {
-        message.textContent = "⚠️ Error: " + err.message;
-      }
+    document.getElementById("loginBtn").addEventListener("click",async()=>{
+      const email=document.getElementById("loginEmail").value.trim(),
+            password=document.getElementById("loginPassword").value.trim(),
+            stay=document.getElementById("stayLoggedIn").checked,
+            msg=document.getElementById("message");
+      if(!email||!password){msg.textContent="❌ Please fill in both fields.";return;}
+      msg.textContent="⏳ Logging in...";
+      try{
+        const res=await fetch(`${API_URL}?action=login&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`);
+        const text=await res.text();
+        if(text.includes("✅ Login successful")){
+          const idRes=await fetch(`${API_URL}?action=getworkerid&email=${encodeURIComponent(email)}`);
+          const data=await idRes.json();
+          if(data.workerId){
+            const session={workerId:data.workerId,displayName:data.displayName,email,timestamp:Date.now(),persistent:stay};
+            const storage=stay?localStorage:sessionStorage;
+            storage.setItem(SESSION_KEY,JSON.stringify(session));
+            window.location.href="employeeDashboard.html";
+          }else msg.textContent="⚠️ Could not find your worker ID.";
+        }else msg.textContent=text;
+      }catch(e){msg.textContent="⚠️ Error: "+e.message;}
     });
   </script>
 
-  <!-- AUTO LANGUAGE SCRIPT -->
-  <script src="assets/lang-auto.js"></script>
+  <!-- INLINE MULTILINGUAL SYSTEM -->
+  <script>
+    function switchLanguage(lang){
+      localStorage.setItem("CLS_Lang",lang);
+      document.querySelectorAll("[data-en]").forEach(el=>{
+        const t=el.getAttribute(`data-${lang}`)||el.getAttribute("data-en");
+        if(t)el.innerHTML=t;
+      });
+      document.querySelectorAll(".language-toggle button").forEach(b=>b.classList.toggle("active",b.dataset.lang===lang));
+    }
+    document.addEventListener("DOMContentLoaded",()=>{
+      const s=localStorage.getItem("CLS_Lang"),
+            b=navigator.language||navigator.userLanguage,
+            l=s||(b.startsWith("es")?"es":b.startsWith("pt")?"pt":"en");
+      switchLanguage(l);
+    });
+  </script>
 </body>
 </html>
