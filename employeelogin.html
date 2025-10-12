@@ -170,54 +170,54 @@
       }
     })();
 
-    // LOGIN HANDLER
-    document.getElementById("loginBtn").addEventListener("click", async () => {
-      const email = document.getElementById("loginEmail").value.trim();
-      const password = document.getElementById("loginPassword").value.trim();
-      const stayLoggedIn = document.getElementById("stayLoggedIn").checked;
-      const message = document.getElementById("message");
+// LOGIN HANDLER
+document.getElementById("loginBtn").addEventListener("click", async () => {
+  const email = document.getElementById("loginEmail").value.trim();
+  const password = document.getElementById("loginPassword").value.trim();
+  const stayLoggedIn = document.getElementById("stayLoggedIn").checked;
+  const message = document.getElementById("message");
 
-      if (!email || !password) {
-        message.textContent = "❌ Please fill in both fields.";
-        return;
+  if (!email || !password) {
+    message.textContent = "❌ Please fill in both fields.";
+    return;
+  }
+
+  message.textContent = "⏳ Logging in...";
+
+  try {
+    const res = await fetch(`${API_URL}?action=login&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}&callback=callback`);
+    const script = await res.text();
+    const json = JSON.parse(script.replace(/^callback\(|\);$/g, ""));
+    const text = json.result;
+
+    if (text.includes("✅ Login successful")) {
+      const idRes = await fetch(`${API_URL}?action=getworkerid&email=${encodeURIComponent(email)}`);
+      const data = await idRes.json();
+
+      if (data.workerId) {
+        const sessionData = {
+          workerId: data.workerId,
+          displayName: data.displayName,
+          email,
+          timestamp: Date.now(),
+          persistent: stayLoggedIn
+        };
+
+        const storage = stayLoggedIn ? localStorage : sessionStorage;
+        storage.setItem(SESSION_KEY, JSON.stringify(sessionData));
+
+        window.location.href = "employeeDashboard.html";
+      } else {
+        message.textContent = "⚠️ Could not find your worker ID.";
       }
+    } else {
+      message.textContent = text;
+    }
+  } catch (err) {
+    message.textContent = "⚠️ Error: " + err.message;
+  }
+});
 
-      message.textContent = "⏳ Logging in...";
-
-      try {
-        const res = await fetch(`${LOGIN_API}?action=login&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}&callback=callback`);
-        const script = await res.text();
-        const json = JSON.parse(script.replace(/^callback\(|\);$/g, ""));
-        const text = json.result;
-
-
-        if (text.includes("✅ Login successful")) {
-          const idRes = await fetch(`${API_URL}?action=getworkerid&email=${encodeURIComponent(email)}`);
-          const data = await idRes.json();
-
-          if (data.workerId) {
-            const sessionData = {
-              workerId: data.workerId,
-              displayName: data.displayName,
-              email,
-              timestamp: Date.now(),
-              persistent: stayLoggedIn
-            };
-
-            const storage = stayLoggedIn ? localStorage : sessionStorage;
-            storage.setItem(SESSION_KEY, JSON.stringify(sessionData));
-
-            window.location.href = "employeeDashboard.html";
-          } else {
-            message.textContent = "⚠️ Could not find your worker ID.";
-          }
-        } else {
-          message.textContent = text;
-        }
-      } catch (err) {
-        message.textContent = "⚠️ Error: " + err.message;
-      }
-    });
   </script>
 </body>
 </html>
