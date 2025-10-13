@@ -1,69 +1,221 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-JPETF03TJ0"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
+    function gtag() { dataLayer.push(arguments); }
     gtag('js', new Date());
     gtag('config', 'G-JPETF03TJ0');
   </script>
 
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title data-en="Employee Dashboard | Carolina Lumper Service"
-          data-es="Panel del Empleado | Carolina Lumper Service"
-          data-pt="Painel do Funcionário | Carolina Lumper Service">
-          Employee Dashboard | Carolina Lumper Service
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title data-en="Employee Dashboard | Carolina Lumper Service" data-es="Panel del Empleado | Carolina Lumper Service"
+    data-pt="Painel do Funcionário | Carolina Lumper Service">
+    Employee Dashboard | Carolina Lumper Service
   </title>
 
-  <link rel="icon" type="image/png" href="assets/CLS-favicon.png"/>
-  <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet"/>
+  <link rel="icon" type="image/png" href="assets/CLS-favicon.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet" />
 
   <style>
-    :root{
-      --cls-yellow:#ffcc00; --cls-yellow-hover:#ffd633; --bg:#000; --card:#111; --text:#fff; --muted:#aaa; --muted2:#888;
-      --border:#333; --thead:#222; --rowalt:#111;
+    :root {
+      --cls-yellow: #ffcc00;
+      --cls-yellow-hover: #ffd633;
+      --bg: #000;
+      --card: #111;
+      --text: #fff;
+      --muted: #aaa;
+      --muted2: #888;
+      --border: #333;
+      --thead: #222;
+      --rowalt: #111;
     }
-    *{box-sizing:border-box}
-    body{background-color:var(--bg);color:var(--text);font-family:Arial,sans-serif;margin:0;text-align:center}
-    .navbar{background:#111;display:flex;justify-content:space-between;align-items:center;padding:10px 20px;flex-wrap:wrap}
-    .logo{height:40px;margin-right:10px}
-    .company-name{font-family:"Anton",sans-serif;color:var(--cls-yellow);text-decoration:none;font-size:1.3em}
-    .nav-links{list-style:none;display:flex;gap:15px;margin:0;padding:0;flex-wrap:wrap}
-    .nav-links a{color:#fff;text-decoration:none;font-size:.9em;transition:color .2s}
-    .nav-links a:hover{color:var(--cls-yellow)}
 
-    .dashboard{padding:40px 16px;max-width:980px;margin:0 auto}
-    h1{color:var(--cls-yellow);font-family:"Anton",sans-serif;font-size:2.3em;margin:.1em 0 .2em}
-    h2#welcomeName{color:var(--cls-yellow);font-weight:normal;font-size:1.2em;margin:.1em 0 1em}
-    .info{margin-bottom:18px;font-size:1.05em}
+    * {
+      box-sizing: border-box
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: Arial, sans-serif;
+      margin: 0;
+      text-align: center
+    }
+
+    .navbar {
+      background: #111;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      flex-wrap: wrap
+    }
+
+    .logo {
+      height: 40px;
+      margin-right: 10px
+    }
+
+    .company-name {
+      font-family: "Anton", sans-serif;
+      color: var(--cls-yellow);
+      text-decoration: none;
+      font-size: 1.3em
+    }
+
+    .nav-links {
+      list-style: none;
+      display: flex;
+      gap: 15px;
+      margin: 0;
+      padding: 0;
+      flex-wrap: wrap
+    }
+
+    .nav-links a {
+      color: #fff;
+      text-decoration: none;
+      font-size: .9em;
+      transition: color .2s
+    }
+
+    .nav-links a:hover {
+      color: var(--cls-yellow)
+    }
+
+    .dashboard {
+      padding: 40px 16px;
+      max-width: 980px;
+      margin: 0 auto
+    }
+
+    h1 {
+      color: var(--cls-yellow);
+      font-family: "Anton", sans-serif;
+      font-size: 2.3em;
+      margin: .1em 0 .2em
+    }
+
+    h2#welcomeName {
+      color: var(--cls-yellow);
+      font-weight: normal;
+      font-size: 1.2em;
+      margin: .1em 0 1em
+    }
+
+    .info {
+      margin-bottom: 18px;
+      font-size: 1.05em
+    }
 
     /* Tabs */
-    .tab-buttons{display:flex;justify-content:center;gap:10px;margin:12px auto 22px;flex-wrap:wrap}
-    .tab-btn{background:#111;color:var(--cls-yellow);border:none;border-radius:10px;padding:12px 22px;font-size:1.05em;
-      cursor:pointer;transition:all .2s;font-family:"Anton",sans-serif}
-    .tab-btn:hover,.tab-btn.active{background:var(--cls-yellow);color:#000}
-    .hidden{display:none}
+    .tab-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin: 12px auto 22px;
+      flex-wrap: wrap
+    }
+
+    .tab-btn {
+      background: #111;
+      color: var(--cls-yellow);
+      border: none;
+      border-radius: 10px;
+      padding: 12px 22px;
+      font-size: 1.05em;
+      cursor: pointer;
+      transition: all .2s;
+      font-family: "Anton", sans-serif
+    }
+
+    .tab-btn:hover,
+    .tab-btn.active {
+      background: var(--cls-yellow);
+      color: #000
+    }
+
+    .hidden {
+      display: none
+    }
+
+    #adminPanel table {
+      font-size: 0.9em
+    }
 
     /* Cards / sections */
-    .card{background:#0b0b0b;border:1px solid var(--border);border-radius:14px;padding:18px;margin:0 auto 22px;max-width:900px}
-    .section-title{color:var(--cls-yellow);margin:0 0 10px;font-size:1.2em}
+    .card {
+      background: #0b0b0b;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px;
+      margin: 0 auto 22px;
+      max-width: 900px
+    }
+
+    .section-title {
+      color: var(--cls-yellow);
+      margin: 0 0 10px;
+      font-size: 1.2em
+    }
 
     /* Clock in button */
-    #clockInBtn{background:var(--cls-yellow);color:#000;border:none;border-radius:10px;padding:14px 36px;font-size:1.1em;
-      cursor:pointer;transition:background-color .2s}
-    #clockInBtn:hover{background:var(--cls-yellow-hover)}
-    #clockInStatus{margin-top:12px;font-size:1.05em;min-height:28px}
+    #clockInBtn {
+      background: var(--cls-yellow);
+      color: #000;
+      border: none;
+      border-radius: 10px;
+      padding: 14px 36px;
+      font-size: 1.1em;
+      cursor: pointer;
+      transition: background-color .2s
+    }
+
+    #clockInBtn:hover {
+      background: var(--cls-yellow-hover)
+    }
+
+    #clockInStatus {
+      margin-top: 12px;
+      font-size: 1.05em;
+      min-height: 28px
+    }
 
     /* Tables */
-    table{margin:16px auto;width:96%;max-width:860px;border-collapse:collapse;color:#f2f2f2}
-    th,td{padding:10px;border:1px solid var(--border)}
-    th{background:var(--thead)}
-    tr:nth-child(even){background:var(--rowalt)}
-    .t-right{text-align:right}
-    .muted{color:var(--muted)}
+    table {
+      margin: 16px auto;
+      width: 96%;
+      max-width: 860px;
+      border-collapse: collapse;
+      color: #f2f2f2
+    }
+
+    th,
+    td {
+      padding: 10px;
+      border: 1px solid var(--border)
+    }
+
+    th {
+      background: var(--thead)
+    }
+
+    tr:nth-child(even) {
+      background: var(--rowalt)
+    }
+
+    .t-right {
+      text-align: right
+    }
+
+    .muted {
+      color: var(--muted)
+    }
 
     /* Payroll controls */
     .controls {
@@ -74,6 +226,7 @@
       margin: 10px auto;
       max-width: 860px;
     }
+
     .btn {
       border: none;
       border-radius: 8px;
@@ -82,29 +235,35 @@
       cursor: pointer;
       transition: .2s;
     }
+
     .btn-blue {
       background: #2563eb;
       color: white;
     }
+
     .btn-blue:hover {
       filter: brightness(1.1);
     }
+
     .btn-gray {
       background: #6b7280;
       color: white;
     }
+
     .btn-gray:hover {
       filter: brightness(1.1);
     }
+
     .btn-green {
       background: #16a34a;
       color: white;
       margin-left: auto;
     }
+
     .btn-green:hover {
       filter: brightness(1.1);
     }
-    
+
     footer {
       background: #111;
       color: var(--muted);
@@ -113,13 +272,16 @@
       font-size: .9em;
       margin-top: 46px;
     }
+
     footer a img {
       width: 24px;
       margin: 0 5px;
     }
+
     .language-toggle {
       margin-top: 10px;
     }
+
     .language-toggle button {
       margin: 4px;
       padding: 8px 12px;
@@ -130,32 +292,45 @@
       cursor: pointer;
       transition: all .2s;
     }
+
     .language-toggle button:hover,
     .language-toggle button.active {
       background: var(--cls-yellow);
       color: #000;
     }
-    
+
     @media (max-width: 640px) {
-      #clockInBtn { width: 100%; }
-      .controls { gap: 10px; }
-      .btn { flex: 1; min-width: 44%; }
-      .btn-green { flex-basis: 100%; margin-left: 0; }
+      #clockInBtn {
+        width: 100%;
+      }
+
+      .controls {
+        gap: 10px;
+      }
+
+      .btn {
+        flex: 1;
+        min-width: 44%;
+      }
+
+      .btn-green {
+        flex-basis: 100%;
+        margin-left: 0;
+      }
     }
-    
+
     /* Payroll tab active state */
     .btn-active {
       background: var(--cls-yellow) !important;
       color: #000 !important;
     }
-    
+
     /* Flash effect for Download PDF button */
     .btn-flash {
       background: var(--cls-yellow) !important;
       color: #000 !important;
       transition: background-color 0.3s ease;
     }
-
   </style>
 </head>
 
@@ -163,7 +338,7 @@
   <!-- NAVBAR -->
   <nav class="navbar">
     <div style="display:flex;align-items:center">
-      <a href="index.html"><img src="assets/CLS_Nav_Logo.png" alt="CLS Logo" class="logo"/></a>
+      <a href="index.html"><img src="assets/CLS_Nav_Logo.png" alt="CLS Logo" class="logo" /></a>
       <a href="index.html" class="company-name">CAROLINA LUMPER SERVICE</a>
     </div>
     <ul class="nav-links">
@@ -176,31 +351,30 @@
 
   <!-- DASHBOARD -->
   <div class="dashboard">
-    <h1 id="welcomeMessage" data-en="Employee Dashboard" data-es="Panel del Empleado" data-pt="Painel do Funcionário">Employee Dashboard</h1>
+    <h1 id="welcomeMessage" data-en="Employee Dashboard" data-es="Panel del Empleado" data-pt="Painel do Funcionário">
+      Employee Dashboard</h1>
     <h2 id="welcomeName"></h2>
     <div class="info" id="userInfo"></div>
 
     <!-- TABS -->
     <div class="tab-buttons">
-      <button id="tabClock" class="tab-btn active"
-              data-en="Clock-Ins" data-es="Entradas" data-pt="Registros">Clock-Ins</button>
-      <button id="tabPayroll" class="tab-btn"
-              data-en="Payroll" data-es="Nómina" data-pt="Folha de Pagamento">Payroll</button>
+      <button id="tabClock" class="tab-btn active" data-en="Clock-Ins" data-es="Entradas"
+        data-pt="Registros">Clock-Ins</button>
+      <button id="tabPayroll" class="tab-btn" data-en="Payroll" data-es="Nómina"
+        data-pt="Folha de Pagamento">Payroll</button>
     </div>
 
     <!-- CLOCK-IN SECTION -->
     <div id="clockin-section" class="card">
-      <button id="clockInBtn"
-              data-en="Clock In / Out" data-es="Registrar Entrada / Salida" data-pt="Registrar Entrada / Saída">
-              Clock In / Out
+      <button id="clockInBtn" data-en="Clock In / Out" data-es="Registrar Entrada / Salida"
+        data-pt="Registrar Entrada / Saída">
+        Clock In / Out
       </button>
       <div id="clockInStatus"></div>
 
-      <h3 class="section-title"
-          data-en="This Week’s Clock-In Report"
-          data-es="Reporte de Entradas de la Semana"
-          data-pt="Relatório Semanal de Entradas">
-          This Week’s Clock-In Report
+      <h3 class="section-title" data-en="This Week’s Clock-In Report" data-es="Reporte de Entradas de la Semana"
+        data-pt="Relatório Semanal de Entradas">
+        This Week’s Clock-In Report
       </h3>
       <table id="reportTable">
         <thead>
@@ -210,28 +384,27 @@
           </tr>
         </thead>
         <tbody id="reportBody">
-          <tr><td colspan="2" class="muted">Loading...</td></tr>
+          <tr>
+            <td colspan="2" class="muted">Loading...</td>
+          </tr>
         </tbody>
       </table>
     </div>
 
     <!-- PAYROLL SECTION -->
     <div id="payroll-section" class="card hidden">
-      <h3 class="section-title"
-          data-en="Payroll Summary" data-es="Resumen de Nómina" data-pt="Resumo da Folha">
-          Payroll Summary
+      <h3 class="section-title" data-en="Payroll Summary" data-es="Resumen de Nómina" data-pt="Resumo da Folha">
+        Payroll Summary
       </h3>
 
       <div class="controls">
-        <button id="btnPayrollCurrent" class="btn btn-blue"
-                data-en="Current Week" data-es="Semana Actual" data-pt="Semana Atual">Current Week</button>
-        <button id="btnPayrollPrevious" class="btn btn-gray"
-                data-en="Previous Week" data-es="Semana Anterior" data-pt="Semana Anterior">Previous Week</button>
-        <button id="btnPayrollPdf" class="btn btn-green"
-                data-en="Send Payroll Report"
-                data-es="Enviar Informe de Nómina"
-                data-pt="Enviar Relatório de Pagamento">
-                Send Payroll Report
+        <button id="btnPayrollCurrent" class="btn btn-blue" data-en="Current Week" data-es="Semana Actual"
+          data-pt="Semana Atual">Current Week</button>
+        <button id="btnPayrollPrevious" class="btn btn-gray" data-en="Previous Week" data-es="Semana Anterior"
+          data-pt="Semana Anterior">Previous Week</button>
+        <button id="btnPayrollPdf" class="btn btn-green" data-en="Send Payroll Report"
+          data-es="Enviar Informe de Nómina" data-pt="Enviar Relatório de Pagamento">
+          Send Payroll Report
         </button>
 
       </div>
@@ -241,18 +414,44 @@
           <tr>
             <th data-en="Date" data-es="Fecha" data-pt="Data">Date</th>
             <th data-en="Hours / Break" data-es="Horas / Descanso" data-pt="Horas / Pausa">Hours / Break</th>
-            <th class="t-right" data-en="Check Amount" data-es="Monto del Cheque" data-pt="Valor do Cheque">Check Amount</th>
+            <th class="t-right" data-en="Check Amount" data-es="Monto del Cheque" data-pt="Valor do Cheque">Check Amount
+            </th>
           </tr>
         </thead>
         <tbody></tbody>
       </table>
 
 
-      <p id="payrollTotals" class="t-right" data-label-total-en="Total" data-label-total-es="Total" data-label-total-pt="Total"></p>
-      <p id="payrollNone" class="muted hidden"
-         data-en="No records found" data-es="No se encontraron registros" data-pt="Nenhum registro encontrado">
-         No records found
+      <p id="payrollTotals" class="t-right" data-label-total-en="Total" data-label-total-es="Total"
+        data-label-total-pt="Total"></p>
+      <p id="payrollNone" class="muted hidden" data-en="No records found" data-es="No se encontraron registros"
+        data-pt="Nenhum registro encontrado">
+        No records found
       </p>
+    </div>
+
+    <!-- ADMIN / LEAD PANEL -->
+    <div id="adminPanel" class="card hidden">
+      <h3 class="section-title" data-en="Admin Tools" data-es="Herramientas de Admin" data-pt="Ferramentas de Admin">
+        Admin Tools
+      </h3>
+
+      <div id="clockinManager" style="text-align:left;max-width:860px;margin:0 auto;">
+        <label style="display:block;margin:8px 0;">
+          <span data-en="Filter by worker(s):" data-es="Filtrar por empleado(s):" data-pt="Filtrar por funcionário(s):">
+            Filter by worker(s):
+          </span>
+          <select id="workerFilter" multiple size="6"
+                  style="width:100%;background:#000;color:#fff;border:1px solid #333;border-radius:6px;padding:6px;"></select>
+        </label>
+
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 16px;">
+          <button id="btnLoadAll" class="btn btn-blue">📋 Load All Clock-Ins</button>
+          <button id="btnClearFilter" class="btn btn-gray">Clear Filter</button>
+        </div>
+
+        <div id="allReportsContainer" style="overflow:auto;"></div>
+      </div>
     </div>
 
     <div class="logout" onclick="logout()" data-en="Logout" data-es="Cerrar Sesión" data-pt="Sair">Logout</div>
@@ -261,13 +460,14 @@
   <!-- FOOTER -->
   <footer>
     <p data-en="© 2024 Carolina Lumper Service. All rights reserved."
-       data-es="© 2024 Carolina Lumper Service. Todos los derechos reservados."
-       data-pt="© 2024 Carolina Lumper Service. Todos os direitos reservados.">
-       © 2024 Carolina Lumper Service. All rights reserved.
+      data-es="© 2024 Carolina Lumper Service. Todos los derechos reservados."
+      data-pt="© 2024 Carolina Lumper Service. Todos os direitos reservados.">
+      © 2024 Carolina Lumper Service. All rights reserved.
     </p>
     <div class="footer-icons">
-      <a href="https://www.facebook.com/profile.php?id=61569872795390"><img src="assets/facebook-icon.png" alt="Facebook"/></a>
-      <a href="#"><img src="assets/linkedin-icon.png" alt="LinkedIn"/></a>
+      <a href="https://www.facebook.com/profile.php?id=61569872795390"><img src="assets/facebook-icon.png"
+          alt="Facebook" /></a>
+      <a href="#"><img src="assets/linkedin-icon.png" alt="LinkedIn" /></a>
     </div>
     <div class="language-toggle">
       <button data-lang="en" onclick="switchLanguage('en')">English</button>
@@ -276,348 +476,471 @@
     </div>
   </footer>
 
-<!-- APP SCRIPT -->
-<script>
-  // ======================== CONFIG ========================
-  const API_URL = "https://cls-proxy.s-garay.workers.dev"; // Proxy to your Apps Script
-  const SESSION_KEY = "CLS_User";
-  const LOGIN_PAGE = "employeelogin.html";
-  const LANG = localStorage.getItem("CLS_Lang") || "en";
-  const GREETINGS = { en: "Welcome", es: "¡Bienvenido", pt: "Bem-vindo" };
+  <!-- APP SCRIPT -->
+  <script>
+    // ======================== CONFIG ========================
+    const API_URL = "https://cls-proxy.s-garay.workers.dev"; // Proxy to your Apps Script
+    const SESSION_KEY = "CLS_User";
+    const LOGIN_PAGE = "employeelogin.html";
+    const LANG = localStorage.getItem("CLS_Lang") || "en";
+    const GREETINGS = { en: "Welcome", es: "¡Bienvenido", pt: "Bem-vindo" };
 
-  // ================= Multilingual Messages =================
-  const MSG = {
-    gettingLocation: { en:"📍 Getting your location...", es:"📍 Obteniendo tu ubicación...", pt:"📍 Obtendo sua localização..." },
-    recordingClockIn:{ en:"Recording clock-in...", es:"Registrando entrada...", pt:"Registrando entrada..." },
-    clockInSuccess:  { en:"✅ Clock-in successful at", es:"✅ ¡Registro exitoso en", pt:"✅ Registro bem-sucedido em" },
-    clockInFailed:   { en:"⚠️ Clock-in failed.", es:"⚠️ Error al registrar entrada.", pt:"⚠️ Falha ao registrar entrada." },
-    locationDenied:  { en:"⚠️ Location access denied. Please enable GPS.", es:"⚠️ Acceso a la ubicación denegado. Activa el GPS.", pt:"⚠️ Acesso à localização negado. Ative o GPS." },
-    locationUnavailable:{ en:"⚠️ Location unavailable. Try again.", es:"⚠️ Ubicación no disponible. Inténtalo de nuevo.", pt:"⚠️ Localização indisponível. Tente novamente." },
-    locationTimeout: { en:"⚠️ Location request timed out.", es:"⚠️ Solicitud de ubicación agotó el tiempo.", pt:"⚠️ Solicitação de localização expirou." },
-    errorPrefix:     { en:"⚠️ Error:", es:"⚠️ Error:", pt:"⚠️ Erro:" },
-    loadingReport:   { en:"Loading...", es:"Cargando...", pt:"Carregando..." },
-    noClockIns:      { en:"No clock-ins this week.", es:"No hay registros esta semana.", pt:"Sem registros esta semana." },
-    reportError:     { en:"⚠️ Error loading report:", es:"⚠️ Error al cargar el informe:", pt:"⚠️ Erro ao carregar o relatório:" }
-  };
+    // ================= Multilingual Messages =================
+    const MSG = {
+      gettingLocation: { en: "📍 Getting your location...", es: "📍 Obteniendo tu ubicación...", pt: "📍 Obtendo sua localização..." },
+      recordingClockIn: { en: "Recording clock-in...", es: "Registrando entrada...", pt: "Registrando entrada..." },
+      clockInSuccess: { en: "✅ Clock-in successful at", es: "✅ ¡Registro exitoso en", pt: "✅ Registro bem-sucedido em" },
+      clockInFailed: { en: "⚠️ Clock-in failed.", es: "⚠️ Error al registrar entrada.", pt: "⚠️ Falha ao registrar entrada." },
+      locationDenied: { en: "⚠️ Location access denied. Please enable GPS.", es: "⚠️ Acceso a la ubicación denegado. Activa el GPS.", pt: "⚠️ Acesso à localização negado. Ative o GPS." },
+      locationUnavailable: { en: "⚠️ Location unavailable. Try again.", es: "⚠️ Ubicación no disponible. Inténtalo de nuevo.", pt: "⚠️ Localização indisponível. Tente novamente." },
+      locationTimeout: { en: "⚠️ Location request timed out.", es: "⚠️ Solicitud de ubicación agotó el tiempo.", pt: "⚠️ Solicitação de localização expirou." },
+      errorPrefix: { en: "⚠️ Error:", es: "⚠️ Error:", pt: "⚠️ Erro:" },
+      loadingReport: { en: "Loading...", es: "Cargando...", pt: "Carregando..." },
+      noClockIns: { en: "No clock-ins this week.", es: "No hay registros esta semana.", pt: "Sem registros esta semana." },
+      reportError: { en: "⚠️ Error loading report:", es: "⚠️ Error al cargar el informe:", pt: "⚠️ Erro ao carregar o relatório:" }
+    };
 
-  // =================== JSONP Helper ===================
-  function jsonp(url) {
-    return new Promise((resolve, reject) => {
-      const cb = "cb_" + Math.random().toString(36).slice(2);
-      const s = document.createElement("script");
-      const sep = url.includes("?") ? "&" : "?";
-      s.src = `${url}${sep}callback=${cb}`;
-      s.async = true;
-      const timeout = setTimeout(() => { delete window[cb]; s.remove(); reject(new Error("Request timed out")); }, 15000);
-      window[cb] = (data) => { clearTimeout(timeout); delete window[cb]; s.remove(); resolve(data); };
-      s.onerror = () => { clearTimeout(timeout); delete window[cb]; s.remove(); reject(new Error("Network error")); };
-      document.body.appendChild(s);
-    });
-  }
+    // =================== JSONP Helper ===================
+    function jsonp(url) {
+      return new Promise((resolve, reject) => {
+        const cb = "cb_" + Math.random().toString(36).slice(2);
+        const s = document.createElement("script");
+        const sep = url.includes("?") ? "&" : "?";
+        s.src = `${url}${sep}callback=${cb}`;
+        s.async = true;
+        const timeout = setTimeout(() => { delete window[cb]; s.remove(); reject(new Error("Request timed out")); }, 15000);
+        window[cb] = (data) => { clearTimeout(timeout); delete window[cb]; s.remove(); resolve(data); };
+        s.onerror = () => { clearTimeout(timeout); delete window[cb]; s.remove(); reject(new Error("Network error")); };
+        document.body.appendChild(s);
+      });
+    }
 
-  // =================== Session ===================
-  let userData = sessionStorage.getItem(SESSION_KEY) || localStorage.getItem(SESSION_KEY);
-  if (userData) { try { userData = JSON.parse(userData); } catch { userData = null; } }
-  if (!userData || !userData.workerId) {
-    alert("Session expired. Please log in again.");
-    window.location.href = LOGIN_PAGE;
-  }
-  const { workerId, displayName, email } = userData;
+    // =================== Session ===================
+    let userData = sessionStorage.getItem(SESSION_KEY) || localStorage.getItem(SESSION_KEY);
+    if (userData) { try { userData = JSON.parse(userData); } catch { userData = null; } }
+    if (!userData || !userData.workerId) {
+      alert("Session expired. Please log in again.");
+      window.location.href = LOGIN_PAGE;
+    }
+    const { workerId, displayName, email } = userData;
 
-  // =================== INIT (All Event Bindings + Defaults) ===================
-  window.addEventListener("DOMContentLoaded", () => {
-    const greeting = GREETINGS[LANG] || GREETINGS.en;
-    document.getElementById("welcomeName").textContent = `${greeting}, ${displayName || "Employee"}!`;
-    document.getElementById("userInfo").textContent = `Worker ID: ${workerId} | ${email}`;
+    // =================== INIT (All Event Bindings + Defaults) ===================
+    window.addEventListener("DOMContentLoaded", () => {
+      const greeting = GREETINGS[LANG] || GREETINGS.en;
+      document.getElementById("welcomeName").textContent = `${greeting}, ${displayName || "Employee"}!`;
+      document.getElementById("userInfo").textContent = `Worker ID: ${workerId} | ${email}`;
 
-    // Clock-in
-    document.getElementById("clockInBtn").addEventListener("click", handleClockIn);
-    loadReport();
+      // Clock-in
+      document.getElementById("clockInBtn").addEventListener("click", handleClockIn);
+      loadReport();
 
-    // Tabs
-    document.getElementById("tabClock").addEventListener("click", () => switchTab("clock"));
-    document.getElementById("tabPayroll").addEventListener("click", () => switchTab("payroll"));
+      // Tabs
+      document.getElementById("tabClock").addEventListener("click", () => switchTab("clock"));
+      document.getElementById("tabPayroll").addEventListener("click", () => switchTab("payroll"));
 
-    // Payroll buttons
-    document.getElementById("btnPayrollCurrent").addEventListener("click", () => {
+      // Payroll buttons
+      document.getElementById("btnPayrollCurrent").addEventListener("click", () => {
+        highlightPayrollButton("btnPayrollCurrent");
+        loadPayroll("current");
+      });
+      document.getElementById("btnPayrollPrevious").addEventListener("click", () => {
+        highlightPayrollButton("btnPayrollPrevious");
+        loadPayroll("previous");
+      });
+
+      // PDF download button
+      document.getElementById("btnPayrollPdf").addEventListener("click", downloadPayrollPdf);
+
+      // Default highlight & load
       highlightPayrollButton("btnPayrollCurrent");
       loadPayroll("current");
-    });
-    document.getElementById("btnPayrollPrevious").addEventListener("click", () => {
-      highlightPayrollButton("btnPayrollPrevious");
-      loadPayroll("previous");
-    });
 
-    // PDF download button
-    document.getElementById("btnPayrollPdf").addEventListener("click", downloadPayrollPdf);
+      // Admin panel wiring
+      ensureRoleAndRevealAdmin();
+      const btnLoadAll = document.getElementById('btnLoadAll');
+      const btnClear = document.getElementById('btnClearFilter');
+      const filterEl = document.getElementById('workerFilter');
 
-    // Default highlight & load
-    highlightPayrollButton("btnPayrollCurrent");
-    loadPayroll("current");
-
-    // Language init
-    initLanguage();
-  });
-
-  // =================== Highlight Active Payroll Button ===================
-  function highlightPayrollButton(activeId) {
-    const current = document.getElementById("btnPayrollCurrent");
-    const previous = document.getElementById("btnPayrollPrevious");
-    [current, previous].forEach(btn => btn.classList.remove("btn-active"));
-    const activeBtn = document.getElementById(activeId);
-    if (activeBtn) activeBtn.classList.add("btn-active");
-  }
-
-  // =================== Tabs ===================
-  function switchTab(tab){
-    const clockBtn = document.getElementById("tabClock");
-    const payBtn   = document.getElementById("tabPayroll");
-    const clockSec = document.getElementById("clockin-section");
-    const paySec   = document.getElementById("payroll-section");
-    if (tab === "clock") {
-      clockBtn.classList.add("active"); payBtn.classList.remove("active");
-      clockSec.classList.remove("hidden"); paySec.classList.add("hidden");
-    } else {
-      payBtn.classList.add("active"); clockBtn.classList.remove("active");
-      paySec.classList.remove("hidden"); clockSec.classList.add("hidden");
-    }
-  }
-
-  // =================== Logout ===================
-  function logout(){
-    localStorage.removeItem(SESSION_KEY);
-    sessionStorage.removeItem(SESSION_KEY);
-    window.location.href = LOGIN_PAGE;
-  }
-
-  // =================== GPS Clock-In ===================
-  async function handleClockIn(){
-    const btn = document.getElementById("clockInBtn");
-    const status = document.getElementById("clockInStatus");
-    btn.disabled = true;
-    status.textContent = MSG.gettingLocation[LANG];
-    try {
-      const pos = await new Promise((resolve,reject)=>
-        navigator.geolocation.getCurrentPosition(resolve,reject,{enableHighAccuracy:true,timeout:10000})
-      );
-      const { latitude, longitude } = pos.coords;
-      status.textContent = MSG.recordingClockIn[LANG];
-
-      const res = await jsonp(`${API_URL}?action=clockin&workerId=${encodeURIComponent(workerId)}&lat=${latitude}&lng=${longitude}`);
-      if (res && res.success) {
-        const site = res.site || "Job Site";
-        const dist = res.distance ? ` (${res.distance} mi)` : "";
-        status.textContent = `${MSG.clockInSuccess[LANG]} ${site}${dist}`;
-        await loadReport();
-      } else if (res && res.message) {
-        const site = res.site ? ` (${res.site} - ${res.distance} mi)` : "";
-        status.textContent = `${MSG.clockInFailed[LANG]} ${site}. ${res.message}`;
-      } else {
-        status.textContent = MSG.clockInFailed[LANG];
-      }
-    } catch (err) {
-      if (err && err.code === 1) status.textContent = MSG.locationDenied[LANG];
-      else if (err && err.code === 2) status.textContent = MSG.locationUnavailable[LANG];
-      else if (err && err.code === 3) status.textContent = MSG.locationTimeout[LANG];
-      else status.textContent = `${MSG.errorPrefix[LANG]} ${err.message || err}`;
-    } finally {
-      btn.disabled = false;
-    }
-  }
-
-  // =================== Clock-In Report (Today Only, Latest First) ===================
-  async function loadReport(){
-    const body = document.getElementById("reportBody");
-    body.innerHTML = `<tr><td colspan='2' class="muted">${MSG.loadingReport[LANG]}</td></tr>`;
-    try {
-      const data = await jsonp(`${API_URL}?action=report&workerId=${encodeURIComponent(workerId)}`);
-      body.innerHTML = "";
-
-      const today = new Date().toLocaleDateString("en-US", { timeZone: "America/New_York" });
-      const todayRecords = (data.records || []).filter(r => r.date === today);
-
-      if (todayRecords.length > 0) {
-        todayRecords.sort((a,b) => {
-          const t1 = a.time ? new Date(`1970-01-01T${a.time}`) : 0;
-          const t2 = b.time ? new Date(`1970-01-01T${b.time}`) : 0;
-          return t2 - t1;
+      if (btnLoadAll) {
+        btnLoadAll.addEventListener('click', () => {
+          const selected = Array.from(filterEl.selectedOptions).map(o => o.value).filter(Boolean);
+          // If any selected, server-filter via CSV to keep payload small; else load all
+          loadAllReports(selected.join(','));
         });
-        todayRecords.forEach(r=>{
-          const tr = document.createElement("tr");
-          tr.innerHTML = `<td>${r.date}</td><td>${r.time}</td>`;
-          body.appendChild(tr);
+      }
+      if (btnClear) {
+        btnClear.addEventListener('click', () => {
+          Array.from(filterEl.options).forEach(o => o.selected = false);
+          loadAllReports('');
         });
-      } else {
-        body.innerHTML = `<tr><td colspan="2" class="muted">${
-          LANG==='es' ? 'Sin registros de hoy.' :
-          LANG==='pt' ? 'Sem registros de hoje.' :
-          'No clock-ins today.'
-        }</td></tr>`;
       }
-    } catch (err) {
-      body.innerHTML = `<tr><td colspan="2">${MSG.reportError[LANG]} ${err.message || err}</td></tr>`;
+
+      // Language init
+      initLanguage();
+    });
+
+    // =================== Highlight Active Payroll Button ===================
+    function highlightPayrollButton(activeId) {
+      const current = document.getElementById("btnPayrollCurrent");
+      const previous = document.getElementById("btnPayrollPrevious");
+      [current, previous].forEach(btn => btn.classList.remove("btn-active"));
+      const activeBtn = document.getElementById(activeId);
+      if (activeBtn) activeBtn.classList.add("btn-active");
     }
-  }
-// Label helper for the payroll total line
-function getTotalLabelByLang() {
-  switch (LANG) {
-    case 'es': return 'Total';
-    case 'pt': return 'Total';
-    default:   return 'Total';
-  }
-}
 
-// Turn a Google Drive "view" URL into a direct download URL
-function driveViewToDownload(url) {
-  try {
-    const m = String(url).match(/\/file\/d\/([^/]+)\//);
-    if (m && m[1]) return `https://drive.google.com/uc?export=download&id=${m[1]}`;
-  } catch (e) {}
-  // Fallback: return original URL
-  return url;
-}
-
-  // =================== Payroll (JSONP) ===================
-  const baseUrl = API_URL;
-  let currentWeekPeriod = null;
-
-  async function loadPayroll(range = 'current') {
-    const none = document.getElementById("payrollNone");
-    const tbody = document.querySelector("#payrollTable tbody");
-    const totalsEl = document.getElementById("payrollTotals");
-    tbody.innerHTML = `<tr><td colspan="3" class="muted">${MSG.loadingReport[LANG]}</td></tr>`;
-    none.classList.add("hidden");
-    totalsEl.textContent = "";
-
-    try {
-      const url = `${baseUrl}?action=payroll&workerId=${encodeURIComponent(workerId)}&range=${range}`;
-      const res = await jsonp(url);
-      if (!res || !res.success || !res.rows) {
-        tbody.innerHTML = "";
-        none.classList.remove("hidden");
-        return;
+    // =================== Tabs ===================
+    function switchTab(tab) {
+      const clockBtn = document.getElementById("tabClock");
+      const payBtn = document.getElementById("tabPayroll");
+      const clockSec = document.getElementById("clockin-section");
+      const paySec = document.getElementById("payroll-section");
+      if (tab === "clock") {
+        clockBtn.classList.add("active"); payBtn.classList.remove("active");
+        clockSec.classList.remove("hidden"); paySec.classList.add("hidden");
+      } else {
+        payBtn.classList.add("active"); clockBtn.classList.remove("active");
+        paySec.classList.remove("hidden"); clockSec.classList.add("hidden");
       }
+    }
 
-      currentWeekPeriod = res.period?.weekEnd || null;
-      if (!res.rows.length) {
-        tbody.innerHTML = "";
-        none.classList.remove("hidden");
-        totalsEl.textContent = "";
-        return;
+    // =================== Logout ===================
+    function logout() {
+      localStorage.removeItem(SESSION_KEY);
+      sessionStorage.removeItem(SESSION_KEY);
+      window.location.href = LOGIN_PAGE;
+    }
+
+    // =================== GPS Clock-In ===================
+    async function handleClockIn() {
+      const btn = document.getElementById("clockInBtn");
+      const status = document.getElementById("clockInStatus");
+      btn.disabled = true;
+      status.textContent = MSG.gettingLocation[LANG];
+      try {
+        const pos = await new Promise((resolve, reject) =>
+          navigator.geolocation.getCurrentPosition(resolve, reject, { enableHighAccuracy: true, timeout: 10000 })
+        );
+        const { latitude, longitude } = pos.coords;
+        status.textContent = MSG.recordingClockIn[LANG];
+
+        const lang = localStorage.getItem("CLS_Lang") || "en";
+        const res = await jsonp(`${API_URL}?action=clockin&workerId=${encodeURIComponent(workerId)}&lat=${latitude}&lng=${longitude}&lang=${lang}`);
+        if (res && res.success) {
+          const site = res.site || "Job Site";
+          const dist = res.distance ? ` (${res.distance} mi)` : "";
+          status.textContent = `${MSG.clockInSuccess[LANG]} ${site}${dist}`;
+          await loadReport();
+        } else if (res && res.message) {
+          const site = res.site ? ` (${res.site} - ${res.distance} mi)` : "";
+          status.textContent = `${MSG.clockInFailed[LANG]} ${site}. ${res.message}`;
+        } else {
+          status.textContent = MSG.clockInFailed[LANG];
+        }
+      } catch (err) {
+        if (err && err.code === 1) status.textContent = MSG.locationDenied[LANG];
+        else if (err && err.code === 2) status.textContent = MSG.locationUnavailable[LANG];
+        else if (err && err.code === 3) status.textContent = MSG.locationTimeout[LANG];
+        else status.textContent = `${MSG.errorPrefix[LANG]} ${err.message || err}`;
+      } finally {
+        btn.disabled = false;
       }
+    }
 
-      res.rows.sort((a,b) => new Date(a.date) - new Date(b.date));
-      const rowsHtml = res.rows.map(r => `
+    // =================== Clock-In Report (Today Only, Latest First) ===================
+    async function loadReport() {
+      const body = document.getElementById("reportBody");
+      body.innerHTML = `<tr><td colspan='2' class="muted">${MSG.loadingReport[LANG]}</td></tr>`;
+      try {
+        const data = await jsonp(`${API_URL}?action=report&workerId=${encodeURIComponent(workerId)}`);
+        body.innerHTML = "";
+
+        const today = new Date().toLocaleDateString("en-US", { timeZone: "America/New_York" });
+        const todayRecords = (data.records || []).filter(r => r.date === today);
+
+        if (todayRecords.length > 0) {
+          todayRecords.sort((a, b) => {
+            const t1 = a.time ? new Date(`1970-01-01T${a.time}`) : 0;
+            const t2 = b.time ? new Date(`1970-01-01T${b.time}`) : 0;
+            return t2 - t1;
+          });
+          todayRecords.forEach(r => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `<td>${r.date}</td><td>${r.time}</td>`;
+            body.appendChild(tr);
+          });
+        } else {
+          body.innerHTML = `<tr><td colspan="2" class="muted">${LANG === 'es' ? 'Sin registros de hoy.' :
+              LANG === 'pt' ? 'Sem registros de hoje.' :
+                'No clock-ins today.'
+            }</td></tr>`;
+        }
+      } catch (err) {
+        body.innerHTML = `<tr><td colspan="2">${MSG.reportError[LANG]} ${err.message || err}</td></tr>`;
+      }
+    }
+    // Label helper for the payroll total line
+    function getTotalLabelByLang() {
+      switch (LANG) {
+        case 'es': return 'Total';
+        case 'pt': return 'Total';
+        default: return 'Total';
+      }
+    }
+
+    // Turn a Google Drive "view" URL into a direct download URL
+    function driveViewToDownload(url) {
+      try {
+        const m = String(url).match(/\/file\/d\/([^/]+)\//);
+        if (m && m[1]) return `https://drive.google.com/uc?export=download&id=${m[1]}`;
+      } catch (e) { }
+      // Fallback: return original URL
+      return url;
+    }
+
+    // =================== Payroll (JSONP) ===================
+    const baseUrl = API_URL;
+    let currentWeekPeriod = null;
+
+    async function loadPayroll(range = 'current') {
+      const none = document.getElementById("payrollNone");
+      const tbody = document.querySelector("#payrollTable tbody");
+      const totalsEl = document.getElementById("payrollTotals");
+      tbody.innerHTML = `<tr><td colspan="3" class="muted">${MSG.loadingReport[LANG]}</td></tr>`;
+      none.classList.add("hidden");
+      totalsEl.textContent = "";
+
+      try {
+        const url = `${baseUrl}?action=payroll&workerId=${encodeURIComponent(workerId)}&range=${range}`;
+        const res = await jsonp(url);
+        if (!res || !res.success || !res.rows) {
+          tbody.innerHTML = "";
+          none.classList.remove("hidden");
+          return;
+        }
+
+        currentWeekPeriod = res.period?.weekEnd || null;
+        if (!res.rows.length) {
+          tbody.innerHTML = "";
+          none.classList.remove("hidden");
+          totalsEl.textContent = "";
+          return;
+        }
+
+        res.rows.sort((a, b) => new Date(a.date) - new Date(b.date));
+        const rowsHtml = res.rows.map(r => `
         <tr>
           <td>${r.date || ''}</td>
           <td>${r.hoursBreak || r.lineItemDetail || ''}</td>
           <td class="t-right">$${Number(r.checkAmount || 0).toFixed(2)}</td>
         </tr>`).join('');
 
-      tbody.innerHTML = rowsHtml;
-      const totalLabel = getTotalLabelByLang();
-      totalsEl.textContent = `${totalLabel}: $${Number(res.totals?.checkAmountSum || 0).toFixed(2)} (${res.totals?.entries || 0} entries)`;
-    } catch (err) {
-      tbody.innerHTML = `<tr><td colspan="3" class="muted">Error: ${err.message || err}</td></tr>`;
-      totalsEl.textContent = "";
+        tbody.innerHTML = rowsHtml;
+        const totalLabel = getTotalLabelByLang();
+        totalsEl.textContent = `${totalLabel}: $${Number(res.totals?.checkAmountSum || 0).toFixed(2)} (${res.totals?.entries || 0} entries)`;
+      } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="3" class="muted">Error: ${err.message || err}</td></tr>`;
+        totalsEl.textContent = "";
+      }
     }
-  }
 
-  // =================== Automatic PDF Download (Direct-to-Device with Flash) ===================
-// =================== Email Payroll PDF (No Download, Multilingual) ===================
-async function downloadPayrollPdf() {
-  const btn = document.getElementById("btnPayrollPdf");
+    // =================== Automatic PDF Download (Direct-to-Device with Flash) ===================
+    // =================== Email Payroll PDF (No Download, Multilingual) ===================
+    async function downloadPayrollPdf() {
+      const btn = document.getElementById("btnPayrollPdf");
 
-  if (!currentWeekPeriod) {
-    alert(
-      LANG === 'es'
-        ? 'Primero cargue la semana actual o anterior'
-        : LANG === 'pt'
-        ? 'Carregue primeiro a semana atual ou anterior'
-        : 'Load current or previous week first'
-    );
-    return;
-  }
+      if (!currentWeekPeriod) {
+        alert(
+          LANG === 'es'
+            ? 'Primero cargue la semana actual o anterior'
+            : LANG === 'pt'
+              ? 'Carregue primeiro a semana atual ou anterior'
+              : 'Load current or previous week first'
+        );
+        return;
+      }
 
-  // 🌟 Visual feedback (flash gold + disable)
-  btn.classList.add("btn-flash");
-  btn.disabled = true;
-  btn.textContent =
-    LANG === 'es'
-      ? 'Enviando...'
-      : LANG === 'pt'
-      ? 'Enviando...'
-      : 'Sending...';
-
-  try {
-    const url = `${baseUrl}?action=payrollPdf&workerId=${encodeURIComponent(
-      workerId
-    )}&workerName=${encodeURIComponent(
-      displayName || ''
-    )}&weekPeriod=${encodeURIComponent(currentWeekPeriod)}`;
-
-    const res = await jsonp(url);
-
-    if (res && res.success !== false) {
-      alert(
+      // 🌟 Visual feedback (flash gold + disable)
+      btn.classList.add("btn-flash");
+      btn.disabled = true;
+      btn.textContent =
         LANG === 'es'
-          ? '✅ Informe de nómina enviado a info@carolinalumpers.com'
+          ? 'Enviando...'
           : LANG === 'pt'
-          ? '✅ Relatório de pagamento enviado para info@carolinalumpers.com'
-          : '✅ Payroll report sent to info@carolinalumpers.com'
+            ? 'Enviando...'
+            : 'Sending...';
+
+      try {
+        const url = `${baseUrl}?action=payrollPdf&workerId=${encodeURIComponent(
+          workerId
+        )}&workerName=${encodeURIComponent(
+          displayName || ''
+        )}&weekPeriod=${encodeURIComponent(currentWeekPeriod)}`;
+
+        const res = await jsonp(url);
+
+        if (res && res.success !== false) {
+          alert(
+            LANG === 'es'
+              ? '✅ Informe de nómina enviado a info@carolinalumpers.com'
+              : LANG === 'pt'
+                ? '✅ Relatório de pagamento enviado para info@carolinalumpers.com'
+                : '✅ Payroll report sent to info@carolinalumpers.com'
+          );
+        } else {
+          alert(
+            LANG === 'es'
+              ? '⚠️ No se pudo enviar el informe de nómina.'
+              : LANG === 'pt'
+                ? '⚠️ Não foi possível enviar o relatório de pagamento.'
+                : '⚠️ Unable to send payroll report.'
+          );
+        }
+      } catch (err) {
+        alert(
+          (LANG === 'es'
+            ? 'Error al enviar informe: '
+            : LANG === 'pt'
+              ? 'Erro ao enviar relatório: '
+              : 'Error sending report: ') + (err.message || err)
+        );
+      } finally {
+        btn.disabled = false;
+        btn.textContent =
+          LANG === 'es'
+            ? 'Enviar Informe de Nómina'
+            : LANG === 'pt'
+              ? 'Enviar Relatório de Pagamento'
+              : 'Send Payroll Report';
+        btn.classList.remove("btn-flash");
+      }
+    }
+
+
+    // =================== Language ===================
+    function switchLanguage(lang) {
+      localStorage.setItem("CLS_Lang", lang);
+      document.querySelectorAll("[data-en]").forEach(el => {
+        const t = el.getAttribute(`data-${lang}`) || el.getAttribute("data-en");
+        if (t) el.innerHTML = t;
+      });
+      document.querySelectorAll(".language-toggle button").forEach(b => b.classList.toggle("active", b.dataset.lang === lang));
+      const user = JSON.parse(localStorage.getItem(SESSION_KEY) || sessionStorage.getItem(SESSION_KEY) || "{}");
+      if (user.displayName) {
+        const greeting = GREETINGS[lang] || GREETINGS.en;
+        document.getElementById("welcomeName").textContent = `${greeting}, ${user.displayName}!`;
+      }
+    }
+
+    function initLanguage() {
+      const s = localStorage.getItem("CLS_Lang");
+      const b = navigator.language || navigator.userLanguage;
+      const l = s || (b?.startsWith("es") ? "es" : b?.startsWith("pt") ? "pt" : "en");
+      switchLanguage(l);
+    }
+
+    // ===== Admin Role & Panel =====
+    async function ensureRoleAndRevealAdmin() {
+      try {
+        // Load role from session if present
+        let store = localStorage.getItem(SESSION_KEY) ? localStorage : sessionStorage;
+        let u = JSON.parse(store.getItem(SESSION_KEY) || '{}');
+
+        if (!u.role) {
+          const info = await jsonp(`${API_URL}?action=whoami&workerId=${encodeURIComponent(workerId)}`);
+          if (info && info.ok && info.role) {
+            u.role = info.role;
+            store.setItem(SESSION_KEY, JSON.stringify(u));
+          }
+        }
+
+        if (u.role === 'Admin' || u.role === 'Lead') {
+          document.getElementById('adminPanel').classList.remove('hidden');
+        }
+      } catch (e) {
+        // silently ignore; non-admins won't see panel
+      }
+    }
+
+    async function loadAllReports(workersCSV = '') {
+      const container = document.getElementById('allReportsContainer');
+      const filterEl  = document.getElementById('workerFilter');
+      container.textContent = '⏳ Loading all clock-ins...';
+
+      try {
+        const url = `${API_URL}?action=reportAll&workerId=${encodeURIComponent(workerId)}${workersCSV ? `&workers=${encodeURIComponent(workersCSV)}` : ''}`;
+        const data = await jsonp(url);
+        if (!data || data.ok === false) {
+          container.textContent = data?.message || '⚠️ Failed to load.';
+          return;
+        }
+
+        // Build filter options
+        filterEl.innerHTML = '';
+        (data.workers || [])
+          .sort((a,b) => (a.name || a.id).localeCompare(b.name || b.id))
+          .forEach(w => {
+            const opt = document.createElement('option');
+            opt.value = w.id;
+            opt.textContent = `${w.name} (${w.id})`;
+            filterEl.appendChild(opt);
+          });
+
+        renderAllReports(container, data.records, data.workers);
+      } catch (err) {
+        container.textContent = `⚠️ ${err.message || err}`;
+      }
+    }
+
+    function renderAllReports(container, recordsByWorker, workersList = []) {
+      container.innerHTML = '';
+      const nameMap = {};
+      (workersList || []).forEach(w => nameMap[w.id] = w.name);
+
+      const ids = Object.keys(recordsByWorker || {}).sort((a,b) =>
+        (nameMap[a] || a).localeCompare(nameMap[b] || b)
       );
-    } else {
-      alert(
-        LANG === 'es'
-          ? '⚠️ No se pudo enviar el informe de nómina.'
+
+      if (!ids.length) {
+        container.innerHTML = LANG === 'es'
+          ? '<div class="muted">Sin registros.</div>'
           : LANG === 'pt'
-          ? '⚠️ Não foi possível enviar o relatório de pagamento.'
-          : '⚠️ Unable to send payroll report.'
-      );
+              ? '<div class="muted">Sem registros.</div>'
+              : '<div class="muted">No records.</div>';
+        return;
+      }
+
+      ids.forEach(id => {
+        const wrap = document.createElement('div');
+        wrap.style.margin = '14px 0';
+
+        const h = document.createElement('h4');
+        h.style.color = 'var(--cls-yellow)';
+        h.textContent = `Worker: ${nameMap[id] || id}`;
+        wrap.appendChild(h);
+
+        const tbl = document.createElement('table');
+        tbl.innerHTML = `
+          <thead>
+            <tr>
+              <th data-en="Date" data-es="Fecha" data-pt="Data">Date</th>
+              <th data-en="Time" data-es="Hora" data-pt="Hora">Time</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        `;
+        const tb = tbl.querySelector('tbody');
+        (recordsByWorker[id] || []).forEach(r => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `<td>${r.date || ''}</td><td>${r.time || ''}</td>`;
+          tb.appendChild(tr);
+        });
+
+        wrap.appendChild(tbl);
+        container.appendChild(wrap);
+      });
     }
-  } catch (err) {
-    alert(
-      (LANG === 'es'
-        ? 'Error al enviar informe: '
-        : LANG === 'pt'
-        ? 'Erro ao enviar relatório: '
-        : 'Error sending report: ') + (err.message || err)
-    );
-  } finally {
-    btn.disabled = false;
-    btn.textContent =
-      LANG === 'es'
-        ? 'Enviar Informe de Nómina'
-        : LANG === 'pt'
-        ? 'Enviar Relatório de Pagamento'
-        : 'Send Payroll Report';
-    btn.classList.remove("btn-flash");
-  }
-}
-
-
-  // =================== Language ===================
-  function switchLanguage(lang){
-    localStorage.setItem("CLS_Lang", lang);
-    document.querySelectorAll("[data-en]").forEach(el=>{
-      const t = el.getAttribute(`data-${lang}`) || el.getAttribute("data-en");
-      if (t) el.innerHTML = t;
-    });
-    document.querySelectorAll(".language-toggle button").forEach(b=>b.classList.toggle("active", b.dataset.lang === lang));
-    const user = JSON.parse(localStorage.getItem(SESSION_KEY) || sessionStorage.getItem(SESSION_KEY) || "{}");
-    if (user.displayName){
-      const greeting = GREETINGS[lang] || GREETINGS.en;
-      document.getElementById("welcomeName").textContent = `${greeting}, ${user.displayName}!`;
-    }
-  }
-
-  function initLanguage(){
-    const s = localStorage.getItem("CLS_Lang");
-    const b = navigator.language || navigator.userLanguage;
-    const l = s || (b?.startsWith("es") ? "es" : b?.startsWith("pt") ? "pt" : "en");
-    switchLanguage(l);
-  }
-</script>
+  </script>
 
 </body>
+
 </html>
