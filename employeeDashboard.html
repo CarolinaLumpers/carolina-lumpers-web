@@ -228,7 +228,12 @@
         <button id="btnPayrollPrevious" class="btn btn-gray"
                 data-en="Previous Week" data-es="Semana Anterior" data-pt="Semana Anterior">Previous Week</button>
         <button id="btnPayrollPdf" class="btn btn-green"
-                data-en="Download PDF" data-es="Descargar PDF" data-pt="Baixar PDF">Download PDF</button>
+                data-en="Send Payroll Report"
+                data-es="Enviar Informe de Nómina"
+                data-pt="Enviar Relatório de Pagamento">
+                Send Payroll Report
+        </button>
+
       </div>
 
       <table id="payrollTable">
@@ -519,44 +524,77 @@ function driveViewToDownload(url) {
   }
 
   // =================== Automatic PDF Download (Direct-to-Device with Flash) ===================
-  async function downloadPayrollPdf() {
-    const btn = document.getElementById("btnPayrollPdf");
-    if (!currentWeekPeriod) {
-      alert(LANG==='es'?'Primero cargue la semana actual o anterior':
-            LANG==='pt'?'Carregue primeiro a semana atual ou anterior':
-            'Load current or previous week first');
-      return;
-    }
+// =================== Email Payroll PDF (No Download, Multilingual) ===================
+async function downloadPayrollPdf() {
+  const btn = document.getElementById("btnPayrollPdf");
 
-    btn.classList.add("btn-flash");
-    btn.disabled = true;
-    setTimeout(() => btn.classList.remove("btn-flash"), 400);
-
-    try {
-      const url = `${baseUrl}?action=payrollPdf&workerId=${encodeURIComponent(workerId)}&workerName=${encodeURIComponent(displayName || '')}&weekPeriod=${encodeURIComponent(currentWeekPeriod)}`;
-      const res = await jsonp(url);
-      if (res && res.pdfUrl) {
-        const dlUrl = driveViewToDownload(res.pdfUrl);
-        const a = document.createElement('a');
-        a.href = dlUrl;
-        a.download = `${(displayName || 'Employee').replace(/\s+/g,'-')}_${currentWeekPeriod}.pdf`;
-        a.style.display = 'none';
-        document.body.appendChild(a);
-        a.click();
-        setTimeout(() => a.remove(), 200);
-      } else {
-        alert(LANG==='es'?'No se pudo generar el PDF':
-              LANG==='pt'?'Não foi possível gerar o PDF':
-              'Unable to generate PDF');
-      }
-    } catch (err) {
-      alert((LANG==='es'?'Error al generar PDF: ':
-             LANG==='pt'?'Erro ao gerar PDF: ':
-             'Error generating PDF: ') + (err.message||err));
-    } finally {
-      btn.disabled = false;
-    }
+  if (!currentWeekPeriod) {
+    alert(
+      LANG === 'es'
+        ? 'Primero cargue la semana actual o anterior'
+        : LANG === 'pt'
+        ? 'Carregue primeiro a semana atual ou anterior'
+        : 'Load current or previous week first'
+    );
+    return;
   }
+
+  // 🌟 Visual feedback (flash gold + disable)
+  btn.classList.add("btn-flash");
+  btn.disabled = true;
+  btn.textContent =
+    LANG === 'es'
+      ? 'Enviando...'
+      : LANG === 'pt'
+      ? 'Enviando...'
+      : 'Sending...';
+
+  try {
+    const url = `${baseUrl}?action=payrollPdf&workerId=${encodeURIComponent(
+      workerId
+    )}&workerName=${encodeURIComponent(
+      displayName || ''
+    )}&weekPeriod=${encodeURIComponent(currentWeekPeriod)}`;
+
+    const res = await jsonp(url);
+
+    if (res && res.success !== false) {
+      alert(
+        LANG === 'es'
+          ? '✅ Informe de nómina enviado a info@carolinalumpers.com'
+          : LANG === 'pt'
+          ? '✅ Relatório de pagamento enviado para info@carolinalumpers.com'
+          : '✅ Payroll report sent to info@carolinalumpers.com'
+      );
+    } else {
+      alert(
+        LANG === 'es'
+          ? '⚠️ No se pudo enviar el informe de nómina.'
+          : LANG === 'pt'
+          ? '⚠️ Não foi possível enviar o relatório de pagamento.'
+          : '⚠️ Unable to send payroll report.'
+      );
+    }
+  } catch (err) {
+    alert(
+      (LANG === 'es'
+        ? 'Error al enviar informe: '
+        : LANG === 'pt'
+        ? 'Erro ao enviar relatório: '
+        : 'Error sending report: ') + (err.message || err)
+    );
+  } finally {
+    btn.disabled = false;
+    btn.textContent =
+      LANG === 'es'
+        ? 'Enviar Informe de Nómina'
+        : LANG === 'pt'
+        ? 'Enviar Relatório de Pagamento'
+        : 'Send Payroll Report';
+    btn.classList.remove("btn-flash");
+  }
+}
+
 
   // =================== Language ===================
   function switchLanguage(lang){
