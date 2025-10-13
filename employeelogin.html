@@ -314,20 +314,50 @@
   </script>
 
   <script>
-    function switchLanguage(lang){
-      localStorage.setItem("CLS_Lang",lang);
-      document.querySelectorAll("[data-en]").forEach(el=>{
-        const t=el.getAttribute(`data-${lang}`)||el.getAttribute("data-en");
-        if(t)el.innerHTML=t;
-      });
-      document.querySelectorAll(".language-toggle button").forEach(b=>b.classList.toggle("active",b.dataset.lang===lang));
+ // --- Multilingual + Navbar Resizing System ---
+  function adjustNavbarFontSize() {
+    const navLinks = document.querySelector('.nav-links');
+    if (!navLinks) return;
+
+    const links = navLinks.querySelectorAll('a');
+    const maxWidth = navLinks.offsetWidth;
+    let totalWidth = 0;
+
+    for (const link of links) {
+      totalWidth += link.offsetWidth;
     }
-    document.addEventListener("DOMContentLoaded",()=>{
-      const s=localStorage.getItem("CLS_Lang"),
-            b=navigator.language||navigator.userLanguage,
-            l=s||(b.startsWith("es")?"es":b.startsWith("pt")?"pt":"en");
-      switchLanguage(l);
+
+    if (totalWidth > maxWidth) {
+      const scaleFactor = maxWidth / totalWidth;
+      navLinks.style.fontSize = scaleFactor * 0.9 + 'em';
+    } else {
+      navLinks.style.fontSize = '0.9em';
+    }
+  }
+
+  function switchLanguage(lang) {
+    localStorage.setItem("CLS_Lang", lang);
+    document.querySelectorAll("[data-en]").forEach(el => {
+      const t = el.getAttribute(`data-${lang}`) || el.getAttribute("data-en");
+      if (t) el.innerHTML = t;
     });
-  </script>
+    document.querySelectorAll(".language-toggle button").forEach(b =>
+      b.classList.toggle("active", b.dataset.lang === lang)
+    );
+
+    adjustNavbarFontSize(); // adjust after translating
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const s = localStorage.getItem("CLS_Lang");
+    const b = navigator.language || navigator.userLanguage;
+    const l = s || (b.startsWith("es") ? "es" : b.startsWith("pt") ? "pt" : "en");
+
+    switchLanguage(l);
+    adjustNavbarFontSize();
+  });
+
+  window.addEventListener("resize", adjustNavbarFontSize);
+</script>
 </body>
 </html>
