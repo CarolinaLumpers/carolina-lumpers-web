@@ -38,6 +38,21 @@
     .language-toggle{text-align:center;margin-top:10px;}
     .language-toggle button{margin:4px;padding:8px 12px;border:none;background:#111;color:#ffcc00;border-radius:6px;cursor:pointer;transition:.2s;}
     .language-toggle button:hover,.language-toggle button.active{background:#ffcc00;color:#000;}
+
+    /* Fix Stay logged in alignment */
+.stay-logged-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin: 10px 0;
+  font-size: 0.95em;
+}
+.stay-logged-container input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+}
+
   </style>
 </head>
 
@@ -69,10 +84,15 @@
     <input type="password" id="loginPassword" placeholder="Password"
            data-en="Password" data-es="Contraseña" data-pt="Senha" required>
 
-    <label style="display:block;margin-top:10px;color:#ccc;font-size:0.9em;">
-      <input type="checkbox" id="stayLoggedIn">
-      <span data-en="Stay logged in" data-es="Mantener sesión iniciada" data-pt="Manter-se conectado">Stay logged in</span>
+    <label for="stayLoggedIn" 
+           style="display:flex;align-items:center;justify-content:center;gap:6px;
+                  margin-top:10px;color:#ccc;font-size:0.9em;">
+      <input type="checkbox" id="stayLoggedIn" style="width:18px;height:18px;">
+      <span data-en="Stay logged in" 
+            data-es="Mantener sesión iniciada" 
+            data-pt="Manter-se conectado">Stay logged in</span>
     </label>
+
 
     <button id="loginBtn" data-en="Login" data-es="Iniciar Sesión" data-pt="Entrar">Login</button>
     <div class="message" id="message"></div>
