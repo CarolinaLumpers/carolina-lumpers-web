@@ -453,6 +453,24 @@
       body.innerHTML = `<tr><td colspan="2">${MSG.reportError[LANG]} ${err.message || err}</td></tr>`;
     }
   }
+// Label helper for the payroll total line
+function getTotalLabelByLang() {
+  switch (LANG) {
+    case 'es': return 'Total';
+    case 'pt': return 'Total';
+    default:   return 'Total';
+  }
+}
+
+// Turn a Google Drive "view" URL into a direct download URL
+function driveViewToDownload(url) {
+  try {
+    const m = String(url).match(/\/file\/d\/([^/]+)\//);
+    if (m && m[1]) return `https://drive.google.com/uc?export=download&id=${m[1]}`;
+  } catch (e) {}
+  // Fallback: return original URL
+  return url;
+}
 
   // =================== Payroll (JSONP) ===================
   const baseUrl = API_URL;
