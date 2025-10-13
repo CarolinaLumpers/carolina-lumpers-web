@@ -370,7 +370,6 @@ async function loadReport(){
     const baseUrl = API_URL; // use proxy consistently
     let currentWeekPeriod = null;
 
-// =================== Payroll Summary (No Site, Fix Hours/Break) ===================
 // =================== Payroll Summary (No Site, Fix Hours/Break, Sorted by Date) ===================
     async function loadPayroll(range='current'){
       const none = document.getElementById("payrollNone");
@@ -442,47 +441,43 @@ async function loadReport(){
       return url;
     }
 
-      async function downloadPayrollPdf(){
-        if (!currentWeekPeriod){
-          alert(LANG==='es'?'Primero cargue la semana actual o anterior':
-                LANG==='pt'?'Carregue primeiro a semana atual ou anterior':
-                'Load current or previous week first');
-          return;
-        }
-        try{
-          const url = `${baseUrl}?action=payrollPdf&workerId=${encodeURIComponent(workerId)}&workerName=${encodeURIComponent(displayName||'')}&weekPeriod=${encodeURIComponent(currentWeekPeriod)}`;
-          const res = await jsonp(url);
-      
-          if (res && res.pdfBase64){
-            // ✅ Convert Base64 to Blob and force download directly to device
-            const byteCharacters = atob(res.pdfBase64);
-            const byteNumbers = new Array(byteCharacters.length);
-            for (let i = 0; i < byteCharacters.length; i++) byteNumbers[i] = byteCharacters.charCodeAt(i);
-            const byteArray = new Uint8Array(byteNumbers);
-            const blob = new Blob([byteArray], { type: 'application/pdf' });
-      
-            const safeName = res.fileName || `${(displayName || 'Employee').replace(/\s+/g,'-')}_${currentWeekPeriod}.pdf`;
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = safeName;
-            link.style.display = 'none';
-            document.body.appendChild(link);
-            link.click();
-            setTimeout(() => {
-              URL.revokeObjectURL(link.href);
-              link.remove();
-            }, 200);
-          } else {
-            alert(LANG==='es'?'No se pudo generar el PDF':
-                  LANG==='pt'?'Não foi possível gerar o PDF':
-                  'Unable to generate PDF');
-          }
-        }catch(err){
-          alert((LANG==='es'?'Error al generar PDF: ':
-                 LANG==='pt'?'Erro ao gerar PDF: ':
-                 'Error generating PDF: ') + (err.message||err));
-        }
+    async function downloadPayrollPdf(){
+      if (!currentWeekPeriod){
+        alert(LANG==='es' ? 'Primero cargue la semana actual o anterior' :
+              LANG==='pt' ? 'Carregue primeiro a semana atual ou anterior' :
+              'Load current or previous week first');
+        return;
       }
+    
+      try{
+        const url = `${baseUrl}?action=payrollPdf&workerId=${encodeURIComponent(workerId)}&workerName=${encodeURIComponent(displayName||'')}&weekPeriod=${encodeURIComponent(currentWeekPeriod)}`;
+        const res = await jsonp(url);
+    
+        if (res && res.pdfUrl){
+          // ✅ Convert Drive "view" link to direct download link
+          const dlUrl = driveViewToDownload(res.pdfUrl);
+    
+          // ✅ Force download (works on Safari, Chrome, Android, iOS)
+          const a = document.createElement('a');
+          a.href = dlUrl;
+          a.download = `${(displayName || 'Employee').replace(/\s+/g,'-')}_${currentWeekPeriod}.pdf`;
+          a.target = '_blank';
+          a.style.display = 'none';
+          document.body.appendChild(a);
+          a.click();
+          setTimeout(() => a.remove(), 300);
+        } else {
+          alert(LANG==='es' ? 'No se pudo generar el PDF' :
+                LANG==='pt' ? 'Não foi possível gerar o PDF' :
+                'Unable to generate PDF');
+        }
+      } catch(err){
+        alert((LANG==='es' ? 'Error al generar PDF: ' :
+               LANG==='pt' ? 'Erro ao gerar PDF: ' :
+               'Error generating PDF: ') + (err.message || err));
+      }
+    }
+
 
 
     // =================== Language ===================
