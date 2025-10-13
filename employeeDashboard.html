@@ -164,13 +164,13 @@
         <thead>
           <tr>
             <th data-en="Date" data-es="Fecha" data-pt="Data">Date</th>
-            <th data-en="Site" data-es="Sitio" data-pt="Local">Site</th>
             <th data-en="Hours / Break" data-es="Horas / Descanso" data-pt="Horas / Pausa">Hours / Break</th>
             <th class="t-right" data-en="Check Amount" data-es="Monto del Cheque" data-pt="Valor do Cheque">Check Amount</th>
           </tr>
         </thead>
         <tbody></tbody>
       </table>
+
 
       <p id="payrollTotals" class="t-right" data-label-total-en="Total" data-label-total-es="Total" data-label-total-pt="Total"></p>
       <p id="payrollNone" class="muted hidden"
@@ -327,38 +327,59 @@
     }
 
     // =================== Weekly Report ===================
-    async function loadReport(){
-      const body = document.getElementById("reportBody");
-      body.innerHTML = `<tr><td colspan='2' class="muted">${MSG.loadingReport[LANG]}</td></tr>`;
-      try {
-        const data = await jsonp(`${API_URL}?action=report&workerId=${encodeURIComponent(workerId)}`);
-        body.innerHTML = "";
-        if (data && data.records && data.records.length > 0) {
-          data.records.forEach(r=>{
-            const tr = document.createElement("tr");
-            tr.innerHTML = `<td>${r.date || ""}</td><td>${r.time || ""}</td>`;
-            body.appendChild(tr);
-          });
-        } else {
-          body.innerHTML = `<tr><td colspan="2" class="muted">${MSG.noClockIns[LANG]}</td></tr>`;
-        }
-      } catch (err) {
-        body.innerHTML = `<tr><td colspan="2">${MSG.reportError[LANG]} ${err.message || err}</td></tr>`;
-      }
+// =================== Clock-In Report (Today Only, Latest First) ===================
+async function loadReport(){
+  const body = document.getElementById("reportBody");
+  body.innerHTML = `<tr><td colspan='2' class="muted">${MSG.loadingReport[LANG]}</td></tr>`;
+  try {
+    const data = await jsonp(`${API_URL}?action=report&workerId=${encodeURIComponent(workerId)}`);
+    body.innerHTML = "";
+
+    // Filter for current date (based on system timezone)
+    const tz = new Date().toLocaleDateString("en-US", { timeZone: "America/New_York" });
+    const today = tz; // "MM/DD/YYYY" format
+    const todayRecords = (data.records || []).filter(r => r.date === today);
+
+    if (todayRecords.length > 0) {
+      // Sort descending by time (latest first)
+      todayRecords.sort((a,b) => {
+        const t1 = a.time ? new Date(`1970-01-01T${a.time}`) : 0;
+        const t2 = b.time ? new Date(`1970-01-01T${b.time}`) : 0;
+        return t2 - t1;
+      });
+
+      todayRecords.forEach(r=>{
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td>${r.date}</td><td>${r.time}</td>`;
+        body.appendChild(tr);
+      });
+    } else {
+      body.innerHTML = `<tr><td colspan="2" class="muted">${
+        LANG==='es' ? 'Sin registros de hoy.' :
+        LANG==='pt' ? 'Sem registros de hoje.' :
+        'No clock-ins today.'
+      }</td></tr>`;
     }
+  } catch (err) {
+    body.innerHTML = `<tr><td colspan="2">${MSG.reportError[LANG]} ${err.message || err}</td></tr>`;
+  }
+}
+
 
     // =================== Payroll (JSONP) ===================
     const baseUrl = API_URL; // use proxy consistently
     let currentWeekPeriod = null;
 
+// =================== Payroll Summary (No Site, Fix Hours/Break) ===================
+// =================== Payroll Summary (No Site, Fix Hours/Break, Sorted by Date) ===================
     async function loadPayroll(range='current'){
       const none = document.getElementById("payrollNone");
       const tbody = document.querySelector("#payrollTable tbody");
       const totalsEl = document.getElementById("payrollTotals");
-      tbody.innerHTML = `<tr><td colspan="4" class="muted">${MSG.loadingReport[LANG]}</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="3" class="muted">${MSG.loadingReport[LANG]}</td></tr>`;
       none.classList.add("hidden");
       totalsEl.textContent = "";
-
+    
       try{
         const url = `${baseUrl}?action=payroll&workerId=${encodeURIComponent(workerId)}&range=${range}`;
         const res = await jsonp(url);
@@ -367,33 +388,42 @@
           none.classList.remove("hidden");
           return;
         }
-
+    
         currentWeekPeriod = res.period?.weekEnd || null;
-
+    
         if (!res.rows.length){
           tbody.innerHTML = "";
           none.classList.remove("hidden");
           totalsEl.textContent = "";
           return;
         }
-
+    
+        // ✅ Sort rows by date (ascending)
+        res.rows.sort((a, b) => {
+          const d1 = new Date(a.date);
+          const d2 = new Date(b.date);
+          return d1 - d2;
+        });
+    
+        // ✅ Map and show "Line Item Detail" in Hours/Break column
         const rowsHtml = res.rows.map(r => `
           <tr>
             <td>${r.date || ''}</td>
-            <td>${r.client || ''}</td>
-            <td>${r.hoursBreak || ''}</td>
+            <td>${r.hoursBreak || r.lineItemDetail || ''}</td>
             <td class="t-right">$${Number(r.checkAmount || 0).toFixed(2)}</td>
           </tr>`).join('');
+    
         tbody.innerHTML = rowsHtml;
-
+    
         const totalLabel = getTotalLabelByLang();
         totalsEl.textContent = `${totalLabel}: $${Number(res.totals?.checkAmountSum || 0).toFixed(2)} (${res.totals?.entries || 0} entries)`;
-
+    
       } catch(err){
-        tbody.innerHTML = `<tr><td colspan="4" class="muted">Error: ${err.message || err}</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="3" class="muted">Error: ${err.message || err}</td></tr>`;
         totalsEl.textContent = "";
       }
     }
+
 
     function getTotalLabelByLang(){
       if (LANG === 'es') return 'Total';
@@ -412,38 +442,47 @@
       return url;
     }
 
-async function downloadPayrollPdf(){
-  if (!currentWeekPeriod){
-    alert(LANG==='es'?'Primero cargue la semana actual o anterior':
-          LANG==='pt'?'Carregue primeiro a semana atual ou anterior':
-          'Load current or previous week first');
-    return;
-  }
-  try{
-    const url = `${baseUrl}?action=payrollPdf&workerId=${encodeURIComponent(workerId)}&workerName=${encodeURIComponent(displayName||'')}&weekPeriod=${encodeURIComponent(currentWeekPeriod)}`;
-    const res = await jsonp(url);
-    if (res && res.pdfUrl){
-      const dlUrl = driveViewToDownload(res.pdfUrl);
-      const safeName = (displayName || 'Employee').replace(/\s+/g,'-');
-      const fileName = `${safeName}_${currentWeekPeriod}.pdf`;
-      const a = document.createElement('a');
-      a.href = dlUrl;
-      a.setAttribute('download', fileName);
-      a.style.display='none';
-      document.body.appendChild(a);
-      a.click();
-      setTimeout(()=>a.remove(), 100);
-    } else {
-      alert(LANG==='es'?'No se pudo generar el PDF':
-            LANG==='pt'?'Não foi possível gerar o PDF':
-            'Unable to generate PDF');
-    }
-  }catch(err){
-    alert((LANG==='es'?'Error al generar PDF: ':
-           LANG==='pt'?'Erro ao gerar PDF: ':
-           'Error generating PDF: ') + (err.message||err));
-  }
-}
+      async function downloadPayrollPdf(){
+        if (!currentWeekPeriod){
+          alert(LANG==='es'?'Primero cargue la semana actual o anterior':
+                LANG==='pt'?'Carregue primeiro a semana atual ou anterior':
+                'Load current or previous week first');
+          return;
+        }
+        try{
+          const url = `${baseUrl}?action=payrollPdf&workerId=${encodeURIComponent(workerId)}&workerName=${encodeURIComponent(displayName||'')}&weekPeriod=${encodeURIComponent(currentWeekPeriod)}`;
+          const res = await jsonp(url);
+      
+          if (res && res.pdfBase64){
+            // ✅ Convert Base64 to Blob and force download directly to device
+            const byteCharacters = atob(res.pdfBase64);
+            const byteNumbers = new Array(byteCharacters.length);
+            for (let i = 0; i < byteCharacters.length; i++) byteNumbers[i] = byteCharacters.charCodeAt(i);
+            const byteArray = new Uint8Array(byteNumbers);
+            const blob = new Blob([byteArray], { type: 'application/pdf' });
+      
+            const safeName = res.fileName || `${(displayName || 'Employee').replace(/\s+/g,'-')}_${currentWeekPeriod}.pdf`;
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = safeName;
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.click();
+            setTimeout(() => {
+              URL.revokeObjectURL(link.href);
+              link.remove();
+            }, 200);
+          } else {
+            alert(LANG==='es'?'No se pudo generar el PDF':
+                  LANG==='pt'?'Não foi possível gerar o PDF':
+                  'Unable to generate PDF');
+          }
+        }catch(err){
+          alert((LANG==='es'?'Error al generar PDF: ':
+                 LANG==='pt'?'Erro ao gerar PDF: ':
+                 'Error generating PDF: ') + (err.message||err));
+        }
+      }
 
 
     // =================== Language ===================
