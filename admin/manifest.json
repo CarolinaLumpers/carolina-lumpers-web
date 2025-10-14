@@ -1,0 +1,15 @@
+﻿{
+  "name": "CLS Admin Dashboard",
+  "short_name": "CLS Admin",
+  "start_url": "/carolina-lumpers-web/admin/adminDashboard.html",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#ffcc00",
+  "icons": [
+    {
+      "src": "/carolina-lumpers-web/assets/CLS-favicon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}
