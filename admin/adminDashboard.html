@@ -4,17 +4,27 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CLS Admin Dashboard</title>
+
+  <!-- PWA Manifest -->
   <link rel="manifest" href="manifest.json">
+
+  <!-- Favicon -->
   <link rel="icon" type="image/png" href="../assets/CLS-favicon.png">
+
+  <!-- Fonts & Styles -->
   <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+
+  <!-- Theme color for PWA -->
   <meta name="theme-color" content="#ffcc00">
 </head>
+
 <body>
   <header class="header">
     <img src="../assets/CLS-favicon.png" alt="CLS Logo" class="logo">
     <h1>Carolina Lumper Service – Admin</h1>
   </header>
+
   <nav class="nav">
     <button class="nav-btn" data-section="workers">🧍 Workers</button>
     <button class="nav-btn" data-section="lineitems">🧾 Line Items</button>
@@ -22,17 +32,16 @@
     <button class="nav-btn" data-section="payroll">💰 Payroll</button>
     <button class="nav-btn" data-section="settings">⚙️ Settings</button>
   </nav>
+
   <main id="content">
     <p class="loading">Loading dashboard...</p>
   </main>
-  <footer><p>© 2025 Carolina Lumper Service | Admin Dashboard</p></footer>
+
+  <footer>
+    <p>© 2025 Carolina Lumper Service | Admin Dashboard</p>
+  </footer>
+
+  <!-- Core Logic (includes service worker registration + PWA install prompt) -->
   <script src="admin.js"></script>
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('service-worker.js')
-        .then(() => console.log('✅ Service worker registered'))
-        .catch(err => console.error('❌ SW registration failed:', err));
-    }
-  </script>
 </body>
 </html>
