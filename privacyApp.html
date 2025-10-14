@@ -1,62 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title data-en="Employment Privacy Policy | Carolina Lumper Service"
           data-es="Política de Privacidad Laboral | Carolina Lumper Service"
           data-pt="Política de Privacidade de Emprego | Carolina Lumper Service">
     Employment Privacy Policy | Carolina Lumper Service
   </title>
-  <link rel="stylesheet" href="style.css" />
-  <link rel="icon" type="image/png" href="assets/CLS-favicon.png" />
-  <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/png" href="assets/CLS-favicon.png">
+  <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
 
   <style>
-    body { margin: 0; background: #000; color: #fff; }
-
-    .privacy-container {
-      max-width: 800px;
-      margin: 40px auto;
-      padding: 20px;
-      background: #0b0b0b;
-      border: 1px solid #333;
-      border-radius: 8px;
+    body {
+      margin: 0;
+      background: #000;
       color: #fff;
+      font-family: Arial, sans-serif;
     }
 
-    .privacy-container h1 {
+    .form-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 80vh;
+      text-align: left;
+      padding: 40px 20px;
+    }
+
+    h1, h2 {
       color: #ffcc00;
       font-family: "Anton", sans-serif;
       text-align: center;
-      margin-bottom: 30px;
     }
 
-    .privacy-container h2 {
-      color: #ffcc00;
-      margin-top: 30px;
-      margin-bottom: 15px;
-      font-size: 1.3em;
-      border-bottom: 1px solid #333;
-      padding-bottom: 5px;
-    }
-
-    .privacy-container p {
+    p, ul, li {
       line-height: 1.6;
-      margin-bottom: 15px;
+      color: #fff;
     }
 
-    .privacy-container ul {
+    ul {
       margin-left: 20px;
-      line-height: 1.6;
     }
 
-    .privacy-container a {
+    a {
       color: #ffcc00;
       text-decoration: underline;
     }
 
-    .privacy-container a:hover {
+    a:hover {
       color: #ffd633;
     }
 
@@ -68,22 +63,18 @@
     .language-toggle button {
       margin: 0 5px;
       padding: 8px 16px;
-      background: #333;
-      color: #fff;
-      border: 1px solid #555;
+      background: #111;
+      color: #ffcc00;
+      border: none;
       border-radius: 4px;
       cursor: pointer;
       font-size: 14px;
     }
 
+    .language-toggle button.active,
     .language-toggle button:hover {
-      background: #555;
-    }
-
-    .language-toggle button.active {
       background: #ffcc00;
       color: #000;
-      border-color: #ffcc00;
     }
 
     .back-link {
@@ -122,162 +113,165 @@
 </head>
 
 <body>
+  <!-- Navigation -->
   <nav class="navbar">
     <div class="logo-container">
       <a href="index.html" class="logo-link">
-        <img src="assets/CLS_Nav_Logo.png" alt="CLS Logo" class="logo" />
+        <img src="assets/CLS_Nav_Logo.png" alt="CLS Logo" class="logo">
       </a>
       <a href="index.html" class="company-name">Carolina Lumper Service</a>
     </div>
     <ul class="nav-links">
       <li><a href="index.html" data-en="Home" data-es="Inicio" data-pt="Início">Home</a></li>
+      <li><a href="about.html" data-en="About Us" data-es="Sobre Nosotros" data-pt="Sobre Nós">About Us</a></li>
       <li><a href="services.html" data-en="Services" data-es="Servicios" data-pt="Serviços">Services</a></li>
-      <li><a href="about.html" data-en="About" data-es="Acerca de" data-pt="Sobre">About</a></li>
-      <li><a href="apply.html" data-en="Apply" data-es="Aplicar" data-pt="Candidatar">Apply</a></li>
       <li><a href="contact.html" data-en="Contact" data-es="Contacto" data-pt="Contato">Contact</a></li>
+      <li><a href="apply.html" class="active" data-en="Apply" data-es="Solicitar" data-pt="Candidatar">Apply</a></li>
     </ul>
   </nav>
 
-  <div class="language-toggle">
-    <button onclick="switchLanguage('en')" data-lang="en">English</button>
-    <button onclick="switchLanguage('es')" data-lang="es">Español</button>
-    <button onclick="switchLanguage('pt')" data-lang="pt">Português</button>
-  </div>
+  <!-- Hero Header -->
+  <header class="hero">
+    <div class="hero-content container text-center">
+      <h2 data-en="Employment Privacy Policy" data-es="Política de Privacidad Laboral" data-pt="Política de Privacidade de Emprego">
+        Employment Privacy Policy
+      </h2>
+      <p data-en="Learn how Carolina Lumper Service protects your information during the application and employment process."
+         data-es="Conozca cómo Carolina Lumper Service protege su información durante el proceso de solicitud y empleo."
+         data-pt="Saiba como a Carolina Lumper Service protege suas informações durante o processo de candidatura e emprego.">
+         Learn how Carolina Lumper Service protects your information during the application and employment process.
+      </p>
+    </div>
+    <div class="hero-image">
+      <img src="assets/CLS-Cover-01web.webp" alt="Hero Banner" class="banner-image">
+      <div class="blur-overlay"></div>
+    </div>
+  </header>
 
-  <div class="privacy-container">
-    <h1 data-en="Employment Privacy Policy" data-es="Política de Privacidad Laboral" data-pt="Política de Privacidade de Emprego">
-      Employment Privacy Policy
-    </h1>
+  <!-- Privacy Content -->
+  <section id="privacy">
+    <div class="form-container">
+      <h2 data-en="Our Commitment" data-es="Nuestro Compromiso" data-pt="Nosso Compromisso">Our Commitment</h2>
+      <p data-en="Carolina Lumper Service (CLS) is committed to protecting your privacy. This policy explains how we collect, use, and protect your personal information during our recruitment and employment process."
+         data-es="Carolina Lumper Service (CLS) se compromete a proteger su privacidad. Esta política explica cómo recopilamos, usamos y protegemos su información personal durante nuestro proceso de reclutamiento y empleo."
+         data-pt="Carolina Lumper Service (CLS) está comprometida em proteger sua privacidade. Esta política explica como coletamos, usamos e protegemos suas informações pessoais durante nosso processo de recrutamento e emprego.">
+         Carolina Lumper Service (CLS) is committed to protecting your privacy. This policy explains how we collect, use, and protect your personal information during our recruitment and employment process.
+      </p>
 
-    <h2 data-en="Our Commitment" data-es="Nuestro Compromiso" data-pt="Nosso Compromisso">Our Commitment</h2>
-    <p data-en="Carolina Lumper Service (CLS) is committed to protecting your privacy. This policy explains how we collect, use, and protect your personal information during our recruitment and employment process."
-       data-es="Carolina Lumper Service (CLS) se compromete a proteger su privacidad. Esta política explica cómo recopilamos, usamos y protegemos su información personal durante nuestro proceso de reclutamiento y empleo."
-       data-pt="Carolina Lumper Service (CLS) está comprometida em proteger sua privacidade. Esta política explica como coletamos, usamos e protegemos suas informações pessoais durante nosso processo de recrutamento e emprego.">
-       Carolina Lumper Service (CLS) is committed to protecting your privacy. This policy explains how we collect, use, and protect your personal information during our recruitment and employment process.
-    </p>
+      <h2 data-en="Information We Collect" data-es="Información que Recopilamos" data-pt="Informações que Coletamos">
+        Information We Collect
+      </h2>
+      <p data-en="We collect information you provide through our application form, including:"
+         data-es="Recopilamos información que usted proporciona a través de nuestro formulario de solicitud, incluyendo:"
+         data-pt="Coletamos informações que você fornece através do nosso formulário de inscrição, incluindo:">
+         We collect information you provide through our application form, including:
+      </p>
+      <ul>
+        <li data-en="Personal contact information (name, phone, email, address)"
+            data-es="Información personal de contacto (nombre, teléfono, correo electrónico, dirección)"
+            data-pt="Informações pessoais de contato (nome, telefone, email, endereço)">
+            Personal contact information (name, phone, email, address)
+        </li>
+        <li data-en="Work authorization status and documentation"
+            data-es="Estado de autorización de trabajo y documentación"
+            data-pt="Status de autorização de trabalho e documentação">
+            Work authorization status and documentation
+        </li>
+        <li data-en="Emergency contact information"
+            data-es="Información de contacto de emergencia"
+            data-pt="Informações de contato de emergência">
+            Emergency contact information
+        </li>
+        <li data-en="Work preferences and availability"
+            data-es="Preferencias de trabajo y disponibilidad"
+            data-pt="Preferências de trabalho e disponibilidade">
+            Work preferences and availability
+        </li>
+        <li data-en="Experience and qualifications"
+            data-es="Experiencia y calificaciones"
+            data-pt="Experiência e qualificações">
+            Experience and qualifications
+        </li>
+      </ul>
 
-    <h2 data-en="Information We Collect" data-es="Información que Recopilamos" data-pt="Informações que Coletamos">
-      Information We Collect
-    </h2>
-    <p data-en="We collect information you provide through our application form, including:"
-       data-es="Recopilamos información que usted proporciona a través de nuestro formulario de solicitud, incluyendo:"
-       data-pt="Coletamos informações que você fornece através do nosso formulário de inscrição, incluindo:">
-       We collect information you provide through our application form, including:
-    </p>
-    <ul>
-      <li data-en="Personal contact information (name, phone, email, address)"
-          data-es="Información personal de contacto (nombre, teléfono, correo electrónico, dirección)"
-          data-pt="Informações pessoais de contato (nome, telefone, email, endereço)">
-          Personal contact information (name, phone, email, address)
-      </li>
-      <li data-en="Work authorization status and documentation"
-          data-es="Estado de autorización de trabajo y documentación"
-          data-pt="Status de autorização de trabalho e documentação">
-          Work authorization status and documentation
-      </li>
-      <li data-en="Emergency contact information"
-          data-es="Información de contacto de emergencia"
-          data-pt="Informações de contato de emergência">
-          Emergency contact information
-      </li>
-      <li data-en="Work preferences and availability"
-          data-es="Preferencias de trabajo y disponibilidad"
-          data-pt="Preferências de trabalho e disponibilidade">
-          Work preferences and availability
-      </li>
-      <li data-en="Experience and qualifications"
-          data-es="Experiencia y calificaciones"
-          data-pt="Experiência e qualificações">
-          Experience and qualifications
-      </li>
-    </ul>
+      <h2 data-en="How We Use Your Information" data-es="Cómo Usamos Su Información" data-pt="Como Usamos Suas Informações">
+        How We Use Your Information
+      </h2>
+      <ul>
+        <li data-en="To evaluate your application and qualifications"
+            data-es="Para evaluar su solicitud y calificaciones"
+            data-pt="Para avaliar sua inscrição e qualificações">
+            To evaluate your application and qualifications
+        </li>
+        <li data-en="To contact you about job opportunities"
+            data-es="Para contactarlo sobre oportunidades de trabajo"
+            data-pt="Para contatá-lo sobre oportunidades de trabalho">
+            To contact you about job opportunities
+        </li>
+        <li data-en="To verify work authorization (as required by law)"
+            data-es="Para verificar la autorización de trabajo (según lo requiere la ley)"
+            data-pt="Para verificar autorização de trabalho (conforme exigido por lei)">
+            To verify work authorization (as required by law)
+        </li>
+        <li data-en="To communicate regarding scheduling and assignments"
+            data-es="Para comunicarnos sobre horarios y asignaciones"
+            data-pt="Para comunicar sobre agendamentos e atribuições">
+            To communicate regarding scheduling and assignments
+        </li>
+      </ul>
 
-    <h2 data-en="How We Use Your Information" data-es="Cómo Usamos Su Información" data-pt="Como Usamos Suas Informações">
-      How We Use Your Information
-    </h2>
-    <p data-en="We use your information solely for recruitment and employment purposes:"
-       data-es="Usamos su información únicamente para fines de reclutamiento y empleo:"
-       data-pt="Usamos suas informações exclusivamente para fins de recrutamento e emprego:">
-       We use your information solely for recruitment and employment purposes:
-    </p>
-    <ul>
-      <li data-en="To evaluate your application and qualifications"
-          data-es="Para evaluar su solicitud y calificaciones"
-          data-pt="Para avaliar sua inscrição e qualificações">
-          To evaluate your application and qualifications
-      </li>
-      <li data-en="To contact you about job opportunities"
-          data-es="Para contactarlo sobre oportunidades de trabajo"
-          data-pt="Para contatá-lo sobre oportunidades de trabalho">
-          To contact you about job opportunities
-      </li>
-      <li data-en="To verify work authorization (as required by law)"
-          data-es="Para verificar la autorización de trabajo (según lo requiere la ley)"
-          data-pt="Para verificar autorização de trabalho (conforme exigido por lei)">
-          To verify work authorization (as required by law)
-      </li>
-      <li data-en="To communicate regarding scheduling and assignments"
-          data-es="Para comunicarnos sobre horarios y asignaciones"
-          data-pt="Para comunicar sobre agendamentos e atribuições">
-          To communicate regarding scheduling and assignments
-      </li>
-    </ul>
+      <h2 data-en="Information Protection" data-es="Protección de la Información" data-pt="Proteção de Informações">
+        Information Protection
+      </h2>
+      <p data-en="We protect your personal information through secure storage systems and limit access to authorized personnel only. We do not sell, share, or distribute your information to third parties except as required by law."
+         data-es="Protegemos su información personal a través de sistemas de almacenamiento seguros y limitamos el acceso solo a personal autorizado. No vendemos, compartimos ni distribuimos su información a terceros excepto según lo requiera la ley."
+         data-pt="Protegemos suas informações pessoais através de sistemas de armazenamento seguros e limitamos o acesso apenas a pessoal autorizado. Não vendemos, compartilhamos ou distribuímos suas informações para terceiros, exceto conforme exigido por lei.">
+         We protect your personal information through secure storage systems and limit access to authorized personnel only. We do not sell, share, or distribute your information to third parties except as required by law.
+      </p>
 
-    <h2 data-en="Information Protection" data-es="Protección de la Información" data-pt="Proteção de Informações">
-      Information Protection
-    </h2>
-    <p data-en="We protect your personal information through secure storage systems and limit access to authorized personnel only. We do not sell, share, or distribute your information to third parties except as required by law."
-       data-es="Protegemos su información personal a través de sistemas de almacenamiento seguros y limitamos el acceso solo a personal autorizado. No vendemos, compartimos ni distribuimos su información a terceros excepto según lo requiera la ley."
-       data-pt="Protegemos suas informações pessoais através de sistemas de armazenamento seguros e limitamos o acesso apenas a pessoal autorizado. Não vendemos, compartilhamos ou distribuímos suas informações para terceiros, exceto conforme exigido por lei.">
-       We protect your personal information through secure storage systems and limit access to authorized personnel only. We do not sell, share, or distribute your information to third parties except as required by law.
-    </p>
+      <h2 data-en="Your Rights" data-es="Sus Derechos" data-pt="Seus Direitos">Your Rights</h2>
+      <ul>
+        <li data-en="Request access to your personal information"
+            data-es="Solicitar acceso a su información personal"
+            data-pt="Solicitar acesso às suas informações pessoais">
+            Request access to your personal information
+        </li>
+        <li data-en="Request corrections to inaccurate information"
+            data-es="Solicitar correcciones a información inexacta"
+            data-pt="Solicitar correções para informações incorretas">
+            Request corrections to inaccurate information
+        </li>
+        <li data-en="Withdraw your application at any time"
+            data-es="Retirar su solicitud en cualquier momento"
+            data-pt="Retirar sua inscrição a qualquer momento">
+            Withdraw your application at any time
+        </li>
+      </ul>
 
-    <h2 data-en="Your Rights" data-es="Sus Derechos" data-pt="Seus Direitos">Your Rights</h2>
-    <p data-en="You have the right to:"
-       data-es="Usted tiene derecho a:"
-       data-pt="Você tem o direito de:">
-       You have the right to:
-    </p>
-    <ul>
-      <li data-en="Request access to your personal information"
-          data-es="Solicitar acceso a su información personal"
-          data-pt="Solicitar acesso às suas informações pessoais">
-          Request access to your personal information
-      </li>
-      <li data-en="Request corrections to inaccurate information"
-          data-es="Solicitar correcciones a información inexacta"
-          data-pt="Solicitar correções para informações incorretas">
-          Request corrections to inaccurate information
-      </li>
-      <li data-en="Withdraw your application at any time"
-          data-es="Retirar su solicitud en cualquier momento"
-          data-pt="Retirar sua inscrição a qualquer momento">
-          Withdraw your application at any time
-      </li>
-    </ul>
+      <h2 data-en="Contact Us" data-es="Contáctenos" data-pt="Fale Conosco">Contact Us</h2>
+      <p data-en="If you have questions about this privacy policy or your personal information, please contact us at:"
+         data-es="Si tiene preguntas sobre esta política de privacidad o su información personal, contáctenos en:"
+         data-pt="Se você tiver dúvidas sobre esta política de privacidade ou suas informações pessoais, entre em contato conosco em:">
+         If you have questions about this privacy policy or your personal information, please contact us at:
+      </p>
+      <p><a href="mailto:jobs@carolinalumpers.com">jobs@carolinalumpers.com</a></p>
 
-    <h2 data-en="Contact Us" data-es="Contáctenos" data-pt="Fale Conosco">Contact Us</h2>
-    <p data-en="If you have questions about this privacy policy or your personal information, please contact us at:"
-       data-es="Si tiene preguntas sobre esta política de privacidad o su información personal, contáctenos en:"
-       data-pt="Se você tiver dúvidas sobre esta política de privacidade ou suas informações pessoais, entre em contato conosco em:">
-       If you have questions about this privacy policy or your personal information, please contact us at:
-    </p>
-    <p><a href="mailto:jobs@carolinalumpers.com">jobs@carolinalumpers.com</a></p>
+      <p data-en="Last updated: October 2025"
+         data-es="Última actualización: Octubre 2025"
+         data-pt="Última atualização: Outubro 2025">
+         Last updated: October 2025
+      </p>
 
-    <p data-en="Last updated: October 2025"
-       data-es="Última actualización: Octubre 2025"
-       data-pt="Última atualização: Outubro 2025">
-       Last updated: October 2025
-    </p>
+      <a href="apply.html" class="back-link"
+         data-en="Back to Application"
+         data-es="Volver a la Solicitud"
+         data-pt="Voltar à Inscrição">
+         Back to Application
+      </a>
+    </div>
+  </section>
 
-    <a href="apply.html" class="back-link"
-       data-en="Back to Application"
-       data-es="Volver a la Solicitud"
-       data-pt="Voltar à Inscrição">
-       Back to Application
-    </a>
-  </div>
-
+  <!-- Footer -->
   <footer>
     <p data-en="© 2024 Carolina Lumper Service. All rights reserved."
        data-es="© 2024 Carolina Lumper Service. Todos los derechos reservados."
@@ -287,6 +281,11 @@
     <div class="footer-icons">
       <a href="https://www.facebook.com/profile.php?id=61569872795390"><img src="assets/facebook-icon.png" alt="Facebook"></a>
       <a href="#"><img src="assets/linkedin-icon.png" alt="LinkedIn"></a>
+    </div>
+    <div class="language-toggle">
+      <button onclick="switchLanguage('en')" data-lang="en">English</button>
+      <button onclick="switchLanguage('es')" data-lang="es">Español</button>
+      <button onclick="switchLanguage('pt')" data-lang="pt">Português</button>
     </div>
   </footer>
 
@@ -301,13 +300,11 @@
         if (text != null) el.innerHTML = text;
       });
 
-      // Highlight active button
       document.querySelectorAll('.language-toggle button').forEach(btn => {
         btn.classList.remove('active');
         if (btn.getAttribute('data-lang') === lang) btn.classList.add('active');
       });
 
-      // Save preference
       localStorage.setItem('CLS_Lang', lang);
     }
 
