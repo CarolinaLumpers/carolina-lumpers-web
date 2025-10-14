@@ -2,375 +2,607 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title data-en="Employment Privacy Policy | Carolina Lumper Service"
-          data-es="Política de Privacidad Laboral | Carolina Lumper Service"
-          data-pt="Política de Privacidade de Emprego | Carolina Lumper Service">
-    Employment Privacy Policy | Carolina Lumper Service
-  </title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="icon" type="image/png" href="assets/CLS-favicon.png">
-  <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apply to Carolina Lumper Service (CLS)</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="assets/CLS-favicon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
 
-  <style>
-    body {
-      margin: 0;
-      background: #000;
-      color: #fff;
-      font-family: Arial, sans-serif;
-    }
+    <style>
+        .form-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 80vh;
+            text-align: center;
+        }
 
-    .form-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 80vh;
-      text-align: left;
-      padding: 40px 20px;
-    }
+        body {
+            margin: 0;
+        }
 
-    h1, h2 {
-      color: #ffcc00;
-      font-family: "Anton", sans-serif;
-      text-align: center;
-    }
+        .language-toggle {
+            margin: 10px;
+            text-align: center;
+        }
 
-    p, ul, li {
-      line-height: 1.6;
-      color: #fff;
-    }
+        .language-toggle button {
+            margin: 5px;
+            padding: 10px;
+            font-size: 14px;
+            cursor: pointer;
+        }
 
-    ul {
-      margin-left: 20px;
-    }
+        /* Labels left, fields right */
+        .form-grid {
+            width: 100%;
+            max-width: 800px;
+            display: grid;
+            grid-template-columns: 220px 1fr;
+            gap: 10px 12px;
+            text-align: left;
+            align-items: center;
+        }
 
-    a {
-      color: #ffcc00;
-      text-decoration: underline;
-    }
+        .form-grid .full {
+            grid-column: 1 / -1;
+        }
 
-    a:hover {
-      color: #ffd633;
-    }
+        .form-grid label {
+            display: block;
+        }
 
-    .language-toggle {
-      text-align: center;
-      margin: 20px 0;
-    }
+        .form-grid input,
+        .form-grid select,
+        .form-grid textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
 
-    .language-toggle button {
-      margin: 0 5px;
-      padding: 8px 16px;
-      background: #111;
-      color: #ffcc00;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 14px;
-    }
+        .actions {
+            grid-column: 1 / -1;
+            text-align: left;
+        }
 
-    .language-toggle button.active,
-    .language-toggle button:hover {
-      background: #ffcc00;
-      color: #000;
-    }
+        .actions button {
+            background-color: #002e63;
+            color: #fff;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
 
-    .back-link {
-      display: block;
-      text-align: center;
-      margin: 30px 0;
-      padding: 12px 24px;
-      background: #002e63;
-      color: #fff;
-      text-decoration: none;
-      border-radius: 4px;
-      max-width: 220px;
-      margin-left: auto;
-      margin-right: auto;
-      font-weight: 500;
-    }
+        .actions button:hover {
+            background-color: #004b99;
+        }
 
-    .back-link:hover {
-      background: #004b99;
-      color: #fff;
-    }
+        #status {
+            margin-top: 10px;
+            font-weight: 600;
+            min-height: 1.5em;
+        }
 
-    footer {
-      text-align: center;
-      padding: 20px 10px;
-      background: #000;
-      color: #fff;
-    }
+        /* Add red asterisk to required field labels */
+        .form-grid label.required::after {
+            content: " *";
+            color: #d00;
+            font-weight: bold;
+        }
 
-    .footer-icons img {
-      width: 24px;
-      height: 24px;
-      margin: 0 6px;
-    }
+        /* White backgrounds for all fields */
+        .form-grid input,
+        .form-grid select,
+        .form-grid textarea {
+            background-color: #fff !important;
+            color: #000 !important;
+            border: 1px solid #ccc;
+        }
 
-    .hero {
-      position: relative;
-      text-align: center;
-      overflow: hidden;
-    }
+        /* Enhanced contrast for work authorization notes */
+        #authDescription {
+            color: #ddd !important;
+        }
+        
+        #docNote {
+            color: #ffda66 !important;
+        }
 
-    .hero-image {
-      position: relative;
-      width: 100%;
-      height: 300px;
-    }
+        /* --- Consistent spacing & grouping --- */
+        .form-grid label {
+            margin-bottom: 3px;
+            font-weight: 500;
+        }
 
-    .banner-image {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      filter: brightness(60%);
-    }
+        .form-grid input,
+        .form-grid select,
+        .form-grid textarea {
+            margin-bottom: 14px; /* space between fields */
+        }
 
-    .blur-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.4);
-      backdrop-filter: blur(2px);
-    }
-  </style>
+        /* Visual break between form sections */
+        .form-grid label[for="language_preference"] {
+            margin-top: 12px;
+            border-top: 1px solid #eee;
+            padding-top: 12px;
+        }
+
+        /* Privacy policy checkbox styling */
+        .form-grid .full label {
+            display: flex;
+            align-items: center; /* checkbox vertically centered */
+            justify-content: flex-start;
+            text-align: left;
+            margin: 20px 0;
+            padding: 15px;
+            background: #000; /* dark background */
+            color: #fff; /* white text */
+            border: 1px solid #333;
+            border-radius: 6px;
+        }
+
+        /* Checkbox on the left */
+        .form-grid .full label input[type="checkbox"] {
+            margin-right: 10px;
+            margin-bottom: 0;
+            width: auto;
+            transform: scale(1.2);
+        }
+
+        /* Privacy policy link highlight */
+        .form-grid .full label a {
+            color: #ffcc00 !important;
+            text-decoration: underline;
+        }
+
+        .form-grid .full label a:hover {
+            color: #ffd633 !important;
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            /* Better vertical spacing in mobile view */
+            .form-grid label {
+                margin-top: 8px;
+            }
+            .form-grid input,
+            .form-grid select,
+            .form-grid textarea {
+                margin-bottom: 18px;
+            }
+
+            /* Optional small polish - subtle contrast between rows */
+            .form-grid input,
+            .form-grid select,
+            .form-grid textarea {
+                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            }
+
+            .actions {
+                text-align: center;
+            }
+        }
+    </style>
+
+    <script>
+        const MESSAGES = {
+            en: { sending: "Sending...", success: "Thanks. We received your application.", error: "Error. Please try again." },
+            es: { sending: "Enviando...", success: "Gracias. Recibimos su solicitud.", error: "Error. Intente de nuevo." },
+            pt: { sending: "Enviando...", success: "Obrigado. Recebemos sua candidatura.", error: "Erro. Tente novamente." }
+        };
+
+        function adjustNavbarFontSize() {
+            const navLinks = document.querySelector('.nav-links');
+            if (!navLinks) return;
+            const links = navLinks.querySelectorAll('a');
+            const maxWidth = navLinks.offsetWidth;
+            let totalWidth = 0;
+            links.forEach(link => totalWidth += link.offsetWidth);
+            navLinks.style.fontSize = (totalWidth > maxWidth)
+                ? (maxWidth / totalWidth) * 0.9 + 'em'
+                : '0.9em';
+        }
+
+        function applyPlaceholders(lang) {
+            document.querySelectorAll('[data-ph-en]').forEach(el => {
+                const val =
+                    lang === 'es' ? el.getAttribute('data-ph-es') :
+                        lang === 'pt' ? el.getAttribute('data-ph-pt') :
+                            el.getAttribute('data-ph-en');
+                if (val) el.setAttribute('placeholder', val);
+            });
+        }
+
+        function switchLanguage(lang) {
+            document.querySelectorAll("[data-en],[data-es],[data-pt]").forEach(el => {
+                if (el.querySelector?.('input,select,textarea')) return;
+                const text =
+                    lang === "es" ? el.getAttribute("data-es") :
+                        lang === "pt" ? el.getAttribute("data-pt") :
+                            el.getAttribute("data-en");
+                if (text != null) el.innerHTML = text;
+            });
+
+            const form = document.getElementById('cls-apply');
+            if (form) form.querySelector('input[name="ui_lang"]').value = lang;
+
+            applyPlaceholders(lang);
+            validateAge(); // ✅ refresh localized DOB message if visible
+            adjustNavbarFontSize();
+        }
+
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const userLang = navigator.language || 'en';
+            const lang = userLang.startsWith("es") ? "es" : userLang.startsWith("pt") ? "pt" : "en";
+            switchLanguage(lang);
+            adjustNavbarFontSize();
+
+            setDobMax();
+
+
+            const form = document.getElementById('cls-apply');
+            if (!form) return;
+
+            form.querySelector('input[name="startedAt"]').value = String(Date.now());
+            const statusEl = document.getElementById('status');
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const currentLang = form.querySelector('input[name="ui_lang"]').value || 'en';
+                if (statusEl) statusEl.textContent = MESSAGES[currentLang].sending;
+
+                try {
+                    const body = new URLSearchParams(new FormData(form));
+                    const res = await fetch(form.action, { method: 'POST', body });
+                    let msg = MESSAGES[currentLang][res.ok ? 'success' : 'error'];
+                    try { const j = await res.json(); if (j?.message) msg = j.message; } catch { }
+                    if (statusEl) statusEl.textContent = msg;
+                    if (res.ok) {
+                        form.reset();
+                        form.querySelector('input[name="ui_lang"]').value = currentLang;
+                        applyPlaceholders(currentLang);
+                    }
+                } catch {
+                    if (statusEl) statusEl.textContent = MESSAGES[currentLang].error;
+                }
+            });
+        });
+
+        function setDobMax() {
+            // Limit date selection to 18+ only
+            const today = new Date();
+            const minAgeDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
+            const dobInput = document.getElementById('dob');
+            dobInput.max = minAgeDate.toISOString().split('T')[0];
+        }
+
+        function validateAge() {
+            const dobInput = document.getElementById('dob');
+            const errorEl = document.getElementById('dobError');
+            const form = document.getElementById('cls-apply');
+            if (!dobInput || !form) return;
+
+            const currentLang = form.querySelector('input[name="ui_lang"]').value || 'en';
+            const messages = {
+                en: 'Applicant must be at least 18 years old.',
+                es: 'El solicitante debe tener al menos 18 años.',
+                pt: 'O candidato deve ter pelo menos 18 anos.'
+            };
+
+            const dobValue = dobInput.value;
+            if (!dobValue) {
+                errorEl.style.display = 'none';
+                dobInput.setCustomValidity('');
+                return;
+            }
+
+            const dob = new Date(dobValue);
+            const today = new Date();
+            const age = today.getFullYear() - dob.getFullYear();
+            const hasBirthdayPassed =
+                today.getMonth() > dob.getMonth() ||
+                (today.getMonth() === dob.getMonth() && today.getDate() >= dob.getDate());
+            const actualAge = hasBirthdayPassed ? age : age - 1;
+
+            if (actualAge < 18) {
+                errorEl.style.display = 'block';
+                errorEl.textContent = messages[currentLang];
+                dobInput.setCustomValidity(messages[currentLang]);
+            } else {
+                errorEl.style.display = 'none';
+                dobInput.setCustomValidity('');
+            }
+        }
+
+        function updateDocNote() {
+          const select = document.getElementById("work_authorization");
+          const val = select?.value || "";
+          const descNote = document.getElementById("authDescription");
+          const docNote = document.getElementById("docNote");
+          const form = document.getElementById("cls-apply");
+          const lang = form?.querySelector('input[name="ui_lang"]')?.value || "en";
+
+          // Reset notes if no value selected
+          if (!val) { 
+            descNote.textContent = ""; 
+            docNote.textContent = ""; 
+            return; 
+          }
+
+          const info = {
+            Citizen: {
+              desc: {
+                en: "You are a U.S. citizen by birth or naturalization.",
+                es: "Usted es ciudadano estadounidense por nacimiento o naturalización.",
+                pt: "Você é cidadão americano por nascimento ou naturalização."
+              },
+              docs: {
+                en: "Driver's license and Social Security card, or U.S. passport.",
+                es: "Licencia de conducir y tarjeta del Seguro Social, o pasaporte estadounidense.",
+                pt: "Carteira de motorista e cartão do Seguro Social, ou passaporte dos EUA."
+              }
+            },
+            "Permanent Resident": {
+              desc: {
+                en: "You have lawful permanent residence in the United States.",
+                es: "Usted tiene residencia permanente legal en los Estados Unidos.",
+                pt: "Você tem residência permanente legal nos Estados Unidos."
+              },
+              docs: {
+                en: "Permanent Resident Card (Green Card).",
+                es: "Tarjeta de Residente Permanente (Green Card).",
+                pt: "Cartão de Residente Permanente (Green Card)."
+              }
+            },
+            "Work Permit (EAD)": {
+              desc: {
+                en: "You have employment authorization from USCIS.",
+                es: "Usted tiene autorización de empleo de USCIS.",
+                pt: "Você tem autorização de emprego do USCIS."
+              },
+              docs: {
+                en: "Employment Authorization Document (EAD) card issued by USCIS.",
+                es: "Documento de Autorización de Empleo (EAD) emitido por USCIS.",
+                pt: "Documento de Autorização de Emprego (EAD) emitido pelo USCIS."
+              }
+            },
+            "Visa (H-2B)": {
+              desc: {
+                en: "You have a temporary worker visa for seasonal employment.",
+                es: "Usted tiene una visa de trabajador temporal para empleo estacional.",
+                pt: "Você tem um visto de trabalhador temporário para emprego sazonal."
+              },
+              docs: {
+                en: "Copy of H-2B visa and passport photo page.",
+                es: "Copia de la visa H-2B y página del pasaporte con foto.",
+                pt: "Cópia do visto H-2B e da página do passaporte com foto."
+              }
+            },
+            "Visa (Other)": {
+              desc: {
+                en: "You have another type of work-authorized visa.",
+                es: "Usted tiene otro tipo de visa autorizada para trabajar.",
+                pt: "Você tem outro tipo de visto autorizado para trabalhar."
+              },
+              docs: {
+                en: "Copy of visa and work authorization letter.",
+                es: "Copia de la visa y carta de autorización de trabajo.",
+                pt: "Cópia do visto e carta de autorização de trabalho."
+              }
+            },
+            "Not Authorized": {
+              desc: {
+                en: "You do not currently have work authorization.",
+                es: "Actualmente no tiene autorización de trabajo.",
+                pt: "Você atualmente não tem autorização de trabalho."
+              },
+              docs: {
+                en: "⚠️ You are not authorized to work in the United States.",
+                es: "⚠️ No está autorizado para trabajar en los Estados Unidos.",
+                pt: "⚠️ Você não está autorizado a trabalhar nos Estados Unidos."
+              }
+            }
+          };
+
+          if (info[val]) {
+            descNote.textContent = info[val].desc[lang];
+            docNote.textContent = "📄 " + info[val].docs[lang];
+          } else {
+            descNote.textContent = "";
+            docNote.textContent = "";
+          }
+        }
+    </script>
 </head>
 
 <body>
-  <!-- Navigation -->
-  <nav class="navbar">
-    <div class="logo-container">
-      <a href="index.html" class="logo-link">
-        <img src="assets/CLS_Nav_Logo.png" alt="CLS Logo" class="logo">
-      </a>
-      <a href="index.html" class="company-name">Carolina Lumper Service</a>
-    </div>
-    <ul class="nav-links">
-      <li><a href="index.html" data-en="Home" data-es="Inicio" data-pt="Início">Home</a></li>
-      <li><a href="about.html" data-en="About Us" data-es="Sobre Nosotros" data-pt="Sobre Nós">About Us</a></li>
-      <li><a href="services.html" data-en="Services" data-es="Servicios" data-pt="Serviços">Services</a></li>
-      <li><a href="contact.html" data-en="Contact" data-es="Contacto" data-pt="Contato">Contact</a></li>
-      <li><a href="apply.html" class="active" data-en="Apply" data-es="Solicitar" data-pt="Candidatar">Apply</a></li>
-    </ul>
-  </nav>
+    <nav class="navbar">
+        <div class="logo-container">
+            <a href="index.html" class="logo-link">
+                <img src="assets/CLS_Nav_Logo.png" alt="CLS Logo" class="logo">
+            </a>
+            <a href="index.html" class="company-name">Carolina Lumper Service</a>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html" data-en="Home" data-es="Inicio" data-pt="Início">Home</a></li>
+            <li><a href="about.html" data-en="About Us" data-es="Sobre Nosotros" data-pt="Sobre Nós">About Us</a></li>
+            <li><a href="services.html" data-en="Services" data-es="Servicios" data-pt="Serviços">Services</a></li>
+            <li><a href="contact.html" data-en="Contact" data-es="Contacto" data-pt="Contato">Contact</a></li>
+            <li><a href="apply.html" class="active" data-en="Apply" data-es="Solicitar" data-pt="Candidatar">Apply</a>
+            </li>
+        </ul>
+    </nav>
 
-  <!-- Hero Header -->
-  <header class="hero">
-    <div class="hero-content container text-center">
-      <h2 data-en="Employment Privacy Policy" data-es="Política de Privacidad Laboral" data-pt="Política de Privacidade de Emprego">
-        Employment Privacy Policy
-      </h2>
-      <p data-en="Learn how Carolina Lumper Service protects your information during the application and employment process."
-         data-es="Conozca cómo Carolina Lumper Service protege su información durante el proceso de solicitud y empleo."
-         data-pt="Saiba como a Carolina Lumper Service protege suas informações durante o processo de candidatura e emprego.">
-         Learn how Carolina Lumper Service protects your information during the application and employment process.
-      </p>
-    </div>
-    <div class="hero-image">
-      <img src="assets/CLS-Cover-01web.webp" alt="Hero Banner" class="banner-image">
-      <div class="blur-overlay"></div>
-    </div>
-  </header>
+    <header class="hero">
+        <div class="hero-content container text-center">
+            <h2 data-en="Employment Privacy Policy"
+                data-es="Política de Privacidad Laboral"
+                data-pt="Política de Privacidade de Emprego">
+                Employment Privacy Policy
+            </h2>
+            <p data-en="Learn how Carolina Lumper Service protects your information during the application and employment process."
+               data-es="Conozca cómo Carolina Lumper Service protege su información durante el proceso de solicitud y empleo."
+               data-pt="Saiba como a Carolina Lumper Service protege suas informações durante o processo de candidatura e emprego.">
+               Learn how Carolina Lumper Service protects your information during the application and employment process.
+            </p>
+        </div>
+    </header>
 
-  <!-- Privacy Content -->
-  <section id="privacy">
-    <div class="form-container">
-      <h2 data-en="Our Commitment" data-es="Nuestro Compromiso" data-pt="Nosso Compromisso">Our Commitment</h2>
-      <p data-en="Carolina Lumper Service (CLS) is committed to protecting your privacy. This policy explains how we collect, use, and protect your personal information during our recruitment and employment process."
-         data-es="Carolina Lumper Service (CLS) se compromete a proteger su privacidad. Esta política explica cómo recopilamos, usamos y protegemos su información personal durante nuestro proceso de reclutamiento y empleo."
-         data-pt="Carolina Lumper Service (CLS) está comprometida em proteger sua privacidade. Esta política explica como coletamos, usamos e protegemos suas informações pessoais durante nosso processo de recrutamento e emprego.">
-         Carolina Lumper Service (CLS) is committed to protecting your privacy. This policy explains how we collect, use, and protect your personal information during our recruitment and employment process.
-      </p>
+    <section id="privacy">
+        <div class="form-container">
 
-      <h2 data-en="Information We Collect" data-es="Información que Recopilamos" data-pt="Informações que Coletamos">
-        Information We Collect
-      </h2>
-      <p data-en="We collect information you provide through our application form, including:"
-         data-es="Recopilamos información que usted proporciona a través de nuestro formulario de solicitud, incluyendo:"
-         data-pt="Coletamos informações que você fornece através do nosso formulário de inscrição, incluindo:">
-         We collect information you provide through our application form, including:
-      </p>
-      <ul>
-        <li data-en="Personal contact information (name, phone, email, address)"
-            data-es="Información personal de contacto (nombre, teléfono, correo electrónico, dirección)"
-            data-pt="Informações pessoais de contato (nome, telefone, email, endereço)">
-            Personal contact information (name, phone, email, address)
-        </li>
-        <li data-en="Work authorization status and documentation"
-            data-es="Estado de autorización de trabajo y documentación"
-            data-pt="Status de autorização de trabalho e documentação">
-            Work authorization status and documentation
-        </li>
-        <li data-en="Emergency contact information"
-            data-es="Información de contacto de emergencia"
-            data-pt="Informações de contato de emergência">
-            Emergency contact information
-        </li>
-        <li data-en="Work preferences and availability"
-            data-es="Preferencias de trabajo y disponibilidad"
-            data-pt="Preferências de trabalho e disponibilidade">
-            Work preferences and availability
-        </li>
-        <li data-en="Experience and qualifications"
-            data-es="Experiencia y calificaciones"
-            data-pt="Experiência e qualificações">
-            Experience and qualifications
-        </li>
-      </ul>
+            <h2 data-en="Our Commitment" data-es="Nuestro Compromiso" data-pt="Nosso Compromisso">Our Commitment</h2>
+            <p data-en="Carolina Lumper Service (CLS) is committed to protecting your privacy. This policy explains how we collect, use, and protect your personal information during our recruitment and employment process."
+               data-es="Carolina Lumper Service (CLS) se compromete a proteger su privacidad. Esta política explica cómo recopilamos, usamos y protegemos su información personal durante nuestro proceso de reclutamiento y empleo."
+               data-pt="Carolina Lumper Service (CLS) está comprometida em proteger sua privacidade. Esta política explica como coletamos, usamos e protegemos suas informações pessoais durante nosso processo de recrutamento e emprego.">
+               Carolina Lumper Service (CLS) is committed to protecting your privacy. This policy explains how we collect, use, and protect your personal information during our recruitment and employment process.
+            </p>
 
-      <h2 data-en="How We Use Your Information" data-es="Cómo Usamos Su Información" data-pt="Como Usamos Suas Informações">
-        How We Use Your Information
-      </h2>
-      <ul>
-        <li data-en="To evaluate your application and qualifications"
-            data-es="Para evaluar su solicitud y calificaciones"
-            data-pt="Para avaliar sua inscrição e qualificações">
-            To evaluate your application and qualifications
-        </li>
-        <li data-en="To contact you about job opportunities"
-            data-es="Para contactarlo sobre oportunidades de trabajo"
-            data-pt="Para contatá-lo sobre oportunidades de trabalho">
-            To contact you about job opportunities
-        </li>
-        <li data-en="To verify work authorization (as required by law)"
-            data-es="Para verificar la autorización de trabajo (según lo requiere la ley)"
-            data-pt="Para verificar autorização de trabalho (conforme exigido por lei)">
-            To verify work authorization (as required by law)
-        </li>
-        <li data-en="To communicate regarding scheduling and assignments"
-            data-es="Para comunicarnos sobre horarios y asignaciones"
-            data-pt="Para comunicar sobre agendamentos e atribuições">
-            To communicate regarding scheduling and assignments
-        </li>
-      </ul>
+            <h2 data-en="Information We Collect" data-es="Información que Recopilamos" data-pt="Informações que Coletamos">
+                Information We Collect
+            </h2>
+            <p data-en="We collect information you provide through our application form, including:"
+               data-es="Recopilamos información que usted proporciona a través de nuestro formulario de solicitud, incluyendo:"
+               data-pt="Coletamos informações que você fornece através do nosso formulário de inscrição, incluindo:">
+               We collect information you provide through our application form, including:
+            </p>
+            <ul>
+                <li data-en="Personal contact information (name, phone, email, address)"
+                    data-es="Información personal de contacto (nombre, teléfono, correo electrónico, dirección)"
+                    data-pt="Informações pessoais de contato (nome, telefone, email, endereço)">
+                    Personal contact information (name, phone, email, address)
+                </li>
+                <li data-en="Work authorization status and documentation"
+                    data-es="Estado de autorización de trabajo y documentación"
+                    data-pt="Status de autorização de trabalho e documentação">
+                    Work authorization status and documentation
+                </li>
+                <li data-en="Emergency contact information"
+                    data-es="Información de contacto de emergencia"
+                    data-pt="Informações de contato de emergência">
+                    Emergency contact information
+                </li>
+                <li data-en="Work preferences and availability"
+                    data-es="Preferencias de trabajo y disponibilidad"
+                    data-pt="Preferências de trabalho e disponibilidade">
+                    Work preferences and availability
+                </li>
+                <li data-en="Experience and qualifications"
+                    data-es="Experiencia y calificaciones"
+                    data-pt="Experiência e qualificações">
+                    Experience and qualifications
+                </li>
+            </ul>
 
-      <h2 data-en="Information Protection" data-es="Protección de la Información" data-pt="Proteção de Informações">
-        Information Protection
-      </h2>
-      <p data-en="We protect your personal information through secure storage systems and limit access to authorized personnel only. We do not sell, share, or distribute your information to third parties except as required by law."
-         data-es="Protegemos su información personal a través de sistemas de almacenamiento seguros y limitamos el acceso solo a personal autorizado. No vendemos, compartimos ni distribuimos su información a terceros excepto según lo requiera la ley."
-         data-pt="Protegemos suas informações pessoais através de sistemas de armazenamento seguros e limitamos o acesso apenas a pessoal autorizado. Não vendemos, compartilhamos ou distribuímos suas informações para terceiros, exceto conforme exigido por lei.">
-         We protect your personal information through secure storage systems and limit access to authorized personnel only. We do not sell, share, or distribute your information to third parties except as required by law.
-      </p>
+            <h2 data-en="How We Use Your Information"
+                data-es="Cómo Usamos Su Información"
+                data-pt="Como Usamos Suas Informações">
+                How We Use Your Information
+            </h2>
+            <ul>
+                <li data-en="To evaluate your application and qualifications"
+                    data-es="Para evaluar su solicitud y calificaciones"
+                    data-pt="Para avaliar sua inscrição e qualificações">
+                    To evaluate your application and qualifications
+                </li>
+                <li data-en="To contact you about job opportunities"
+                    data-es="Para contactarlo sobre oportunidades de trabajo"
+                    data-pt="Para contatá-lo sobre oportunidades de trabalho">
+                    To contact you about job opportunities
+                </li>
+                <li data-en="To verify work authorization (as required by law)"
+                    data-es="Para verificar la autorización de trabajo (según lo requiere la ley)"
+                    data-pt="Para verificar autorização de trabalho (conforme exigido por lei)">
+                    To verify work authorization (as required by law)
+                </li>
+                <li data-en="To communicate regarding scheduling and assignments"
+                    data-es="Para comunicarnos sobre horarios y asignaciones"
+                    data-pt="Para comunicar sobre agendamentos e atribuições">
+                    To communicate regarding scheduling and assignments
+                </li>
+            </ul>
 
-      <h2 data-en="Your Rights" data-es="Sus Derechos" data-pt="Seus Direitos">Your Rights</h2>
-      <ul>
-        <li data-en="Request access to your personal information"
-            data-es="Solicitar acceso a su información personal"
-            data-pt="Solicitar acesso às suas informações pessoais">
-            Request access to your personal information
-        </li>
-        <li data-en="Request corrections to inaccurate information"
-            data-es="Solicitar correcciones a información inexacta"
-            data-pt="Solicitar correções para informações incorretas">
-            Request corrections to inaccurate information
-        </li>
-        <li data-en="Withdraw your application at any time"
-            data-es="Retirar su solicitud en cualquier momento"
-            data-pt="Retirar sua inscrição a qualquer momento">
-            Withdraw your application at any time
-        </li>
-      </ul>
+            <h2 data-en="Information Protection"
+                data-es="Protección de la Información"
+                data-pt="Proteção de Informações">
+                Information Protection
+            </h2>
+            <p data-en="We protect your personal information through secure storage systems and limit access to authorized personnel only. We do not sell, share, or distribute your information to third parties except as required by law."
+               data-es="Protegemos su información personal a través de sistemas de almacenamiento seguros y limitamos el acceso solo a personal autorizado. No vendemos, compartimos ni distribuimos su información a terceros excepto según lo requiera la ley."
+               data-pt="Protegemos suas informações pessoais através de sistemas de armazenamento seguros e limitamos o acesso apenas a pessoal autorizado. Não vendemos, compartilhamos ou distribuímos suas informações para terceiros, exceto conforme exigido por lei.">
+               We protect your personal information through secure storage systems and limit access to authorized personnel only. We do not sell, share, or distribute your information to third parties except as required by law.
+            </p>
 
-      <h2 data-en="Contact Us" data-es="Contáctenos" data-pt="Fale Conosco">Contact Us</h2>
-      <p data-en="If you have questions about this privacy policy or your personal information, please contact us at:"
-         data-es="Si tiene preguntas sobre esta política de privacidad o su información personal, contáctenos en:"
-         data-pt="Se você tiver dúvidas sobre esta política de privacidade ou suas informações pessoais, entre em contato conosco em:">
-         If you have questions about this privacy policy or your personal information, please contact us at:
-      </p>
-      <p><a href="mailto:jobs@carolinalumpers.com">jobs@carolinalumpers.com</a></p>
+            <h2 data-en="Your Rights" data-es="Sus Derechos" data-pt="Seus Direitos">Your Rights</h2>
+            <ul>
+                <li data-en="Request access to your personal information"
+                    data-es="Solicitar acceso a su información personal"
+                    data-pt="Solicitar acesso às suas informações pessoais">
+                    Request access to your personal information
+                </li>
+                <li data-en="Request corrections to inaccurate information"
+                    data-es="Solicitar correcciones a información inexacta"
+                    data-pt="Solicitar correções para informações incorretas">
+                    Request corrections to inaccurate information
+                </li>
+                <li data-en="Withdraw your application at any time"
+                    data-es="Retirar su solicitud en cualquier momento"
+                    data-pt="Retirar sua inscrição a qualquer momento">
+                    Withdraw your application at any time
+                </li>
+            </ul>
 
-      <p data-en="Last updated: October 2025"
-         data-es="Última actualización: Octubre 2025"
-         data-pt="Última atualização: Outubro 2025">
-         Last updated: October 2025
-      </p>
+            <h2 data-en="Contact Us" data-es="Contáctenos" data-pt="Fale Conosco">Contact Us</h2>
+            <p data-en="If you have questions about this privacy policy or your personal information, please contact us at:"
+               data-es="Si tiene preguntas sobre esta política de privacidad o su información personal, contáctenos en:"
+               data-pt="Se você tiver dúvidas sobre esta política de privacidade ou suas informações pessoais, entre em contato conosco em:">
+               If you have questions about this privacy policy or your personal information, please contact us at:
+            </p>
+            <p><a href="mailto:jobs@carolinalumpers.com">jobs@carolinalumpers.com</a></p>
 
-      <a href="apply.html" class="back-link"
-         data-en="Back to Application"
-         data-es="Volver a la Solicitud"
-         data-pt="Voltar à Inscrição">
-         Back to Application
-      </a>
-    </div>
-  </section>
+            <p data-en="Last updated: October 2025"
+               data-es="Última actualización: Octubre 2025"
+               data-pt="Última atualização: Outubro 2025">
+               Last updated: October 2025
+            </p>
 
-  <!-- Footer -->
-  <footer>
-    <p data-en="© 2024 Carolina Lumper Service. All rights reserved."
-       data-es="© 2024 Carolina Lumper Service. Todos los derechos reservados."
-       data-pt="© 2024 Carolina Lumper Service. Todos os direitos reservados.">
-       © 2024 Carolina Lumper Service. All rights reserved.
-    </p>
-    <div class="footer-icons">
-      <a href="https://www.facebook.com/profile.php?id=61569872795390"><img src="assets/facebook-icon.png" alt="Facebook"></a>
-      <a href="#"><img src="assets/linkedin-icon.png" alt="LinkedIn"></a>
-    </div>
-    <div class="language-toggle">
-      <button onclick="switchLanguage('en')" data-lang="en">English</button>
-      <button onclick="switchLanguage('es')" data-lang="es">Español</button>
-      <button onclick="switchLanguage('pt')" data-lang="pt">Português</button>
-    </div>
-  </footer>
+            <a href="apply.html" class="back-link"
+               data-en="Back to Application"
+               data-es="Volver a la Solicitud"
+               data-pt="Voltar à Inscrição">
+               Back to Application
+            </a>
 
-  <script>
-    function adjustNavbarFontSize() {
-      const navLinks = document.querySelector('.nav-links');
-      if (!navLinks) return;
-      const links = navLinks.querySelectorAll('a');
-      const maxWidth = navLinks.offsetWidth;
-      let totalWidth = 0;
-      links.forEach(link => totalWidth += link.offsetWidth);
-      navLinks.style.fontSize = (totalWidth > maxWidth)
-        ? (maxWidth / totalWidth) * 0.9 + 'em'
-        : '0.9em';
-    }
+        </div>
+    </section>
 
-    function switchLanguage(lang) {
-      localStorage.setItem("CLS_Lang", lang);
-
-      // Translate text content
-      document.querySelectorAll("[data-en]").forEach(el => {
-        const text = el.getAttribute(`data-${lang}`) || el.getAttribute("data-en");
-        if (text) el.innerHTML = text;
-      });
-
-      // Highlight active toggle button
-      document.querySelectorAll(".language-toggle button").forEach(b =>
-        b.classList.toggle("active", b.dataset.lang === lang)
-      );
-
-      // Update <title>
-      const titleEl = document.querySelector("title");
-      if (titleEl) {
-        const newTitle = titleEl.getAttribute(`data-${lang}`) || titleEl.getAttribute("data-en");
-        if (newTitle) titleEl.textContent = newTitle;
-      }
-
-      adjustNavbarFontSize();
-    }
-
-    document.addEventListener("DOMContentLoaded", () => {
-      const savedLang = localStorage.getItem("CLS_Lang");
-      const browserLang = (navigator.languages && navigator.languages[0]) || navigator.language || "en";
-      let lang = "en";
-
-      if (savedLang) {
-        lang = savedLang;
-      } else if (browserLang.toLowerCase().startsWith("pt")) {
-        lang = "pt";
-      } else if (browserLang.toLowerCase().startsWith("es")) {
-        lang = "es";
-      }
-
-      switchLanguage(lang);
-      adjustNavbarFontSize();
-    });
-  </script>
+    <footer>
+        <p data-en="© 2024 Carolina Lumper Service. All rights reserved."
+            data-es="© 2024 Carolina Lumper Service. Todos los derechos reservados."
+            data-pt="© 2024 Carolina Lumper Service. Todos os direitos reservados.">
+            © 2024 Carolina Lumper Service. All rights reserved.
+        </p>
+        <div class="footer-icons">
+            <a href="https://www.facebook.com/profile.php?id=61569872795390"><img src="assets/facebook-icon.png"
+                    alt="Facebook"></a>
+            <a href="#"><img src="assets/linkedin-icon.png" alt="LinkedIn"></a>
+        </div>
+        <div class="language-toggle">
+            <button onclick="switchLanguage('en')">English</button>
+            <button onclick="switchLanguage('es')">Español</button>
+            <button onclick="switchLanguage('pt')">Português</button>
+        </div>
+    </footer>
 </body>
+
 </html>
