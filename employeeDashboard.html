@@ -836,16 +836,31 @@
 
     // =================== Language ===================
     function switchLanguage(lang) {
+      // ✅ Save the new language globally
       localStorage.setItem("CLS_Lang", lang);
+
+      // Update all translatable elements
       document.querySelectorAll("[data-en]").forEach(el => {
         const t = el.getAttribute(`data-${lang}`) || el.getAttribute("data-en");
         if (t) el.innerHTML = t;
       });
-      document.querySelectorAll(".language-toggle button").forEach(b => b.classList.toggle("active", b.dataset.lang === lang));
+
+      // Highlight the active language button
+      document.querySelectorAll(".language-toggle button").forEach(b => {
+        b.classList.toggle("active", b.dataset.lang === lang);
+      });
+
+      // ✅ Update greeting text with the right language
       const user = JSON.parse(localStorage.getItem(SESSION_KEY) || sessionStorage.getItem(SESSION_KEY) || "{}");
       if (user.displayName) {
         const greeting = GREETINGS[lang] || GREETINGS.en;
         document.getElementById("welcomeName").textContent = `${greeting}, ${user.displayName}!`;
+      }
+
+      // ✅ Force-refresh visible status message if any
+      const status = document.getElementById("clockInStatus");
+      if (status && status.textContent) {
+        status.textContent = status.textContent; // triggers re-render but doesn’t reset message
       }
     }
 
