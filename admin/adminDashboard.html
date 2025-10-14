@@ -1,5 +1,6 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,6 +18,15 @@
 
   <!-- Theme color for PWA -->
   <meta name="theme-color" content="#ffcc00">
+
+  <!-- Enable iOS full-screen PWA mode -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="CLS Admin">
+
+  <!-- iOS app icon -->
+  <link rel="apple-touch-icon" href="assets/CLS-favicon.png">
+
 </head>
 
 <body>
@@ -44,4 +54,5 @@
   <!-- Core Logic (includes service worker registration + PWA install prompt) -->
   <script src="admin.js"></script>
 </body>
+
 </html>
