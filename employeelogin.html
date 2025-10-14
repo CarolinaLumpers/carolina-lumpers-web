@@ -267,23 +267,7 @@
         try { u = JSON.parse(u); } catch { u = null; }
         if (u && u.workerId) {
           // ✅ Always stay logged in until user manually logs out
-          // ✅ After login, check role before redirecting
-          try {
-            const who = await jsonp(`${API_URL}?action=whoami&workerId=${encodeURIComponent(data.workerId)}`);
-
-            if (who && who.ok && who.role === "Admin") {
-              // 🚀 Only Admins go to the Admin PWA
-              window.location.href = "admin/adminDashboard.html";
-            } else {
-              // Everyone else (Lead, Worker, etc.) goes to Employee Dashboard
-              window.location.href = "employeeDashboard.html";
-            }
-
-          } catch (err) {
-            console.error("Role check failed:", err);
-            // Fallback if something goes wrong
-            window.location.href = "employeeDashboard.html";
-          }
+          window.location.href = "employeeDashboard.html";
         }
       }
     })();
