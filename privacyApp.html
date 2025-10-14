@@ -109,6 +109,35 @@
       height: 24px;
       margin: 0 6px;
     }
+
+    .hero {
+      position: relative;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    .hero-image {
+      position: relative;
+      width: 100%;
+      height: 300px;
+    }
+
+    .banner-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: brightness(60%);
+    }
+
+    .blur-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(2px);
+    }
   </style>
 </head>
 
@@ -290,16 +319,28 @@
   </footer>
 
   <script>
+    function adjustNavbarFontSize() {
+      const navLinks = document.querySelector('.nav-links');
+      if (!navLinks) return;
+      const links = navLinks.querySelectorAll('a');
+      const maxWidth = navLinks.offsetWidth;
+      let totalWidth = 0;
+      links.forEach(link => totalWidth += link.offsetWidth);
+      navLinks.style.fontSize = (totalWidth > maxWidth)
+        ? (maxWidth / totalWidth) * 0.9 + 'em'
+        : '0.9em';
+    }
+
     function switchLanguage(lang) {
       localStorage.setItem("CLS_Lang", lang);
 
-      // Update all translatable elements
+      // Translate text content
       document.querySelectorAll("[data-en]").forEach(el => {
         const text = el.getAttribute(`data-${lang}`) || el.getAttribute("data-en");
         if (text) el.innerHTML = text;
       });
 
-      // Highlight active button
+      // Highlight active toggle button
       document.querySelectorAll(".language-toggle button").forEach(b =>
         b.classList.toggle("active", b.dataset.lang === lang)
       );
@@ -310,14 +351,25 @@
         const newTitle = titleEl.getAttribute(`data-${lang}`) || titleEl.getAttribute("data-en");
         if (newTitle) titleEl.textContent = newTitle;
       }
+
+      adjustNavbarFontSize();
     }
 
-    // Initialize language on load
     document.addEventListener("DOMContentLoaded", () => {
       const savedLang = localStorage.getItem("CLS_Lang");
-      const browserLang = navigator.language || "en";
-      const lang = savedLang || (browserLang.startsWith("es") ? "es" : browserLang.startsWith("pt") ? "pt" : "en");
+      const browserLang = (navigator.languages && navigator.languages[0]) || navigator.language || "en";
+      let lang = "en";
+
+      if (savedLang) {
+        lang = savedLang;
+      } else if (browserLang.toLowerCase().startsWith("pt")) {
+        lang = "pt";
+      } else if (browserLang.toLowerCase().startsWith("es")) {
+        lang = "es";
+      }
+
       switchLanguage(lang);
+      adjustNavbarFontSize();
     });
   </script>
 </body>
