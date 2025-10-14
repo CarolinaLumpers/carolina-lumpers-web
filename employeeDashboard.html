@@ -629,8 +629,9 @@
 
         const lang = localStorage.getItem("CLS_Lang") || "en";
         const res = await jsonp(
-          `${API_URL}?action=clockin&workerId=${encodeURIComponent(workerId)}&lat=${latitude}&lng=${longitude}&lang=${lang}`
+          `${API_URL}?action=clockin&workerId=${encodeURIComponent(workerId)}&lat=${latitude}&lng=${longitude}&lang=${lang}&email=${encodeURIComponent(email)}`
         );
+
 
         if (res && res.success) {
           // If backend provided a localized message (e.g. late message), show it directly
