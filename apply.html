@@ -96,10 +96,63 @@
             font-weight: bold;
         }
 
+        /* White backgrounds for all fields */
+        .form-grid input,
+        .form-grid select,
+        .form-grid textarea {
+            background-color: #fff !important;
+            color: #000 !important;
+            border: 1px solid #ccc;
+        }
+
+        /* Enhanced contrast for work authorization notes */
+        #authDescription {
+            color: #ddd !important;
+        }
+        
+        #docNote {
+            color: #ffda66 !important;
+        }
+
+        /* --- Consistent spacing & grouping --- */
+        .form-grid label {
+            margin-bottom: 3px;
+            font-weight: 500;
+        }
+
+        .form-grid input,
+        .form-grid select,
+        .form-grid textarea {
+            margin-bottom: 14px; /* space between fields */
+        }
+
+        /* Visual break between form sections */
+        .form-grid label[for="language_preference"] {
+            margin-top: 12px;
+            border-top: 1px solid #eee;
+            padding-top: 12px;
+        }
 
         @media (max-width: 768px) {
             .form-grid {
                 grid-template-columns: 1fr;
+            }
+
+            /* Better vertical spacing in mobile view */
+            .form-grid label {
+                margin-top: 8px;
+            }
+            .form-grid input,
+            .form-grid select,
+            .form-grid textarea {
+                margin-bottom: 18px;
+            }
+
+            /* Optional small polish - subtle contrast between rows */
+            .form-grid input,
+            .form-grid select,
+            .form-grid textarea {
+                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
             }
 
             .actions {
@@ -242,45 +295,100 @@
         function updateDocNote() {
           const select = document.getElementById("work_authorization");
           const val = select?.value || "";
-          const note = document.getElementById("docNote");
+          const descNote = document.getElementById("authDescription");
+          const docNote = document.getElementById("docNote");
           const form = document.getElementById("cls-apply");
           const lang = form?.querySelector('input[name="ui_lang"]')?.value || "en";
 
-          const docs = {
+          // Reset notes if no value selected
+          if (!val) { 
+            descNote.textContent = ""; 
+            docNote.textContent = ""; 
+            return; 
+          }
+
+          const info = {
             Citizen: {
-              en: "Driver's license and Social Security card, or U.S. passport.",
-              es: "Licencia de conducir y tarjeta del Seguro Social, o pasaporte estadounidense.",
-              pt: "Carteira de motorista e cartão do Seguro Social, ou passaporte dos EUA."
+              desc: {
+                en: "You are a U.S. citizen by birth or naturalization.",
+                es: "Usted es ciudadano estadounidense por nacimiento o naturalización.",
+                pt: "Você é cidadão americano por nascimento ou naturalização."
+              },
+              docs: {
+                en: "Driver's license and Social Security card, or U.S. passport.",
+                es: "Licencia de conducir y tarjeta del Seguro Social, o pasaporte estadounidense.",
+                pt: "Carteira de motorista e cartão do Seguro Social, ou passaporte dos EUA."
+              }
             },
             "Permanent Resident": {
-              en: "Permanent Resident Card (Green Card).",
-              es: "Tarjeta de Residente Permanente (Green Card).",
-              pt: "Cartão de Residente Permanente (Green Card)."
+              desc: {
+                en: "You have lawful permanent residence in the United States.",
+                es: "Usted tiene residencia permanente legal en los Estados Unidos.",
+                pt: "Você tem residência permanente legal nos Estados Unidos."
+              },
+              docs: {
+                en: "Permanent Resident Card (Green Card).",
+                es: "Tarjeta de Residente Permanente (Green Card).",
+                pt: "Cartão de Residente Permanente (Green Card)."
+              }
             },
             "Work Permit (EAD)": {
-              en: "Employment Authorization Document (EAD) card issued by USCIS.",
-              es: "Documento de Autorización de Empleo (EAD) emitido por USCIS.",
-              pt: "Documento de Autorização de Emprego (EAD) emitido pelo USCIS."
+              desc: {
+                en: "You have employment authorization from USCIS.",
+                es: "Usted tiene autorización de empleo de USCIS.",
+                pt: "Você tem autorização de emprego do USCIS."
+              },
+              docs: {
+                en: "Employment Authorization Document (EAD) card issued by USCIS.",
+                es: "Documento de Autorización de Empleo (EAD) emitido por USCIS.",
+                pt: "Documento de Autorização de Emprego (EAD) emitido pelo USCIS."
+              }
             },
             "Visa (H-2B)": {
-              en: "Copy of H-2B visa and passport photo page.",
-              es: "Copia de la visa H-2B y página del pasaporte con foto.",
-              pt: "Cópia do visto H-2B e da página do passaporte com foto."
+              desc: {
+                en: "You have a temporary worker visa for seasonal employment.",
+                es: "Usted tiene una visa de trabajador temporal para empleo estacional.",
+                pt: "Você tem um visto de trabalhador temporário para emprego sazonal."
+              },
+              docs: {
+                en: "Copy of H-2B visa and passport photo page.",
+                es: "Copia de la visa H-2B y página del pasaporte con foto.",
+                pt: "Cópia do visto H-2B e da página do passaporte com foto."
+              }
             },
             "Visa (Other)": {
-              en: "Copy of visa and work authorization letter.",
-              es: "Copia de la visa y carta de autorización de trabajo.",
-              pt: "Cópia do visto e carta de autorização de trabalho."
+              desc: {
+                en: "You have another type of work-authorized visa.",
+                es: "Usted tiene otro tipo de visa autorizada para trabajar.",
+                pt: "Você tem outro tipo de visto autorizado para trabalhar."
+              },
+              docs: {
+                en: "Copy of visa and work authorization letter.",
+                es: "Copia de la visa y carta de autorización de trabajo.",
+                pt: "Cópia do visto e carta de autorização de trabalho."
+              }
             },
             "Not Authorized": {
-              en: "⚠️ You are not authorized to work in the United States.",
-              es: "⚠️ No está autorizado para trabajar en los Estados Unidos.",
-              pt: "⚠️ Você não está autorizado a trabalhar nos Estados Unidos."
+              desc: {
+                en: "You do not currently have work authorization.",
+                es: "Actualmente no tiene autorización de trabajo.",
+                pt: "Você atualmente não tem autorização de trabalho."
+              },
+              docs: {
+                en: "⚠️ You are not authorized to work in the United States.",
+                es: "⚠️ No está autorizado para trabajar en los Estados Unidos.",
+                pt: "⚠️ Você não está autorizado a trabalhar nos Estados Unidos."
+              }
             }
           };
 
-          if (docs[val]) note.textContent = "📄 " + docs[val][lang];
-          else note.textContent = "";
+          if (info[val]) {
+            descNote.textContent = info[val].desc[lang];
+            docNote.textContent = "📄 " + info[val].docs[lang];
+          } else {
+            descNote.textContent = "";
+            docNote.textContent = "";
+          }
         }
     </script>
 </head>
@@ -447,38 +555,47 @@
                       <option value="Visa (Other)" data-en="Other Visa" data-es="Otra Visa" data-pt="Outro Visto">Other Visa</option>
                       <option value="Not Authorized" data-en="Not Authorized" data-es="No Autorizado" data-pt="Não Autorizado">Not Authorized</option>
                     </select>
+                    <small id="authDescription" style="display:block;color:#bbb;font-size:0.9em;margin-top:4px;"></small>
                     <small id="docNote" style="display:block;color:#ffcc00;font-size:0.9em;margin-top:4px;"></small>
 
                     <!-- New Fields -->
-                    <label for="start_date" data-en="Available Start Date" data-es="Fecha de inicio disponible" data-pt="Data de início disponível">
+                    <label for="start_date" data-en="Available Start Date" data-es="Fecha de inicio disponible" data-pt="Data de início disponível" class="required">
                       Available Start Date
                     </label>
-                    <input id="start_date" name="start_date" type="date">
+                    <input id="start_date" name="start_date" type="date" required>
 
-                    <label for="transportation" data-en="Reliable Transportation" data-es="Transporte confiable" data-pt="Transporte confiável">
+                    <label for="transportation" data-en="Reliable Transportation" data-es="Transporte confiable" data-pt="Transporte confiável" class="required">
                       Reliable Transportation
                     </label>
-                    <select id="transportation" name="transportation">
-                      <option value=""></option><option value="Yes">Yes</option><option value="No">No</option>
+                    <select id="transportation" name="transportation" required>
+                      <option value=""></option>
+                      <option value="Yes" data-en="Yes" data-es="Sí" data-pt="Sim">Yes</option>
+                      <option value="No" data-en="No" data-es="No" data-pt="Não">No</option>
                     </select>
 
                     <label for="driver_license" data-en="Valid Driver's License" data-es="Licencia de conducir válida"
                            data-pt="Carteira de motorista válida">Valid Driver's License</label>
                     <select id="driver_license" name="driver_license">
-                      <option value=""></option><option value="Yes">Yes</option><option value="No">No</option>
+                      <option value=""></option>
+                      <option value="Yes" data-en="Yes" data-es="Sí" data-pt="Sim">Yes</option>
+                      <option value="No" data-en="No" data-es="No" data-pt="Não">No</option>
                     </select>
 
                     <label for="overtime_ok" data-en="Willing to Work Overtime" data-es="Dispuesto a trabajar horas extra"
                            data-pt="Disposto a fazer horas extras">Willing to Work Overtime</label>
                     <select id="overtime_ok" name="overtime_ok">
-                      <option value=""></option><option value="Yes">Yes</option><option value="No">No</option>
+                      <option value=""></option>
+                      <option value="Yes" data-en="Yes" data-es="Sí" data-pt="Sim">Yes</option>
+                      <option value="No" data-en="No" data-es="No" data-pt="Não">No</option>
                     </select>
 
                     <label for="travel_ok" data-en="Willing to Travel" data-es="Dispuesto a viajar" data-pt="Disposto a viajar">
                       Willing to Travel
                     </label>
                     <select id="travel_ok" name="travel_ok">
-                      <option value=""></option><option value="Yes">Yes</option><option value="No">No</option>
+                      <option value=""></option>
+                      <option value="Yes" data-en="Yes" data-es="Sí" data-pt="Sim">Yes</option>
+                      <option value="No" data-en="No" data-es="No" data-pt="Não">No</option>
                     </select>
 
                     <label for="equipment_experience" data-en="Equipment Experience" data-es="Experiencia con equipos"
@@ -488,22 +605,24 @@
 
                     <!-- Emergency Contact -->
                     <label for="emergency_contact_name" data-en="Emergency Contact Name" data-es="Nombre del contacto de emergencia"
-                           data-pt="Nome do contato de emergência">Emergency Contact Name</label>
-                    <input id="emergency_contact_name" name="emergency_contact_name">
+                           data-pt="Nome do contato de emergência" class="required">Emergency Contact Name</label>
+                    <input id="emergency_contact_name" name="emergency_contact_name" required>
 
                     <label for="emergency_contact_relation" data-en="Relationship" data-es="Relación" data-pt="Relação">Relationship</label>
                     <input id="emergency_contact_relation" name="emergency_contact_relation">
 
                     <label for="emergency_contact_phone" data-en="Emergency Contact Phone" data-es="Teléfono del contacto de emergencia"
-                           data-pt="Telefone do contato de emergência">Emergency Contact Phone</label>
-                    <input id="emergency_contact_phone" name="emergency_contact_phone" type="tel">
+                           data-pt="Telefone do contato de emergência" class="required">Emergency Contact Phone</label>
+                    <input id="emergency_contact_phone" name="emergency_contact_phone" type="tel" required>
 
                     <label for="referral_source" data-en="How did you hear about us?" data-es="¿Cómo se enteró de nosotros?"
                            data-pt="Como soube de nós?">How did you hear about us?</label>
                     <select id="referral_source" name="referral_source">
-                      <option value=""></option><option value="Friend">Friend</option>
-                      <option value="Facebook">Facebook</option><option value="Indeed">Indeed</option>
-                      <option value="Other">Other</option>
+                      <option value=""></option>
+                      <option value="Friend" data-en="Friend" data-es="Amigo" data-pt="Amigo">Friend</option>
+                      <option value="Facebook" data-en="Facebook" data-es="Facebook" data-pt="Facebook">Facebook</option>
+                      <option value="Indeed" data-en="Indeed" data-es="Indeed" data-pt="Indeed">Indeed</option>
+                      <option value="Other" data-en="Other" data-es="Otro" data-pt="Outro">Other</option>
                     </select>
 
                     <label for="language_preference" data-en="Language preference" data-es="Idioma preferido"
@@ -534,8 +653,8 @@
                         site</label>
                     <select id="site" name="site">
                         <option value=""></option>
-                        <option value="Matthews">CLT - Matthews</option>
-                        <option value="Steel Creek">CLT - Steel Creek</option>
+                        <option value="Matthews" data-en="CLT - Matthews" data-es="CLT - Matthews" data-pt="CLT - Matthews">CLT - Matthews</option>
+                        <option value="Steel Creek" data-en="CLT - Steel Creek" data-es="CLT - Steel Creek" data-pt="CLT - Steel Creek">CLT - Steel Creek</option>
                     </select>
 
 
@@ -543,13 +662,10 @@
                         data-pt="Turno preferido">Preferred shift</label>
                     <select id="shift_preference" name="shift_preference">
                         <option value=""></option>
-                        <option value="Day" data-en="Day" data-es="Diurno" data-pt="Diurno">Day</option>
-                        <option value="Evening" data-en="Evening" data-es="Vespertino" data-pt="Vespertino">Evening
-                        </option>
-                        <option value="Night" data-en="Night" data-es="Nocturno" data-pt="Noturno">Night</option>
-                        <option value="Weekends" data-en="Weekends" data-es="Fines de semana" data-pt="Fins de semana">
-                            Weekends
-                        </option>
+                        <option value="Day" data-en="Day" data-es="Día" data-pt="Dia">Day</option>
+                        <option value="Evening" data-en="Evening" data-es="Tarde" data-pt="Tarde">Evening</option>
+                        <option value="Night" data-en="Night" data-es="Noche" data-pt="Noite">Night</option>
+                        <option value="Weekends" data-en="Weekends" data-es="Fines de semana" data-pt="Fins de semana">Weekends</option>
                     </select>
 
 
@@ -557,11 +673,11 @@
                         data-pt="Experiência">Experience level</label>
                     <select id="experience_level" name="experience_level">
                         <option value=""></option>
-                        <option value="None">None</option>
-                        <option value="0–6 months">0–6 months</option>
-                        <option value="6–12 months">6–12 months</option>
-                        <option value="1–3 years">1–3 years</option>
-                        <option value="3+ years">3+ years</option>
+                        <option value="None" data-en="None" data-es="Ninguna" data-pt="Nenhuma">None</option>
+                        <option value="0–6 months" data-en="0–6 months" data-es="0–6 meses" data-pt="0–6 meses">0–6 months</option>
+                        <option value="6–12 months" data-en="6–12 months" data-es="6–12 meses" data-pt="6–12 meses">6–12 months</option>
+                        <option value="1–3 years" data-en="1–3 years" data-es="1–3 años" data-pt="1–3 anos">1–3 years</option>
+                        <option value="3+ years" data-en="3+ years" data-es="3+ años" data-pt="3+ anos">3+ years</option>
                     </select>
                     <label for="notes" data-en="Notes" data-es="Notas" data-pt="Observações">Notes</label>
                     <textarea id="notes" name="notes" rows="4" data-ph-en="Forklift certs, availability, locations"
@@ -571,8 +687,12 @@
                     <div class="full">
                         <label>
                             <input type="checkbox" name="consent" required>
-                            <span data-en="I agree to the privacy policy" data-es="Acepto la política de privacidad"
-                                data-pt="Concordo com a política de privacidade">I agree to the privacy policy</span>
+                            <span
+                              data-en='I agree to the <a href="privacyApp.html" target="_blank" style="color:#002e63;text-decoration:underline;">Privacy Policy</a>'
+                              data-es='Acepto la <a href="privacyApp.html" target="_blank" style="color:#002e63;text-decoration:underline;">Política de Privacidad</a>'
+                              data-pt='Concordo com a <a href="privacyApp.html" target="_blank" style="color:#002e63;text-decoration:underline;">Política de Privacidade</a>'>
+                              I agree to the <a href="privacyApp.html" target="_blank" style="color:#002e63;text-decoration:underline;">Privacy Policy</a>
+                            </span>
                         </label>
                     </div>
 
