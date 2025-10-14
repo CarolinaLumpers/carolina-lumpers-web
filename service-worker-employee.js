@@ -1,7 +1,6 @@
-const CACHE_NAME = "cls-employee-v1";
+const CACHE_NAME = "cls-employee-v2";
 const ASSETS = [
   "./employeeDashboard.html",
-  "./employee.js",
   "./style.css",
   "./manifest-employee.json",
   "./assets/CLS-favicon.png"
@@ -9,7 +8,9 @@ const ASSETS = [
 
 // Install: cache assets
 self.addEventListener("install", e => {
-  e.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS)));
+  e.waitUntil(
+    caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS))
+  );
 });
 
 // Activate: clean old caches
@@ -23,5 +24,7 @@ self.addEventListener("activate", e => {
 
 // Fetch: serve cached or fetch new
 self.addEventListener("fetch", e => {
-  e.respondWith(caches.match(e.request).then(res => res || fetch(e.request)));
+  e.respondWith(
+    caches.match(e.request).then(res => res || fetch(e.request))
+  );
 });
