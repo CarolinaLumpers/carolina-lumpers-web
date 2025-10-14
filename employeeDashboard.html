@@ -616,15 +616,22 @@
       const status = document.getElementById("clockInStatus");
       btn.disabled = true;
       status.textContent = MSG.gettingLocation[LANG];
+
       try {
         const pos = await new Promise((resolve, reject) =>
-          navigator.geolocation.getCurrentPosition(resolve, reject, { enableHighAccuracy: true, timeout: 10000 })
+          navigator.geolocation.getCurrentPosition(resolve, reject, {
+            enableHighAccuracy: true,
+            timeout: 10000,
+          })
         );
         const { latitude, longitude } = pos.coords;
         status.textContent = MSG.recordingClockIn[LANG];
 
         const lang = localStorage.getItem("CLS_Lang") || "en";
-        const res = await jsonp(`${API_URL}?action=clockin&workerId=${encodeURIComponent(workerId)}&lat=${latitude}&lng=${longitude}&lang=${lang}`);
+        const res = await jsonp(
+          `${API_URL}?action=clockin&workerId=${encodeURIComponent(workerId)}&lat=${latitude}&lng=${longitude}&lang=${lang}`
+        );
+
         if (res && res.success) {
           // If backend provided a localized message (e.g. late message), show it directly
           if (res.message) {
@@ -635,23 +642,26 @@
             status.textContent = `${MSG.clockInSuccess[LANG]} ${site}${dist}`;
           }
           await loadReport();
+        } else if (res && res.message) {
+          const site = res.site ? ` (${res.site} - ${res.distance} mi)` : "";
+          status.textContent = `${MSG.clockInFailed[LANG]} ${site}. ${res.message}`;
+        } else {
+          status.textContent = MSG.clockInFailed[LANG];
         }
-
-      } else if (res && res.message) {
-        const site = res.site ? ` (${res.site} - ${res.distance} mi)` : "";
-        status.textContent = `${MSG.clockInFailed[LANG]} ${site}. ${res.message}`;
-      } else {
-        status.textContent = MSG.clockInFailed[LANG];
+      } catch (err) {
+        if (err && err.code === 1)
+          status.textContent = MSG.locationDenied[LANG];
+        else if (err && err.code === 2)
+          status.textContent = MSG.locationUnavailable[LANG];
+        else if (err && err.code === 3)
+          status.textContent = MSG.locationTimeout[LANG];
+        else
+          status.textContent = `${MSG.errorPrefix[LANG]} ${err.message || err}`;
+      } finally {
+        btn.disabled = false;
       }
-    } catch (err) {
-      if (err && err.code === 1) status.textContent = MSG.locationDenied[LANG];
-      else if (err && err.code === 2) status.textContent = MSG.locationUnavailable[LANG];
-      else if (err && err.code === 3) status.textContent = MSG.locationTimeout[LANG];
-      else status.textContent = `${MSG.errorPrefix[LANG]} ${err.message || err}`;
-    } finally {
-      btn.disabled = false;
     }
-    }
+
 
     // =================== Clock-In Report (Today Only, Latest First) ===================
     async function loadReport() {
