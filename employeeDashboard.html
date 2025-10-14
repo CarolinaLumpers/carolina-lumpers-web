@@ -372,9 +372,12 @@
       </button>
       <div id="clockInStatus"></div>
 
-      <h3 class="section-title" data-en="This Week’s Clock-In Report" data-es="Reporte de Entradas de la Semana"
-        data-pt="Relatório Semanal de Entradas">
-        This Week’s Clock-In Report
+      <h3 class="section-title" data-en="Today's Clock-In Report" data-es="Reporte de Entradas de Hoy"
+        data-pt="Relatório de Entradas de Hoje">
+        Today's Clock-In Report
+      </h3>
+
+      This Week’s Clock-In Report
       </h3>
       <table id="reportTable">
         <thead>
@@ -452,19 +455,24 @@
 
         <div id="allReportsContainer" style="overflow:auto;"></div>
       </div>
-      
+
       <!-- VIEW AS (Admin-only) -->
       <div id="viewAsWrap" class="card hidden" style="margin-top:12px;text-align:left;max-width:860px;">
-        <h4 class="section-title" data-en="View As (Admin only)" data-es="Ver Como (solo Admin)" data-pt="Ver Como (somente Admin)">
+        <h4 class="section-title" data-en="View As (Admin only)" data-es="Ver Como (solo Admin)"
+          data-pt="Ver Como (somente Admin)">
           View As (Admin only)
         </h4>
         <label style="display:block;margin:8px 0;">
-          <span data-en="Choose a worker:" data-es="Elija un empleado:" data-pt="Escolha um funcionário:">Choose a worker:</span>
-          <select id="viewAsSelect" style="width:100%;background:#000;color:#fff;border:1px solid #333;border-radius:6px;padding:6px;"></select>
+          <span data-en="Choose a worker:" data-es="Elija un empleado:" data-pt="Escolha um funcionário:">Choose a
+            worker:</span>
+          <select id="viewAsSelect"
+            style="width:100%;background:#000;color:#fff;border:1px solid #333;border-radius:6px;padding:6px;"></select>
         </label>
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin:8px 0;">
-          <button id="btnActivateViewAs" class="btn btn-blue" data-en="Activate View As" data-es="Activar Ver Como" data-pt="Ativar Ver Como">Activate View As</button>
-          <button id="btnExitViewAs" class="btn btn-gray hidden" data-en="Exit View As" data-es="Salir de Ver Como" data-pt="Sair do Ver Como">Exit View As</button>
+          <button id="btnActivateViewAs" class="btn btn-blue" data-en="Activate View As" data-es="Activar Ver Como"
+            data-pt="Ativar Ver Como">Activate View As</button>
+          <button id="btnExitViewAs" class="btn btn-gray hidden" data-en="Exit View As" data-es="Salir de Ver Como"
+            data-pt="Sair do Ver Como">Exit View As</button>
         </div>
         <div id="viewAsBanner" class="muted hidden"></div>
       </div>
@@ -715,11 +723,10 @@
             body.appendChild(tr);
           });
         } else {
-          body.innerHTML = `<tr><td colspan="2" class="muted">${
-            LANG === 'es' ? 'Sin registros de hoy.' :
-            LANG === 'pt' ? 'Sem registros de hoje.' :
-            'No clock-ins today.'
-          }</td></tr>`;
+          body.innerHTML = `<tr><td colspan="2" class="muted">${LANG === 'es' ? 'Sin registros de hoy.' :
+              LANG === 'pt' ? 'Sem registros de hoje.' :
+                'No clock-ins today.'
+            }</td></tr>`;
         }
       } catch (err) {
         body.innerHTML = `<tr><td colspan="2">${MSG.reportError[LANG]} ${err.message || err}</td></tr>`;
@@ -1043,8 +1050,8 @@
       const btn = document.getElementById('clockInBtn');
       btn.disabled = true;
       btn.title = (LANG === 'es') ? 'Deshabilitado en modo Ver Como' :
-                  (LANG === 'pt') ? 'Desativado no modo Ver Como' :
-                                    'Disabled in View As mode';
+        (LANG === 'pt') ? 'Desativado no modo Ver Como' :
+          'Disabled in View As mode';
     }
 
     function clearViewAsBanner() {
