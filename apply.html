@@ -157,8 +157,12 @@
 
         /* Privacy policy link highlight */
         .form-grid .full label a {
-            color: #ffcc00;
+            color: #ffcc00 !important;
             text-decoration: underline;
+        }
+
+        .form-grid .full label a:hover {
+            color: #ffd633 !important;
         }
 
         @media (max-width: 768px) {
@@ -716,10 +720,10 @@
                         <label>
                             <input type="checkbox" name="consent" required>
                             <span
-                              data-en='I agree to the <a href="privacyApp.html" target="_blank" style="color:#002e63;text-decoration:underline;">Privacy Policy</a>'
-                              data-es='Acepto la <a href="privacyApp.html" target="_blank" style="color:#002e63;text-decoration:underline;">Política de Privacidad</a>'
-                              data-pt='Concordo com a <a href="privacyApp.html" target="_blank" style="color:#002e63;text-decoration:underline;">Política de Privacidade</a>'>
-                              I agree to the <a href="privacyApp.html" target="_blank" style="color:#002e63;text-decoration:underline;">Privacy Policy</a>
+                              data-en='I agree to the <a href="privacyApp.html" target="_blank" style="color:#ffcc00;text-decoration:underline;">Privacy Policy</a>'
+                              data-es='Acepto la <a href="privacyApp.html" target="_blank" style="color:#ffcc00;text-decoration:underline;">Política de Privacidad</a>'
+                              data-pt='Concordo com a <a href="privacyApp.html" target="_blank" style="color:#ffcc00;text-decoration:underline;">Política de Privacidade</a>'>
+                              I agree to the <a href="privacyApp.html" target="_blank" style="color:#ffcc00;text-decoration:underline;">Privacy Policy</a>
                             </span>
                         </label>
                     </div>
