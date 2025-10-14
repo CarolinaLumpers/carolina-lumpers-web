@@ -1,21 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-JPETF03TJ0"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
+    function gtag() { dataLayer.push(arguments); }
     gtag('js', new Date());
     gtag('config', 'G-JPETF03TJ0');
   </script>
 
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title data-en="Employee Login | Carolina Lumper Service"
-          data-es="Inicio de Sesión | Carolina Lumper Service"
-          data-pt="Login de Funcionário | Carolina Lumper Service">
-          Employee Login | Carolina Lumper Service
+  <title data-en="Employee Login | Carolina Lumper Service" data-es="Inicio de Sesión | Carolina Lumper Service"
+    data-pt="Login de Funcionário | Carolina Lumper Service">
+    Employee Login | Carolina Lumper Service
   </title>
 
   <link rel="icon" type="image/png" href="assets/CLS-favicon.png">
@@ -131,6 +131,7 @@
         margin: 20px auto;
         padding: 25px 15px;
       }
+
       .login-container h1 {
         font-size: 1.6em;
       }
@@ -160,23 +161,26 @@
   <!-- LOGIN FORM (centered vertically) -->
   <main>
     <div class="login-container">
-      <h1 data-en="Employee Login" data-es="Inicio de Sesión de Empleado" data-pt="Login de Funcionário">Employee Login</h1>
+      <h1 data-en="Employee Login" data-es="Inicio de Sesión de Empleado" data-pt="Login de Funcionário">Employee Login
+      </h1>
 
-      <input type="email" id="loginEmail" placeholder="Work Email" 
-             data-en="Work Email" data-es="Correo de Trabajo" data-pt="Email de Trabalho" required>
-      <input type="password" id="loginPassword" placeholder="Password"
-             data-en="Password" data-es="Contraseña" data-pt="Senha" required>
+      <input type="email" id="loginEmail" placeholder="Work Email" data-en="Work Email" data-es="Correo de Trabajo"
+        data-pt="Email de Trabalho" required>
+      <input type="password" id="loginPassword" placeholder="Password" data-en="Password" data-es="Contraseña"
+        data-pt="Senha" required>
 
       <label for="stayLoggedIn">
         <input type="checkbox" id="stayLoggedIn">
-        <span data-en="Stay logged in" data-es="Mantener sesión iniciada" data-pt="Manter-se conectado">Stay logged in</span>
+        <span data-en="Stay logged in" data-es="Mantener sesión iniciada" data-pt="Manter-se conectado">Stay logged
+          in</span>
       </label>
 
       <button id="loginBtn" data-en="Login" data-es="Iniciar Sesión" data-pt="Entrar">Login</button>
       <div class="message" id="message"></div>
 
       <div class="link">
-        <span data-en="Don’t have an account?" data-es="¿No tienes una cuenta?" data-pt="Não tem uma conta?">Don’t have an account?</span>
+        <span data-en="Don’t have an account?" data-es="¿No tienes una cuenta?" data-pt="Não tem uma conta?">Don’t have
+          an account?</span>
         <a href="employeeSignup.html" data-en="Sign Up" data-es="Regístrate" data-pt="Cadastre-se">Sign Up</a>
       </div>
     </div>
@@ -185,12 +189,13 @@
   <!-- FOOTER -->
   <footer>
     <p data-en="© 2024 Carolina Lumper Service. All rights reserved."
-       data-es="© 2024 Carolina Lumper Service. Todos los derechos reservados."
-       data-pt="© 2024 Carolina Lumper Service. Todos os direitos reservados.">
-       © 2024 Carolina Lumper Service. All rights reserved.
+      data-es="© 2024 Carolina Lumper Service. Todos los derechos reservados."
+      data-pt="© 2024 Carolina Lumper Service. Todos os direitos reservados.">
+      © 2024 Carolina Lumper Service. All rights reserved.
     </p>
     <div class="footer-icons">
-      <a href="https://www.facebook.com/profile.php?id=61569872795390"><img src="assets/facebook-icon.png" alt="Facebook"></a>
+      <a href="https://www.facebook.com/profile.php?id=61569872795390"><img src="assets/facebook-icon.png"
+          alt="Facebook"></a>
       <a href="#"><img src="assets/linkedin-icon.png" alt="LinkedIn"></a>
     </div>
     <div class="language-toggle">
@@ -203,7 +208,7 @@
   <!-- LOGIN SCRIPT -->
   <script>
     const API_URL = "https://cls-proxy.s-garay.workers.dev";
-    const SESSION_KEY = "CLS_User", MAX_SESSION_AGE = 6048e5; // 7 days
+    const SESSION_KEY = "CLS_User";
 
     const LANG = localStorage.getItem("CLS_Lang") || "en";
     const MSG = {
@@ -256,19 +261,17 @@
       });
     }
 
-    (function(){
+    (function () {
       let u = sessionStorage.getItem(SESSION_KEY) || localStorage.getItem(SESSION_KEY);
       if (u) {
         try { u = JSON.parse(u); } catch { u = null; }
-        const expired = !u || Date.now() - u.timestamp > MAX_SESSION_AGE;
-        if (!expired && u.workerId) {
+        if (u && u.workerId) {
+          // ✅ Always stay logged in until user manually logs out
           window.location.href = "employeeDashboard.html";
-        } else {
-          localStorage.removeItem(SESSION_KEY);
-          sessionStorage.removeItem(SESSION_KEY);
         }
       }
     })();
+
 
     document.getElementById("loginBtn").addEventListener("click", async () => {
       const email = document.getElementById("loginEmail").value.trim();
@@ -314,50 +317,51 @@
   </script>
 
   <script>
- // --- Multilingual + Navbar Resizing System ---
-  function adjustNavbarFontSize() {
-    const navLinks = document.querySelector('.nav-links');
-    if (!navLinks) return;
+    // --- Multilingual + Navbar Resizing System ---
+    function adjustNavbarFontSize() {
+      const navLinks = document.querySelector('.nav-links');
+      if (!navLinks) return;
 
-    const links = navLinks.querySelectorAll('a');
-    const maxWidth = navLinks.offsetWidth;
-    let totalWidth = 0;
+      const links = navLinks.querySelectorAll('a');
+      const maxWidth = navLinks.offsetWidth;
+      let totalWidth = 0;
 
-    for (const link of links) {
-      totalWidth += link.offsetWidth;
+      for (const link of links) {
+        totalWidth += link.offsetWidth;
+      }
+
+      if (totalWidth > maxWidth) {
+        const scaleFactor = maxWidth / totalWidth;
+        navLinks.style.fontSize = scaleFactor * 0.9 + 'em';
+      } else {
+        navLinks.style.fontSize = '0.9em';
+      }
     }
 
-    if (totalWidth > maxWidth) {
-      const scaleFactor = maxWidth / totalWidth;
-      navLinks.style.fontSize = scaleFactor * 0.9 + 'em';
-    } else {
-      navLinks.style.fontSize = '0.9em';
-    }
-  }
+    function switchLanguage(lang) {
+      localStorage.setItem("CLS_Lang", lang);
+      document.querySelectorAll("[data-en]").forEach(el => {
+        const t = el.getAttribute(`data-${lang}`) || el.getAttribute("data-en");
+        if (t) el.innerHTML = t;
+      });
+      document.querySelectorAll(".language-toggle button").forEach(b =>
+        b.classList.toggle("active", b.dataset.lang === lang)
+      );
 
-  function switchLanguage(lang) {
-    localStorage.setItem("CLS_Lang", lang);
-    document.querySelectorAll("[data-en]").forEach(el => {
-      const t = el.getAttribute(`data-${lang}`) || el.getAttribute("data-en");
-      if (t) el.innerHTML = t;
+      adjustNavbarFontSize(); // adjust after translating
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const s = localStorage.getItem("CLS_Lang");
+      const b = navigator.language || navigator.userLanguage;
+      const l = s || (b.startsWith("es") ? "es" : b.startsWith("pt") ? "pt" : "en");
+
+      switchLanguage(l);
+      adjustNavbarFontSize();
     });
-    document.querySelectorAll(".language-toggle button").forEach(b =>
-      b.classList.toggle("active", b.dataset.lang === lang)
-    );
 
-    adjustNavbarFontSize(); // adjust after translating
-  }
-
-  document.addEventListener("DOMContentLoaded", () => {
-    const s = localStorage.getItem("CLS_Lang");
-    const b = navigator.language || navigator.userLanguage;
-    const l = s || (b.startsWith("es") ? "es" : b.startsWith("pt") ? "pt" : "en");
-
-    switchLanguage(l);
-    adjustNavbarFontSize();
-  });
-
-  window.addEventListener("resize", adjustNavbarFontSize);
-</script>
+    window.addEventListener("resize", adjustNavbarFontSize);
+  </script>
 </body>
+
 </html>
