@@ -442,7 +442,7 @@
             Filter by worker(s):
           </span>
           <select id="workerFilter" multiple size="6"
-                  style="width:100%;background:#000;color:#fff;border:1px solid #333;border-radius:6px;padding:6px;"></select>
+            style="width:100%;background:#000;color:#fff;border:1px solid #333;border-radius:6px;padding:6px;"></select>
         </label>
 
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 16px;">
@@ -626,24 +626,31 @@
         const lang = localStorage.getItem("CLS_Lang") || "en";
         const res = await jsonp(`${API_URL}?action=clockin&workerId=${encodeURIComponent(workerId)}&lat=${latitude}&lng=${longitude}&lang=${lang}`);
         if (res && res.success) {
-          const site = res.site || "Job Site";
-          const dist = res.distance ? ` (${res.distance} mi)` : "";
-          status.textContent = `${MSG.clockInSuccess[LANG]} ${site}${dist}`;
+          // If backend provided a localized message (e.g. late message), show it directly
+          if (res.message) {
+            status.textContent = res.message;
+          } else {
+            const site = res.site || "Job Site";
+            const dist = res.distance ? ` (${res.distance} mi)` : "";
+            status.textContent = `${MSG.clockInSuccess[LANG]} ${site}${dist}`;
+          }
           await loadReport();
-        } else if (res && res.message) {
-          const site = res.site ? ` (${res.site} - ${res.distance} mi)` : "";
-          status.textContent = `${MSG.clockInFailed[LANG]} ${site}. ${res.message}`;
-        } else {
-          status.textContent = MSG.clockInFailed[LANG];
         }
-      } catch (err) {
-        if (err && err.code === 1) status.textContent = MSG.locationDenied[LANG];
-        else if (err && err.code === 2) status.textContent = MSG.locationUnavailable[LANG];
-        else if (err && err.code === 3) status.textContent = MSG.locationTimeout[LANG];
-        else status.textContent = `${MSG.errorPrefix[LANG]} ${err.message || err}`;
-      } finally {
-        btn.disabled = false;
+
+      } else if (res && res.message) {
+        const site = res.site ? ` (${res.site} - ${res.distance} mi)` : "";
+        status.textContent = `${MSG.clockInFailed[LANG]} ${site}. ${res.message}`;
+      } else {
+        status.textContent = MSG.clockInFailed[LANG];
       }
+    } catch (err) {
+      if (err && err.code === 1) status.textContent = MSG.locationDenied[LANG];
+      else if (err && err.code === 2) status.textContent = MSG.locationUnavailable[LANG];
+      else if (err && err.code === 3) status.textContent = MSG.locationTimeout[LANG];
+      else status.textContent = `${MSG.errorPrefix[LANG]} ${err.message || err}`;
+    } finally {
+      btn.disabled = false;
+    }
     }
 
     // =================== Clock-In Report (Today Only, Latest First) ===================
@@ -670,8 +677,8 @@
           });
         } else {
           body.innerHTML = `<tr><td colspan="2" class="muted">${LANG === 'es' ? 'Sin registros de hoy.' :
-              LANG === 'pt' ? 'Sem registros de hoje.' :
-                'No clock-ins today.'
+            LANG === 'pt' ? 'Sem registros de hoje.' :
+              'No clock-ins today.'
             }</td></tr>`;
         }
       } catch (err) {
@@ -863,7 +870,7 @@
 
     async function loadAllReports(workersCSV = '') {
       const container = document.getElementById('allReportsContainer');
-      const filterEl  = document.getElementById('workerFilter');
+      const filterEl = document.getElementById('workerFilter');
       container.textContent = '⏳ Loading all clock-ins...';
 
       try {
@@ -877,7 +884,7 @@
         // Build filter options
         filterEl.innerHTML = '';
         (data.workers || [])
-          .sort((a,b) => (a.name || a.id).localeCompare(b.name || b.id))
+          .sort((a, b) => (a.name || a.id).localeCompare(b.name || b.id))
           .forEach(w => {
             const opt = document.createElement('option');
             opt.value = w.id;
@@ -896,7 +903,7 @@
       const nameMap = {};
       (workersList || []).forEach(w => nameMap[w.id] = w.name);
 
-      const ids = Object.keys(recordsByWorker || {}).sort((a,b) =>
+      const ids = Object.keys(recordsByWorker || {}).sort((a, b) =>
         (nameMap[a] || a).localeCompare(nameMap[b] || b)
       );
 
@@ -904,8 +911,8 @@
         container.innerHTML = LANG === 'es'
           ? '<div class="muted">Sin registros.</div>'
           : LANG === 'pt'
-              ? '<div class="muted">Sem registros.</div>'
-              : '<div class="muted">No records.</div>';
+            ? '<div class="muted">Sem registros.</div>'
+            : '<div class="muted">No records.</div>';
         return;
       }
 
