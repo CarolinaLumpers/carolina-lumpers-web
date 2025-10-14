@@ -1,4 +1,4 @@
-﻿const API_URL = "https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec";
+﻿const API_URL = "https://script.google.com/macros/s/AKfycbwHBLEQ5QHuhD-O4uI4hRN_5_yS9YsFgtn_dMAdoAO2C7zHLoi3qfHO82vas3Uv0wXXpg/exec";
 document.addEventListener("DOMContentLoaded", () => {
   const content = document.getElementById("content");
   const buttons = document.querySelectorAll(".nav-btn");
