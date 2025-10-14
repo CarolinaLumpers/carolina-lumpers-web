@@ -33,3 +33,55 @@ document.addEventListener("DOMContentLoaded", () => {
     content.appendChild(table);
   }
 });
+
+// =========================================
+// 📲 PWA INSTALL PROMPT HANDLER
+// =========================================
+let deferredPrompt;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault(); // Stop Chrome's default mini-infobar
+  deferredPrompt = e;
+
+  // Create a button element
+  const installBtn = document.createElement('button');
+  installBtn.textContent = "📲 Install CLS Admin App";
+  installBtn.className = "install-btn";
+  installBtn.style.position = "fixed";
+  installBtn.style.bottom = "20px";
+  installBtn.style.left = "50%";
+  installBtn.style.transform = "translateX(-50%)";
+  installBtn.style.background = "#ffcc00";
+  installBtn.style.color = "#000";
+  installBtn.style.padding = "12px 20px";
+  installBtn.style.fontSize = "1rem";
+  installBtn.style.border = "none";
+  installBtn.style.borderRadius = "10px";
+  installBtn.style.boxShadow = "0 0 10px rgba(255, 204, 0, 0.4)";
+  installBtn.style.cursor = "pointer";
+  installBtn.style.zIndex = "1000";
+  installBtn.style.transition = "opacity 0.3s";
+
+  // Add to page
+  document.body.appendChild(installBtn);
+
+  // Handle click
+  installBtn.addEventListener('click', async () => {
+    installBtn.disabled = true;
+    installBtn.textContent = "Installing...";
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    console.log(`User response to install prompt: ${outcome}`);
+    deferredPrompt = null;
+    installBtn.style.opacity = "0";
+    setTimeout(() => installBtn.remove(), 500);
+  });
+});
+
+// Hide the install button if already installed
+window.addEventListener('appinstalled', () => {
+  console.log('✅ CLS Admin App installed');
+  deferredPrompt = null;
+  const btn = document.querySelector('.install-btn');
+  if (btn) btn.remove();
+});
