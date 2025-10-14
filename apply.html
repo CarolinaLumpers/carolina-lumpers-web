@@ -1,505 +1,218 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Apply to Carolina Lumper Service (CLS)</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="icon" type="image/png" href="assets/CLS-favicon.png">
-    <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
-
-    <style>
-        .form-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 80vh;
-            text-align: center;
-        }
-
-        body {
-            margin: 0;
-        }
-
-        .language-toggle {
-            margin: 10px;
-            text-align: center;
-        }
-
-        .language-toggle button {
-            margin: 5px;
-            padding: 10px;
-            font-size: 14px;
-            cursor: pointer;
-        }
-
-        /* Labels left, fields right */
-        .form-grid {
-            width: 100%;
-            max-width: 800px;
-            display: grid;
-            grid-template-columns: 220px 1fr;
-            gap: 10px 12px;
-            text-align: left;
-            align-items: center;
-        }
-
-        .form-grid .full {
-            grid-column: 1 / -1;
-        }
-
-        .form-grid label {
-            display: block;
-        }
-
-        .form-grid input,
-        .form-grid select,
-        .form-grid textarea {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-
-        .actions {
-            grid-column: 1 / -1;
-            text-align: left;
-        }
-
-        .actions button {
-            background-color: #002e63;
-            color: #fff;
-            border: none;
-            padding: 10px 16px;
-            border-radius: 4px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-
-        .actions button:hover {
-            background-color: #004b99;
-        }
-
-        #status {
-            margin-top: 10px;
-            font-weight: 600;
-            min-height: 1.5em;
-        }
-
-        /* Add red asterisk to required field labels */
-        .form-grid label.required::after {
-            content: " *";
-            color: #d00;
-            font-weight: bold;
-        }
-
-
-        @media (max-width: 768px) {
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .actions {
-                text-align: center;
-            }
-        }
-    </style>
-
-    <script>
-        const MESSAGES = {
-            en: { sending: "Sending...", success: "Thanks. We received your application.", error: "Error. Please try again." },
-            es: { sending: "Enviando...", success: "Gracias. Recibimos su solicitud.", error: "Error. Intente de nuevo." },
-            pt: { sending: "Enviando...", success: "Obrigado. Recebemos sua candidatura.", error: "Erro. Tente novamente." }
-        };
-
-        function adjustNavbarFontSize() {
-            const navLinks = document.querySelector('.nav-links');
-            if (!navLinks) return;
-            const links = navLinks.querySelectorAll('a');
-            const maxWidth = navLinks.offsetWidth;
-            let totalWidth = 0;
-            links.forEach(link => totalWidth += link.offsetWidth);
-            navLinks.style.fontSize = (totalWidth > maxWidth)
-                ? (maxWidth / totalWidth) * 0.9 + 'em'
-                : '0.9em';
-        }
-
-        function applyPlaceholders(lang) {
-            document.querySelectorAll('[data-ph-en]').forEach(el => {
-                const val =
-                    lang === 'es' ? el.getAttribute('data-ph-es') :
-                        lang === 'pt' ? el.getAttribute('data-ph-pt') :
-                            el.getAttribute('data-ph-en');
-                if (val) el.setAttribute('placeholder', val);
-            });
-        }
-
-        function switchLanguage(lang) {
-            document.querySelectorAll("[data-en],[data-es],[data-pt]").forEach(el => {
-                if (el.querySelector?.('input,select,textarea')) return;
-                const text =
-                    lang === "es" ? el.getAttribute("data-es") :
-                        lang === "pt" ? el.getAttribute("data-pt") :
-                            el.getAttribute("data-en");
-                if (text != null) el.innerHTML = text;
-            });
-
-            const form = document.getElementById('cls-apply');
-            if (form) form.querySelector('input[name="ui_lang"]').value = lang;
-
-            applyPlaceholders(lang);
-            validateAge(); // ✅ refresh localized DOB message if visible
-            adjustNavbarFontSize();
-        }
-
-
-        document.addEventListener("DOMContentLoaded", () => {
-            const userLang = navigator.language || 'en';
-            const lang = userLang.startsWith("es") ? "es" : userLang.startsWith("pt") ? "pt" : "en";
-            switchLanguage(lang);
-            adjustNavbarFontSize();
-
-            setDobMax();
-
-
-            const form = document.getElementById('cls-apply');
-            if (!form) return;
-
-            form.querySelector('input[name="startedAt"]').value = String(Date.now());
-            const statusEl = document.getElementById('status');
-
-            form.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const currentLang = form.querySelector('input[name="ui_lang"]').value || 'en';
-                if (statusEl) statusEl.textContent = MESSAGES[currentLang].sending;
-
-                try {
-                    const body = new URLSearchParams(new FormData(form));
-                    const res = await fetch(form.action, { method: 'POST', body });
-                    let msg = MESSAGES[currentLang][res.ok ? 'success' : 'error'];
-                    try { const j = await res.json(); if (j?.message) msg = j.message; } catch { }
-                    if (statusEl) statusEl.textContent = msg;
-                    if (res.ok) {
-                        form.reset();
-                        form.querySelector('input[name="ui_lang"]').value = currentLang;
-                        applyPlaceholders(currentLang);
-                    }
-                } catch {
-                    if (statusEl) statusEl.textContent = MESSAGES[currentLang].error;
-                }
-            });
-        });
-
-        function setDobMax() {
-            // Limit date selection to 18+ only
-            const today = new Date();
-            const minAgeDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
-            const dobInput = document.getElementById('dob');
-            dobInput.max = minAgeDate.toISOString().split('T')[0];
-        }
-
-        function validateAge() {
-            const dobInput = document.getElementById('dob');
-            const errorEl = document.getElementById('dobError');
-            const form = document.getElementById('cls-apply');
-            if (!dobInput || !form) return;
-
-            const currentLang = form.querySelector('input[name="ui_lang"]').value || 'en';
-            const messages = {
-                en: 'Applicant must be at least 18 years old.',
-                es: 'El solicitante debe tener al menos 18 años.',
-                pt: 'O candidato deve ter pelo menos 18 anos.'
-            };
-
-            const dobValue = dobInput.value;
-            if (!dobValue) {
-                errorEl.style.display = 'none';
-                dobInput.setCustomValidity('');
-                return;
-            }
-
-            const dob = new Date(dobValue);
-            const today = new Date();
-            const age = today.getFullYear() - dob.getFullYear();
-            const hasBirthdayPassed =
-                today.getMonth() > dob.getMonth() ||
-                (today.getMonth() === dob.getMonth() && today.getDate() >= dob.getDate());
-            const actualAge = hasBirthdayPassed ? age : age - 1;
-
-            if (actualAge < 18) {
-                errorEl.style.display = 'block';
-                errorEl.textContent = messages[currentLang];
-                dobInput.setCustomValidity(messages[currentLang]);
-            } else {
-                errorEl.style.display = 'none';
-                dobInput.setCustomValidity('');
-            }
-        }
-    </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apply to Carolina Lumper Service (CLS)</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/png" href="assets/CLS-favicon.png">
+  <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+  <style>
+    body { margin:0; background:#000; color:#fff; font-family:Arial,sans-serif; }
+    .form-container { padding:40px 20px; text-align:center; }
+    h2 { color:#ffcc00; font-family:"Anton",sans-serif; }
+    .form-grid {
+      width:100%; max-width:800px; margin:auto;
+      display:grid; grid-template-columns:220px 1fr; gap:10px 12px; text-align:left;
+    }
+    .form-grid label { color:#fff; }
+    .form-grid input, .form-grid select, .form-grid textarea {
+      width:100%; padding:8px; border:1px solid #333; border-radius:4px;
+    }
+    .actions { grid-column:1 / -1; text-align:center; margin-top:20px; }
+    button {
+      background-color:#ffcc00; color:#000; border:none; padding:10px 16px;
+      border-radius:8px; font-size:16px; cursor:pointer; font-weight:bold;
+    }
+    button:hover { background-color:#ffd633; }
+    .language-toggle { margin-top:10px; }
+    .language-toggle button { margin:4px; padding:6px 10px; border:none; background:#111; color:#ffcc00; border-radius:6px; cursor:pointer; }
+    .language-toggle button.active, .language-toggle button:hover { background:#ffcc00; color:#000; }
+    small.doc-note { color:#ffcc00; display:block; font-size:0.9em; margin-top:4px; }
+    @media(max-width:768px){ .form-grid{grid-template-columns:1fr;} }
+  </style>
+  <script>
+    const MESSAGES = {
+      en:{sending:"Sending...",success:"✅ Application received. Thank you!",error:"❌ Error. Please try again."},
+      es:{sending:"Enviando...",success:"✅ Solicitud recibida. ¡Gracias!",error:"❌ Error. Intente de nuevo."},
+      pt:{sending:"Enviando...",success:"✅ Candidatura recebida. Obrigado!",error:"❌ Erro. Tente novamente."}
+    };
+    document.addEventListener("DOMContentLoaded",()=>{
+      const lang = (navigator.language||"en").startsWith("es")?"es":(navigator.language.startsWith("pt")?"pt":"en");
+      switchLanguage(lang);
+      document.getElementById("cls-apply").addEventListener("submit",submitForm);
+      document.getElementById("work_authorization").addEventListener("change",updateDocNote);
+    });
+    function switchLanguage(lang){
+      document.querySelectorAll("[data-en]").forEach(el=>{
+        const t=el.getAttribute(`data-${lang}`)||el.getAttribute("data-en");
+        if(t) el.innerHTML=t;
+      });
+      document.querySelectorAll("[data-ph-en]").forEach(el=>{
+        const p=el.getAttribute(`data-ph-${lang}`)||el.getAttribute("data-ph-en");
+        if(p) el.placeholder=p;
+      });
+      document.querySelectorAll(".language-toggle button").forEach(b=>b.classList.toggle("active",b.dataset.lang===lang));
+      document.querySelector('input[name="ui_lang"]').value=lang;
+      updateDocNote();
+    }
+    async function submitForm(e){
+      e.preventDefault();
+      const f=e.target, lang=f.ui_lang.value||"en";
+      const status=document.getElementById("status");
+      status.textContent=MESSAGES[lang].sending;
+      try{
+        const res=await fetch(f.action,{method:"POST",body:new URLSearchParams(new FormData(f))});
+        status.textContent=MESSAGES[lang][res.ok?"success":"error"];
+        if(res.ok)f.reset();
+      }catch{status.textContent=MESSAGES[lang].error;}
+    }
+    function updateDocNote(){
+      const select=document.getElementById("work_authorization");
+      const val=select.value;
+      const note=document.getElementById("docNote");
+      const lang=document.querySelector('input[name="ui_lang"]').value||"en";
+      const docs={
+        Citizen:{en:"Driver’s license and Social Security card, or U.S. passport.",
+                 es:"Licencia de conducir y tarjeta del Seguro Social, o pasaporte estadounidense.",
+                 pt:"Carteira de motorista e cartão do Seguro Social, ou passaporte dos EUA."},
+        "Permanent Resident":{en:"Permanent Resident Card (Green Card).",
+                 es:"Tarjeta de Residente Permanente (Green Card).",
+                 pt:"Cartão de Residente Permanente (Green Card)."},
+        "Work Permit (EAD)":{en:"Employment Authorization Document (EAD) card issued by USCIS.",
+                 es:"Documento de Autorización de Empleo (EAD) emitido por USCIS.",
+                 pt:"Documento de Autorização de Emprego (EAD) emitido pelo USCIS."},
+        "Visa (H-2B)":{en:"Copy of H-2B visa and passport photo page.",
+                 es:"Copia de la visa H-2B y página del pasaporte con foto.",
+                 pt:"Cópia do visto H-2B e da página do passaporte com foto."},
+        "Visa (Other)":{en:"Copy of visa and work authorization letter.",
+                 es:"Copia de la visa y carta de autorización de trabajo.",
+                 pt:"Cópia do visto e carta de autorização de trabalho."},
+        "Not Authorized":{en:"⚠️ You are not authorized to work in the United States.",
+                 es:"⚠️ No está autorizado para trabajar en los Estados Unidos.",
+                 pt:"⚠️ Você não está autorizado a trabalhar nos Estados Unidos."}
+      };
+      if(docs[val]) note.textContent="📄 "+docs[val][lang]; else note.textContent="";
+    }
+  </script>
 </head>
-
 <body>
-    <nav class="navbar">
-        <div class="logo-container">
-            <a href="index.html" class="logo-link">
-                <img src="assets/CLS_Nav_Logo.png" alt="CLS Logo" class="logo">
-            </a>
-            <a href="index.html" class="company-name">Carolina Lumper Service</a>
+  <nav class="navbar">
+    <div class="logo-container">
+      <a href="index.html"><img src="assets/CLS_Nav_Logo.png" alt="CLS Logo" class="logo"></a>
+      <a href="index.html" class="company-name">CAROLINA LUMPER SERVICE</a>
+    </div>
+    <ul class="nav-links">
+      <li><a href="index.html" data-en="Home" data-es="Inicio" data-pt="Início">Home</a></li>
+      <li><a href="about.html" data-en="About Us" data-es="Sobre Nosotros" data-pt="Sobre Nós">About Us</a></li>
+      <li><a href="services.html" data-en="Services" data-es="Servicios" data-pt="Serviços">Services</a></li>
+      <li><a href="contact.html" data-en="Contact" data-es="Contacto" data-pt="Contato">Contact</a></li>
+      <li><a href="apply.html" class="active" data-en="Apply" data-es="Solicitar" data-pt="Candidatar">Apply</a></li>
+    </ul>
+  </nav>
+
+  <section id="apply" class="form-container">
+    <h2 data-en="Apply for a Position" data-es="Solicitar un Puesto" data-pt="Candidatar-se a uma Posição">
+      Apply for a Position
+    </h2>
+
+    <form id="cls-apply" method="POST"
+      action="https://script.google.com/macros/s/AKfycbxdD80YrBa6wa271_TtCpwWnQJbQfeRjZVe0iRkAdO36D_t3E44foSn11IdCEq1iJ6OSg/exec">
+      <input type="hidden" name="ui_lang" value="en">
+
+      <div class="form-grid">
+        <label data-en="First Name" data-es="Nombre" data-pt="Nome" class="required">First Name</label>
+        <input name="first_name" required data-ph-en="First name" data-ph-es="Nombre" data-ph-pt="Nome">
+
+        <label data-en="Last Name" data-es="Apellido" data-pt="Sobrenome" class="required">Last Name</label>
+        <input name="last_name" required data-ph-en="Last name" data-ph-es="Apellido" data-ph-pt="Sobrenome">
+
+        <label data-en="Date of Birth" data-es="Fecha de nacimiento" data-pt="Data de nascimento" class="required">
+          Date of Birth
+        </label>
+        <input id="dob" name="dob" type="date" required>
+
+        <label data-en="Email" data-es="Correo electrónico" data-pt="E-mail" class="required">Email</label>
+        <input name="email" type="email" required data-ph-en="you@example.com" data-ph-es="tu@ejemplo.com" data-ph-pt="voce@exemplo.com">
+
+        <label data-en="Phone" data-es="Teléfono" data-pt="Telefone" class="required">Phone</label>
+        <input name="phone" type="tel" required data-ph-en="(555) 555-1212" data-ph-es="(555) 555-1212" data-ph-pt="(11) 5555-1212">
+
+        <label data-en="City" data-es="Ciudad" data-pt="Cidade" class="required">City</label>
+        <input name="city" required>
+
+        <label data-en="State" data-es="Estado" data-pt="Estado" class="required">State</label>
+        <input name="state" required>
+
+        <label for="work_authorization" data-en="Work Authorization" data-es="Autorización de trabajo" data-pt="Autorização de trabalho" class="required">Work Authorization</label>
+        <select id="work_authorization" name="work_authorization" required>
+          <option value=""></option>
+          <option value="Citizen" data-en="US Citizen" data-es="Ciudadano de EE. UU." data-pt="Cidadão dos EUA">US Citizen</option>
+          <option value="Permanent Resident" data-en="Permanent Resident" data-es="Residente Permanente" data-pt="Residente Permanente">Permanent Resident</option>
+          <option value="Work Permit (EAD)" data-en="Work Permit (EAD)" data-es="Permiso de Trabajo (EAD)" data-pt="Permissão de Trabalho (EAD)">Work Permit (EAD)</option>
+          <option value="Visa (H-2B)" data-en="Visa (H-2B)" data-es="Visa (H-2B)" data-pt="Visto (H-2B)">Visa (H-2B)</option>
+          <option value="Visa (Other)" data-en="Other Visa" data-es="Otra Visa" data-pt="Outro Visto">Other Visa</option>
+          <option value="Not Authorized" data-en="Not Authorized" data-es="No Autorizado" data-pt="Não Autorizado">Not Authorized</option>
+        </select>
+        <small id="docNote" class="doc-note"></small>
+
+        <label data-en="Available Start Date" data-es="Fecha de inicio disponible" data-pt="Data de início disponível">
+          Available Start Date
+        </label>
+        <input type="date" name="start_date">
+
+        <label data-en="Reliable Transportation" data-es="Transporte confiable" data-pt="Transporte confiável">Reliable Transportation</label>
+        <select name="transportation"><option value=""></option><option value="Yes">Yes</option><option value="No">No</option></select>
+
+        <label data-en="Valid Driver’s License" data-es="Licencia de conducir válida" data-pt="Carteira de motorista válida">Valid Driver’s License</label>
+        <select name="driver_license"><option value=""></option><option value="Yes">Yes</option><option value="No">No</option></select>
+
+        <label data-en="Willing to Work Overtime" data-es="Dispuesto a trabajar horas extra" data-pt="Disposto a fazer horas extras">Willing to Work Overtime</label>
+        <select name="overtime_ok"><option value=""></option><option value="Yes">Yes</option><option value="No">No</option></select>
+
+        <label data-en="Willing to Travel" data-es="Dispuesto a viajar" data-pt="Disposto a viajar">Willing to Travel</label>
+        <select name="travel_ok"><option value=""></option><option value="Yes">Yes</option><option value="No">No</option></select>
+
+        <label data-en="Equipment Experience" data-es="Experiencia con equipos" data-pt="Experiência com equipamentos">Equipment Experience</label>
+        <input name="equipment_experience" data-ph-en="Forklift, pallet jack" data-ph-es="Montacargas, patín hidráulico" data-ph-pt="Empilhadeira, paleteira">
+
+        <label data-en="Emergency Contact Name" data-es="Nombre del contacto de emergencia" data-pt="Nome do contato de emergência">Emergency Contact Name</label>
+        <input name="emergency_contact_name">
+
+        <label data-en="Relationship" data-es="Relación" data-pt="Relação">Relationship</label>
+        <input name="emergency_contact_relation">
+
+        <label data-en="Emergency Contact Phone" data-es="Teléfono del contacto de emergencia" data-pt="Telefone do contato de emergência">Emergency Contact Phone</label>
+        <input name="emergency_contact_phone" type="tel">
+
+        <label data-en="How did you hear about us?" data-es="¿Cómo se enteró de nosotros?" data-pt="Como soube de nós?">How did you hear about us?</label>
+        <select name="referral_source">
+          <option value=""></option>
+          <option value="Friend">Friend</option>
+          <option value="Facebook">Facebook</option>
+          <option value="Indeed">Indeed</option>
+          <option value="Other">Other</option>
+        </select>
+
+        <label data-en="Notes" data-es="Notas" data-pt="Observações">Notes</label>
+        <textarea name="notes" rows="3"></textarea>
+
+        <div class="actions">
+          <button type="submit" data-en="Submit Application" data-es="Enviar Solicitud" data-pt="Enviar Candidatura">Submit Application</button>
+          <p id="status" role="status" aria-live="polite"></p>
         </div>
-        <ul class="nav-links">
-            <li><a href="index.html" data-en="Home" data-es="Inicio" data-pt="Início">Home</a></li>
-            <li><a href="about.html" data-en="About Us" data-es="Sobre Nosotros" data-pt="Sobre Nós">About Us</a></li>
-            <li><a href="services.html" data-en="Services" data-es="Servicios" data-pt="Serviços">Services</a></li>
-            <li><a href="contact.html" data-en="Contact" data-es="Contacto" data-pt="Contato">Contact</a></li>
-            <li><a href="apply.html" class="active" data-en="Apply" data-es="Solicitar" data-pt="Candidatar">Apply</a>
-            </li>
-        </ul>
-    </nav>
+      </div>
+    </form>
 
-    <header class="hero">
-        <div class="hero-content container text-center">
-            <h2 data-en="Join the CLS Team" data-es="Únete al Equipo CLS" data-pt="Junte-se à Equipe CLS">Join the CLS
-                Team
-            </h2>
-            <p data-en="We are looking for motivated individuals to join our team. Fill out the application below to get started!"
-                data-es="Estamos buscando personas motivadas para unirse a nuestro equipo. ¡Complete la solicitud abajo para comenzar!"
-                data-pt="Estamos procurando pessoas motivadas para se juntar à nossa equipe. Preencha o formulário abaixo para começar!">
-                We are looking for motivated individuals to join our team. Fill out the application below to get
-                started!
-            </p>
-        </div>
-        <div class="hero-image">
-            <img src="assets/CLS-Cover-01web.webp" alt="Hero Banner" class="banner-image">
-            <div class="blur-overlay"></div>
-        </div>
-    </header>
+    <div class="language-toggle">
+      <button data-lang="en" onclick="switchLanguage('en')">English</button>
+      <button data-lang="es" onclick="switchLanguage('es')">Español</button>
+      <button data-lang="pt" onclick="switchLanguage('pt')">Português</button>
+    </div>
+  </section>
 
-    <section id="apply">
-        <div class="form-container">
-            <h2 data-en="Apply for a Position" data-es="Solicitar un Puesto" data-pt="Candidatar-se a uma Posição">Apply
-                for a
-                Position</h2>
-            <p data-en="Interested in joining our team? Complete the form below:"
-                data-es="¿Interesado en unirte a nuestro equipo? Completa el formulario abajo:"
-                data-pt="Interessado em se juntar à nossa equipe? Complete o formulário abaixo:">
-                Interested in joining our team? Complete the form below:
-            </p>
-
-            <form id="cls-apply"
-                action="https://script.google.com/macros/s/AKfycbxdD80YrBa6wa271_TtCpwWnQJbQfeRjZVe0iRkAdO36D_t3E44foSn11IdCEq1iJ6OSg/exec"
-                method="POST">
-                <input type="hidden" name="startedAt" value="">
-                <input type="hidden" name="ui_lang" value="en">
-
-                <div style="position:absolute;left:-10000px" aria-hidden="true">
-                    <span data-en="Website" data-es="Sitio web" data-pt="Site">Website</span>
-                    <input name="website" tabindex="-1" autocomplete="off">
-                </div>
-
-                <div class="form-grid">
-                    <label for="first_name" data-en="First name" data-es="Nombre" data-pt="Nome" class="required">First
-                        name</label>
-                    <input id="first_name" name="first_name" required minlength="2" autocomplete="given-name"
-                        data-ph-en="First name" data-ph-es="Nombre" data-ph-pt="Nome">
-
-                    <label for="last_name" data-en="Last name" data-es="Apellido" data-pt="Sobrenome"
-                        class="required">Last
-                        name</label>
-                    <input id="last_name" name="last_name" required minlength="2" autocomplete="family-name"
-                        data-ph-en="Last name" data-ph-es="Apellido" data-ph-pt="Sobrenome">
-
-                    <label for="dob" data-en="Date of Birth" data-es="Fecha de nacimiento" data-pt="Data de nascimento"
-                        class="required">
-                        Date of Birth
-                    </label>
-                    <input id="dob" name="dob" type="date" required max="" onfocus="setDobMax()" oninput="validateAge()"
-                        title="You must be at least 18 years old">
-                    <span id="dobError" style="color:#d00;font-size:13px;display:none;"></span>
-
-                    <label for="email" data-en="Email" data-es="Correo electrónico" data-pt="E-mail"
-                        class="required">Email</label>
-                    <input id="email" name="email" type="email" required autocomplete="email"
-                        data-ph-en="you@example.com" data-ph-es="tu@ejemplo.com" data-ph-pt="voce@exemplo.com">
-
-                    <label for="phone" data-en="Phone" data-es="Teléfono" data-pt="Telefone"
-                        class="required">Phone</label>
-                    <input id="phone" name="phone" type="tel" inputmode="tel" required autocomplete="tel"
-                        data-ph-en="(555) 555-1212" data-ph-es="(555) 555-1212" data-ph-pt="(11) 5555-1212">
-
-                    <label for="city" data-en="City" data-es="Ciudad" data-pt="Cidade" class="required">City</label>
-                    <input id="city" name="city" required autocomplete="address-level2" data-ph-en="City"
-                        data-ph-es="Ciudad" data-ph-pt="Cidade">
-
-                    <label for="state" data-en="State" data-es="Estado" data-pt="Estado" class="required">State</label>
-                    <select id="state" name="state" required autocomplete="address-level1">
-                        <option value=""></option>
-                        <option value="AL">Alabama</option>
-                        <option value="AK">Alaska</option>
-                        <option value="AZ">Arizona</option>
-                        <option value="AR">Arkansas</option>
-                        <option value="CA">California</option>
-                        <option value="CO">Colorado</option>
-                        <option value="CT">Connecticut</option>
-                        <option value="DE">Delaware</option>
-                        <option value="FL">Florida</option>
-                        <option value="GA">Georgia</option>
-                        <option value="HI">Hawaii</option>
-                        <option value="ID">Idaho</option>
-                        <option value="IL">Illinois</option>
-                        <option value="IN">Indiana</option>
-                        <option value="IA">Iowa</option>
-                        <option value="KS">Kansas</option>
-                        <option value="KY">Kentucky</option>
-                        <option value="LA">Louisiana</option>
-                        <option value="ME">Maine</option>
-                        <option value="MD">Maryland</option>
-                        <option value="MA">Massachusetts</option>
-                        <option value="MI">Michigan</option>
-                        <option value="MN">Minnesota</option>
-                        <option value="MS">Mississippi</option>
-                        <option value="MO">Missouri</option>
-                        <option value="MT">Montana</option>
-                        <option value="NE">Nebraska</option>
-                        <option value="NV">Nevada</option>
-                        <option value="NH">New Hampshire</option>
-                        <option value="NJ">New Jersey</option>
-                        <option value="NM">New Mexico</option>
-                        <option value="NY">New York</option>
-                        <option value="NC">North Carolina</option>
-                        <option value="ND">North Dakota</option>
-                        <option value="OH">Ohio</option>
-                        <option value="OK">Oklahoma</option>
-                        <option value="OR">Oregon</option>
-                        <option value="PA">Pennsylvania</option>
-                        <option value="RI">Rhode Island</option>
-                        <option value="SC">South Carolina</option>
-                        <option value="SD">South Dakota</option>
-                        <option value="TN">Tennessee</option>
-                        <option value="TX">Texas</option>
-                        <option value="UT">Utah</option>
-                        <option value="VT">Vermont</option>
-                        <option value="VA">Virginia</option>
-                        <option value="WA">Washington</option>
-                        <option value="WV">West Virginia</option>
-                        <option value="WI">Wisconsin</option>
-                        <option value="WY">Wyoming</option>
-                    </select>
-
-
-                    <label for="work_authorization" data-en="Work authorization" data-es="Autorización de trabajo"
-                        data-pt="Autorização de trabalho" class="required">Work authorization</label>
-                    <select id="work_authorization" name="work_authorization" required>
-                        <option value=""></option>
-                        <option value="Citizen" data-en="Citizen" data-es="Ciudadano" data-pt="Cidadão">Citizen</option>
-                        <option value="Permanent Resident" data-en="Permanent Resident" data-es="Residente permanente"
-                            data-pt="Residente permanente">Permanent Resident</option>
-                        <option value="Work Visa" data-en="Work Visa" data-es="Visa de trabajo"
-                            data-pt="Visto de trabalho">Work
-                            Visa</option>
-                        <option value="Other" data-en="Other" data-es="Otro" data-pt="Outro">Other</option>
-                    </select>
-
-
-                    <label for="language_preference" data-en="Language preference" data-es="Idioma preferido"
-                        data-pt="Idioma preferido" class="required">Language preference</label>
-                    <select id="language_preference" name="language_preference" required>
-                        <option value=""></option>
-                        <option value="English" data-en="English" data-es="Inglés" data-pt="Inglês">English</option>
-                        <option value="Spanish" data-en="Spanish" data-es="Español" data-pt="Espanhol">Spanish</option>
-                        <option value="Portuguese" data-en="Portuguese" data-es="Portugués" data-pt="Português">
-                            Portuguese</option>
-                        <option value="Other" data-en="Other" data-es="Otro" data-pt="Outro">Other</option>
-                    </select>
-
-                    <label for="english_proficiency" data-en="English proficiency" data-es="Dominio del inglés"
-                        data-pt="Proficiência em inglês" class="required">English proficiency</label>
-                    <select id="english_proficiency" name="english_proficiency" required>
-                        <option value=""></option>
-                        <option value="Basic" data-en="Basic" data-es="Básico" data-pt="Básico">Basic</option>
-                        <option value="Conversational" data-en="Conversational" data-es="Conversacional"
-                            data-pt="Conversacional">
-                            Conversational</option>
-                        <option value="Fluent" data-en="Fluent" data-es="Fluido" data-pt="Fluente">Fluent</option>
-                        <option value="Native" data-en="Native" data-es="Nativo" data-pt="Nativo">Native</option>
-                    </select>
-
-                    <label for="site" data-en="Preferred site" data-es="Sitio preferido"
-                        data-pt="Site preferido">Preferred
-                        site</label>
-                    <select id="site" name="site">
-                        <option value=""></option>
-                        <option value="Matthews">CLT - Matthews</option>
-                        <option value="Steel Creek">CLT - Steel Creek</option>
-                    </select>
-
-
-                    <label for="shift_preference" data-en="Preferred shift" data-es="Turno preferido"
-                        data-pt="Turno preferido">Preferred shift</label>
-                    <select id="shift_preference" name="shift_preference">
-                        <option value=""></option>
-                        <option value="Day" data-en="Day" data-es="Diurno" data-pt="Diurno">Day</option>
-                        <option value="Evening" data-en="Evening" data-es="Vespertino" data-pt="Vespertino">Evening
-                        </option>
-                        <option value="Night" data-en="Night" data-es="Nocturno" data-pt="Noturno">Night</option>
-                        <option value="Weekends" data-en="Weekends" data-es="Fines de semana" data-pt="Fins de semana">
-                            Weekends
-                        </option>
-                    </select>
-
-
-                    <label for="experience_level" data-en="Experience level" data-es="Experiencia"
-                        data-pt="Experiência">Experience level</label>
-                    <select id="experience_level" name="experience_level">
-                        <option value=""></option>
-                        <option value="None">None</option>
-                        <option value="0–6 months">0–6 months</option>
-                        <option value="6–12 months">6–12 months</option>
-                        <option value="1–3 years">1–3 years</option>
-                        <option value="3+ years">3+ years</option>
-                    </select>
-                    <label for="notes" data-en="Notes" data-es="Notas" data-pt="Observações">Notes</label>
-                    <textarea id="notes" name="notes" rows="4" data-ph-en="Forklift certs, availability, locations"
-                        data-ph-es="Certificados, disponibilidad, ubicaciones"
-                        data-ph-pt="Certificados, disponibilidade, locais"></textarea>
-
-                    <div class="full">
-                        <label>
-                            <input type="checkbox" name="consent" required>
-                            <span data-en="I agree to the privacy policy" data-es="Acepto la política de privacidad"
-                                data-pt="Concordo com a política de privacidade">I agree to the privacy policy</span>
-                        </label>
-                    </div>
-
-                    <div class="actions">
-                        <button type="submit" data-en="Submit application" data-es="Enviar solicitud"
-                            data-pt="Enviar candidatura">Submit application</button>
-                        <p id="status" role="status" aria-live="polite"></p>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </section>
-
-    <footer>
-        <p data-en="© 2024 Carolina Lumper Service. All rights reserved."
-            data-es="© 2024 Carolina Lumper Service. Todos los derechos reservados."
-            data-pt="© 2024 Carolina Lumper Service. Todos os direitos reservados.">
-            © 2024 Carolina Lumper Service. All rights reserved.
-        </p>
-        <div class="footer-icons">
-            <a href="https://www.facebook.com/profile.php?id=61569872795390"><img src="assets/facebook-icon.png"
-                    alt="Facebook"></a>
-            <a href="#"><img src="assets/linkedin-icon.png" alt="LinkedIn"></a>
-        </div>
-        <div class="language-toggle">
-            <button onclick="switchLanguage('en')">English</button>
-            <button onclick="switchLanguage('es')">Español</button>
-            <button onclick="switchLanguage('pt')">Português</button>
-        </div>
-    </footer>
+  <footer>
+    <p>© 2024 Carolina Lumper Service. All rights reserved.</p>
+  </footer>
 </body>
-
 </html>
