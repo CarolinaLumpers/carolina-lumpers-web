@@ -452,6 +452,22 @@
 
         <div id="allReportsContainer" style="overflow:auto;"></div>
       </div>
+      
+      <!-- VIEW AS (Admin-only) -->
+      <div id="viewAsWrap" class="card hidden" style="margin-top:12px;text-align:left;max-width:860px;">
+        <h4 class="section-title" data-en="View As (Admin only)" data-es="Ver Como (solo Admin)" data-pt="Ver Como (somente Admin)">
+          View As (Admin only)
+        </h4>
+        <label style="display:block;margin:8px 0;">
+          <span data-en="Choose a worker:" data-es="Elija un empleado:" data-pt="Escolha um funcionário:">Choose a worker:</span>
+          <select id="viewAsSelect" style="width:100%;background:#000;color:#fff;border:1px solid #333;border-radius:6px;padding:6px;"></select>
+        </label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin:8px 0;">
+          <button id="btnActivateViewAs" class="btn btn-blue" data-en="Activate View As" data-es="Activar Ver Como" data-pt="Ativar Ver Como">Activate View As</button>
+          <button id="btnExitViewAs" class="btn btn-gray hidden" data-en="Exit View As" data-es="Salir de Ver Como" data-pt="Sair do Ver Como">Exit View As</button>
+        </div>
+        <div id="viewAsBanner" class="muted hidden"></div>
+      </div>
     </div>
 
     <div class="logout" onclick="logout()" data-en="Logout" data-es="Cerrar Sesión" data-pt="Sair">Logout</div>
@@ -523,6 +539,11 @@
       window.location.href = LOGIN_PAGE;
     }
     const { workerId, displayName, email } = userData;
+
+    // View As functionality
+    let VIEW_AS_WORKER = null;      // stores workerId being viewed
+    let VIEW_AS_ACTIVE = false;     // mode flag
+    let USER_ROLE = null;           // cached role
 
     // =================== INIT (All Event Bindings + Defaults) ===================
     window.addEventListener("DOMContentLoaded", () => {
@@ -668,10 +689,17 @@
     async function loadReport() {
       const body = document.getElementById("reportBody");
       body.innerHTML = `<tr><td colspan='2' class="muted">${MSG.loadingReport[LANG]}</td></tr>`;
-      try {
-        const data = await jsonp(`${API_URL}?action=report&workerId=${encodeURIComponent(workerId)}`);
-        body.innerHTML = "";
 
+      try {
+        let data;
+        if (VIEW_AS_ACTIVE && USER_ROLE === 'Admin') {
+          // Admin viewing as someone else (today only)
+          data = await jsonp(`${API_URL}?action=reportAs&requesterId=${encodeURIComponent(workerId)}&targetId=${encodeURIComponent(VIEW_AS_WORKER)}`);
+        } else {
+          data = await jsonp(`${API_URL}?action=report&workerId=${encodeURIComponent(workerId)}`);
+        }
+
+        body.innerHTML = "";
         const today = new Date().toLocaleDateString("en-US", { timeZone: "America/New_York" });
         const todayRecords = (data.records || []).filter(r => r.date === today);
 
@@ -687,10 +715,11 @@
             body.appendChild(tr);
           });
         } else {
-          body.innerHTML = `<tr><td colspan="2" class="muted">${LANG === 'es' ? 'Sin registros de hoy.' :
+          body.innerHTML = `<tr><td colspan="2" class="muted">${
+            LANG === 'es' ? 'Sin registros de hoy.' :
             LANG === 'pt' ? 'Sem registros de hoje.' :
-              'No clock-ins today.'
-            }</td></tr>`;
+            'No clock-ins today.'
+          }</td></tr>`;
         }
       } catch (err) {
         body.innerHTML = `<tr><td colspan="2">${MSG.reportError[LANG]} ${err.message || err}</td></tr>`;
@@ -728,8 +757,12 @@
       totalsEl.textContent = "";
 
       try {
-        const url = `${baseUrl}?action=payroll&workerId=${encodeURIComponent(workerId)}&range=${range}`;
-        const res = await jsonp(url);
+        let res;
+        if (VIEW_AS_ACTIVE && USER_ROLE === 'Admin') {
+          res = await jsonp(`${API_URL}?action=payrollAs&requesterId=${encodeURIComponent(workerId)}&targetId=${encodeURIComponent(VIEW_AS_WORKER)}&range=${range}`);
+        } else {
+          res = await jsonp(`${API_URL}?action=payroll&workerId=${encodeURIComponent(workerId)}&range=${range}`);
+        }
         if (!res || !res.success || !res.rows) {
           tbody.innerHTML = "";
           none.classList.remove("hidden");
@@ -885,9 +918,31 @@
             store.setItem(SESSION_KEY, JSON.stringify(u));
           }
         }
+        USER_ROLE = u.role;
 
-        if (u.role === 'Admin' || u.role === 'Lead') {
+        if (USER_ROLE === 'Admin' || USER_ROLE === 'Lead') {
           document.getElementById('adminPanel').classList.remove('hidden');
+        }
+
+        // View As is Admin ONLY
+        if (USER_ROLE === 'Admin') {
+          document.getElementById('viewAsWrap').classList.remove('hidden');
+
+          // Populate View As list using the same workers list we get from reportAll
+          const data = await jsonp(`${API_URL}?action=reportAll&workerId=${encodeURIComponent(workerId)}`);
+          const sel = document.getElementById('viewAsSelect');
+          sel.innerHTML = '';
+          (data.workers || [])
+            .sort((a, b) => (a.name || a.id).localeCompare(b.name || b.id))
+            .forEach(w => {
+              const opt = document.createElement('option');
+              opt.value = w.id;
+              opt.textContent = `${w.name} (${w.id})`;
+              sel.appendChild(opt);
+            });
+
+          document.getElementById('btnActivateViewAs').onclick = () => activateViewAs();
+          document.getElementById('btnExitViewAs').onclick = () => exitViewAs();
         }
       } catch (e) {
         // silently ignore; non-admins won't see panel
@@ -971,6 +1026,64 @@
         wrap.appendChild(tbl);
         container.appendChild(wrap);
       });
+    }
+
+    // ===== View As Helper Functions =====
+    function setViewAsBanner(targetId, name) {
+      const b = document.getElementById('viewAsBanner');
+      b.classList.remove('hidden');
+      b.textContent =
+        (LANG === 'es')
+          ? `Viendo como: ${name || targetId}`
+          : (LANG === 'pt')
+            ? `Visualizando como: ${name || targetId}`
+            : `Viewing as: ${name || targetId}`;
+
+      // Disable clock-in while viewing to avoid accidental actions
+      const btn = document.getElementById('clockInBtn');
+      btn.disabled = true;
+      btn.title = (LANG === 'es') ? 'Deshabilitado en modo Ver Como' :
+                  (LANG === 'pt') ? 'Desativado no modo Ver Como' :
+                                    'Disabled in View As mode';
+    }
+
+    function clearViewAsBanner() {
+      const b = document.getElementById('viewAsBanner');
+      b.classList.add('hidden');
+      b.textContent = '';
+      const btn = document.getElementById('clockInBtn');
+      btn.disabled = false;
+      btn.title = '';
+    }
+
+    async function activateViewAs() {
+      const sel = document.getElementById('viewAsSelect');
+      const targetId = sel.value;
+      if (!targetId) return;
+
+      VIEW_AS_WORKER = targetId;
+      VIEW_AS_ACTIVE = true;
+
+      // Fetch name for banner
+      const who = await jsonp(`${API_URL}?action=whois&workerId=${encodeURIComponent(targetId)}`);
+      setViewAsBanner(targetId, who?.displayName || '');
+
+      document.getElementById('btnActivateViewAs').classList.add('hidden');
+      document.getElementById('btnExitViewAs').classList.remove('hidden');
+
+      // Refresh sections in View As mode
+      await loadReport();
+      await loadPayroll('current');
+    }
+
+    function exitViewAs() {
+      VIEW_AS_WORKER = null;
+      VIEW_AS_ACTIVE = false;
+      clearViewAsBanner();
+      document.getElementById('btnExitViewAs').classList.add('hidden');
+      document.getElementById('btnActivateViewAs').classList.remove('hidden');
+      loadReport();
+      loadPayroll('current');
     }
   </script>
 
