@@ -2,13 +2,19 @@
   "name": "CLS Admin Dashboard",
   "short_name": "CLS Admin",
   "start_url": "./adminDashboard.html",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#000000",
   "theme_color": "#ffcc00",
   "icons": [
     {
-      "src": "CLS-favicon.png",
+      "src": "assets/CLS-favicon.png",
       "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/CLS-favicon.png",
+      "sizes": "512x512",
       "type": "image/png"
     }
   ]
