@@ -59,7 +59,7 @@
     .navbar {
       background: #111;
       display: flex;
-      justify-content: space-between;
+      justify-content: center;
       align-items: center;
       padding: 10px 20px;
       flex-wrap: wrap
@@ -350,12 +350,6 @@
       <a href="index.html"><img src="assets/CLS_Nav_Logo.png" alt="CLS Logo" class="logo" /></a>
       <a href="index.html" class="company-name">CAROLINA LUMPER SERVICE</a>
     </div>
-    <ul class="nav-links">
-      <li><a href="index.html" data-en="Home" data-es="Inicio" data-pt="Início">Home</a></li>
-      <li><a href="about.html" data-en="About" data-es="Sobre" data-pt="Sobre">About</a></li>
-      <li><a href="services.html" data-en="Services" data-es="Servicios" data-pt="Serviços">Services</a></li>
-      <li><a href="contact.html" data-en="Contact" data-es="Contacto" data-pt="Contato">Contact</a></li>
-    </ul>
   </nav>
 
   <!-- DASHBOARD -->
@@ -1113,9 +1107,23 @@
 
   <script>
     // ======================================================
-    // 📲  CLS Employee PWA Install Prompt
+    // 📲  CLS Employee PWA Install Prompt (Multilingual)
     // ======================================================
     let deferredPrompt;
+
+    // Multilingual text for PWA install
+    const PWA_TEXT = {
+      installButton: {
+        en: "📲 Install CLS Employee App",
+        es: "📲 Instalar App de Empleado CLS",
+        pt: "📲 Instalar App do Funcionário CLS"
+      },
+      installing: {
+        en: "Installing...",
+        es: "Instalando...",
+        pt: "Instalando..."
+      }
+    };
 
     // Check if app is already installed/running as PWA
     if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
@@ -1126,9 +1134,10 @@
       e.preventDefault();               // stop Chrome's default banner
       deferredPrompt = e;
 
-      // Create button
+      // Create button with current language
+      const currentLang = localStorage.getItem("CLS_Lang") || "en";
       const installBtn = document.createElement('button');
-      installBtn.textContent = "📲 Install CLS Employee App";
+      installBtn.textContent = PWA_TEXT.installButton[currentLang] || PWA_TEXT.installButton.en;
       installBtn.className = "install-btn";
       installBtn.style.position = "fixed";
       installBtn.style.bottom = "20px";
@@ -1149,8 +1158,9 @@
 
       // Handle click
       installBtn.addEventListener('click', async () => {
+        const currentLang = localStorage.getItem("CLS_Lang") || "en";
         installBtn.disabled = true;
-        installBtn.textContent = "Installing...";
+        installBtn.textContent = PWA_TEXT.installing[currentLang] || PWA_TEXT.installing.en;
         deferredPrompt.prompt();
         const { outcome } = await deferredPrompt.userChoice;
         console.log(`User install response: ${outcome}`);
