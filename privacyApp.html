@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-en="Privacy Policy | Carolina Lumper Service"
+          data-es="Política de Privacidad | Carolina Lumper Service"
+          data-pt="Política de Privacidade | Carolina Lumper Service">
+          Privacy Policy | Carolina Lumper Service
+  </title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body { background:#000; color:#fff; font-family:Arial,sans-serif; padding:40px; }
+    a { color:#ffcc00; }
+    h2 { color:#ffcc00; font-family:"Anton",sans-serif; }
+    .language-toggle { margin-top:20px; }
+    .language-toggle button { margin:5px; padding:8px 12px; border:none; background:#111; color:#ffcc00; border-radius:6px; cursor:pointer; }
+    .language-toggle button.active, .language-toggle button:hover { background:#ffcc00; color:#000; }
+  </style>
+  <script>
+    function switchLanguage(lang) {
+      document.querySelectorAll("[data-en],[data-es],[data-pt]").forEach(el=>{
+        const text = el.getAttribute(`data-${lang}`) || el.getAttribute("data-en");
+        if (text) el.innerHTML = text;
+      });
+      document.querySelectorAll(".language-toggle button").forEach(b=>b.classList.toggle("active",b.dataset.lang===lang));
+    }
+    document.addEventListener("DOMContentLoaded",()=>{
+      const userLang = navigator.language.startsWith("es")?"es":navigator.language.startsWith("pt")?"pt":"en";
+      switchLanguage(userLang);
+    });
+  </script>
+</head>
+<body>
+  <h2 data-en="Privacy Policy" data-es="Política de Privacidad" data-pt="Política de Privacidade">Privacy Policy</h2>
+
+  <p data-en="Carolina Lumper Service (“CLS”) respects your privacy. Information collected through our application form is used solely for employment consideration and will not be shared with third parties. By submitting your information, you consent to its processing for recruiting purposes only."
+     data-es="Carolina Lumper Service (“CLS”) respeta su privacidad. La información recopilada a través de nuestro formulario de solicitud se utiliza únicamente para la consideración laboral y no se compartirá con terceros. Al enviar su información, usted da su consentimiento para su procesamiento con fines de contratación."
+     data-pt="A Carolina Lumper Service (“CLS”) respeita sua privacidade. As informações coletadas através do nosso formulário de candidatura são usadas apenas para fins de recrutamento e não serão compartilhadas com terceiros. Ao enviar suas informações, você consente com seu uso para fins de recrutamento.">
+     Carolina Lumper Service (“CLS”) respects your privacy...
+  </p>
+
+  <p data-en='For questions, contact us at <a href="mailto:jobs@carolinalumpers.com">jobs@carolinalumpers.com</a>.'
+     data-es='Si tiene preguntas, contáctenos en <a href="mailto:jobs@carolinalumpers.com">jobs@carolinalumpers.com</a>.'
+     data-pt='Para dúvidas, entre em contato conosco em <a href="mailto:jobs@carolinalumpers.com">jobs@carolinalumpers.com</a>.'>
+     For questions, contact us...
+  </p>
+
+  <p><a href="apply.html" data-en="← Back to Application" data-es="← Volver a la Solicitud" data-pt="← Voltar à Candidatura">← Back to Application</a></p>
+
+  <div class="language-toggle">
+    <button data-lang="en" onclick="switchLanguage('en')">English</button>
+    <button data-lang="es" onclick="switchLanguage('es')">Español</button>
+    <button data-lang="pt" onclick="switchLanguage('pt')">Português</button>
+  </div>
+</body>
+</html>
