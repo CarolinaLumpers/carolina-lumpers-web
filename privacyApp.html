@@ -291,43 +291,32 @@
 
   <script>
     function switchLanguage(lang) {
-      // Update all elements with data attributes
-      document.querySelectorAll("[data-en],[data-es],[data-pt]").forEach(el => {
-        if (el.querySelector?.('input,select,textarea')) return;
-        const text =
-          lang === "es" ? el.getAttribute("data-es") :
-          lang === "pt" ? el.getAttribute("data-pt") :
-          el.getAttribute("data-en");
-        if (text != null) el.innerHTML = text;
+      localStorage.setItem("CLS_Lang", lang);
+
+      // Update all translatable elements
+      document.querySelectorAll("[data-en]").forEach(el => {
+        const text = el.getAttribute(`data-${lang}`) || el.getAttribute("data-en");
+        if (text) el.innerHTML = text;
       });
 
-      // Update page title
-      const titleEl = document.querySelector('title');
+      // Highlight active button
+      document.querySelectorAll(".language-toggle button").forEach(b =>
+        b.classList.toggle("active", b.dataset.lang === lang)
+      );
+
+      // Update <title>
+      const titleEl = document.querySelector("title");
       if (titleEl) {
-        const titleText =
-          lang === "es" ? titleEl.getAttribute("data-es") :
-          lang === "pt" ? titleEl.getAttribute("data-pt") :
-          titleEl.getAttribute("data-en");
-        if (titleText) titleEl.textContent = titleText;
+        const newTitle = titleEl.getAttribute(`data-${lang}`) || titleEl.getAttribute("data-en");
+        if (newTitle) titleEl.textContent = newTitle;
       }
-
-      // Update active language button
-      document.querySelectorAll('.language-toggle button').forEach(btn => {
-        btn.classList.remove('active');
-        if (btn.getAttribute('data-lang') === lang) {
-          btn.classList.add('active');
-        }
-      });
-
-      // Save language preference
-      localStorage.setItem('CLS_Lang', lang);
     }
 
-    // Initialize language on page load
+    // Initialize language on load
     document.addEventListener("DOMContentLoaded", () => {
-      const savedLang = localStorage.getItem('CLS_Lang');
-      const userLang = navigator.language || 'en';
-      const lang = savedLang || (userLang.startsWith("es") ? "es" : userLang.startsWith("pt") ? "pt" : "en");
+      const savedLang = localStorage.getItem("CLS_Lang");
+      const browserLang = navigator.language || "en";
+      const lang = savedLang || (browserLang.startsWith("es") ? "es" : browserLang.startsWith("pt") ? "pt" : "en");
       switchLanguage(lang);
     });
   </script>
