@@ -3,6 +3,17 @@
    ================================ */
 const API_BASE = "https://script.google.com/macros/s/AKfycbwHBLEQ5QHuhD-O4uI4hRN_5_yS9YsFgtn_dMAdoAO2C7zHLoi3qfHO82vas3Uv0wXXpg/exec";
 
+// Device Type Detection Function
+function getDeviceType() {
+  const ua = navigator.userAgent || navigator.vendor || window.opera;
+  if (/android/i.test(ua)) return "Android";
+  if (/iPad|iPhone|iPod/.test(ua)) return "iOS";
+  if (/Macintosh|Mac OS X/.test(ua) && !/Mobile/.test(ua)) return "Mac Desktop";
+  if (/Windows NT/.test(ua)) return "Windows Desktop";
+  if (/Linux/.test(ua)) return "Linux Desktop";
+  return "Unknown";
+}
+
 /* ================================
    SHARED COMPONENTS
    ================================ */
@@ -539,8 +550,11 @@ function initLoginForm() {
     if (statusEl) statusEl.textContent = MESSAGES[currentLang].sending;
 
     try {
+      // Get device type for tracking
+      const deviceType = getDeviceType();
+      
       const res = await fetch(
-        `${API_BASE}?action=login&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
+        `${API_BASE}?action=login&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}&device=${encodeURIComponent(deviceType)}`
       );
 
       const data = await res.json();
