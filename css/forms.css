@@ -51,11 +51,22 @@ form input, form textarea, form select {
   color: var(--text-color-2);
 }
 
-/* White backgrounds for all form fields */
+/* Form fields with better contrast for dark theme */
 form input, form select, form textarea {
-  background-color: #fff !important;
-  color: #000 !important;
-  border: 1px solid #ccc;
+  background-color: #1a1a1a;
+  color: #fff;
+  border: 1px solid #555;
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 16px;
+  transition: border-color 0.3s ease;
+}
+
+/* Focus states for better accessibility */
+form input:focus, form select:focus, form textarea:focus {
+  border-color: var(--accent-color);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(255, 191, 0, 0.2);
 }
 
 form button {
@@ -493,4 +504,13 @@ label.chip:hover {
 
 .success.show {
   display: block !important;
+}
+
+/* Force visible first step - CRITICAL FIX */
+.form-step.active {
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  position: relative;
+  z-index: 5;
 }
