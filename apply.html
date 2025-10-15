@@ -428,7 +428,14 @@
       // Update any other translatable elements inside form
       form.querySelectorAll('span[data-en]:not(input span)').forEach(span => {
         const text = span.getAttribute(`data-${lang}`) || span.getAttribute('data-en');
-        if (text) span.textContent = text;
+        if (text) {
+          // Use innerHTML for spans that contain HTML (like privacy policy links)
+          if (text.includes('<a href=')) {
+            span.innerHTML = text;
+          } else {
+            span.textContent = text;
+          }
+        }
       });
     }
 
@@ -488,6 +495,12 @@
         if (!sd.value) { setInvalid(sd); ok=false; }
       }
 
+      if (idx === 4){ // Emergency contact
+        const name = form.emergency_contact_name, phone = form.emergency_contact_phone;
+        if (!name.value.trim()) { setInvalid(name); ok=false; }
+        if (!phone.value.trim()) { setInvalid(phone); ok=false; }
+      }
+
       if (idx === 5){ // Language & privacy
         const lang = form.language_preference, eng = form.english_proficiency, consent = form.consent;
         if (!lang.value) { setInvalid(lang); ok=false; }
@@ -500,20 +513,46 @@
     // Submission via fetch (so we can show on-page success)
     form.addEventListener('submit', async (e)=>{
       e.preventDefault();
-      if (!validateStep(current)) return;
+      
+      // Validate all required steps before submission
+      let allValid = true;
+      for (let i = 0; i < total; i++) {
+        if (!validateStep(i)) {
+          allValid = false;
+          // Go to first invalid step
+          go(i, true);
+          break;
+        }
+      }
+      if (!allValid) return;
 
       // Set startedAt if empty
       if (!form.startedAt.value) form.startedAt.value = Date.now();
 
       const endpoint = form.getAttribute('action');
       const fd = new FormData(form);
+      
+      // Add console logging for debugging
+      console.log('Submitting to:', endpoint);
+      console.log('Form data:', Object.fromEntries(fd));
 
       try{
         const res = await fetch(endpoint, { method:'POST', body: fd });
-        if (!res.ok) throw new Error('Submit failed');
+        console.log('Response status:', res.status);
+        
+        if (!res.ok) {
+          const errorText = await res.text();
+          console.error('Submit failed:', errorText);
+          throw new Error(`Submit failed: ${res.status}`);
+        }
+        
+        const result = await res.json();
+        console.log('Success response:', result);
+        
         successMsg.style.display = 'block';
         nextBtn.disabled = true; backBtn.disabled = true; submitBtn.disabled = true;
       }catch(err){
+        console.error('Submission error:', err);
         successMsg.textContent = '⚠️ Error submitting application. Please try again.';
         successMsg.style.display = 'block';
       }
