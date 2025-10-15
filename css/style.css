@@ -614,3 +614,253 @@ button:hover {
     height: 300px; /* Taller for mobile */
   }
 }
+
+/* Summary List */
+.summary-list {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 20px 0;
+}
+
+.summary-list h4 {
+  margin-top: 0;
+  margin-bottom: 12px;
+  color: #333;
+}
+
+.summary-list div {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #e1e5e9;
+}
+
+.summary-list div:last-child {
+  border-bottom: none;
+}
+
+.summary-list strong {
+  color: #333;
+}
+
+.summary-list span {
+  color: #6c757d;
+}
+
+.field label {
+  color: var(--text-color-2);
+  font-weight: 600;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.field label.required::after {
+  content: " *";
+  color: #e74c3c;
+}
+
+.field input,
+.field select,
+.field textarea {
+  padding: 12px;
+  border: 2px solid #e1e5e9;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: border-color 0.3s ease;
+  background: white;
+  color: var(--text-color-2);
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(255, 191, 0, 0.1);
+}
+
+.field textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.field.invalid input,
+.field.invalid select,
+.field.invalid textarea {
+  border-color: #e74c3c;
+}
+
+.field .error {
+  color: #e74c3c;
+  font-size: 13px;
+  margin-top: 4px;
+  display: none;
+}
+
+.field.invalid .error {
+  display: block;
+}
+
+.helper {
+  font-size: 13px;
+  color: #666;
+  margin-top: 4px;
+}
+
+/* Checkboxes and Chips */
+.checklist {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  background: #f8f9fa;
+  border: 2px solid #e1e5e9;
+  border-radius: 25px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 14px;
+  color: var(--text-color-2);
+}
+
+.chip input[type="checkbox"] {
+  margin-right: 8px;
+  margin-bottom: 0;
+}
+
+.chip:hover {
+  border-color: var(--accent-color);
+  background: #fff8e1;
+}
+
+.chip:has(input:checked) {
+  background: var(--accent-color);
+  border-color: var(--accent-color);
+  color: white;
+}
+
+/* File Upload */
+.field.attach input[type="file"] {
+  padding: 8px;
+  border-style: dashed;
+}
+
+/* Summary Section */
+.summary {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.summary h3 {
+  color: var(--text-color-2);
+  margin-bottom: 16px;
+}
+
+.summary dl {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 8px 16px;
+  margin: 0;
+}
+
+.summary dt {
+  font-weight: 600;
+  color: #666;
+}
+
+.summary dd {
+  margin: 0;
+  color: var(--text-color-2);
+}
+
+/* Navigation */
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 24px;
+  border-top: 1px solid #e1e5e9;
+  margin-top: 30px;
+}
+
+.nav .left {
+  flex: 1;
+}
+
+.nav .right {
+  display: flex;
+  gap: 12px;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 24px;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 120px;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: var(--accent-color);
+  color: white;
+  border-color: var(--accent-color);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #E8A317;
+  border-color: #E8A317;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 191, 0, 0.3);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: #666;
+  border-color: #e1e5e9;
+}
+
+.btn-ghost:hover:not(:disabled) {
+  background: #f8f9fa;
+  border-color: #ccc;
+}
+
+/* Success Message */
+.success {
+  background: #d4edda;
+  color: #155724;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid #c3e6cb;
+  margin-top: 20px;
+  display: none;
+  text-align: center;
+  font-weight: 600;
+}
+
+.success.show {
+  display: block;
+}
+
+/* Utilities */
+.mb8 { margin-bottom: 8px; }

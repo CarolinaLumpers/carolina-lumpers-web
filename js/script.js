@@ -176,8 +176,25 @@ function contactPlaceholders(lang) {
 }
 
 function initApplyForm() {
-  const form = document.getElementById('cls-apply');
-  if (!form) return;
+  // Check if we have the new multi-step application form or the old form
+  const newForm = document.getElementById('applicationForm');
+  const oldForm = document.getElementById('cls-apply');
+  
+  if (newForm) {
+    // New multi-step form is already initialized by its own script in apply.html
+    // Just ensure the current language is applied for any translatable elements
+    const lang = localStorage.getItem("CLS_Lang") || "en";
+    document.querySelectorAll("[data-en]").forEach(el => {
+      const text = el.getAttribute(`data-${lang}`) || el.getAttribute("data-en");
+      if (text) el.innerHTML = text;
+    });
+    
+    // Apply language to placeholders if needed
+    applyPlaceholders(lang);
+    return;
+  }
+  
+  if (!oldForm) return;
 
   const statusEl = document.getElementById('status');
   const MESSAGES = {
@@ -197,9 +214,9 @@ function initApplyForm() {
   function validateAge() {
     const dobInput = document.getElementById('dob');
     const errorEl = document.getElementById('dobError');
-    if (!dobInput || !form) return;
+    if (!dobInput || !oldForm) return;
 
-    const currentLang = form.querySelector('input[name="ui_lang"]').value || 'en';
+    const currentLang = oldForm.querySelector('input[name="ui_lang"]').value || 'en';
     const messages = {
       en: 'Applicant must be at least 18 years old.',
       es: 'El solicitante debe tener al menos 18 años.',
@@ -238,7 +255,7 @@ function initApplyForm() {
     const val = select?.value || "";
     const descNote = document.getElementById("authDescription");
     const docNote = document.getElementById("docNote");
-    const lang = form?.querySelector('input[name="ui_lang"]')?.value || "en";
+    const lang = oldForm?.querySelector('input[name="ui_lang"]')?.value || "en";
 
     // Reset notes if no value selected
     if (!val) { 
@@ -333,7 +350,7 @@ function initApplyForm() {
 
   // Initialize form
   setDobMax();
-  form.querySelector('input[name="startedAt"]').value = String(Date.now());
+  oldForm.querySelector('input[name="startedAt"]').value = String(Date.now());
 
   // Set up event listeners
   const dobInput = document.getElementById('dob');
@@ -347,24 +364,24 @@ function initApplyForm() {
   if (authSelect) authSelect.addEventListener('change', updateDocNote);
 
   // Apply current language placeholders on form init
-  const currentLang = form.querySelector('input[name="ui_lang"]').value || 'en';
+  const currentLang = oldForm.querySelector('input[name="ui_lang"]').value || 'en';
   applyPlaceholders(currentLang);
 
   // Form submission handler
-  form.addEventListener('submit', async (e) => {
+  oldForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const currentLang = form.querySelector('input[name="ui_lang"]').value || 'en';
+    const currentLang = oldForm.querySelector('input[name="ui_lang"]').value || 'en';
     if (statusEl) statusEl.textContent = MESSAGES[currentLang].sending;
 
     try {
-      const body = new URLSearchParams(new FormData(form));
-      const res = await fetch(form.action, { method: 'POST', body });
+      const body = new URLSearchParams(new FormData(oldForm));
+      const res = await fetch(oldForm.action, { method: 'POST', body });
       let msg = MESSAGES[currentLang][res.ok ? 'success' : 'error'];
       try { const j = await res.json(); if (j?.message) msg = j.message; } catch { }
       if (statusEl) statusEl.textContent = msg;
       if (res.ok) {
-        form.reset();
-        form.querySelector('input[name="ui_lang"]').value = currentLang;
+        oldForm.reset();
+        oldForm.querySelector('input[name="ui_lang"]').value = currentLang;
         applyPlaceholders(currentLang);
       }
     } catch {
@@ -519,8 +536,25 @@ function initLoginForm() {
 
 // Contact Form Module
 function initContactForm() {
-  const form = document.getElementById("contactForm");
-  if (!form) return;
+  // Check if we have the new quote form or the old contact form
+  const quoteForm = document.getElementById("quoteForm");
+  const contactForm = document.getElementById("contactForm");
+  
+  if (quoteForm) {
+    // New quote form is already initialized by its own script in contact.html
+    // Just ensure the current language is applied for any translatable elements
+    const lang = localStorage.getItem("CLS_Lang") || "en";
+    document.querySelectorAll("[data-en]").forEach(el => {
+      const text = el.getAttribute(`data-${lang}`) || el.getAttribute("data-en");
+      if (text) el.innerHTML = text;
+    });
+    
+    // Apply language to placeholders if needed
+    contactPlaceholders(lang);
+    return;
+  }
+  
+  if (!contactForm) return;
 
   const statusEl = document.getElementById("status");
   const MESSAGES = {
@@ -544,7 +578,7 @@ function initContactForm() {
     }
   };
 
-  form.addEventListener("submit", async (e) => {
+  contactForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     const currentLang = localStorage.getItem("CLS_Lang") || "en";
 
@@ -562,11 +596,11 @@ function initContactForm() {
     try {
       const res = await fetch(API_BASE, {
         method: "POST",
-        body: new URLSearchParams(new FormData(form))
+        body: new URLSearchParams(new FormData(contactForm))
       });
 
       if (res.ok) {
-        form.reset();
+        contactForm.reset();
         statusEl.textContent = MESSAGES[currentLang].success;
         
         // Reapply placeholders after reset
@@ -579,7 +613,6 @@ function initContactForm() {
         statusEl.textContent = MESSAGES[currentLang].serverError;
       }
     } catch (err) {
-      console.error(err);
       statusEl.textContent = MESSAGES[currentLang].serverError;
     }
   });

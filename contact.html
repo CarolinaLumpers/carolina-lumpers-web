@@ -60,29 +60,249 @@
     </ul>
   </section>
 
-  <!-- Contact Form Section -->
-  <section id="contact">
-    <div class="form-container">
-      <h2 data-en="Contact Us" data-es="Contáctenos" data-pt="Contate-nos">Contact Us</h2>
+  <!-- Quote Request Form Section -->
+  <div class="wrap">
+    <div class="card" id="wizard">
+      <!-- PROGRESS -->
+      <div class="progress" aria-live="polite">
+        <div class="progress-top">
+          <strong id="stepLabel">Step 1 of 7</strong>
+          <span id="stepName">Contact Information</span>
+        </div>
+        <div class="bar"><div class="bar-fill" id="barFill" style="transform:scaleX(0.142857)"></div></div>
+        <div class="steps" id="stepsDots" aria-label="Progress steps">
+          <!-- dots injected by JS -->
+        </div>
+      </div>
 
-      <form id="contactForm" action="https://script.google.com/macros/s/AKfycbwHBLEQ5QHuhD-O4uI4hRN_5_yS9YsFgtn_dMAdoAO2C7zHLoi3qfHO82vas3Uv0wXXpg/exec" method="POST">
-        <input type="text" name="name" id="name" required
-               data-ph-en="Your Name" data-ph-es="Su Nombre" data-ph-pt="Seu Nome"
-               placeholder="Your Name">
+      <!-- FORM -->
+      <form id="quoteForm" novalidate>
+        <!-- 1. Contact Information -->
+        <section class="form-step active" data-title="Contact Information">
+          <div class="grid grid-2">
+            <div class="field">
+              <label>Company Name (if applicable)</label>
+              <input name="companyName" type="text" autocomplete="organization">
+            </div>
+            <div class="field">
+              <label>Contact Person / Title</label>
+              <input name="contactName" type="text" autocomplete="name">
+            </div>
+            <div class="field">
+              <label class="required">Phone Number</label>
+              <input name="phone" type="tel" autocomplete="tel" required>
+              <div class="error">Please enter a phone number.</div>
+            </div>
+            <div class="field">
+              <label class="required">Email Address</label>
+              <input name="email" type="email" autocomplete="email" required>
+              <div class="error">Please enter a valid email.</div>
+            </div>
+            <div class="field">
+              <label>Preferred Contact Method</label>
+              <select name="preferredContact">
+                <option value="">Select…</option>
+                <option>Phone</option>
+                <option>Email</option>
+                <option>Text</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>How did you hear about us? (optional)</label>
+              <input name="referral" type="text" placeholder="Google, referral, carrier rep, etc.">
+            </div>
+          </div>
+        </section>
 
-        <input type="email" name="email" id="email" required
-               data-ph-en="Your Email" data-ph-es="Su Correo" data-ph-pt="Seu Email"
-               placeholder="Your Email">
+        <!-- 2. Service Details -->
+        <section class="form-step" data-title="Service Details">
+          <div class="mb8"><label>Type of Service Needed (check all that apply)</label></div>
+          <div class="checklist">
+            <label class="chip"><input type="checkbox" name="services" value="Lumper">Lumper</label>
+            <label class="chip"><input type="checkbox" name="services" value="Unloading">Unloading</label>
+            <label class="chip"><input type="checkbox" name="services" value="Loading">Loading</label>
+            <label class="chip"><input type="checkbox" name="services" value="Pallet Breakdown">Pallet Breakdown</label>
+            <label class="chip"><input type="checkbox" name="services" value="Repacking">Repacking</label>
+            <label class="chip"><input type="checkbox" name="services" value="Cross-Docking">Cross-Docking</label>
+            <label class="chip"><input type="checkbox" name="services" value="Sorting">Sorting</label>
+            <label class="chip"><input type="checkbox" name="services" value="Other">Other</label>
+          </div>
 
-        <textarea name="message" id="message" rows="5" required
-                  data-ph-en="Your Message" data-ph-es="Su Mensaje" data-ph-pt="Sua Mensagem"
-                  placeholder="Your Message"></textarea>
+          <div class="grid grid-2" style="margin-top:12px">
+            <div class="field">
+              <label>Frequency of Service</label>
+              <select name="frequency">
+                <option value="">Select…</option>
+                <option>One-time</option><option>Daily</option><option>Weekly</option>
+                <option>Monthly</option><option>Seasonal</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Expected Start Date</label>
+              <input name="startDate" type="date">
+            </div>
+            <div class="field">
+              <label>Shift or Time Window</label>
+              <select name="shift">
+                <option value="">Select…</option>
+                <option>Morning</option><option>Afternoon</option><option>Night</option><option>Flexible</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Estimated Duration (optional)</label>
+              <input name="duration" type="text" placeholder="e.g., 4 hours, all shift">
+            </div>
+            <div class="field">
+              <label>Ongoing Account or Trial Job? (optional)</label>
+              <input name="ongoingOrTrial" type="text" placeholder="Ongoing, pilot, or one-off"/>
+            </div>
+          </div>
+        </section>
 
-        <button type="submit" data-en="Send Message" data-es="Enviar Mensaje" data-pt="Enviar Mensagem">Send Message</button>
-        <p id="status" class="message" role="status" aria-live="polite"></p>
+        <!-- 3. Location Details -->
+        <section class="form-step" data-title="Location Details">
+          <div class="grid grid-2">
+            <div class="field">
+              <label class="required">Facility Name / Warehouse</label>
+              <input name="facility" type="text" required>
+              <div class="error">Facility name is required.</div>
+            </div>
+            <div class="field">
+              <label class="required">Address</label>
+              <input name="address" type="text" required placeholder="Street, City, State, ZIP">
+              <div class="error">Address is required.</div>
+            </div>
+            <div class="field">
+              <label>Dock or Bay Number (if known)</label>
+              <input name="dock" type="text">
+            </div>
+            <div class="field">
+              <label>Entry or Safety Requirements</label>
+              <input name="entryRequirements" type="text" placeholder="Badges, PPE, safety videos, etc.">
+            </div>
+            <div class="field">
+              <label>On-Site Contact Name & Phone</label>
+              <input name="onsiteContact" type="text" placeholder="Name, phone">
+            </div>
+          </div>
+        </section>
+
+        <!-- 4. Volume & Workforce -->
+        <section class="form-step" data-title="Volume & Workforce">
+          <div class="grid grid-2">
+            <div class="field">
+              <label>Average Number of Loads</label>
+              <input name="avgLoads" type="text" placeholder="per Day / Week">
+            </div>
+            <div class="field">
+              <label>Type of Freight</label>
+              <select name="freight">
+                <option value="">Select…</option>
+                <option>Palletized</option><option>Floor-Loaded</option><option>Mixed</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Estimated Number of Workers Needed (if known)</label>
+              <input name="workersNeeded" type="number" min="1" step="1" placeholder="e.g., 4">
+            </div>
+            <div class="field">
+              <label>Special Equipment Required</label>
+              <input name="equipment" type="text" placeholder="Pallet Jack, Forklift, PPE, Other">
+            </div>
+            <div class="field">
+              <label>Average Load Weight or Container Size (optional)</label>
+              <input name="avgWeight" type="text" placeholder="e.g., 40' HC, 20k lbs">
+            </div>
+          </div>
+        </section>
+
+        <!-- 5. Billing Information -->
+        <section class="form-step" data-title="Billing Information">
+          <div class="grid grid-2">
+            <div class="field">
+              <label>Billing Contact Name & Email</label>
+              <input name="billingContact" type="text" placeholder="Name, email">
+            </div>
+            <div class="field">
+              <label>Preferred Billing Method</label>
+              <select name="billingMethod">
+                <option value="">Select…</option>
+                <option>Email</option><option>Portal</option><option>Paper</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Payment Terms or Requirements</label>
+              <input name="paymentTerms" type="text" placeholder="Net 15, Net 30, ACH preferred">
+            </div>
+            <div class="field">
+              <label>Accounts Payable Address (if different)</label>
+              <input name="apAddress" type="text">
+            </div>
+            <div class="field">
+              <label>Tax Exemption Certificate (if applicable)</label>
+              <input name="taxExempt" type="text" placeholder="Number / note">
+            </div>
+            <div class="field">
+              <label>Require W9 or insurance certificate before service?</label>
+              <select name="requireDocs">
+                <option value="">Select…</option>
+                <option>Yes</option><option>No</option><option>Maybe</option>
+              </select>
+            </div>
+          </div>
+        </section>
+
+        <!-- 6. Additional Notes -->
+        <section class="form-step" data-title="Additional Notes">
+          <div class="field">
+            <label>Special Instructions or Comments</label>
+            <textarea name="notes" placeholder="Include shift overlap, badge requirements, truck staging details…"></textarea>
+          </div>
+          <div class="field attach">
+            <label>Attachments (optional)</label>
+            <input name="attachments" type="file" multiple>
+            <div class="helper">Attach load schedules, photos, or rate sheets (optional).</div>
+          </div>
+          <div class="grid grid-2" style="margin-top:12px">
+            <label class="chip"><input type="checkbox" name="sendRateSheet" value="Yes">Please send me a standard rate sheet</label>
+            <label class="chip"><input type="checkbox" name="siteVisit" value="Yes">Request a site visit before quoting</label>
+          </div>
+        </section>
+
+        <!-- 7. Confirmation & Authorization -->
+        <section class="form-step" data-title="Confirmation">
+          <div class="summary" id="summaryBox">
+            <h3 style="margin-top:0">Review</h3>
+            <dl id="summaryList"></dl>
+          </div>
+          <div class="grid grid-2" style="margin-top:12px">
+            <div class="field">
+              <label>Signature / Name</label>
+              <input name="signature" type="text" placeholder="Type your full name">
+            </div>
+            <div class="field">
+              <label>Date</label>
+              <input name="signatureDate" type="date">
+            </div>
+          </div>
+          <p class="helper">By submitting, you authorize Carolina Lumper Service to contact you for scheduling and provide a written quote.</p>
+          <div class="success" id="successMsg">✅ Thanks! Your request was submitted. We'll be in touch shortly.</div>
+        </section>
+
+        <!-- Nav buttons -->
+        <div class="nav">
+          <div class="left">
+            <button type="button" class="btn btn-ghost" id="backBtn">← Back</button>
+          </div>
+          <div class="right">
+            <button type="button" class="btn" id="saveDraftBtn" title="Save a draft locally">Save Draft</button>
+            <button type="button" class="btn btn-primary" id="nextBtn">Next →</button>
+            <button type="submit" class="btn btn-primary" id="submitBtn" style="display:none">Submit Request</button>
+          </div>
+        </div>
       </form>
     </div>
-  </section>
+  </div>
 
   <!-- Footer -->
   <footer>
@@ -98,8 +318,223 @@
     </div>
 
   </footer>
-</body>
-</html>
-  </footer>
+  
+  <script>
+    (function(){
+      const form = document.getElementById('quoteForm');
+      const steps = Array.from(form.querySelectorAll('.form-step'));
+      const stepLabel = document.getElementById('stepLabel');
+      const stepName = document.getElementById('stepName');
+      const barFill = document.getElementById('barFill');
+      const backBtn = document.getElementById('backBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      const submitBtn = document.getElementById('submitBtn');
+      const successMsg = document.getElementById('successMsg');
+      const summaryList = document.getElementById('summaryList');
+      const stepsDots = document.getElementById('stepsDots');
+      const saveDraftBtn = document.getElementById('saveDraftBtn');
+
+      let current = 0;
+      const total = steps.length;
+
+      // Build numbered dots
+      const titles = steps.map(s => s.dataset.title || 'Step');
+      titles.forEach((t,i)=>{
+        const dot=document.createElement('button');
+        dot.type='button';
+        dot.className='step-dot';
+        dot.title=t;
+        dot.textContent=(i+1);
+        dot.addEventListener('click',()=>go(i,true));
+        stepsDots.appendChild(dot);
+      });
+
+      function updateProgress(){
+        stepLabel.textContent = `Step ${current+1} of ${total}`;
+        stepName.textContent = titles[current] || '';
+        const pct = (current+1)/total;
+        barFill.style.transform = `scaleX(${pct})`;
+        stepsDots.querySelectorAll('.step-dot').forEach((d,i)=>{
+          d.setAttribute('aria-current', i===current ? 'step' : 'false');
+          d.classList.toggle('done', i<current);
+        });
+        backBtn.style.visibility = current === 0 ? 'hidden' : 'visible';
+        nextBtn.style.display = current === total-1 ? 'none' : 'inline-flex';
+        submitBtn.style.display = current === total-1 ? 'inline-flex' : 'none';
+      }
+
+      function go(n, allowSkip=false){
+        // Block skipping required fields going forward
+        if (!allowSkip && n>current) {
+          if (!validateStep(current)) return;
+        }
+        steps[current].classList.remove('active');
+        current = Math.max(0, Math.min(total-1, n));
+        steps[current].classList.add('active');
+        if (current === total-1) buildSummary();
+        updateProgress();
+        scrollToTop();
+      }
+
+      function next(){ go(current+1); }
+      function back(){ go(current-1, true); }
+
+      function scrollToTop(){
+        document.querySelector('.card').scrollIntoView({behavior:'smooth', block:'start'});
+      }
+
+      function setInvalid(field, msg){
+        field.classList.add('invalid');
+        const err = field.querySelector('.error');
+        if (err && msg) err.textContent = msg;
+      }
+      function clearInvalid(field){ field.classList.remove('invalid'); }
+
+      function validateEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(v||'').trim()); }
+
+      function validateStep(idx){
+        // light required validation on key fields
+        const stepEl = steps[idx];
+        const fields = stepEl.querySelectorAll('.field');
+        let ok = true;
+
+        fields.forEach(f=>clearInvalid(f));
+
+        // basic per-step checks
+        if (idx===0){ // contact
+          const phone = stepEl.querySelector('input[name="phone"]');
+          const email = stepEl.querySelector('input[name="email"]');
+          if (!phone.value.trim()){ setInvalid(phone.parentElement); ok=false; }
+          if (!validateEmail(email.value)){ setInvalid(email.parentElement,"Please enter a valid email."); ok=false; }
+        }
+        if (idx===2){ // location
+          const facility = stepEl.querySelector('input[name="facility"]');
+          const address = stepEl.querySelector('input[name="address"]');
+          if (!facility.value.trim()){ setInvalid(facility.parentElement); ok=false; }
+          if (!address.value.trim()){ setInvalid(address.parentElement); ok=false; }
+        }
+        return ok;
+      }
+
+      function getAllValues(){
+        const fd = new FormData(form);
+        // collect multi-check services explicitly
+        const services = Array.from(form.querySelectorAll('input[name="services"]:checked')).map(i=>i.value);
+        if (services.length) fd.set('services', services.join(', '));
+
+        // files (just names for summary)
+        const files = form.elements['attachments']?.files || [];
+        return { fd, services, files: Array.from(files).map(f=>f.name) };
+      }
+
+      function buildSummary(){
+        const { fd, services, files } = getAllValues();
+        const entries = [];
+        const push = (k,v)=>{ if(v && String(v).trim()) entries.push([k,String(v).trim()]); };
+
+        push('Company', fd.get('companyName'));
+        push('Contact', fd.get('contactName'));
+        push('Phone', fd.get('phone'));
+        push('Email', fd.get('email'));
+        push('Preferred Contact', fd.get('preferredContact'));
+        push('Heard About Us', fd.get('referral'));
+        push('Services', services.join(', '));
+        push('Frequency', fd.get('frequency'));
+        push('Start Date', fd.get('startDate'));
+        push('Shift Window', fd.get('shift'));
+        push('Duration', fd.get('duration'));
+        push('Ongoing/Trial', fd.get('ongoingOrTrial'));
+        push('Facility', fd.get('facility'));
+        push('Address', fd.get('address'));
+        push('Dock/Bay', fd.get('dock'));
+        push('Entry/Safety', fd.get('entryRequirements'));
+        push('On-site Contact', fd.get('onsiteContact'));
+        push('Avg Loads', fd.get('avgLoads'));
+        push('Freight', fd.get('freight'));
+        push('Workers Needed', fd.get('workersNeeded'));
+        push('Equipment', fd.get('equipment'));
+        push('Avg Weight/Size', fd.get('avgWeight'));
+        push('Billing Contact', fd.get('billingContact'));
+        push('Billing Method', fd.get('billingMethod'));
+        push('Payment Terms', fd.get('paymentTerms'));
+        push('AP Address', fd.get('apAddress'));
+        push('Tax Exempt', fd.get('taxExempt'));
+        push('Require W9/Insurance', fd.get('requireDocs'));
+        push('Send Rate Sheet', form.querySelector('input[name="sendRateSheet"]')?.checked ? 'Yes':'No');
+        push('Request Site Visit', form.querySelector('input[name="siteVisit"]')?.checked ? 'Yes':'No');
+        push('Notes', fd.get('notes'));
+        push('Attachments', files.join(', '));
+
+        summaryList.innerHTML = entries.map(([k,v])=>`<dt>${k}</dt><dd>${v}</dd>`).join('');
+      }
+
+      function saveDraft(){
+        const { fd } = getAllValues();
+        const obj = {};
+        fd.forEach((v,k)=>{ obj[k]=v; });
+        try{
+          localStorage.setItem('CLS_QUOTE_DRAFT', JSON.stringify(obj));
+          saveDraftBtn.textContent = 'Saved ✓';
+          setTimeout(()=>saveDraftBtn.textContent='Save Draft', 1500);
+        }catch(e){}
+      }
+
+      function loadDraft(){
+        try{
+          const raw = localStorage.getItem('CLS_QUOTE_DRAFT');
+          if(!raw) return;
+          const obj = JSON.parse(raw);
+          for (const [k,v] of Object.entries(obj)){
+            const el = form.elements[k];
+            if (!el) continue;
+            if (el.type === 'checkbox' || el.type === 'radio'){
+              el.checked = v === 'on' || v === true || v === 'true';
+            } else {
+              el.value = v;
+            }
+          }
+        }catch(e){}
+      }
+
+      backBtn.addEventListener('click', back);
+      nextBtn.addEventListener('click', next);
+      saveDraftBtn.addEventListener('click', saveDraft);
+
+      // Submit handler – show success on same page
+      form.addEventListener('submit', async (e)=>{
+        e.preventDefault();
+        if (!validateStep(current)) return;
+
+        // build payload (attachments left for backend enhancement)
+        const { fd } = getAllValues();
+        fd.append('startedAt', Date.now());
+        fd.append('formType', 'quote-request');
+
+        try {
+          // Use the existing API_BASE from script.js
+          const API_BASE = "https://script.google.com/macros/s/AKfycbwHBLEQ5QHuhD-O4uI4hRN_5_yS9YsFgtn_dMAdoAO2C7zHLoi3qfHO82vas3Uv0wXXpg/exec";
+          const res = await fetch(API_BASE, { method:'POST', body: fd });
+          
+          if (res.ok) {
+            successMsg.classList.add('show');
+            submitBtn.disabled = true; nextBtn.disabled = true; backBtn.disabled = true;
+            
+            // Clear draft after success
+            try{ localStorage.removeItem('CLS_QUOTE_DRAFT'); }catch(_){}
+          } else {
+            throw new Error('Submission failed');
+          }
+        } catch (error) {
+          successMsg.textContent = '⚠️ Error submitting request. Please try again.';
+          successMsg.classList.add('show');
+        }
+      });
+
+      // init
+      steps[0].classList.add('active');
+      updateProgress();
+      loadDraft();
+    })();
+  </script>
 </body>
 </html>

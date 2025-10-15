@@ -342,6 +342,235 @@
             <button onclick="switchLanguage('pt')">Português</button>
         </div>
     </footer>
+    
+    <script>
+      (function(){
+        const form = document.getElementById('applicationForm');
+        const steps = Array.from(form.querySelectorAll('.form-step'));
+        const stepLabel = document.getElementById('stepLabel');
+        const stepName = document.getElementById('stepName');
+        const barFill = document.getElementById('barFill');
+        const backBtn = document.getElementById('backBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const submitBtn = document.getElementById('submitBtn');
+        const successMsg = document.getElementById('successMsg');
+        const summaryList = document.getElementById('summaryList');
+        const stepsDots = document.getElementById('stepsDots');
+        const saveDraftBtn = document.getElementById('saveDraftBtn');
+
+        let current = 0;
+        const total = steps.length;
+
+        // Build numbered dots
+        const titles = steps.map(s => s.dataset.title || 'Step');
+        titles.forEach((t,i)=>{
+          const dot=document.createElement('button');
+          dot.type='button';
+          dot.className='step-dot';
+          dot.title=t;
+          dot.textContent=(i+1);
+          dot.addEventListener('click',()=>go(i,true));
+          stepsDots.appendChild(dot);
+        });
+
+        function updateProgress(){
+          stepLabel.textContent = `Step ${current+1} of ${total}`;
+          stepName.textContent = titles[current] || '';
+          const pct = (current+1)/total;
+          barFill.style.transform = `scaleX(${pct})`;
+          stepsDots.querySelectorAll('.step-dot').forEach((d,i)=>{
+            d.setAttribute('aria-current', i===current ? 'step' : 'false');
+            d.classList.toggle('done', i<current);
+          });
+          backBtn.style.visibility = current === 0 ? 'hidden' : 'visible';
+          nextBtn.style.display = current === total-1 ? 'none' : 'inline-flex';
+          submitBtn.style.display = current === total-1 ? 'inline-flex' : 'none';
+        }
+
+        function go(n, allowSkip=false){
+          // Block skipping required fields going forward
+          if (!allowSkip && n>current) {
+            if (!validateStep(current)) return;
+          }
+          steps[current].classList.remove('active');
+          current = Math.max(0, Math.min(total-1, n));
+          steps[current].classList.add('active');
+          if (current === total-1) buildSummary();
+          updateProgress();
+          scrollToTop();
+        }
+
+        function next(){ go(current+1); }
+        function back(){ go(current-1, true); }
+
+        function scrollToTop(){
+          document.querySelector('.card').scrollIntoView({behavior:'smooth', block:'start'});
+        }
+
+        function setInvalid(field, msg){
+          field.classList.add('invalid');
+          const err = field.querySelector('.error');
+          if (err && msg) err.textContent = msg;
+        }
+        function clearInvalid(field){ field.classList.remove('invalid'); }
+
+        function validateEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(v||'').trim()); }
+        
+        function isOver18(dob) {
+          if (!dob) return false;
+          const today = new Date();
+          const birthDate = new Date(dob);
+          const age = today.getFullYear() - birthDate.getFullYear();
+          const monthDiff = today.getMonth() - birthDate.getMonth();
+          if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+            return age - 1 >= 18;
+          }
+          return age >= 18;
+        }
+
+        function validateStep(idx){
+          const stepEl = steps[idx];
+          const fields = stepEl.querySelectorAll('.field');
+          let ok = true;
+
+          fields.forEach(f=>clearInvalid(f));
+
+          // Step-specific validation
+          if (idx===0){ // Personal Information
+            const firstName = stepEl.querySelector('input[name="first_name"]');
+            const lastName = stepEl.querySelector('input[name="last_name"]');
+            const dob = stepEl.querySelector('input[name="dob"]');
+            const phone = stepEl.querySelector('input[name="phone"]');
+            const email = stepEl.querySelector('input[name="email"]');
+            
+            if (!firstName.value.trim()){ setInvalid(firstName.parentElement); ok=false; }
+            if (!lastName.value.trim()){ setInvalid(lastName.parentElement); ok=false; }
+            if (!dob.value || !isOver18(dob.value)){ setInvalid(dob.parentElement, "You must be at least 18 years old."); ok=false; }
+            if (!phone.value.trim()){ setInvalid(phone.parentElement); ok=false; }
+            if (!validateEmail(email.value)){ setInvalid(email.parentElement); ok=false; }
+          }
+          if (idx===1){ // Location & Transportation
+            const city = stepEl.querySelector('input[name="city"]');
+            const state = stepEl.querySelector('select[name="state"]');
+            const transport = stepEl.querySelector('select[name="reliable_transport"]');
+            const travel = stepEl.querySelector('select[name="willing_travel"]');
+            
+            if (!city.value.trim()){ setInvalid(city.parentElement); ok=false; }
+            if (!state.value){ setInvalid(state.parentElement); ok=false; }
+            if (!transport.value){ setInvalid(transport.parentElement); ok=false; }
+            if (!travel.value){ setInvalid(travel.parentElement); ok=false; }
+          }
+          if (idx===4){ // Authorization
+            const background = stepEl.querySelector('select[name="background_check"]');
+            const consent = stepEl.querySelector('input[name="consent"]');
+            
+            if (!background.value){ setInvalid(background.parentElement); ok=false; }
+            if (!consent.checked){ setInvalid(consent.parentElement); ok=false; }
+          }
+          return ok;
+        }
+
+        function getAllValues(){
+          const fd = new FormData(form);
+          return { fd };
+        }
+
+        function buildSummary(){
+          const { fd } = getAllValues();
+          const entries = [];
+          const push = (k,v)=>{ if(v && String(v).trim()) entries.push([k,String(v).trim()]); };
+
+          push('Name', `${fd.get('first_name')} ${fd.get('last_name')}`);
+          push('Date of Birth', fd.get('dob'));
+          push('Phone', fd.get('phone'));
+          push('Email', fd.get('email'));
+          push('Location', `${fd.get('city')}, ${fd.get('state')}`);
+          push('Reliable Transportation', fd.get('reliable_transport'));
+          push('Willing to Travel', fd.get('willing_travel'));
+          push('Preferred Shift', fd.get('shift_preferences'));
+          push('Start Date', fd.get('start_date'));
+          push('Previous Experience', fd.get('previous_experience'));
+          push('Certifications', fd.get('certifications'));
+          push('Background Check Consent', fd.get('background_check'));
+          push('Emergency Contact', fd.get('emergency_contact_name'));
+          push('Emergency Phone', fd.get('emergency_contact_phone'));
+          push('Why Interested', fd.get('why_interested'));
+          push('Availability', fd.get('availability'));
+          push('Notes', fd.get('notes'));
+
+          summaryList.innerHTML = entries.map(([k,v])=>`<dt>${k}</dt><dd>${v}</dd>`).join('');
+        }
+
+        function saveDraft(){
+          const { fd } = getAllValues();
+          const obj = {};
+          fd.forEach((v,k)=>{ obj[k]=v; });
+          try{
+            localStorage.setItem('CLS_APPLICATION_DRAFT', JSON.stringify(obj));
+            saveDraftBtn.textContent = 'Saved ✓';
+            setTimeout(()=>saveDraftBtn.textContent='Save Draft', 1500);
+          }catch(e){}
+        }
+
+        function loadDraft(){
+          try{
+            const raw = localStorage.getItem('CLS_APPLICATION_DRAFT');
+            if(!raw) return;
+            const obj = JSON.parse(raw);
+            for (const [k,v] of Object.entries(obj)){
+              const el = form.elements[k];
+              if (!el) continue;
+              if (el.type === 'checkbox'){
+                el.checked = v === 'on' || v === true || v === 'true';
+              } else {
+                el.value = v;
+              }
+            }
+          }catch(e){}
+        }
+
+        backBtn.addEventListener('click', back);
+        nextBtn.addEventListener('click', next);
+        saveDraftBtn.addEventListener('click', saveDraft);
+
+        // Submit handler
+        form.addEventListener('submit', async (e)=>{
+          e.preventDefault();
+          if (!validateStep(current)) return;
+
+          const { fd } = getAllValues();
+          fd.set('startedAt', Date.now());
+          fd.set('formType', 'job-application');
+
+          try {
+            const API_BASE = "https://script.google.com/macros/s/AKfycbxdD80YrBa6wa271_TtCpwWnQJbQfeRjZVe0iRkAdO36D_t3E44foSn11IdCEq1iJ6OSg/exec";
+            const res = await fetch(API_BASE, { method:'POST', body: fd });
+            
+            if (res.ok) {
+              successMsg.classList.add('show');
+              submitBtn.disabled = true; nextBtn.disabled = true; backBtn.disabled = true;
+              
+              // Clear draft after success
+              try{ localStorage.removeItem('CLS_APPLICATION_DRAFT'); }catch(_){}
+            } else {
+              throw new Error('Submission failed');
+            }
+          } catch (error) {
+            successMsg.textContent = '⚠️ Error submitting application. Please try again.';
+            successMsg.classList.add('show');
+          }
+        });
+
+        // Auto-fill signature date
+        const today = new Date().toISOString().split('T')[0];
+        form.querySelector('input[name="signatureDate"]').value = today;
+
+        // init
+        steps[0].classList.add('active');
+        updateProgress();
+        loadDraft();
+      })();
+    </script>
     <script src="js/script.js" defer></script>
 </body>
 
