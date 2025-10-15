@@ -111,17 +111,29 @@ form button:hover {
   display: block;
   margin-bottom: 3px;
   font-weight: 500;
+  color: #ffcc00; /* CLS yellow for dark theme */
 }
 
 .form-grid input,
 .form-grid select,
 .form-grid textarea {
   width: 100%;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  padding: 10px;
+  background: #1a1a1a; /* Dark background */
+  color: #fff; /* White text */
+  border: 1px solid #555; /* Dark border */
+  border-radius: 6px;
   font-size: 14px;
   margin-bottom: 14px;
+  transition: border-color 0.3s ease;
+}
+
+.form-grid input:focus,
+.form-grid select:focus,
+.form-grid textarea:focus {
+  border-color: #ffcc00; /* Yellow focus border */
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(255, 204, 0, 0.2);
 }
 
 /* Required field indicators */
