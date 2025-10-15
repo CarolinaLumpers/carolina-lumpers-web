@@ -140,6 +140,9 @@ async function loadNavbar() {
       // Initialize navbar functionality after loading
       initializeNavbar();
       
+      // Set active page highlighting
+      setActiveNavLink();
+      
       console.log('Navbar loaded successfully');
     } else {
       console.warn('Navbar container not found');
@@ -147,6 +150,27 @@ async function loadNavbar() {
   } catch (error) {
     console.error('Error loading navbar:', error);
   }
+}
+
+// Set Active Navigation Link
+function setActiveNavLink() {
+  const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+  const navLinks = document.querySelectorAll('.nav-links a');
+  
+  // Remove any existing active classes
+  navLinks.forEach(link => {
+    link.classList.remove('active');
+  });
+  
+  // Find and highlight the current page link
+  navLinks.forEach(link => {
+    const href = link.getAttribute('href');
+    if (href === currentPage || 
+        (currentPage === '' && href === 'index.html') ||
+        (currentPage === '/' && href === 'index.html')) {
+      link.classList.add('active');
+    }
+  });
 }
 
 async function loadFooter() {
