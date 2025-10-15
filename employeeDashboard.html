@@ -507,8 +507,6 @@
   <script>
     // ======================== CONFIG ========================
     const API_URL = "https://cls-proxy.s-garay.workers.dev"; // Proxy to your Apps Script
-    const SESSION_KEY = "CLS_User";
-    const LOGIN_PAGE = "employeelogin.html";
     const LANG = localStorage.getItem("CLS_Lang") || "en";
     const GREETINGS = { en: "Welcome", es: "¡Bienvenido", pt: "Bem-vindo" };
 
@@ -543,13 +541,15 @@
     }
 
     // =================== Session ===================
-    let userData = sessionStorage.getItem(SESSION_KEY) || localStorage.getItem(SESSION_KEY);
-    if (userData) { try { userData = JSON.parse(userData); } catch { userData = null; } }
-    if (!userData || !userData.workerId) {
+    const workerId = localStorage.getItem("CLS_WorkerID");
+    const displayName = localStorage.getItem("CLS_WorkerName");
+    const email = localStorage.getItem("CLS_Email");
+
+    if (!workerId || !displayName || !email) {
       alert("Session expired. Please log in again.");
-      window.location.href = LOGIN_PAGE;
+      window.location.href = "employeelogin.html";
     }
-    const { workerId, displayName, email } = userData;
+    const userData = { workerId, displayName, email };
 
     // View As functionality
     let VIEW_AS_WORKER = null;      // stores workerId being viewed
@@ -637,9 +637,13 @@
 
     // =================== Logout ===================
     function logout() {
-      localStorage.removeItem(SESSION_KEY);
-      sessionStorage.removeItem(SESSION_KEY);
-      window.location.href = LOGIN_PAGE;
+      localStorage.removeItem("CLS_WorkerID");
+      localStorage.removeItem("CLS_WorkerName");
+      localStorage.removeItem("CLS_Email");
+      localStorage.removeItem("CLS_RememberUser");
+      localStorage.removeItem("CLS_SessionExpiry");
+      localStorage.removeItem("CLS_Role");
+      window.location.href = "employeelogin.html";
     }
 
     // =================== GPS Clock-In ===================
@@ -894,10 +898,10 @@
       });
 
       // ✅ Update greeting text with the right language
-      const user = JSON.parse(localStorage.getItem(SESSION_KEY) || sessionStorage.getItem(SESSION_KEY) || "{}");
-      if (user.displayName) {
+      const displayName = localStorage.getItem("CLS_WorkerName");
+      if (displayName) {
         const greeting = GREETINGS[lang] || GREETINGS.en;
-        document.getElementById("welcomeName").textContent = `${greeting}, ${user.displayName}!`;
+        document.getElementById("welcomeName").textContent = `${greeting}, ${displayName}!`;
       }
 
       // ✅ Force-refresh visible status message if any
@@ -917,18 +921,17 @@
     // ===== Admin Role & Panel =====
     async function ensureRoleAndRevealAdmin() {
       try {
-        // Load role from session if present
-        let store = localStorage.getItem(SESSION_KEY) ? localStorage : sessionStorage;
-        let u = JSON.parse(store.getItem(SESSION_KEY) || '{}');
+        // Load role from localStorage if present
+        let storedRole = localStorage.getItem("CLS_Role");
 
-        if (!u.role) {
+        if (!storedRole) {
           const info = await jsonp(`${API_URL}?action=whoami&workerId=${encodeURIComponent(workerId)}`);
           if (info && info.ok && info.role) {
-            u.role = info.role;
-            store.setItem(SESSION_KEY, JSON.stringify(u));
+            storedRole = info.role;
+            localStorage.setItem("CLS_Role", storedRole);
           }
         }
-        USER_ROLE = u.role;
+        USER_ROLE = storedRole;
 
         if (USER_ROLE === 'Admin' || USER_ROLE === 'Lead') {
           document.getElementById('adminPanel').classList.remove('hidden');
