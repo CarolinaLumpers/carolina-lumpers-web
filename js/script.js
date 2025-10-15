@@ -14,6 +14,31 @@ function getDeviceType() {
   return "Unknown";
 }
 
+// Browser Detection Function
+function getBrowserType() {
+  const ua = navigator.userAgent;
+  
+  // Check for Edge first (since it contains "Chrome" in user agent)
+  if (/Edg/.test(ua)) return "Microsoft Edge";
+  
+  // Check for Chrome (must be before Safari since Chrome contains "Safari")
+  if (/Chrome/.test(ua) && !/Edg/.test(ua)) return "Google Chrome";
+  
+  // Check for Safari
+  if (/Safari/.test(ua) && !/Chrome/.test(ua)) return "Safari";
+  
+  // Check for Firefox
+  if (/Firefox/.test(ua)) return "Mozilla Firefox";
+  
+  // Check for Opera
+  if (/Opera|OPR/.test(ua)) return "Opera";
+  
+  // Check for Internet Explorer
+  if (/Trident|MSIE/.test(ua)) return "Internet Explorer";
+  
+  return "Unknown Browser";
+}
+
 /* ================================
    SHARED COMPONENTS
    ================================ */
@@ -550,11 +575,13 @@ function initLoginForm() {
     if (statusEl) statusEl.textContent = MESSAGES[currentLang].sending;
 
     try {
-      // Get device type for tracking
+      // Get device and browser info for tracking
       const deviceType = getDeviceType();
+      const browserType = getBrowserType();
+      const deviceInfo = `${deviceType} - ${browserType}`;
       
       const res = await fetch(
-        `${API_BASE}?action=login&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}&device=${encodeURIComponent(deviceType)}`
+        `${API_BASE}?action=login&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}&device=${encodeURIComponent(deviceInfo)}`
       );
 
       const data = await res.json();

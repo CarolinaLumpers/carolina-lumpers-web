@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CLS Employee Login System - Test Dashboard</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 20px; 
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .test-section h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .result {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border-left: 4px solid #007bff;
+        }
+        .error {
+            border-left-color: #dc3545;
+            background: #f8d7da;
+        }
+        .success {
+            border-left-color: #28a745;
+            background: #d4edda;
+        }
+        pre {
+            background: #f1f1f1;
+            padding: 10px;
+            overflow-x: auto;
+            border-radius: 4px;
+        }
+        .loading {
+            color: #666;
+            font-style: italic;
+        }
+        .input-group {
+            margin: 10px 0;
+        }
+        .input-group label {
+            display: inline-block;
+            width: 100px;
+            font-weight: bold;
+        }
+        .input-group input {
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            width: 200px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 CLS Employee Login System - Test Dashboard</h1>
+        <p>Use this dashboard to test and validate the employee login system components.</p>
+
+        <div class="test-section">
+            <h3>📅 Date/Time Format Test</h3>
+            <p>Tests how dates and times are stored in the ClockIn sheet</p>
+            <button onclick="runTest('testFormats')">Test Date/Time Formats</button>
+            <div id="testFormats-result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>⚙️ System Configuration Test</h3>
+            <p>Validates system configuration, sheet access, and function availability</p>
+            <button onclick="runTest('testConfig')">Test System Config</button>
+            <div id="testConfig-result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>🕐 Clock-In Flow Test</h3>
+            <p>Simulates the clock-in process with optional coordinates</p>
+            <div class="input-group">
+                <label>Worker ID:</label>
+                <input type="text" id="workerId" value="TEST001" placeholder="Worker ID">
+            </div>
+            <div class="input-group">
+                <label>Latitude:</label>
+                <input type="number" id="lat" step="any" placeholder="35.7796 (optional)">
+            </div>
+            <div class="input-group">
+                <label>Longitude:</label>
+                <input type="number" id="lng" step="any" placeholder="-78.6382 (optional)">
+            </div>
+            <button onclick="runClockInTest()">Test Clock-In Flow</button>
+            <div id="testClockIn-result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>📊 All Tests</h3>
+            <p>Run all tests at once</p>
+            <button onclick="runAllTests()">Run All Tests</button>
+        </div>
+    </div>
+
+    <script>
+        // Update this with your actual Apps Script web app URL
+        const API_BASE = 'https://script.google.com/macros/s/AKfycbwHBLEQ5QHuhD-O4uI4hRN_5_yS9YsFgtn_dMAdoAO2C7zHLoi3qfHO82vas3Uv0wXXpg/exec';
+
+        function runTest(testName) {
+            const resultDiv = document.getElementById(testName + '-result');
+            resultDiv.innerHTML = '<div class="loading">🔄 Running test...</div>';
+
+            makeTestCall(testName)
+                .then(data => displayResult(resultDiv, data, testName))
+                .catch(error => displayError(resultDiv, error));
+        }
+
+        function runClockInTest() {
+            const workerId = document.getElementById('workerId').value || 'TEST001';
+            const lat = document.getElementById('lat').value;
+            const lng = document.getElementById('lng').value;
+            
+            const resultDiv = document.getElementById('testClockIn-result');
+            resultDiv.innerHTML = '<div class="loading">🔄 Testing clock-in flow...</div>';
+
+            let params = `workerId=${encodeURIComponent(workerId)}`;
+            if (lat) params += `&lat=${encodeURIComponent(lat)}`;
+            if (lng) params += `&lng=${encodeURIComponent(lng)}`;
+
+            makeTestCall('testClockIn', params)
+                .then(data => displayResult(resultDiv, data, 'testClockIn'))
+                .catch(error => displayError(resultDiv, error));
+        }
+
+        function runAllTests() {
+            runTest('testConfig');
+            runTest('testFormats');
+            runClockInTest();
+        }
+
+        function makeTestCall(action, extraParams = '') {
+            return new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                const callbackName = 'testCallback_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                
+                window[callbackName] = function(response) {
+                    resolve(response);
+                    document.head.removeChild(script);
+                    delete window[callbackName];
+                };
+
+                script.onerror = () => {
+                    reject(new Error('Failed to load test script'));
+                    document.head.removeChild(script);
+                    delete window[callbackName];
+                };
+
+                const url = `${API_BASE}?action=${action}&callback=${callbackName}${extraParams ? '&' + extraParams : ''}`;
+                script.src = url;
+                document.head.appendChild(script);
+            });
+        }
+
+        function displayResult(container, data, testName) {
+            let html = `<div class="result ${data.error ? 'error' : 'success'}">`;
+            
+            if (data.error) {
+                html += `<h4>❌ Test Failed: ${testName}</h4>`;
+                html += `<p><strong>Error:</strong> ${data.error}</p>`;
+            } else {
+                html += `<h4>✅ Test Results: ${testName}</h4>`;
+                html += `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+            }
+            
+            html += `</div>`;
+            container.innerHTML = html;
+        }
+
+        function displayError(container, error) {
+            container.innerHTML = `
+                <div class="result error">
+                    <h4>❌ Network Error</h4>
+                    <p><strong>Error:</strong> ${error.message}</p>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>
