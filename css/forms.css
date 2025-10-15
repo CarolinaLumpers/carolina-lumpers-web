@@ -160,13 +160,6 @@ form input:focus, form select:focus, form textarea:focus {
   color: #ffda66 !important;
 }
 
-/* Visual break between form sections */
-.form-grid label[for="language_preference"] {
-  margin-top: 12px;
-  border-top: 1px solid #eee;
-  padding-top: 12px;
-}
-
 /* Privacy policy checkbox styling */
 .form-grid .full label {
   display: flex;
@@ -262,6 +255,59 @@ label[for="stayLoggedIn"] input {
 .language-toggle button:hover,
 .language-toggle button.active {
   background: var(--cls-yellow);
+  color: #000;
+}
+
+/* Form navigation buttons */
+.form-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 30px 0 20px 0;
+  gap: 15px;
+}
+
+.form-nav button {
+  margin: 0;
+  padding: 10px 20px;
+  border: none;
+  background: #111;
+  color: var(--cls-yellow);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all .2s;
+  display: inline-flex;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 500;
+  min-width: 100px;
+  justify-content: center;
+}
+
+.form-nav button:hover {
+  background: var(--cls-yellow);
+  color: #000;
+}
+
+.form-nav button:disabled {
+  background: #333;
+  color: #666;
+  cursor: not-allowed;
+}
+
+.form-nav button:disabled:hover {
+  background: #333;
+  color: #666;
+}
+
+/* Primary button styling for submit */
+.form-nav button.btn-primary {
+  background: var(--cls-yellow);
+  color: #000;
+}
+
+.form-nav button.btn-primary:hover {
+  background: #ffd633;
   color: #000;
 }
 
