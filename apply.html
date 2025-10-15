@@ -601,6 +601,61 @@
         clearInterval(safetyInterval);
       }
     }, 500);
+
+    // Work Authorization Documentation Function
+    function updateDocNote() {
+      const select = document.getElementById("work_authorization");
+      const val = select.value;
+      const note = document.getElementById("docNote");
+      const lang = document.querySelector('input[name="ui_lang"]').value || "en";
+
+      const docs = {
+        Citizen: {
+          en: "Bring your U.S. passport OR both a driver's license and Social Security card for visual verification during onboarding.",
+          es: "Lleve su pasaporte estadounidense O tanto su licencia de conducir como su tarjeta del Seguro Social para verificación visual durante la incorporación.",
+          pt: "Traga seu passaporte dos EUA OU tanto a carteira de motorista quanto o cartão do Seguro Social para verificação visual durante a integração."
+        },
+        "Permanent Resident": {
+          en: "Bring your Permanent Resident Card (Green Card, Form I-551) for visual verification during onboarding.",
+          es: "Lleve su tarjeta de residente permanente (Green Card, Form I-551) para verificación visual durante la incorporación.",
+          pt: "Traga seu Cartão de Residente Permanente (Green Card, Form I-551) para verificação visual durante a integração."
+        },
+        "Work Permit (EAD)": {
+          en: "Bring your Employment Authorization Document (EAD, Form I-766) issued by USCIS for visual verification during onboarding.",
+          es: "Lleve su Documento de Autorización de Empleo (EAD, Formulario I-766) emitido por USCIS para verificación visual durante la incorporación.",
+          pt: "Traga seu Documento de Autorização de Emprego (EAD, Formulário I-766) emitido pelo USCIS para verificação visual durante a integração."
+        },
+        "Visa (H-2B)": {
+          en: "Bring your passport, visa page, and I-94 record for visual verification during onboarding. You can access your I-94 at i94.cbp.dhs.gov.",
+          es: "Lleve su pasaporte, página de visa y registro I-94 para verificación visual durante la incorporación. Puede acceder a su I-94 en i94.cbp.dhs.gov.",
+          pt: "Traga seu passaporte, página do visto e registro I-94 para verificação visual durante a integração. Você pode acessar seu I-94 em i94.cbp.dhs.gov."
+        },
+        "Visa (Other)": {
+          en: "Bring your passport and any DHS or USCIS authorization letter for visual verification during onboarding.",
+          es: "Lleve su pasaporte y cualquier carta de autorización del DHS o USCIS para verificación visual durante la incorporación.",
+          pt: "Traga seu passaporte e qualquer carta de autorização do DHS ou USCIS para verificação visual durante a integração."
+        },
+        "Not Authorized": {
+          en: "⚠️ You are not currently authorized to work in the United States. Please obtain proper authorization before employment.",
+          es: "⚠️ No está actualmente autorizado para trabajar en los Estados Unidos. Obtenga la autorización correspondiente antes del empleo.",
+          pt: "⚠️ Você não está atualmente autorizado a trabalhar nos Estados Unidos. Obtenha a devida autorização antes do emprego."
+        }
+      };
+
+      if (docs[val]) {
+        note.textContent = "📄 " + docs[val][lang];
+      } else {
+        note.textContent = "";
+      }
+    }
+
+    // Add event listener for work authorization select
+    const workAuthSelect = document.getElementById("work_authorization");
+    if (workAuthSelect) {
+      workAuthSelect.addEventListener('change', updateDocNote);
+      // Also update when language changes
+      window.addEventListener('languageChanged', updateDocNote);
+    }
   })();
   </script>
 
