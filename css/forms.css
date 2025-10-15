@@ -17,12 +17,22 @@
 
 /* Form container variations */
 .form-container {
+  display: block;
+  width: 100%;
+  max-width: 800px; /* Apply form is wider */
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* For login/signup pages, use the centered flex layout */
+body[data-page="login"] .form-container,
+body[data-page="signup"] .form-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   min-height: 80vh;
-  max-width: 800px; /* Apply form is wider */
+  max-width: 400px;
 }
 
 .login-container, .signup-container {
@@ -256,17 +266,31 @@ label[for="stayLoggedIn"] input {
   text-decoration: underline;
 }
 
-/* Language toggle for forms */
+/* Language toggle for forms - matches employeeDashboard style */
 .language-toggle {
-  margin: 10px;
+  margin-top: 10px;
   text-align: center;
+  display: inline-block;
+  width: 100%;
 }
 
 .language-toggle button {
-  margin: 5px;
-  padding: 10px;
-  font-size: 14px;
+  margin: 4px;
+  padding: 8px 12px;
+  border: none;
+  background: #111;
+  color: var(--cls-yellow);
+  border-radius: 6px;
   cursor: pointer;
+  transition: all .2s;
+  display: inline-block;
+  width: auto;
+}
+
+.language-toggle button:hover,
+.language-toggle button.active {
+  background: var(--cls-yellow);
+  color: #000;
 }
 
 /* Multi-step form specific styles */

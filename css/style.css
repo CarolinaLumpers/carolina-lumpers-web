@@ -11,6 +11,18 @@
   --card-bg: #FBB040; /* Mellow Orange */
   --text-muted: #B3B3B3; /* Light Gray */
   --text-color-2: #000000; /* Black text */
+  
+  /* EmployeeDashboard Variables */
+  --cls-yellow: #ffcc00;
+  --cls-yellow-hover: #ffd633;
+  --bg: #000;
+  --card: #111;
+  --text: #fff;
+  --muted: #aaa;
+  --muted2: #888;
+  --border: #333;
+  --thead: #222;
+  --rowalt: #111;
 }
 
 /* ===================
@@ -312,50 +324,83 @@ section h2 {
 }
 
 /* ===================
-   Footer Adjustments
+   Footer Styles (EmployeeDashboard)
    =================== */
    
 footer {
-  background-color: var(--secondary-bg); /* Match site theme */
-  color: var(--text-color); /* White text for contrast */
-  padding: 20px; /* Add inner spacing */
-  text-align: center; /* Center-align text content */
-  position: relative; /* Ensure proper layout flow */
+  background: #111;
+  color: var(--muted);
+  text-align: center;
+  padding: 18px;
+  font-size: .9em;
+  margin-top: 46px;
+}
+
+footer a img {
+  width: 24px;
+  margin: 0 5px;
 }
 
 .footer-content {
-  display: flex; /* Flexbox for alignment */
-  flex-wrap: wrap; /* Allow items to wrap on smaller screens */
-  justify-content: center; /* Center items horizontally */
-  align-items: center; /* Align items vertically */
-  gap: 20px; /* Add spacing between items */
-  max-width: 1200px; /* Limit width */
-  margin: 0 auto; /* Center the footer content */
+  margin-bottom: 15px;
+}
+
+.footer-content h3 {
+  color: var(--cls-yellow);
+  margin: 10px 0;
+  font-size: 1.1em;
+}
+
+.footer-content p {
+  margin: 5px 0;
+  font-size: 0.9em;
+}
+
+.footer-content a {
+  color: var(--cls-yellow);
+  text-decoration: none;
+}
+
+.footer-content a:hover {
+  text-decoration: underline;
 }
 
 .footer-icons {
-  display: flex; /* Align icons horizontally */
-  gap: 15px; /* Space between icons */
-  justify-content: center; /* Center the icons */
-  align-items: center; /* Vertically align icons */
+  margin: 10px 0;
 }
 
-.footer-icons img {
-  width: 30px; /* Set icon size */
-  height: 30px; /* Keep consistent size */
-  border-radius: 5px; /* Add subtle rounding */
-  transition: transform 0.3s ease, filter 0.3s ease; /* Add hover effect */
-}
-
-.footer-icons img:hover {
-  transform: scale(1.1); /* Slightly enlarge on hover */
-  filter: brightness(1.2); /* Make brighter */
+.footer-icons h3 {
+  color: var(--cls-yellow);
+  margin: 10px 0;
+  font-size: 1.1em;
 }
 
 .footer-text {
-  font-size: 0.9em; /* Slightly smaller text for legal info */
-  margin-top: 10px; /* Add space above text */
-  color: var(--text-muted); /* Use muted color for subtlety */
+  margin: 15px 0 10px 0;
+}
+
+.language-toggle {
+  margin-top: 10px;
+  display: inline-block;
+}
+
+.language-toggle button {
+  margin: 4px;
+  padding: 8px 12px;
+  border: none;
+  background: #111;
+  color: var(--cls-yellow);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all .2s;
+  display: inline-block;
+  width: auto;
+}
+
+.language-toggle button:hover,
+.language-toggle button.active {
+  background: var(--cls-yellow);
+  color: #000;
 }
 
 /* ===================
@@ -419,6 +464,30 @@ button:hover {
   background-color: var(--button-hover-bg);
   color: var(--secondary-bg);
   transform: translateY(-2px); /* Subtle lift effect */
+}
+
+/* ===================
+   LANGUAGE TOGGLE BUTTONS (employeeDashboard style)
+   =================== */
+.language-toggle {
+  margin-top: 10px;
+}
+
+.language-toggle button {
+  margin: 4px;
+  padding: 8px 12px;
+  border: none;
+  background: #111;
+  color: var(--cls-yellow);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.language-toggle button:hover,
+.language-toggle button.active {
+  background: var(--cls-yellow);
+  color: #000;
 }
 
 /* ===================
@@ -551,27 +620,6 @@ button:hover {
 
   .nav-links a:hover {
     color: var(--accent-color);
-  }
-
-  /* ===================
-     Footer Section
-     =================== */
-  footer {
-    padding: 15px;
-  }
-
-  .footer-content {
-    flex-direction: column;
-    gap: 15px;
-  }
-
-  .footer-icons img {
-    width: 25px;
-    height: 25px;
-  }
-
-  .footer-text {
-    font-size: 0.8em;
   }
 
   /* ===================

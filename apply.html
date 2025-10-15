@@ -330,33 +330,13 @@
   </main>
 
   <!-- Footer -->
-  <footer>
-    <p
-      data-en="© 2024 Carolina Lumper Service. All rights reserved."
-      data-es="© 2024 Carolina Lumper Service. Todos los derechos reservados."
-      data-pt="© 2024 Carolina Lumper Service. Todos os direitos reservados."
-    >
-      © 2024 Carolina Lumper Service. All rights reserved.
-    </p>
-    <div class="footer-icons">
-      <a href="https://www.facebook.com/profile.php?id=61569872795390"><img src="assets/facebook-icon.png" alt="Facebook"></a>
-      <a href="#"><img src="assets/linkedin-icon.png" alt="LinkedIn"></a>
-    </div>
-    <div class="language-toggle">
-      <button onclick="switchLanguage('en')">English</button>
-      <button onclick="switchLanguage('es')">Español</button>
-      <button onclick="switchLanguage('pt')">Português</button>
-    </div>
-  </footer>
+  <div id="footer-container"></div>
 
   <!-- Wizard Logic (mirrors contact page, adapted for cls-apply) -->
   <script>
   (function(){
-    console.log('Apply form script starting...');
     const form = document.getElementById('applicationForm');
-    console.log('Form found:', form);
     const steps = Array.from(form.querySelectorAll('.form-step'));
-    console.log('Steps found:', steps.length, steps);
     const stepLabel = document.getElementById('stepLabel');
     const stepName = document.getElementById('stepName');
     const barFill = document.getElementById('barFill');
@@ -368,7 +348,6 @@
 
     let current = 0;
     const total = steps.length;
-    console.log('Total steps:', total);
 
     // Age limit for DOB max
     const dobInput = document.getElementById('dob');
@@ -413,6 +392,54 @@
       updateProgress();
       document.getElementById('apply').scrollIntoView({behavior:'smooth'});
     }
+
+    // Safe language update function for form elements
+    function updateFormLanguage(lang) {
+      // Update form labels and text (safe with textContent)
+      form.querySelectorAll('label[data-en]').forEach(label => {
+        const text = label.getAttribute(`data-${lang}`) || label.getAttribute('data-en');
+        if (text) label.textContent = text;
+      });
+      
+      // Update form section titles
+      steps.forEach(step => {
+        const text = step.getAttribute(`data-${lang}`) || step.getAttribute('data-en');
+        if (text) {
+          step.setAttribute('data-title', text);
+          // Update progress if this is current step
+          if (step.classList.contains('active')) {
+            stepName.textContent = text;
+          }
+        }
+      });
+      
+      // Update option text
+      form.querySelectorAll('option[data-en]').forEach(option => {
+        const text = option.getAttribute(`data-${lang}`) || option.getAttribute('data-en');
+        if (text) option.textContent = text;
+      });
+      
+      // Update button text
+      form.querySelectorAll('button span[data-en], .btn span[data-en]').forEach(span => {
+        const text = span.getAttribute(`data-${lang}`) || span.getAttribute('data-en');
+        if (text) span.textContent = text;
+      });
+      
+      // Update any other translatable elements inside form
+      form.querySelectorAll('span[data-en]:not(input span)').forEach(span => {
+        const text = span.getAttribute(`data-${lang}`) || span.getAttribute('data-en');
+        if (text) span.textContent = text;
+      });
+    }
+
+    // Listen for language changes from the global system
+    window.addEventListener('languageChanged', function(e) {
+      updateFormLanguage(e.detail.language);
+    });
+    
+    // Apply initial language
+    const initialLang = localStorage.getItem("CLS_Lang") || "en";
+    updateFormLanguage(initialLang);
 
     function next(){ go(current+1); }
     function back(){ go(current-1, true); }
@@ -494,11 +521,42 @@
 
     // Init
     steps[0].classList.add('active');
-    console.log('First step made active:', steps[0]);
-    console.log('First step classes:', steps[0].className);
-    console.log('First step computed style display:', window.getComputedStyle(steps[0]).display);
     updateProgress();
-    console.log('Apply form initialization complete');
+    
+    // Create observer to watch for external interference
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.type === 'attributes' && 
+            mutation.attributeName === 'class' && 
+            mutation.target.classList.contains('form-step')) {
+          // Re-ensure first step is active if no step is active
+          const activeSteps = steps.filter(s => s.classList.contains('active'));
+          if (activeSteps.length === 0) {
+            steps[current].classList.add('active');
+            updateProgress();
+          }
+        }
+      });
+    });
+    
+    // Watch all form steps for class changes
+    steps.forEach(step => {
+      observer.observe(step, { attributes: true, attributeFilter: ['class'] });
+    });
+    
+    // Additional safety check - re-activate every 500ms for first 3 seconds
+    let safetyChecks = 0;
+    const safetyInterval = setInterval(() => {
+      const activeSteps = steps.filter(s => s.classList.contains('active'));
+      if (activeSteps.length === 0) {
+        steps[current].classList.add('active');
+        updateProgress();
+      }
+      safetyChecks++;
+      if (safetyChecks >= 6) { // 6 * 500ms = 3 seconds
+        clearInterval(safetyInterval);
+      }
+    }, 500);
   })();
   </script>
 

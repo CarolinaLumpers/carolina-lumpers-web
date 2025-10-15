@@ -4,6 +4,38 @@
 const API_BASE = "https://script.google.com/macros/s/AKfycbwHBLEQ5QHuhD-O4uI4hRN_5_yS9YsFgtn_dMAdoAO2C7zHLoi3qfHO82vas3Uv0wXXpg/exec";
 
 /* ================================
+   SHARED COMPONENTS
+   ================================ */
+async function loadFooter() {
+  try {
+    console.log('Loading footer...');
+    const response = await fetch('components/footer.html');
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const footerHTML = await response.text();
+    console.log('Footer HTML loaded:', footerHTML.substring(0, 100) + '...');
+    
+    const footerContainer = document.getElementById('footer-container');
+    if (footerContainer) {
+      footerContainer.innerHTML = footerHTML;
+      console.log('Footer injected into container');
+      
+      // Make sure switchLanguage is globally available
+      window.switchLanguage = switchLanguage;
+      
+      // Initialize language after footer is loaded
+      const storedLang = localStorage.getItem("CLS_Lang") || "en";
+      switchLanguage(storedLang);
+    } else {
+      console.error('Footer container not found!');
+    }
+  } catch (error) {
+    console.error('Error loading footer:', error);
+  }
+}
+
+/* ================================
    GLOBAL NAVIGATION & LANGUAGE
    ================================ */
 function adjustNavbarFontSize() {
@@ -23,15 +55,21 @@ function adjustNavbarFontSize() {
 function switchLanguage(lang) {
   localStorage.setItem("CLS_Lang", lang);
 
-  // Update all text elements
+  // Update all text elements, but skip form elements that might have complex structure
   document.querySelectorAll("[data-en]").forEach(el => {
+    // Skip elements inside form steps to prevent breaking the form wizard
+    if (el.closest('.form-step') || el.closest('#applicationForm')) {
+      return;
+    }
+    
     const text = el.getAttribute(`data-${lang}`) || el.getAttribute("data-en");
     if (text) el.innerHTML = text;
   });
 
   // Highlight active button
   document.querySelectorAll(".language-toggle button").forEach(btn => {
-    btn.classList.toggle("active", btn.getAttribute("onclick")?.includes(lang));
+    const btnLang = btn.getAttribute("data-lang") || btn.getAttribute("onclick")?.match(/switchLanguage\('(\w+)'\)/)?.[1];
+    btn.classList.toggle("active", btnLang === lang);
   });
 
   // Update placeholders for current page
@@ -43,6 +81,11 @@ function switchLanguage(lang) {
   } else if (currentPage === 'contact') {
     contactPlaceholders(lang);
   }
+
+  // Dispatch event for form to handle its own language updates
+  window.dispatchEvent(new CustomEvent('languageChanged', {
+    detail: { language: lang }
+  }));
 
   adjustNavbarFontSize(); // readjust after translation
 }
@@ -57,6 +100,7 @@ function initLanguageSystem() {
 /* Run on page load */
 document.addEventListener("DOMContentLoaded", () => {
   adjustNavbarFontSize();
+  loadFooter(); // Load shared footer component
   initLanguageSystem();
 
   // Determine current page for page-specific logic
@@ -182,9 +226,14 @@ function initApplyForm() {
   
   if (newForm) {
     // New multi-step form is already initialized by its own script in apply.html
-    // Just ensure the current language is applied for any translatable elements
+    // Don't interfere with form elements, just apply language to non-form elements
     const lang = localStorage.getItem("CLS_Lang") || "en";
     document.querySelectorAll("[data-en]").forEach(el => {
+      // Skip form elements to prevent breaking the wizard
+      if (el.closest('.form-step') || el.closest('#applicationForm')) {
+        return;
+      }
+      
       const text = el.getAttribute(`data-${lang}`) || el.getAttribute("data-en");
       if (text) el.innerHTML = text;
     });

@@ -7,8 +7,9 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="icon" type="image/png" href="assets/CLS-favicon.png">
   <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+  <script src="js/script.js" defer></script>
 </head>
-<body>
+<body data-page="eula">
   <!-- Navigation Bar -->
   <nav class="navbar">
     <div class="logo-container">
@@ -18,11 +19,11 @@
       <a href="index.html" class="company-name">Carolina Lumper Service</a>
     </div>
     <ul class="nav-links">
-      <li><a href="index.html">Home</a></li>
-      <li><a href="about.html">About Us</a></li>
-      <li><a href="services.html">Services</a></li>
-      <li><a href="contact.html">Contact</a></li>
-      <li><a href="apply.html">Apply</a></li>
+      <li><a href="index.html" data-en="Home" data-es="Inicio" data-pt="Início">Home</a></li>
+      <li><a href="about.html" data-en="About Us" data-es="Sobre Nosotros" data-pt="Sobre Nós">About Us</a></li>
+      <li><a href="services.html" data-en="Services" data-es="Servicios" data-pt="Serviços">Services</a></li>
+      <li><a href="contact.html" data-en="Contact" data-es="Contacto" data-pt="Contato">Contact</a></li>
+      <li><a href="apply.html" data-en="Apply" data-es="Solicitar" data-pt="Candidatar">Apply</a></li>
     </ul>
   </nav>
 
@@ -95,12 +96,6 @@
   </main>
 
   <!-- Footer -->
-  <footer>
-    <p>© 2024 Carolina Lumper Service, LLC. All rights reserved.</p>
-    <div class="footer-icons">
-      <a href="#"><img src="assets/facebook-icon.png" alt="Facebook"></a>
-      <a href="#"><img src="assets/linkedin-icon.png" alt="LinkedIn"></a>
-    </div>
-  </footer>
+  <div id="footer-container"></div>
 </body>
 </html>

@@ -200,18 +200,6 @@
             pt: { sending: "Enviando...", success: "Obrigado. Recebemos sua candidatura.", error: "Erro. Tente novamente." }
         };
 
-        function adjustNavbarFontSize() {
-            const navLinks = document.querySelector('.nav-links');
-            if (!navLinks) return;
-            const links = navLinks.querySelectorAll('a');
-            const maxWidth = navLinks.offsetWidth;
-            let totalWidth = 0;
-            links.forEach(link => totalWidth += link.offsetWidth);
-            navLinks.style.fontSize = (totalWidth > maxWidth)
-                ? (maxWidth / totalWidth) * 0.9 + 'em'
-                : '0.9em';
-        }
-
         function applyPlaceholders(lang) {
             document.querySelectorAll('[data-ph-en]').forEach(el => {
                 const val =
@@ -222,31 +210,7 @@
             });
         }
 
-        function switchLanguage(lang) {
-            document.querySelectorAll("[data-en],[data-es],[data-pt]").forEach(el => {
-                if (el.querySelector?.('input,select,textarea')) return;
-                const text =
-                    lang === "es" ? el.getAttribute("data-es") :
-                        lang === "pt" ? el.getAttribute("data-pt") :
-                            el.getAttribute("data-en");
-                if (text != null) el.innerHTML = text;
-            });
-
-            const form = document.getElementById('cls-apply');
-            if (form) form.querySelector('input[name="ui_lang"]').value = lang;
-
-            applyPlaceholders(lang);
-            validateAge(); // ✅ refresh localized DOB message if visible
-            adjustNavbarFontSize();
-        }
-
-
         document.addEventListener("DOMContentLoaded", () => {
-            const userLang = navigator.language || 'en';
-            const lang = userLang.startsWith("es") ? "es" : userLang.startsWith("pt") ? "pt" : "en";
-            switchLanguage(lang);
-            adjustNavbarFontSize();
-
             setDobMax();
 
 
@@ -425,7 +389,7 @@
     </script>
 </head>
 
-<body>
+<body data-page="privacy-app">
     <nav class="navbar">
         <div class="logo-container">
             <a href="index.html" class="logo-link">
@@ -598,11 +562,13 @@
             <a href="#"><img src="assets/linkedin-icon.png" alt="LinkedIn"></a>
         </div>
         <div class="language-toggle">
-            <button onclick="switchLanguage('en')">English</button>
-            <button onclick="switchLanguage('es')">Español</button>
-            <button onclick="switchLanguage('pt')">Português</button>
+            <button data-lang="en" onclick="switchLanguage('en')">English</button>
+            <button data-lang="es" onclick="switchLanguage('es')">Español</button>
+            <button data-lang="pt" onclick="switchLanguage('pt')">Português</button>
         </div>
     </footer>
+
+    <script src="js/script.js" defer></script>
 </body>
 
 </html>
