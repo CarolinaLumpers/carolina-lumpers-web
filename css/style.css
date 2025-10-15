@@ -177,19 +177,39 @@ a:focus {
   text-align: center;  
 }
 
+/* Base mobile navigation styles (default for mobile-first) */
 .nav-links a {
-  font-size: 1em;
-  padding: 5px 10px; /* Add touch-friendly padding */
+  font-size: 1.4em;
   color: white;
   text-decoration: none;
+  padding: 18px 20px;
+  width: 100%;
+  text-align: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   transition: all 0.3s ease;
+  font-weight: 500;
+  display: block;
 }
 
-.nav-links a:hover,
-.nav-links a:focus,
-.nav-links a.active {
-  text-decoration: underline;
-  color: var(--accent-color);
+/* Desktop navigation styles */
+@media (min-width: 769px) {
+  .nav-links a {
+    font-size: 1em;
+    padding: 5px 10px; /* Add touch-friendly padding */
+    color: white;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    width: auto;
+    border-bottom: none;
+    display: inline-block;
+    font-weight: normal;
+  }
+  .nav-links a:hover,
+  .nav-links a:focus,
+  .nav-links a.active {
+    text-decoration: underline;
+    color: var(--accent-color);
+  }
 }
 
 /* ===================
@@ -686,18 +706,6 @@ button:hover {
   /* Show mobile menu when active */
   .nav-links.active {
     right: 0;
-  }
-
-  .nav-links a {
-    font-size: 1.4em;
-    color: white;
-    text-decoration: none;
-    padding: 18px 20px;
-    width: 100%;
-    text-align: center;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    transition: all 0.3s ease;
-    font-weight: 500;
   }
 
   .nav-links a:hover,
