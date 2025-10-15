@@ -451,6 +451,105 @@ body[data-page="login"] main {
 }
 
 /* Quote request section consistency */
+
+/* === CLS Step Progress Visuals === */
+#apply .progress,
+#quote-request .progress {
+  background: #111;            /* dark backdrop instead of full gold */
+  border-radius: 10px;
+  padding: 12px 18px;
+  margin-bottom: 20px;
+  box-shadow: 0 0 6px rgba(255, 204, 0, 0.2);
+}
+
+#apply .progress-top,
+#quote-request .progress-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #ffcc00;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+#apply .bar,
+#quote-request .bar {
+  height: 6px;                /* thinner bar */
+  background: #333;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+#apply .bar-fill,
+#quote-request .bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #ffcc00, #ffdb4d);
+  transform-origin: left center;
+  transform: scaleX(0);
+  transition: transform 0.4s ease;
+}
+
+/* Step dots below progress bar */
+#apply .steps,
+#quote-request .steps {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+#apply .step-dot,
+#quote-request .step-dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid #ffcc00;
+  color: #ffcc00;
+  background: transparent;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+#apply .step-dot[aria-current="step"],
+#quote-request .step-dot[aria-current="step"] {
+  background: #ffcc00;
+  color: #000;
+  transform: scale(1.1);
+}
+
+#apply .step-dot.done,
+#quote-request .step-dot.done {
+  background: #ffcc00;
+  color: #000;
+  opacity: 0.9;
+}
+
+/* Step Container Styling */
+.form-step {
+  background: #111;
+  color: #fff;
+  border-radius: 12px;
+  padding: 25px 30px;
+  margin-top: 20px;
+  box-shadow: 0 0 10px rgba(255, 204, 0, 0.15);
+}
+
+.form-step label {
+  color: #ffcc00;
+  font-weight: 600;
+}
+
+.form-step input,
+.form-step select,
+.form-step textarea {
+  background: #1a1a1a;
+  color: #fff;
+  border: 1px solid #555;
+  border-radius: 6px;
+  padding: 10px;
+  width: 100%;
+}
 #quote-request {
   background-color: var(--secondary-bg);
   color: var(--text-color);
