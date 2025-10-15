@@ -49,19 +49,8 @@ body[data-page="signup"] .form-container {
   margin-bottom: 20px;
 }
 
-/* Shared input and button styling */
-form input, form textarea, form select {
-  width: 90%;
-  padding: 12px;
-  margin: 8px 0;
-  border: none;
-  border-radius: 6px;
-  font-size: 1em;
-  background-color: var(--card-bg);
-  color: var(--text-color-2);
-}
-
-/* Form fields with better contrast for dark theme */
+/* Shared input and button styling - specific overrides for forms */
+/* Dark theme form fields for better contrast */
 form input, form select, form textarea {
   background-color: #1a1a1a;
   color: #fff;
@@ -77,23 +66,6 @@ form input:focus, form select:focus, form textarea:focus {
   border-color: var(--accent-color);
   outline: none;
   box-shadow: 0 0 0 2px rgba(255, 191, 0, 0.2);
-}
-
-form button {
-  background-color: var(--accent-color);
-  color: var(--text-color-2);
-  border: none;
-  border-radius: 6px;
-  padding: 12px 30px;
-  font-size: 1em;
-  cursor: pointer;
-  transition: 0.2s;
-  margin-top: 10px;
-}
-
-form button:hover {
-  background-color: var(--button-hover-bg);
-  color: var(--secondary-bg);
 }
 
 .message {
@@ -339,44 +311,6 @@ label[for="stayLoggedIn"] input {
   border-radius: 3px;
   transition: transform 0.3s ease;
   transform-origin: left;
-}
-
-.steps {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-}
-
-.step-dot {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  border: 2px solid rgba(255,255,255,0.5);
-  background: transparent;
-  color: white;
-  font-size: 14px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.step-dot:hover {
-  border-color: white;
-  background: rgba(255,255,255,0.2);
-}
-
-.step-dot[aria-current="step"] {
-  background: white;
-  color: var(--accent-color);
-  border-color: white;
-}
-
-.step-dot.done {
-  background: rgba(255,255,255,0.3);
-  border-color: white;
 }
 
 /* Form step containers */
