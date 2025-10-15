@@ -526,8 +526,20 @@ body[data-page="login"] main {
   margin: 0 auto 20px auto;    /* Center the progress bar */
   max-width: 700px;            /* Wider container */
   width: fit-content;          /* Only take space needed */
-  min-width: 400px;            /* Wider minimum width */
+  min-width: 300px;            /* Reduced minimum width */
   box-shadow: 0 0 6px rgba(255, 204, 0, 0.2);
+}
+
+/* Mobile responsive progress bar */
+@media (max-width: 768px) {
+  #apply .progress,
+  #apply .form-container .progress,
+  #quote-request .progress {
+    max-width: 90%;            /* Use percentage of screen width */
+    min-width: 280px;          /* Smaller minimum for mobile */
+    padding: 10px 14px;        /* Reduce padding on mobile */
+    margin: 0 auto 15px auto;  /* Reduce bottom margin */
+  }
 }
 
 #apply .progress-top,
@@ -575,6 +587,17 @@ body[data-page="login"] main {
   box-sizing: border-box;
 }
 
+/* Mobile responsive steps */
+@media (max-width: 768px) {
+  #apply .steps,
+  #apply .form-container .steps,
+  #quote-request .steps {
+    max-width: 90%;            /* Match mobile progress bar width */
+    padding: 0 20px;           /* Reduce side padding on mobile */
+    margin: 10px auto 0 auto;  /* Reduce top margin */
+  }
+}
+
 #apply .step-dot,
 #apply .form-container .step-dot,
 #quote-request .step-dot {
@@ -598,6 +621,31 @@ body[data-page="login"] main {
   box-sizing: border-box !important;
   padding: 0 !important;
   transition: all 0.3s ease;
+}
+
+/* Mobile responsive step dots */
+@media (max-width: 768px) {
+  #apply .step-dot,
+  #apply .form-container .step-dot,
+  #quote-request .step-dot {
+    width: 20px !important;      /* Smaller dots for mobile */
+    height: 20px !important;
+    min-width: 20px !important;
+    min-height: 20px !important;
+    max-width: 20px !important;
+    max-height: 20px !important;
+    font-size: 10px;             /* Smaller font for mobile */
+  }
+}
+
+/* Mobile responsive progress text */
+@media (max-width: 768px) {
+  #apply .progress-top,
+  #apply .form-container .progress-top,
+  #quote-request .progress-top {
+    font-size: 14px;             /* Smaller text on mobile */
+    margin-bottom: 6px;          /* Reduce margin */
+  }
 }
 
 #apply .step-dot[aria-current="step"],
