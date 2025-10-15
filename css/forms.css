@@ -414,3 +414,37 @@ body[data-page="login"] main {
   align-items: center;
   padding: 20px;
 }
+
+/* === CLS Quote Form Flow Fixes === */
+body[data-page="contact"] {
+  background: #000;
+  padding-top: 140px;
+}
+
+/* Dark wrap around white form */
+.wrap {
+  background: #111;
+  border-radius: 12px;
+  padding: 30px;
+  margin: 40px auto;
+}
+
+/* Align progress bar and text */
+.progress-top {
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  text-align: center;
+}
+
+/* Reduce padding on mobile */
+@media (max-width: 768px) {
+  .wrap { padding: 15px; }
+  .form-step { padding: 20px 15px; }
+}
+
+/* Make success message consistent */
+.success.show {
+  display: block;
+  margin-top: 25px;
+}
