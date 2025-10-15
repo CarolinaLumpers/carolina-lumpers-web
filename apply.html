@@ -437,6 +437,11 @@
           }
         }
       });
+      
+      // Update work authorization documentation when language changes
+      if (typeof updateDocNote === 'function') {
+        updateDocNote();
+      }
     }
 
     // Listen for language changes from the global system
@@ -607,7 +612,8 @@
       const select = document.getElementById("work_authorization");
       const val = select.value;
       const note = document.getElementById("docNote");
-      const lang = document.querySelector('input[name="ui_lang"]').value || "en";
+      // Get language from localStorage (same as global language system)
+      const lang = localStorage.getItem("CLS_Lang") || "en";
 
       const docs = {
         Citizen: {
