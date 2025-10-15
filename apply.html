@@ -535,6 +535,11 @@
       // Add console logging for debugging
       console.log('Submitting to:', endpoint);
       console.log('Form data:', Object.fromEntries(fd));
+      console.log('Form elements check:');
+      console.log('first_name:', form.first_name?.value);
+      console.log('last_name:', form.last_name?.value);
+      console.log('email:', form.email?.value);
+      console.log('consent:', form.consent?.checked);
 
       try{
         const res = await fetch(endpoint, { method:'POST', body: fd });
