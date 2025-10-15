@@ -523,7 +523,10 @@ body[data-page="login"] main {
   background: #111;            /* dark backdrop instead of full gold */
   border-radius: 10px;
   padding: 12px 18px;
-  margin-bottom: 20px;
+  margin: 0 auto 20px auto;    /* Center the progress bar */
+  max-width: 700px;            /* Wider container */
+  width: fit-content;          /* Only take space needed */
+  min-width: 400px;            /* Wider minimum width */
   box-shadow: 0 0 6px rgba(255, 204, 0, 0.2);
 }
 
@@ -562,22 +565,38 @@ body[data-page="login"] main {
 #apply .form-container .steps,
 #quote-request .steps {
   display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin-top: 12px;
+  justify-content: space-between; /* Distribute across full width */
+  align-items: center;
+  gap: 0;                      /* Remove gap, use space-between instead */
+  margin: 12px auto 0 auto;    /* Center the steps container */
+  max-width: 700px;            /* Match progress bar max-width */
+  width: 100%;                 /* Take full available width */
+  padding: 0 40px;             /* Add padding on sides */
+  box-sizing: border-box;
 }
 
 #apply .step-dot,
 #apply .form-container .step-dot,
 #quote-request .step-dot {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
+  width: 24px !important;      /* Force exact width */
+  height: 24px !important;     /* Force exact height */
+  min-width: 24px !important;  /* Prevent shrinking */
+  min-height: 24px !important; /* Prevent shrinking */
+  max-width: 24px !important;  /* Prevent growing */
+  max-height: 24px !important; /* Prevent growing */
+  border-radius: 50% !important;
   border: 2px solid #ffcc00;
   color: #ffcc00;
   background: transparent;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 12px;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  flex-shrink: 0 !important;
+  box-sizing: border-box !important;
+  padding: 0 !important;
   transition: all 0.3s ease;
 }
 
