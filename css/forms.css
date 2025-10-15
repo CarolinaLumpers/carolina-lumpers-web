@@ -539,6 +539,8 @@ body[data-page="login"] main {
     min-width: 280px;          /* Smaller minimum for mobile */
     padding: 10px 14px;        /* Reduce padding on mobile */
     margin: 0 auto 15px auto;  /* Reduce bottom margin */
+    width: 90%;                /* Force consistent width */
+    display: block;            /* Ensure block display for centering */
   }
 }
 
@@ -593,8 +595,10 @@ body[data-page="login"] main {
   #apply .form-container .steps,
   #quote-request .steps {
     max-width: 90%;            /* Match mobile progress bar width */
+    width: 90%;                /* Force same width as progress bar */
     padding: 0 20px;           /* Reduce side padding on mobile */
     margin: 10px auto 0 auto;  /* Reduce top margin */
+    display: flex;             /* Ensure flex display */
   }
 }
 
