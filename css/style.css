@@ -178,17 +178,18 @@ a:focus {
 }
 
 /* Base mobile navigation styles (default for mobile-first) */
+/* CRITICAL: This ensures large text on mobile - DO NOT REMOVE */
 .nav-links a {
-  font-size: 1.4em;
-  color: white;
-  text-decoration: none;
-  padding: 18px 20px;
-  width: 100%;
-  text-align: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  transition: all 0.3s ease;
-  font-weight: 500;
-  display: block;
+  font-size: 1.4em !important;
+  color: white !important;
+  text-decoration: none !important;
+  padding: 18px 20px !important;
+  width: 100% !important;
+  text-align: center !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+  transition: all 0.3s ease !important;
+  font-weight: 500 !important;
+  display: block !important;
 }
 
 /* Desktop navigation styles */
@@ -708,11 +709,25 @@ button:hover {
     right: 0;
   }
 
+  /* CRITICAL: Mobile navigation font size - ensure large text */
+  .nav-links a {
+    font-size: 1.4em !important;
+    color: white !important;
+    text-decoration: none !important;
+    padding: 18px 20px !important;
+    width: 100% !important;
+    text-align: center !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    transition: all 0.3s ease !important;
+    font-weight: 500 !important;
+    display: block !important;
+  }
+
   .nav-links a:hover,
   .nav-links a:focus,
   .nav-links a.active {
-    background-color: var(--accent-color);
-    color: #000;
+    background-color: var(--accent-color) !important;
+    color: #000 !important;
   }
 
   /* Overlay for mobile menu */
