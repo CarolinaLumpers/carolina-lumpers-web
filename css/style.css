@@ -106,6 +106,64 @@ a:focus {
   z-index: 1000; /* Ensure it's on top */
   width: 100%;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add a slight shadow */
+  transition: all 0.3s ease; /* Smooth transitions */
+}
+
+/* Logo container styles */
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  transition: all 0.3s ease;
+}
+
+.logo {
+  height: 50px;
+  width: auto;
+  transition: all 0.3s ease;
+}
+
+.company-name {
+  font-size: 1.2em;
+  color: var(--accent-color);
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+/* Hamburger menu (hidden on desktop) */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 30px;
+  height: 30px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 1001;
+}
+
+.hamburger-line {
+  width: 100%;
+  height: 3px;
+  background-color: var(--accent-color);
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+/* Hamburger animation when active */
+.hamburger.active .hamburger-line:nth-child(1) {
+  transform: rotate(45deg) translate(8px, 8px);
+}
+
+.hamburger.active .hamburger-line:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger.active .hamburger-line:nth-child(3) {
+  transform: rotate(-45deg) translate(8px, -8px);
 }
 
 .nav-links {
@@ -122,10 +180,14 @@ a:focus {
 .nav-links a {
   font-size: 1em;
   padding: 5px 10px; /* Add touch-friendly padding */
+  color: white;
+  text-decoration: none;
+  transition: all 0.3s ease;
 }
 
 .nav-links a:hover,
-.nav-links a:focus {
+.nav-links a:focus,
+.nav-links a.active {
   text-decoration: underline;
   color: var(--accent-color);
 }
@@ -559,63 +621,109 @@ button:hover {
   }
 
   /* ===================
-     Navbar
+     Navbar Mobile Responsive
      =================== */
   .navbar {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background-color: var(--secondary-bg);
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    width: 100%;
+    padding: 10px 20px;
+    transition: all 0.3s ease;
   }
 
-  /* First Row: Logo and Company Name */
+  /* Navbar scroll behavior - hide logo/company name when scrolled */
+  .navbar.scrolled .logo-container {
+    opacity: 0;
+    transform: translateY(-20px);
+    pointer-events: none;
+  }
+
+  .navbar.scrolled {
+    padding: 5px 20px;
+  }
+
+  /* Show hamburger menu on mobile */
+  .hamburger {
+    display: flex !important;
+  }
+
+  /* Logo container mobile styles */
   .logo-container {
     display: flex;
-    flex-direction: row;
-    justify-content: center;
     align-items: center;
     gap: 10px;
-    width: 80%;
-    height: auto;
+    transition: all 0.3s ease;
   }
 
   .logo {
-    height: auto;
-    max-height: 120px;
+    height: 40px;
     width: auto;
   }
 
   .company-name {
-    font-size: clamp(1.5em, 0.5vw, 3em); /* Constrain font size */
+    font-size: 1em;
     color: var(--accent-color);
     text-transform: uppercase;
-    text-align: left;
+    text-decoration: none;
   }
 
-  /* Second Row: Navigation Links */
+  /* Mobile navigation menu */
   .nav-links {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    list-style: none;
-    gap: 10px;
-    width: 100%;
-    height: 40px; /* Maintain fixed height */
-    margin: 0;
-    padding: 0;
+    position: fixed;
+    top: 0;
+    right: -100%;
+    height: 100vh;
+    width: 80%;
+    max-width: 300px;
     background-color: var(--secondary-bg);
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    padding-top: 80px;
+    gap: 30px;
+    transition: right 0.3s ease;
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+  }
+
+  /* Show mobile menu when active */
+  .nav-links.active {
+    right: 0;
   }
 
   .nav-links a {
-    font-size: 0.9em; /* or adjust as needed */
+    font-size: 1.4em;
     color: white;
     text-decoration: none;
-    padding: 5px 5px; /*  Slight horizontal padding for better tap targets */
-    white-space: nowrap;  /* Prevent wrapping */
+    padding: 18px 20px;
+    width: 100%;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    font-weight: 500;
+  }
+
+  .nav-links a:hover,
+  .nav-links a:focus,
+  .nav-links a.active {
+    background-color: var(--accent-color);
+    color: #000;
+  }
+
+  /* Overlay for mobile menu */
+  .nav-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .nav-overlay.active {
+    opacity: 1;
+    visibility: visible;
   }
 
   .nav-links a:hover {

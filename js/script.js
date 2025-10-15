@@ -42,6 +42,113 @@ function getBrowserType() {
 /* ================================
    SHARED COMPONENTS
    ================================ */
+
+// Global Navbar Functionality
+function initializeNavbar() {
+  const hamburger = document.getElementById('hamburger');
+  const navLinks = document.getElementById('navLinks');
+  const navOverlay = document.getElementById('navOverlay');
+  const navbar = document.getElementById('navbar');
+  
+  // Hamburger menu toggle
+  if (hamburger && navLinks && navOverlay) {
+    hamburger.addEventListener('click', function() {
+      navLinks.classList.toggle('active');
+      navOverlay.classList.toggle('active');
+      hamburger.classList.toggle('active');
+      
+      // Update aria-expanded for accessibility
+      const isExpanded = hamburger.classList.contains('active');
+      hamburger.setAttribute('aria-expanded', isExpanded);
+      
+      // Prevent body scroll when menu is open
+      document.body.style.overflow = isExpanded ? 'hidden' : '';
+    });
+  }
+  
+  // Close menu when overlay is clicked
+  if (navOverlay) {
+    navOverlay.addEventListener('click', function() {
+      navLinks.classList.remove('active');
+      navOverlay.classList.remove('active');
+      hamburger.classList.remove('active');
+      hamburger.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    });
+  }
+  
+  // Close menu when nav link is clicked
+  if (navLinks) {
+    navLinks.addEventListener('click', function(e) {
+      if (e.target.tagName === 'A') {
+        navLinks.classList.remove('active');
+        navOverlay.classList.remove('active');
+        hamburger.classList.remove('active');
+        hamburger.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+      }
+    });
+  }
+  
+  // Navbar scroll behavior for mobile
+  if (navbar) {
+    let lastScrollTop = 0;
+    window.addEventListener('scroll', function() {
+      if (window.innerWidth <= 768) { // Only on mobile
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        
+        if (scrollTop > 50) {
+          navbar.classList.add('scrolled');
+        } else {
+          navbar.classList.remove('scrolled');
+        }
+        
+        lastScrollTop = scrollTop;
+      }
+    });
+  }
+  
+  // Remove scrolled class on resize if not mobile and close menu
+  window.addEventListener('resize', function() {
+    if (window.innerWidth > 768) {
+      if (navbar) navbar.classList.remove('scrolled');
+      if (navLinks) navLinks.classList.remove('active');
+      if (navOverlay) navOverlay.classList.remove('active');
+      if (hamburger) {
+        hamburger.classList.remove('active');
+        hamburger.setAttribute('aria-expanded', 'false');
+      }
+      document.body.style.overflow = '';
+    }
+  });
+}
+
+// Load Navbar Component
+async function loadNavbar() {
+  try {
+    console.log('Loading navbar...');
+    const response = await fetch('components/navbar.html');
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const navbarHTML = await response.text();
+    
+    const navbarContainer = document.getElementById('navbar-container');
+    if (navbarContainer) {
+      navbarContainer.innerHTML = navbarHTML;
+      
+      // Initialize navbar functionality after loading
+      initializeNavbar();
+      
+      console.log('Navbar loaded successfully');
+    } else {
+      console.warn('Navbar container not found');
+    }
+  } catch (error) {
+    console.error('Error loading navbar:', error);
+  }
+}
+
 async function loadFooter() {
   try {
     console.log('Loading footer...');
@@ -136,6 +243,7 @@ function initLanguageSystem() {
 /* Run on page load */
 document.addEventListener("DOMContentLoaded", () => {
   adjustNavbarFontSize();
+  loadNavbar(); // Load shared navbar component
   loadFooter(); // Load shared footer component
   initLanguageSystem();
 
