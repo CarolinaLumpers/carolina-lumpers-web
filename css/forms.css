@@ -1,0 +1,299 @@
+/* ================================
+   Forms CSS - Shared form styling
+   ================================ */
+
+/* Shared form containers */
+.form-container, .login-container, .signup-container {
+  background-color: var(--secondary-bg);
+  color: var(--text-color);
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(255, 191, 0, 0.3);
+  padding: 30px 20px;
+  max-width: 500px;
+  width: 100%;
+  text-align: center;
+  margin: 0 auto;
+}
+
+/* Form container variations */
+.form-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 80vh;
+  max-width: 800px; /* Apply form is wider */
+}
+
+.login-container, .signup-container {
+  max-width: 400px;
+}
+
+/* Form headings */
+.form-container h1, .form-container h2,
+.login-container h1, .signup-container h1 {
+  color: var(--accent-color);
+  font-family: 'Anton', sans-serif;
+  font-size: 2em;
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+/* Shared input and button styling */
+form input, form textarea, form select {
+  width: 90%;
+  padding: 12px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 6px;
+  font-size: 1em;
+  background-color: var(--card-bg);
+  color: var(--text-color-2);
+}
+
+/* White backgrounds for all form fields */
+form input, form select, form textarea {
+  background-color: #fff !important;
+  color: #000 !important;
+  border: 1px solid #ccc;
+}
+
+form button {
+  background-color: var(--accent-color);
+  color: var(--text-color-2);
+  border: none;
+  border-radius: 6px;
+  padding: 12px 30px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: 0.2s;
+  margin-top: 10px;
+}
+
+form button:hover {
+  background-color: var(--button-hover-bg);
+  color: var(--secondary-bg);
+}
+
+.message {
+  margin-top: 15px;
+  font-size: 0.95em;
+  min-height: 20px;
+}
+
+/* Apply form specific grid layout */
+.form-grid {
+  width: 100%;
+  max-width: 800px;
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 10px 12px;
+  text-align: left;
+  align-items: center;
+}
+
+.form-grid .full {
+  grid-column: 1 / -1;
+}
+
+.form-grid label {
+  display: block;
+  margin-bottom: 3px;
+  font-weight: 500;
+}
+
+.form-grid input,
+.form-grid select,
+.form-grid textarea {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  margin-bottom: 14px;
+}
+
+/* Required field indicators */
+.form-grid label.required::after {
+  content: " *";
+  color: #d00;
+  font-weight: bold;
+}
+
+/* Actions section for form buttons */
+.actions {
+  grid-column: 1 / -1;
+  text-align: left;
+}
+
+.actions button {
+  background-color: #002e63;
+  color: #fff;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.actions button:hover {
+  background-color: #004b99;
+}
+
+#status {
+  margin-top: 10px;
+  font-weight: 600;
+  min-height: 1.5em;
+}
+
+/* Enhanced contrast for work authorization notes */
+#authDescription {
+  color: #ddd !important;
+}
+
+#docNote {
+  color: #ffda66 !important;
+}
+
+/* Visual break between form sections */
+.form-grid label[for="language_preference"] {
+  margin-top: 12px;
+  border-top: 1px solid #eee;
+  padding-top: 12px;
+}
+
+/* Privacy policy checkbox styling */
+.form-grid .full label {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: left;
+  margin: 20px 0;
+  padding: 15px;
+  background: #000;
+  color: #fff;
+  border: 1px solid #333;
+  border-radius: 6px;
+}
+
+.form-grid .full label input[type="checkbox"] {
+  margin-right: 10px;
+  margin-bottom: 0;
+  width: auto;
+  transform: scale(1.2);
+}
+
+.form-grid .full label a {
+  color: #ffcc00 !important;
+  text-decoration: underline;
+}
+
+.form-grid .full label a:hover {
+  color: #ffd633 !important;
+}
+
+/* Login/Signup specific styles */
+.login-container, .signup-container {
+  /* Vertically center the form box */
+  max-width: 400px;
+  width: 100%;
+  padding: 30px 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(255, 191, 0, 0.3);
+  text-align: center;
+}
+
+/* Stay logged in alignment */
+label[for="stayLoggedIn"] {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 10px;
+  color: var(--text-muted);
+  font-size: 0.9em;
+}
+
+label[for="stayLoggedIn"] input {
+  width: 18px;
+  height: 18px;
+}
+
+.link {
+  margin-top: 20px;
+  font-size: 0.95em;
+}
+
+.link a {
+  color: var(--accent-color);
+  text-decoration: none;
+}
+
+.link a:hover {
+  text-decoration: underline;
+}
+
+/* Language toggle for forms */
+.language-toggle {
+  margin: 10px;
+  text-align: center;
+}
+
+.language-toggle button {
+  margin: 5px;
+  padding: 10px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-grid label {
+    margin-top: 8px;
+  }
+  
+  .form-grid input,
+  .form-grid select,
+  .form-grid textarea {
+    margin-bottom: 18px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+
+  .actions {
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-container, .signup-container {
+    margin: 20px auto;
+    padding: 25px 15px;
+  }
+
+  .login-container h1, .signup-container h1 {
+    font-size: 1.6em;
+  }
+}
+
+/* Login page specific body styling */
+body[data-page="login"] {
+  background-color: var(--secondary-bg);
+  color: var(--text-color);
+  font-family: 'Roboto', Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  margin: 0;
+}
+
+body[data-page="login"] main {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}

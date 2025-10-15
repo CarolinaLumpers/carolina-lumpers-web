@@ -7,85 +7,10 @@
   <link rel="stylesheet" href="style.css">
   <link rel="icon" type="image/png" href="assets/CLS-favicon.png">
   <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
-  <style>
-    /* Centering the iframe */
-    .form-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 80vh;
-      text-align: center;
-    }
-
-    iframe {
-      border: none;
-      width: 100%;
-      max-width: 800px;
-      /* Adjust for your layout */
-      height: 2400px;
-      /* Adjust to fit content without iframe scrollbar */
-    }
-
-    body {
-      margin: 0;
-    }
-
-    .language-toggle {
-      margin: 10px;
-      text-align: center;
-    }
-
-    .language-toggle button {
-      margin: 5px;
-      padding: 10px;
-      font-size: 14px;
-      cursor: pointer;
-    }
-  </style>
- <script src="script.js" defer></script>  </head>
-
-  <script>
-  //Existing script.js functionality moved inline.
-
-    function adjustNavbarFontSize() {
-      const navLinks = document.querySelector('.nav-links');
-      const links = navLinks.querySelectorAll('a');
-      const maxWidth = navLinks.offsetWidth;
-
-      let totalWidth = 0;
-      for (const link of links) {
-        totalWidth += link.offsetWidth;
-      }
-
-      if (totalWidth > maxWidth) {
-        const scaleFactor = maxWidth / totalWidth;
-        navLinks.style.fontSize = scaleFactor * 0.9 + 'em';
-      } else {
-        navLinks.style.fontSize = '0.9em';
-      }
-    }
-
-
-    function switchLanguage(lang) {
-      const elements = document.querySelectorAll("[data-en], [data-es], [data-pt]");
-      elements.forEach(element => {
-        element.innerHTML = lang === "es" ? element.getAttribute("data-es") :
-          lang === "pt" ? element.getAttribute("data-pt") :
-            element.getAttribute("data-en");
-      });
-      adjustNavbarFontSize(); // Call after language switch
-    }
-
-    document.addEventListener("DOMContentLoaded", () => {
-      const userLang = navigator.language || navigator.userLanguage;
-      const lang = userLang.startsWith("es") ? "es" : userLang.startsWith("pt") ? "pt" : "en";
-      switchLanguage(lang);
-      adjustNavbarFontSize(); // Call on initial load
-    });
-  </script>
+  <script src="js/script.js" defer></script>
 </head>
-<body>
+
+<body data-page="services">
   <!-- Navigation Bar -->
   <nav class="navbar">
     <div class="logo-container">

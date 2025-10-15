@@ -21,125 +21,11 @@
   <link rel="icon" type="image/png" href="assets/CLS-favicon.png">
   <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="css/forms.css">
 
-  <!-- Login-specific styling -->
-  <style>
-    /* Vertically center the login box */
-    body {
-      background-color: var(--secondary-bg);
-      color: var(--text-color);
-      font-family: 'Roboto', Arial, sans-serif;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-      margin: 0;
-    }
-
-    main {
-      flex: 1;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-    }
-
-    .login-container {
-      background-color: var(--secondary-bg);
-      color: var(--text-color);
-      max-width: 400px;
-      width: 100%;
-      padding: 30px 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(255, 191, 0, 0.3);
-      text-align: center;
-    }
-
-    .login-container h1 {
-      color: var(--accent-color);
-      font-family: 'Anton', sans-serif;
-      font-size: 2em;
-      margin-top: 0;
-      margin-bottom: 20px;
-    }
-
-    .login-container input {
-      width: 90%;
-      padding: 12px;
-      margin: 10px 0;
-      border-radius: 6px;
-      border: none;
-      font-size: 1em;
-      background-color: var(--card-bg);
-      color: var(--text-color-2);
-    }
-
-    .login-container button {
-      background: var(--accent-color);
-      color: var(--text-color-2);
-      border: none;
-      border-radius: 6px;
-      padding: 12px 30px;
-      font-size: 1em;
-      cursor: pointer;
-      transition: 0.2s;
-      margin-top: 10px;
-    }
-
-    .login-container button:hover {
-      background-color: var(--button-hover-bg);
-      color: var(--secondary-bg);
-    }
-
-    .message {
-      margin-top: 15px;
-      font-size: 0.95em;
-      min-height: 20px;
-    }
-
-    .link {
-      margin-top: 20px;
-      font-size: 0.95em;
-    }
-
-    .link a {
-      color: var(--accent-color);
-      text-decoration: none;
-    }
-
-    .link a:hover {
-      text-decoration: underline;
-    }
-
-    /* Stay logged in alignment */
-    label[for="stayLoggedIn"] {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      margin-top: 10px;
-      color: var(--text-muted);
-      font-size: 0.9em;
-    }
-
-    label[for="stayLoggedIn"] input {
-      width: 18px;
-      height: 18px;
-    }
-
-    @media (max-width: 480px) {
-      .login-container {
-        margin: 20px auto;
-        padding: 25px 15px;
-      }
-
-      .login-container h1 {
-        font-size: 1.6em;
-      }
-    }
-  </style>
 </head>
 
-<body>
+<body data-page="login">
   <!-- NAVBAR -->
   <nav class="navbar">
     <div class="logo-container">
@@ -161,22 +47,22 @@
   <!-- LOGIN FORM (centered vertically) -->
   <main>
     <div class="login-container">
-      <h1 data-en="Employee Login" data-es="Inicio de Sesión de Empleado" data-pt="Login de Funcionário">Employee Login
-      </h1>
+      <h1 data-en="Employee Login" data-es="Inicio de Sesión de Empleado" data-pt="Login de Funcionário">Employee Login</h1>
 
-      <input type="email" id="loginEmail" placeholder="Work Email" data-en="Work Email" data-es="Correo de Trabajo"
-        data-pt="Email de Trabalho" required>
-      <input type="password" id="loginPassword" placeholder="Password" data-en="Password" data-es="Contraseña"
-        data-pt="Senha" required>
+      <form id="loginForm">
+        <input type="email" id="email" name="email" autocomplete="email" placeholder="Work Email" 
+               data-en="Work Email" data-es="Correo de Trabajo" data-pt="Email de Trabalho" required>
+        <input type="password" id="password" name="password" autocomplete="current-password" placeholder="Password" 
+               data-en="Password" data-es="Contraseña" data-pt="Senha" required>
 
-      <label for="stayLoggedIn">
-        <input type="checkbox" id="stayLoggedIn">
-        <span data-en="Stay logged in" data-es="Mantener sesión iniciada" data-pt="Manter-se conectado">Stay logged
-          in</span>
-      </label>
+        <label for="stayLoggedIn">
+          <input type="checkbox" id="stayLoggedIn">
+          <span data-en="Stay logged in" data-es="Mantener sesión iniciada" data-pt="Manter-se conectado">Stay logged in</span>
+        </label>
 
-      <button id="loginBtn" data-en="Login" data-es="Iniciar Sesión" data-pt="Entrar">Login</button>
-      <div class="message" id="message"></div>
+        <button type="submit" id="loginBtn" data-en="Login" data-es="Iniciar Sesión" data-pt="Entrar">Login</button>
+        <p id="status" class="message" role="status" aria-live="polite"></p>
+      </form>
 
       <div class="link">
         <span data-en="Don’t have an account?" data-es="¿No tienes una cuenta?" data-pt="Não tem uma conta?">Don’t have
@@ -205,163 +91,9 @@
     </div>
   </footer>
 
-  <!-- LOGIN SCRIPT -->
-  <script>
-    const API_URL = "https://cls-proxy.s-garay.workers.dev";
-    const SESSION_KEY = "CLS_User";
-
-    const LANG = localStorage.getItem("CLS_Lang") || "en";
-    const MSG = {
-      missingFields: {
-        en: "❌ Please fill in both fields.",
-        es: "❌ Por favor completa ambos campos.",
-        pt: "❌ Por favor preencha ambos os campos."
-      },
-      loggingIn: {
-        en: "⏳ Logging in...",
-        es: "⏳ Iniciando sesión...",
-        pt: "⏳ Entrando..."
-      },
-      loginFailed: {
-        en: "⚠️ Login failed.",
-        es: "⚠️ Error al iniciar sesión.",
-        pt: "⚠️ Falha no login."
-      },
-      wrongPassword: {
-        en: "❌ Incorrect password.",
-        es: "❌ Contraseña incorrecta.",
-        pt: "❌ Senha incorreta."
-      },
-      userNotFound: {
-        en: "⚠️ Worker not found.",
-        es: "⚠️ Empleado no encontrado.",
-        pt: "⚠️ Funcionário não encontrado."
-      },
-      success: {
-        en: "✅ Login successful!",
-        es: "✅ ¡Inicio de sesión exitoso!",
-        pt: "✅ Login realizado com sucesso!"
-      },
-      serverError: {
-        en: "⚠️ Error:",
-        es: "⚠️ Error:",
-        pt: "⚠️ Erro:"
-      }
-    };
-
-    async function jsonp(url) {
-      return new Promise((resolve, reject) => {
-        const cb = "cb_" + Math.random().toString(36).slice(2);
-        const s = document.createElement("script");
-        s.src = `${url}&callback=${cb}`;
-        s.async = true;
-        window[cb] = (data) => { resolve(data); delete window[cb]; s.remove(); };
-        s.onerror = () => reject(new Error("Network error"));
-        document.body.appendChild(s);
-      });
-    }
-
-    (function () {
-      let u = sessionStorage.getItem(SESSION_KEY) || localStorage.getItem(SESSION_KEY);
-      if (u) {
-        try { u = JSON.parse(u); } catch { u = null; }
-        if (u && u.workerId) {
-          // ✅ Always stay logged in until user manually logs out
-          window.location.href = "employeeDashboard.html";
-        }
-      }
-    })();
 
 
-    document.getElementById("loginBtn").addEventListener("click", async () => {
-      const email = document.getElementById("loginEmail").value.trim();
-      const password = document.getElementById("loginPassword").value.trim();
-      const stay = document.getElementById("stayLoggedIn").checked;
-      const msg = document.getElementById("message");
-
-      if (!email || !password) {
-        msg.textContent = MSG.missingFields[LANG];
-        return;
-      }
-
-      msg.textContent = MSG.loggingIn[LANG];
-
-      try {
-        const data = await jsonp(`${API_URL}?action=login&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`);
-
-        if (data && data.success) {
-          msg.textContent = MSG.success[LANG];
-
-          const session = {
-            workerId: data.workerId,
-            displayName: data.displayName || "Employee",
-            email: data.email || email,
-            timestamp: Date.now(),
-            persistent: stay
-          };
-
-          const storage = stay ? localStorage : sessionStorage;
-          storage.setItem(SESSION_KEY, JSON.stringify(session));
-          window.location.href = "employeeDashboard.html";
-
-        } else {
-          if (data && data.message && data.message.includes("password")) msg.textContent = MSG.wrongPassword[LANG];
-          else if (data && data.message && data.message.includes("Worker not found")) msg.textContent = MSG.userNotFound[LANG];
-          else msg.textContent = MSG.loginFailed[LANG];
-        }
-
-      } catch (e) {
-        msg.textContent = `${MSG.serverError[LANG]} ${e.message}`;
-      }
-    });
-  </script>
-
-  <script>
-    // --- Multilingual + Navbar Resizing System ---
-    function adjustNavbarFontSize() {
-      const navLinks = document.querySelector('.nav-links');
-      if (!navLinks) return;
-
-      const links = navLinks.querySelectorAll('a');
-      const maxWidth = navLinks.offsetWidth;
-      let totalWidth = 0;
-
-      for (const link of links) {
-        totalWidth += link.offsetWidth;
-      }
-
-      if (totalWidth > maxWidth) {
-        const scaleFactor = maxWidth / totalWidth;
-        navLinks.style.fontSize = scaleFactor * 0.9 + 'em';
-      } else {
-        navLinks.style.fontSize = '0.9em';
-      }
-    }
-
-    function switchLanguage(lang) {
-      localStorage.setItem("CLS_Lang", lang);
-      document.querySelectorAll("[data-en]").forEach(el => {
-        const t = el.getAttribute(`data-${lang}`) || el.getAttribute("data-en");
-        if (t) el.innerHTML = t;
-      });
-      document.querySelectorAll(".language-toggle button").forEach(b =>
-        b.classList.toggle("active", b.dataset.lang === lang)
-      );
-
-      adjustNavbarFontSize(); // adjust after translating
-    }
-
-    document.addEventListener("DOMContentLoaded", () => {
-      const s = localStorage.getItem("CLS_Lang");
-      const b = navigator.language || navigator.userLanguage;
-      const l = s || (b.startsWith("es") ? "es" : b.startsWith("pt") ? "pt" : "en");
-
-      switchLanguage(l);
-      adjustNavbarFontSize();
-    });
-
-    window.addEventListener("resize", adjustNavbarFontSize);
-  </script>
+  <script src="js/script.js" defer></script>
 </body>
 
 </html>

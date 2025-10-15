@@ -21,97 +21,10 @@
   <link rel="icon" type="image/png" href="assets/CLS-favicon.png">
   <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
-
-  <style>
-    body {
-      background-color: #000;
-      color: #fff;
-      font-family: Arial, sans-serif;
-      text-align: center;
-      margin: 0;
-      padding: 0;
-    }
-
-    .signup-container {
-      max-width: 400px;
-      margin: 80px auto;
-      background-color: #111;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(255, 204, 0, 0.2);
-    }
-
-    h1 {
-      font-family: "Anton", sans-serif;
-      color: #ffcc00;
-      margin-bottom: 20px;
-    }
-
-    input {
-      width: 90%;
-      padding: 12px;
-      margin: 10px 0;
-      border-radius: 6px;
-      border: none;
-      font-size: 1em;
-    }
-
-    button {
-      background-color: #ffcc00;
-      color: #000;
-      border: none;
-      border-radius: 6px;
-      padding: 12px 30px;
-      font-size: 1em;
-      cursor: pointer;
-      transition: background-color 0.2s ease-in-out;
-      margin-top: 10px;
-    }
-
-    button:hover {
-      background-color: #ffd633;
-    }
-
-    .message {
-      margin-top: 15px;
-      font-size: 0.95em;
-      min-height: 20px;
-    }
-
-    footer {
-      background-color: #111;
-      color: #aaa;
-      text-align: center;
-      padding: 20px;
-      font-size: 0.9em;
-      margin-top: 60px;
-    }
-
-    .language-toggle {
-      margin-top: 10px;
-      text-align: center;
-    }
-
-    .language-toggle button {
-      margin: 4px;
-      padding: 8px 12px;
-      border: none;
-      background: #111;
-      color: #ffcc00;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .language-toggle button:hover,
-    .language-toggle button.active {
-      background: #ffcc00;
-      color: #000;
-    }
-  </style>
+  <link rel="stylesheet" href="css/forms.css">
 </head>
 
-<body>
+<body data-page="signup">
   <!-- NAVBAR -->
   <nav class="navbar">
     <div class="logo-container">
@@ -133,12 +46,17 @@
   <!-- SIGN UP FORM -->
   <div class="signup-container">
     <h1 data-en="Employee Sign Up" data-es="Registro de Empleado" data-pt="Cadastro de Funcionário">Employee Sign Up</h1>
-    <input type="email" id="email" placeholder="Work Email" required
-           data-en="Work Email" data-es="Correo de Trabajo" data-pt="Email de Trabalho">
-    <input type="password" id="password" placeholder="Create Password" required
-           data-en="Create Password" data-es="Crear Contraseña" data-pt="Criar Senha">
-    <button id="signupBtn" data-en="Create Account" data-es="Crear Cuenta" data-pt="Criar Conta">Create Account</button>
-    <div class="message" id="message"></div>
+    
+    <form id="signupForm" action="https://script.google.com/macros/s/AKfycbwHBLEQ5QHuhD-O4uI4hRN_5_yS9YsFgtn_dMAdoAO2C7zHLoi3qfHO82vas3Uv0wXXpg/exec" method="POST">
+      <input type="email" id="email" name="email" placeholder="Work Email" required
+             data-en="Work Email" data-es="Correo de Trabajo" data-pt="Email de Trabalho">
+      <input type="password" id="password" name="password" placeholder="Create Password" required
+             data-en="Create Password" data-es="Crear Contraseña" data-pt="Criar Senha">
+      <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password" required
+             data-en="Confirm Password" data-es="Confirmar Contraseña" data-pt="Confirmar Senha">
+      <button type="submit" data-en="Create Account" data-es="Crear Cuenta" data-pt="Criar Conta">Create Account</button>
+      <p id="status" role="status" aria-live="polite"></p>
+    </form>
 
     <p style="margin-top:20px;">
       <span data-en="Already have an account?" data-es="¿Ya tienes una cuenta?" data-pt="Já tem uma conta?">Already have an account?</span>
@@ -164,50 +82,6 @@
     </div>
   </footer>
 
-  <!-- SIGNUP SCRIPT -->
-  <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbwHBLEQ5QHuhD-O4uI4hRN_5_yS9YsFgtn_dMAdoAO2C7zHLoi3qfHO82vas3Uv0wXXpg/exec";
-
-    document.getElementById("signupBtn").addEventListener("click", async () => {
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value.trim();
-      const message = document.getElementById("message");
-
-      if (!email || !password) {
-        message.textContent = "❌ Please fill in all fields.";
-        return;
-      }
-
-      message.textContent = "⏳ Creating account...";
-
-      try {
-        const res = await fetch(`${API_URL}?action=signup&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`);
-        const text = await res.text();
-        message.textContent = text.includes("✅")
-          ? "✅ Account created! You can now log in."
-          : text;
-      } catch (err) {
-        message.textContent = "⚠️ Error: " + err.message;
-      }
-    });
-  </script>
-
-  <!-- ✅ INLINE LANGUAGE SCRIPT -->
-  <script>
-    function switchLanguage(lang){
-      localStorage.setItem("CLS_Lang",lang);
-      document.querySelectorAll("[data-en]").forEach(el=>{
-        const t=el.getAttribute(`data-${lang}`)||el.getAttribute("data-en");
-        if(t)el.innerHTML=t;
-      });
-      document.querySelectorAll(".language-toggle button").forEach(b=>b.classList.toggle("active",b.dataset.lang===lang));
-    }
-    document.addEventListener("DOMContentLoaded",()=>{
-      const s=localStorage.getItem("CLS_Lang");
-      const b=navigator.language||navigator.userLanguage;
-      const l=s||(b.startsWith("es")?"es":b.startsWith("pt")?"pt":"en");
-      switchLanguage(l);
-    });
-  </script>
+  <script src="js/script.js" defer></script>
 </body>
 </html>
