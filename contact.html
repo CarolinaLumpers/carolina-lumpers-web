@@ -13,7 +13,7 @@
   <script src="js/script.js" defer></script>
 </head>
 
-<body data-page="contact" style="padding-top:140px;">
+<body data-page="contact">
   <!-- Navbar -->
   <nav class="navbar">
     <div class="logo-container">
@@ -31,9 +31,9 @@
 
   <!-- Hero -->
   <header class="hero">
-    <div class="hero-content text-center container">
-      <h2>Request a Quote</h2>
-      <p>We’re here to assist you with pricing, scheduling, or service inquiries. Let’s connect!</p>
+    <div class="hero-content">
+      <h2>Request a Quote or Contact CLS</h2>
+      <p>We're ready to support your freight operation — request a quote today or reach out to our team.</p>
     </div>
     <div class="hero-image">
       <img src="assets/CLS-Cover-01web.webp" alt="Hero Banner" class="banner-image">
@@ -55,25 +55,246 @@
       </ul>
     </section>
 
-    <!-- Quote Request Wizard -->
-    <div class="wrap">
-      <div class="card" id="wizard">
-        <div class="progress" aria-live="polite">
-          <div class="progress-top">
-            <strong id="stepLabel">Step 1 of 7</strong>
-            <span id="stepName">Contact Information</span>
-          </div>
-          <div class="bar"><div class="bar-fill" id="barFill"></div></div>
-          <div class="steps" id="stepsDots"></div>
-        </div>
+    <!-- Quote Request Form -->
+    <section id="quote-request" class="section-container">
+      <h2>Request a Quote</h2>
+      <p>Fill out the quick form below, and our team will follow up with scheduling and pricing details.</p>
 
-        <!-- Form -->
-        <form id="quoteForm" novalidate>
-          <!-- Sections identical to your original; unchanged for brevity -->
-          <!-- ✅ All your 7 form-step sections remain the same here -->
-        </form>
+      <div class="progress" aria-live="polite">
+        <div class="progress-top">
+          <strong id="stepLabel">Step 1 of 7</strong>
+          <span id="stepName">Contact Information</span>
+        </div>
+        <div class="bar"><div class="bar-fill" id="barFill"></div></div>
+        <div class="steps" id="stepsDots"></div>
       </div>
-    </div>
+
+      <form id="quoteForm" novalidate>
+          <!-- 1. Contact Information -->
+          <section class="form-step active" data-title="Contact Information">
+            <div class="grid grid-2">
+              <div class="field">
+                <label>Company Name (if applicable)</label>
+                <input name="companyName" type="text" autocomplete="organization">
+              </div>
+              <div class="field">
+                <label>Contact Person / Title</label>
+                <input name="contactName" type="text" autocomplete="name">
+              </div>
+              <div class="field">
+                <label class="required">Phone Number</label>
+                <input name="phone" type="tel" autocomplete="tel" required>
+                <div class="error">Please enter a phone number.</div>
+              </div>
+              <div class="field">
+                <label class="required">Email Address</label>
+                <input name="email" type="email" autocomplete="email" required>
+                <div class="error">Please enter a valid email.</div>
+              </div>
+              <div class="field">
+                <label>Preferred Contact Method</label>
+                <select name="preferredContact">
+                  <option value="">Select…</option>
+                  <option>Phone</option>
+                  <option>Email</option>
+                  <option>Text</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>How did you hear about us? (optional)</label>
+                <input name="referral" type="text" placeholder="Google, referral, carrier rep, etc.">
+              </div>
+            </div>
+          </section>
+
+          <!-- 2. Service Details -->
+          <section class="form-step" data-title="Service Details">
+            <div class="mb8"><label>Type of Service Needed (check all that apply)</label></div>
+            <div class="checklist">
+              <label class="chip"><input type="checkbox" name="services" value="Lumper">Lumper</label>
+              <label class="chip"><input type="checkbox" name="services" value="Unloading">Unloading</label>
+              <label class="chip"><input type="checkbox" name="services" value="Loading">Loading</label>
+              <label class="chip"><input type="checkbox" name="services" value="Pallet Breakdown">Pallet Breakdown</label>
+              <label class="chip"><input type="checkbox" name="services" value="Repacking">Repacking</label>
+              <label class="chip"><input type="checkbox" name="services" value="Cross-Docking">Cross-Docking</label>
+              <label class="chip"><input type="checkbox" name="services" value="Sorting">Sorting</label>
+              <label class="chip"><input type="checkbox" name="services" value="Other">Other</label>
+            </div>
+
+            <div class="grid grid-2" style="margin-top:12px">
+              <div class="field">
+                <label>Frequency of Service</label>
+                <select name="frequency">
+                  <option value="">Select…</option>
+                  <option>One-time</option>
+                  <option>Daily</option>
+                  <option>Weekly</option>
+                  <option>Monthly</option>
+                  <option>Seasonal</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Expected Start Date</label>
+                <input name="startDate" type="date">
+              </div>
+              <div class="field">
+                <label>Shift or Time Window</label>
+                <select name="shift">
+                  <option value="">Select…</option>
+                  <option>Morning</option>
+                  <option>Afternoon</option>
+                  <option>Night</option>
+                  <option>Flexible</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Estimated Duration (optional)</label>
+                <input name="duration" type="text" placeholder="e.g., 4 hours, all shift">
+              </div>
+              <div class="field">
+                <label>Ongoing Account or Trial Job? (optional)</label>
+                <input name="ongoingOrTrial" type="text" placeholder="Ongoing, pilot, or one-off"/>
+              </div>
+            </div>
+          </section>
+
+          <!-- 3. Location Details -->
+          <section class="form-step" data-title="Location Details">
+            <div class="grid grid-2">
+              <div class="field">
+                <label class="required">Facility Name / Warehouse</label>
+                <input name="facility" type="text" required>
+                <div class="error">Facility name is required.</div>
+              </div>
+              <div class="field">
+                <label class="required">Address</label>
+                <input name="address" type="text" required placeholder="Street, City, State, ZIP">
+                <div class="error">Address is required.</div>
+              </div>
+              <div class="field">
+                <label>Dock or Bay Number (if known)</label>
+                <input name="dock" type="text">
+              </div>
+              <div class="field">
+                <label>Entry or Safety Requirements</label>
+                <input name="entryRequirements" type="text" placeholder="Badges, PPE, safety videos, etc.">
+              </div>
+              <div class="field">
+                <label>On-Site Contact Name & Phone</label>
+                <input name="onsiteContact" type="text" placeholder="Name, phone">
+              </div>
+            </div>
+          </section>
+
+          <!-- 4. Volume & Workforce -->
+          <section class="form-step" data-title="Volume & Workforce">
+            <div class="grid grid-2">
+              <div class="field">
+                <label>Average Number of Loads</label>
+                <input name="avgLoads" type="text" placeholder="per Day / Week">
+              </div>
+              <div class="field">
+                <label>Type of Freight</label>
+                <select name="freight">
+                  <option value="">Select…</option>
+                  <option>Palletized</option>
+                  <option>Floor-Loaded</option>
+                  <option>Mixed</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Estimated Number of Workers Needed (if known)</label>
+                <input name="workersNeeded" type="number" min="1" step="1" placeholder="e.g., 4">
+              </div>
+              <div class="field">
+                <label>Special Equipment Required</label>
+                <input name="equipment" type="text" placeholder="Pallet Jack, Forklift, PPE, Other">
+              </div>
+              <div class="field">
+                <label>Average Load Weight or Container Size (optional)</label>
+                <input name="avgWeight" type="text" placeholder="e.g., 40' HC, 20k lbs">
+              </div>
+            </div>
+          </section>
+
+          <!-- 5. Billing Information -->
+          <section class="form-step" data-title="Billing Information">
+            <div class="grid grid-2">
+              <div class="field">
+                <label>Billing Contact Name & Email</label>
+                <input name="billingContact" type="text" placeholder="Name, email">
+              </div>
+              <div class="field">
+                <label>Preferred Billing Method</label>
+                <select name="billingMethod">
+                  <option value="">Select…</option>
+                  <option>Email</option>
+                  <option>Portal</option>
+                  <option>Paper</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Payment Terms or Requirements</label>
+                <input name="paymentTerms" type="text" placeholder="Net 15, Net 30, ACH preferred">
+              </div>
+              <div class="field">
+                <label>Accounts Payable Address (if different)</label>
+                <input name="apAddress" type="text">
+              </div>
+              <div class="field">
+                <label>Tax Exemption Certificate (if applicable)</label>
+                <input name="taxExempt" type="text" placeholder="Number / note">
+              </div>
+              <div class="field">
+                <label>Require W9 or insurance certificate before service?</label>
+                <select name="requireDocs">
+                  <option value="">Select…</option>
+                  <option>Yes</option>
+                  <option>No</option>
+                  <option>Maybe</option>
+                </select>
+              </div>
+            </div>
+          </section>
+
+          <!-- 6. Additional Notes -->
+          <section class="form-step" data-title="Additional Notes">
+            <div class="field">
+              <label>Special Instructions or Comments</label>
+              <textarea name="notes" placeholder="Include shift overlap, badge requirements, truck staging details…"></textarea>
+            </div>
+            <div class="grid grid-2" style="margin-top:12px">
+              <label class="chip"><input type="checkbox" name="sendRateSheet" value="Yes">Please send me a standard rate sheet</label>
+              <label class="chip"><input type="checkbox" name="siteVisit" value="Yes">Request a site visit before quoting</label>
+            </div>
+          </section>
+
+          <!-- 7. Confirmation & Authorization -->
+          <section class="form-step" data-title="Confirmation">
+            <div class="grid grid-2" style="margin-top:12px">
+              <div class="field">
+                <label>Signature / Name</label>
+                <input name="signature" type="text" placeholder="Type your full name">
+              </div>
+              <div class="field">
+                <label>Date</label>
+                <input name="signatureDate" type="date">
+              </div>
+            </div>
+            <p class="helper">By submitting, you authorize Carolina Lumper Service to contact you for scheduling and provide a written quote.</p>
+          </section>
+          
+          <!-- Form Navigation -->
+          <div class="form-nav">
+            <button type="button" id="backBtn" class="btn btn-secondary" style="display:none;">← Back</button>
+            <button type="button" id="nextBtn" class="btn btn-primary">Next →</button>
+            <button type="submit" id="submitBtn" class="btn btn-primary" style="display:none;">Submit Request</button>
+          </div>
+      </form>
+      
+      <!-- Success Message -->
+      <div id="successMsg" class="success" style="display:none;">✅ Thanks! Your request has been submitted.</div>
+    </section>
   </main>
 
   <!-- Footer -->
@@ -135,7 +356,7 @@
       steps[current].classList.add('active');
       if (current === total-1) buildSummary();
       updateProgress();
-      document.querySelector('.card').scrollIntoView({behavior:'smooth'});
+      document.getElementById('quote-request').scrollIntoView({behavior:'smooth'});
     }
 
     function next(){ go(current+1); }

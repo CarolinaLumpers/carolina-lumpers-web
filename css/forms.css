@@ -254,9 +254,11 @@ label[for="stayLoggedIn"] input {
 }
 
 .card {
-  background: #fff;
+  /* background: #fff; */
+  /* box-shadow: 0 4px 20px rgba(0,0,0,0.1); */
+  background: transparent;
+  border: none;
   border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
   overflow: hidden;
   margin: 20px 0;
 }
@@ -415,21 +417,8 @@ body[data-page="login"] main {
   padding: 20px;
 }
 
-/* === CLS Quote Form Flow Fixes === */
-body[data-page="contact"] {
-  background: #000;
-  padding-top: 140px;
-}
-
-/* Dark wrap around white form */
-.wrap {
-  background: #111;
-  border-radius: 12px;
-  padding: 30px;
-  margin: 40px auto;
-}
-
-/* Align progress bar and text */
+/* === Contact Form Progress Styling === */
+/* Progress bar styling for quote form */
 .progress-top {
   flex-wrap: wrap;
   justify-content: center;
@@ -437,14 +426,44 @@ body[data-page="contact"] {
   text-align: center;
 }
 
-/* Reduce padding on mobile */
+/* Form step responsive padding */
 @media (max-width: 768px) {
-  .wrap { padding: 15px; }
-  .form-step { padding: 20px 15px; }
+  .form-step { 
+    padding: 20px 15px; 
+  }
 }
 
-/* Make success message consistent */
+/* Success message styling */
 .success.show {
   display: block;
   margin-top: 25px;
+}
+
+/* Quote request section consistency */
+#quote-request {
+  background-color: var(--secondary-bg);
+  color: var(--text-color);
+  padding: 40px 0;
+}
+
+/* Form validation visual feedback */
+.field.invalid input,
+.field.invalid select {
+  border-color: #ff4c4c !important;
+  box-shadow: 0 0 4px #ff4c4c;
+}
+
+/* Success message display */
+.success {
+  background: #d4edda;
+  color: #155724;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid #c3e6cb;
+  text-align: center;
+  font-weight: 600;
+}
+
+.success.show {
+  display: block !important;
 }
