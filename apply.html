@@ -1,577 +1,500 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Apply to Carolina Lumper Service (CLS)</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/forms.css">
-    <link rel="icon" type="image/png" href="assets/CLS-favicon.png">
-    <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Apply to Carolina Lumper Service (CLS)</title>
 
+  <!-- Core styles (same as site) -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/forms.css">
+  <link rel="icon" type="image/png" href="assets/CLS-favicon.png">
+  <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+
+  <!-- Site scripts -->
+  <script src="js/script.js" defer></script>
 </head>
 
 <body data-page="apply">
-    <nav class="navbar">
-        <div class="logo-container">
-            <a href="index.html" class="logo-link">
-                <img src="assets/CLS_Nav_Logo.png" alt="CLS Logo" class="logo">
-            </a>
-            <a href="index.html" class="company-name">Carolina Lumper Service</a>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="logo-container">
+      <a href="index.html" class="logo-link">
+        <img src="assets/CLS_Nav_Logo.png" alt="CLS Logo" class="logo">
+      </a>
+      <a href="index.html" class="company-name">Carolina Lumper Service</a>
+    </div>
+    <ul class="nav-links">
+      <li><a href="index.html" data-en="Home" data-es="Inicio" data-pt="Início">Home</a></li>
+      <li><a href="about.html" data-en="About Us" data-es="Sobre Nosotros" data-pt="Sobre Nós">About Us</a></li>
+      <li><a href="services.html" data-en="Services" data-es="Servicios" data-pt="Serviços">Services</a></li>
+      <li><a href="contact.html" data-en="Contact" data-es="Contacto" data-pt="Contato">Contact</a></li>
+      <li><a href="apply.html" class="active" data-en="Apply" data-es="Solicitar" data-pt="Candidatar">Apply</a></li>
+    </ul>
+  </nav>
+
+  <!-- Hero -->
+  <header class="hero">
+    <div class="hero-content container text-center">
+      <h2 data-en="Join the CLS Team" data-es="Únete al Equipo CLS" data-pt="Junte-se à Equipe CLS">
+        Join the CLS Team
+      </h2>
+      <p
+        data-en="We are looking for motivated individuals to join our team. Fill out the application below to get started!"
+        data-es="Estamos buscando personas motivadas para unirse a nuestro equipo. ¡Complete la solicitud abajo para comenzar!"
+        data-pt="Estamos procurando pessoas motivadas para se juntar à nossa equipe. Preencha o formulário abaixo para começar!"
+      >
+        We are looking for motivated individuals to join our team. Fill out the application below to get started!
+      </p>
+    </div>
+    <div class="hero-image">
+      <img src="assets/CLS-Cover-01web.webp" alt="Hero Banner" class="banner-image">
+      <div class="blur-overlay"></div>
+    </div>
+  </header>
+
+  <!-- Application -->
+  <main class="container">
+    <section id="apply" class="section-container">
+      <div class="form-container">
+        <h2 data-en="Apply for a Position" data-es="Solicitar un Puesto" data-pt="Candidatar-se a uma Posição">
+          Apply for a Position
+        </h2>
+        <p
+          data-en="Interested in joining our team? Complete the form below:"
+          data-es="¿Interesado en unirte a nuestro equipo? Completa el formulario abajo:"
+          data-pt="Interessado em se juntar à nossa equipe? Complete o formulário abaixo:"
+        >
+          Interested in joining our team? Complete the form below:
+        </p>
+
+        <!-- Progress -->
+        <div class="progress" aria-live="polite">
+          <div class="progress-top">
+            <strong id="stepLabel">Step 1 of 6</strong>
+            <span id="stepName">Personal Information</span>
+          </div>
+          <div class="bar"><div class="bar-fill" id="barFill"></div></div>
+          <div class="steps" id="stepsDots"></div>
         </div>
-        <ul class="nav-links">
-            <li><a href="index.html" data-en="Home" data-es="Inicio" data-pt="Início">Home</a></li>
-            <li><a href="about.html" data-en="About Us" data-es="Sobre Nosotros" data-pt="Sobre Nós">About Us</a></li>
-            <li><a href="services.html" data-en="Services" data-es="Servicios" data-pt="Serviços">Services</a></li>
-            <li><a href="contact.html" data-en="Contact" data-es="Contacto" data-pt="Contato">Contact</a></li>
-            <li><a href="apply.html" class="active" data-en="Apply" data-es="Solicitar" data-pt="Candidatar">Apply</a>
-            </li>
-        </ul>
-    </nav>
 
-    <header class="hero">
-        <div class="hero-content container text-center">
-            <h2 data-en="Join the CLS Team" data-es="Únete al Equipo CLS" data-pt="Junte-se à Equipe CLS">Join the CLS
-                Team
-            </h2>
-            <p data-en="We are looking for motivated individuals to join our team. Fill out the application below to get started!"
-                data-es="Estamos buscando personas motivadas para unirse a nuestro equipo. ¡Complete la solicitud abajo para comenzar!"
-                data-pt="Estamos procurando pessoas motivadas para se juntar à nossa equipe. Preencha o formulário abaixo para começar!">
-                We are looking for motivated individuals to join our team. Fill out the application below to get
-                started!
-            </p>
-        </div>
-        <div class="hero-image">
-            <img src="assets/CLS-Cover-01web.webp" alt="Hero Banner" class="banner-image">
-            <div class="blur-overlay"></div>
-        </div>
-    </header>
+        <!-- Form -->
+        <form id="cls-apply"
+              action="https://script.google.com/macros/s/AKfycbxdD80YrBa6wa271_TtCpwWnQJbQfeRjZVe0iRkAdO36D_t3E44foSn11IdCEq1iJ6OSg/exec"
+              method="POST" novalidate>
+          <!-- Hidden meta + honeypot -->
+          <input type="hidden" name="startedAt" value="">
+          <input type="hidden" name="ui_lang" value="en">
+          <div style="position:absolute;left:-10000px" aria-hidden="true">
+            <span data-en="Website" data-es="Sitio web" data-pt="Site">Website</span>
+            <input name="website" tabindex="-1" autocomplete="off">
+          </div>
 
-    <section id="apply">
-        <div class="form-container">
-            <h2 data-en="Apply for a Position" data-es="Solicitar un Puesto" data-pt="Candidatar-se a uma Posição">Apply
-                for a
-                Position</h2>
-            <p data-en="Interested in joining our team? Complete the form below:"
-                data-es="¿Interesado en unirte a nuestro equipo? Completa el formulario abajo:"
-                data-pt="Interessado em se juntar à nossa equipe? Complete o formulário abaixo:">
-                Interested in joining our team? Complete the form below:
-            </p>
+          <!-- STEP 1: Personal Information -->
+          <section class="form-step active" data-title="Personal Information" data-en="Personal Information" data-es="Información personal" data-pt="Informações pessoais">
+            <div class="form-grid">
+              <label for="first_name" class="required" data-en="First name" data-es="Nombre" data-pt="Nome">First name</label>
+              <input id="first_name" name="first_name" required minlength="2" autocomplete="given-name"
+                     data-ph-en="First name" data-ph-es="Nombre" data-ph-pt="Nome">
 
-            <form id="cls-apply"
-                action="https://script.google.com/macros/s/AKfycbxdD80YrBa6wa271_TtCpwWnQJbQfeRjZVe0iRkAdO36D_t3E44foSn11IdCEq1iJ6OSg/exec"
-                method="POST">
-                <input type="hidden" name="startedAt" value="">
-                <input type="hidden" name="ui_lang" value="en">
+              <label for="last_name" class="required" data-en="Last name" data-es="Apellido" data-pt="Sobrenome">Last name</label>
+              <input id="last_name" name="last_name" required minlength="2" autocomplete="family-name"
+                     data-ph-en="Last name" data-ph-es="Apellido" data-ph-pt="Sobrenome">
 
-                <div style="position:absolute;left:-10000px" aria-hidden="true">
-                    <span data-en="Website" data-es="Sitio web" data-pt="Site">Website</span>
-                    <input name="website" tabindex="-1" autocomplete="off">
-                </div>
+              <label for="dob" class="required" data-en="Date of Birth" data-es="Fecha de nacimiento" data-pt="Data de nascimento">
+                Date of Birth
+              </label>
+              <input id="dob" name="dob" type="date" required max="" title="You must be at least 18 years old">
+              <span id="dobError" style="color:#d00;font-size:13px;display:none;"></span>
 
-                <div class="form-grid">
-                    <label for="first_name" data-en="First name" data-es="Nombre" data-pt="Nome" class="required">First
-                        name</label>
-                    <input id="first_name" name="first_name" required minlength="2" autocomplete="given-name"
-                        data-ph-en="First name" data-ph-es="Nombre" data-ph-pt="Nome">
+              <label for="email" class="required" data-en="Email" data-es="Correo electrónico" data-pt="E-mail">Email</label>
+              <input id="email" name="email" type="email" required autocomplete="email"
+                     data-ph-en="you@example.com" data-ph-es="tu@ejemplo.com" data-ph-pt="voce@exemplo.com">
 
-                    <label for="last_name" data-en="Last name" data-es="Apellido" data-pt="Sobrenome"
-                        class="required">Last
-                        name</label>
-                    <input id="last_name" name="last_name" required minlength="2" autocomplete="family-name"
-                        data-ph-en="Last name" data-ph-es="Apellido" data-ph-pt="Sobrenome">
+              <label for="phone" class="required" data-en="Phone" data-es="Teléfono" data-pt="Telefone">Phone</label>
+              <input id="phone" name="phone" type="tel" inputmode="tel" required autocomplete="tel"
+                     data-ph-en="(555) 555-1212" data-ph-es="(555) 555-1212" data-ph-pt="(11) 5555-1212">
+            </div>
+          </section>
 
-                    <label for="dob" data-en="Date of Birth" data-es="Fecha de nacimiento" data-pt="Data de nascimento"
-                        class="required">
-                        Date of Birth
-                    </label>
-                    <input id="dob" name="dob" type="date" required max=""
-                        title="You must be at least 18 years old">
-                    <span id="dobError" style="color:#d00;font-size:13px;display:none;"></span>
+          <!-- STEP 2: Location & Transportation -->
+          <section class="form-step" data-title="Location & Transportation" data-en="Location & Transportation" data-es="Ubicación y transporte" data-pt="Local e transporte">
+            <div class="form-grid">
+              <label for="city" class="required" data-en="City" data-es="Ciudad" data-pt="Cidade">City</label>
+              <input id="city" name="city" required autocomplete="address-level2" data-ph-en="City" data-ph-es="Ciudad" data-ph-pt="Cidade">
 
-                    <label for="email" data-en="Email" data-es="Correo electrónico" data-pt="E-mail"
-                        class="required">Email</label>
-                    <input id="email" name="email" type="email" required autocomplete="email"
-                        data-ph-en="you@example.com" data-ph-es="tu@ejemplo.com" data-ph-pt="voce@exemplo.com">
+              <label for="state" class="required" data-en="State" data-es="Estado" data-pt="Estado">State</label>
+              <select id="state" name="state" required autocomplete="address-level1">
+                <option value=""></option>
+                <option value="AL">Alabama</option><option value="AK">Alaska</option><option value="AZ">Arizona</option>
+                <option value="AR">Arkansas</option><option value="CA">California</option><option value="CO">Colorado</option>
+                <option value="CT">Connecticut</option><option value="DE">Delaware</option><option value="FL">Florida</option>
+                <option value="GA">Georgia</option><option value="HI">Hawaii</option><option value="ID">Idaho</option>
+                <option value="IL">Illinois</option><option value="IN">Indiana</option><option value="IA">Iowa</option>
+                <option value="KS">Kansas</option><option value="KY">Kentucky</option><option value="LA">Louisiana</option>
+                <option value="ME">Maine</option><option value="MD">Maryland</option><option value="MA">Massachusetts</option>
+                <option value="MI">Michigan</option><option value="MN">Minnesota</option><option value="MS">Mississippi</option>
+                <option value="MO">Missouri</option><option value="MT">Montana</option><option value="NE">Nebraska</option>
+                <option value="NV">Nevada</option><option value="NH">New Hampshire</option><option value="NJ">New Jersey</option>
+                <option value="NM">New Mexico</option><option value="NY">New York</option><option value="NC">North Carolina</option>
+                <option value="ND">North Dakota</option><option value="OH">Ohio</option><option value="OK">Oklahoma</option>
+                <option value="OR">Oregon</option><option value="PA">Pennsylvania</option><option value="RI">Rhode Island</option>
+                <option value="SC">South Carolina</option><option value="SD">South Dakota</option><option value="TN">Tennessee</option>
+                <option value="TX">Texas</option><option value="UT">Utah</option><option value="VT">Vermont</option>
+                <option value="VA">Virginia</option><option value="WA">Washington</option><option value="WV">West Virginia</option>
+                <option value="WI">Wisconsin</option><option value="WY">Wyoming</option>
+              </select>
 
-                    <label for="phone" data-en="Phone" data-es="Teléfono" data-pt="Telefone"
-                        class="required">Phone</label>
-                    <input id="phone" name="phone" type="tel" inputmode="tel" required autocomplete="tel"
-                        data-ph-en="(555) 555-1212" data-ph-es="(555) 555-1212" data-ph-pt="(11) 5555-1212">
+              <label for="transportation" class="required" data-en="Reliable Transportation" data-es="Transporte confiable" data-pt="Transporte confiável">
+                Reliable Transportation
+              </label>
+              <select id="transportation" name="transportation" required>
+                <option value=""></option>
+                <option value="Yes" data-en="Yes" data-es="Sí" data-pt="Sim">Yes</option>
+                <option value="No" data-en="No" data-es="No" data-pt="Não">No</option>
+              </select>
 
-                    <label for="city" data-en="City" data-es="Ciudad" data-pt="Cidade" class="required">City</label>
-                    <input id="city" name="city" required autocomplete="address-level2" data-ph-en="City"
-                        data-ph-es="Ciudad" data-ph-pt="Cidade">
+              <label for="driver_license" data-en="Valid Driver's License" data-es="Licencia de conducir válida" data-pt="Carteira de motorista válida">
+                Valid Driver's License
+              </label>
+              <select id="driver_license" name="driver_license">
+                <option value=""></option>
+                <option value="Yes" data-en="Yes" data-es="Sí" data-pt="Sim">Yes</option>
+                <option value="No" data-en="No" data-es="No" data-pt="Não">No</option>
+              </select>
 
-                    <label for="state" data-en="State" data-es="Estado" data-pt="Estado" class="required">State</label>
-                    <select id="state" name="state" required autocomplete="address-level1">
-                        <option value=""></option>
-                        <option value="AL">Alabama</option>
-                        <option value="AK">Alaska</option>
-                        <option value="AZ">Arizona</option>
-                        <option value="AR">Arkansas</option>
-                        <option value="CA">California</option>
-                        <option value="CO">Colorado</option>
-                        <option value="CT">Connecticut</option>
-                        <option value="DE">Delaware</option>
-                        <option value="FL">Florida</option>
-                        <option value="GA">Georgia</option>
-                        <option value="HI">Hawaii</option>
-                        <option value="ID">Idaho</option>
-                        <option value="IL">Illinois</option>
-                        <option value="IN">Indiana</option>
-                        <option value="IA">Iowa</option>
-                        <option value="KS">Kansas</option>
-                        <option value="KY">Kentucky</option>
-                        <option value="LA">Louisiana</option>
-                        <option value="ME">Maine</option>
-                        <option value="MD">Maryland</option>
-                        <option value="MA">Massachusetts</option>
-                        <option value="MI">Michigan</option>
-                        <option value="MN">Minnesota</option>
-                        <option value="MS">Mississippi</option>
-                        <option value="MO">Missouri</option>
-                        <option value="MT">Montana</option>
-                        <option value="NE">Nebraska</option>
-                        <option value="NV">Nevada</option>
-                        <option value="NH">New Hampshire</option>
-                        <option value="NJ">New Jersey</option>
-                        <option value="NM">New Mexico</option>
-                        <option value="NY">New York</option>
-                        <option value="NC">North Carolina</option>
-                        <option value="ND">North Dakota</option>
-                        <option value="OH">Ohio</option>
-                        <option value="OK">Oklahoma</option>
-                        <option value="OR">Oregon</option>
-                        <option value="PA">Pennsylvania</option>
-                        <option value="RI">Rhode Island</option>
-                        <option value="SC">South Carolina</option>
-                        <option value="SD">South Dakota</option>
-                        <option value="TN">Tennessee</option>
-                        <option value="TX">Texas</option>
-                        <option value="UT">Utah</option>
-                        <option value="VT">Vermont</option>
-                        <option value="VA">Virginia</option>
-                        <option value="WA">Washington</option>
-                        <option value="WV">West Virginia</option>
-                        <option value="WI">Wisconsin</option>
-                        <option value="WY">Wyoming</option>
-                    </select>
+              <label for="overtime_ok" data-en="Willing to Work Overtime" data-es="Dispuesto a trabajar horas extra" data-pt="Disposto a fazer horas extras">
+                Willing to Work Overtime
+              </label>
+              <select id="overtime_ok" name="overtime_ok">
+                <option value=""></option>
+                <option value="Yes" data-en="Yes" data-es="Sí" data-pt="Sim">Yes</option>
+                <option value="No" data-en="No" data-es="No" data-pt="Não">No</option>
+              </select>
 
+              <label for="travel_ok" data-en="Willing to Travel" data-es="Dispuesto a viajar" data-pt="Disposto a viajar">
+                Willing to Travel
+              </label>
+              <select id="travel_ok" name="travel_ok">
+                <option value=""></option>
+                <option value="Yes" data-en="Yes" data-es="Sí" data-pt="Sim">Yes</option>
+                <option value="No" data-en="No" data-es="No" data-pt="Não">No</option>
+              </select>
+            </div>
+          </section>
 
-                    <!-- Expanded Work Authorization -->
-                    <label for="work_authorization" data-en="Work Authorization"
-                           data-es="Autorización de trabajo" data-pt="Autorização de trabalho" class="required">
-                      Work Authorization
-                    </label>
-                    <select id="work_authorization" name="work_authorization" required>
-                      <option value=""></option>
-                      <option value="Citizen" data-en="US Citizen" data-es="Ciudadano de EE. UU." data-pt="Cidadão dos EUA">US Citizen</option>
-                      <option value="Permanent Resident" data-en="Permanent Resident" data-es="Residente Permanente" data-pt="Residente Permanente">Permanent Resident</option>
-                      <option value="Work Permit (EAD)" data-en="Work Permit (EAD)" data-es="Permiso de Trabajo (EAD)" data-pt="Permissão de Trabalho (EAD)">Work Permit (EAD)</option>
-                      <option value="Visa (H-2B)" data-en="Visa (H-2B)" data-es="Visa (H-2B)" data-pt="Visto (H-2B)">Visa (H-2B)</option>
-                      <option value="Visa (Other)" data-en="Other Visa" data-es="Otra Visa" data-pt="Outro Visto">Other Visa</option>
-                      <option value="Not Authorized" data-en="Not Authorized" data-es="No Autorizado" data-pt="Não Autorizado">Not Authorized</option>
-                    </select>
-                    <small id="authDescription" style="display:block;color:#bbb;font-size:0.9em;margin-top:4px;"></small>
-                    <small id="docNote" style="display:block;color:#ffcc00;font-size:0.9em;margin-top:4px;"></small>
+          <!-- STEP 3: Work Authorization & Start -->
+          <section class="form-step" data-title="Work Authorization & Start" data-en="Work Authorization & Start" data-es="Autorización y inicio" data-pt="Autorização e início">
+            <div class="form-grid">
+              <label for="work_authorization" class="required"
+                     data-en="Work Authorization" data-es="Autorización de trabajo" data-pt="Autorização de trabalho">
+                Work Authorization
+              </label>
+              <select id="work_authorization" name="work_authorization" required>
+                <option value=""></option>
+                <option value="Citizen" data-en="US Citizen" data-es="Ciudadano de EE. UU." data-pt="Cidadão dos EUA">US Citizen</option>
+                <option value="Permanent Resident" data-en="Permanent Resident" data-es="Residente Permanente" data-pt="Residente Permanente">Permanent Resident</option>
+                <option value="Work Permit (EAD)" data-en="Work Permit (EAD)" data-es="Permiso de Trabajo (EAD)" data-pt="Permissão de Trabalho (EAD)">Work Permit (EAD)</option>
+                <option value="Visa (H-2B)" data-en="Visa (H-2B)" data-es="Visa (H-2B)" data-pt="Visto (H-2B)">Visa (H-2B)</option>
+                <option value="Visa (Other)" data-en="Other Visa" data-es="Otra Visa" data-pt="Outro Visto">Other Visa</option>
+                <option value="Not Authorized" data-en="Not Authorized" data-es="No Autorizado" data-pt="Não Autorizado">Not Authorized</option>
+              </select>
+              <small id="authDescription" style="display:block;color:#bbb;font-size:0.9em;margin-top:4px;"></small>
+              <small id="docNote" style="display:block;color:#ffcc00;font-size:0.9em;margin-top:4px;"></small>
 
-                    <!-- New Fields -->
-                    <label for="start_date" data-en="Available Start Date" data-es="Fecha de inicio disponible" data-pt="Data de início disponível" class="required">
-                      Available Start Date
-                    </label>
-                    <input id="start_date" name="start_date" type="date" required>
+              <label for="start_date" class="required"
+                     data-en="Available Start Date" data-es="Fecha de inicio disponible" data-pt="Data de início disponível">
+                Available Start Date
+              </label>
+              <input id="start_date" name="start_date" type="date" required>
+            </div>
+          </section>
 
-                    <label for="transportation" data-en="Reliable Transportation" data-es="Transporte confiable" data-pt="Transporte confiável" class="required">
-                      Reliable Transportation
-                    </label>
-                    <select id="transportation" name="transportation" required>
-                      <option value=""></option>
-                      <option value="Yes" data-en="Yes" data-es="Sí" data-pt="Sim">Yes</option>
-                      <option value="No" data-en="No" data-es="No" data-pt="Não">No</option>
-                    </select>
+          <!-- STEP 4: Job Preferences & Experience -->
+          <section class="form-step" data-title="Job Preferences & Experience" data-en="Job Preferences & Experience" data-es="Preferencias y experiencia" data-pt="Preferências e experiência">
+            <div class="form-grid">
+              <label for="site" data-en="Preferred site" data-es="Sitio preferido" data-pt="Site preferido">Preferred site</label>
+              <select id="site" name="site">
+                <option value=""></option>
+                <option value="Matthews" data-en="CLT - Matthews" data-es="CLT - Matthews" data-pt="CLT - Matthews">CLT - Matthews</option>
+                <option value="Steel Creek" data-en="CLT - Steel Creek" data-es="CLT - Steel Creek" data-pt="CLT - Steel Creek">CLT - Steel Creek</option>
+              </select>
 
-                    <label for="driver_license" data-en="Valid Driver's License" data-es="Licencia de conducir válida"
-                           data-pt="Carteira de motorista válida">Valid Driver's License</label>
-                    <select id="driver_license" name="driver_license">
-                      <option value=""></option>
-                      <option value="Yes" data-en="Yes" data-es="Sí" data-pt="Sim">Yes</option>
-                      <option value="No" data-en="No" data-es="No" data-pt="Não">No</option>
-                    </select>
+              <label for="shift_preference" data-en="Preferred shift" data-es="Turno preferido" data-pt="Turno preferido">Preferred shift</label>
+              <select id="shift_preference" name="shift_preference">
+                <option value=""></option>
+                <option value="Day" data-en="Day" data-es="Día" data-pt="Dia">Day</option>
+                <option value="Evening" data-en="Evening" data-es="Tarde" data-pt="Tarde">Evening</option>
+                <option value="Night" data-en="Night" data-es="Noche" data-pt="Noite">Night</option>
+                <option value="Weekends" data-en="Weekends" data-es="Fines de semana" data-pt="Fins de semana">Weekends</option>
+              </select>
 
-                    <label for="overtime_ok" data-en="Willing to Work Overtime" data-es="Dispuesto a trabajar horas extra"
-                           data-pt="Disposto a fazer horas extras">Willing to Work Overtime</label>
-                    <select id="overtime_ok" name="overtime_ok">
-                      <option value=""></option>
-                      <option value="Yes" data-en="Yes" data-es="Sí" data-pt="Sim">Yes</option>
-                      <option value="No" data-en="No" data-es="No" data-pt="Não">No</option>
-                    </select>
+              <label for="experience_level" data-en="Experience level" data-es="Experiencia" data-pt="Experiência">Experience level</label>
+              <select id="experience_level" name="experience_level">
+                <option value=""></option>
+                <option value="None" data-en="None" data-es="Ninguna" data-pt="Nenhuma">None</option>
+                <option value="0–6 months" data-en="0–6 months" data-es="0–6 meses" data-pt="0–6 meses">0–6 months</option>
+                <option value="6–12 months" data-en="6–12 months" data-es="6–12 meses" data-pt="6–12 meses">6–12 months</option>
+                <option value="1–3 years" data-en="1–3 years" data-es="1–3 años" data-pt="1–3 anos">1–3 years</option>
+                <option value="3+ years" data-en="3+ years" data-es="3+ años" data-pt="3+ anos">3+ years</option>
+              </select>
 
-                    <label for="travel_ok" data-en="Willing to Travel" data-es="Dispuesto a viajar" data-pt="Disposto a viajar">
-                      Willing to Travel
-                    </label>
-                    <select id="travel_ok" name="travel_ok">
-                      <option value=""></option>
-                      <option value="Yes" data-en="Yes" data-es="Sí" data-pt="Sim">Yes</option>
-                      <option value="No" data-en="No" data-es="No" data-pt="Não">No</option>
-                    </select>
+              <label for="equipment_experience" data-en="Equipment Experience" data-es="Experiencia con equipos" data-pt="Experiência com equipamentos">
+                Equipment Experience
+              </label>
+              <input id="equipment_experience" name="equipment_experience"
+                     data-ph-en="Forklift, pallet jack" data-ph-es="Montacargas, patín hidráulico" data-ph-pt="Empilhadeira, paleteira">
 
-                    <label for="equipment_experience" data-en="Equipment Experience" data-es="Experiencia con equipos"
-                           data-pt="Experiência com equipamentos">Equipment Experience</label>
-                    <input id="equipment_experience" name="equipment_experience"
-                           data-ph-en="Forklift, pallet jack" data-ph-es="Montacargas, patín hidráulico" data-ph-pt="Empilhadeira, paleteira">
-
-                    <!-- Emergency Contact -->
-                    <label for="emergency_contact_name" data-en="Emergency Contact Name" data-es="Nombre del contacto de emergencia"
-                           data-pt="Nome do contato de emergência" class="required">Emergency Contact Name</label>
-                    <input id="emergency_contact_name" name="emergency_contact_name" required>
-
-                    <label for="emergency_contact_relation" data-en="Relationship" data-es="Relación" data-pt="Relação">Relationship</label>
-                    <input id="emergency_contact_relation" name="emergency_contact_relation">
-
-                    <label for="emergency_contact_phone" data-en="Emergency Contact Phone" data-es="Teléfono del contacto de emergencia"
-                           data-pt="Telefone do contato de emergência" class="required">Emergency Contact Phone</label>
-                    <input id="emergency_contact_phone" name="emergency_contact_phone" type="tel" required>
-
-                    <label for="referral_source" data-en="How did you hear about us?" data-es="¿Cómo se enteró de nosotros?"
-                           data-pt="Como soube de nós?">How did you hear about us?</label>
-                    <select id="referral_source" name="referral_source">
-                      <option value=""></option>
-                      <option value="Friend" data-en="Friend" data-es="Amigo" data-pt="Amigo">Friend</option>
-                      <option value="Facebook" data-en="Facebook" data-es="Facebook" data-pt="Facebook">Facebook</option>
-                      <option value="Indeed" data-en="Indeed" data-es="Indeed" data-pt="Indeed">Indeed</option>
-                      <option value="Other" data-en="Other" data-es="Otro" data-pt="Outro">Other</option>
-                    </select>
-
-                    <label for="language_preference" data-en="Language preference" data-es="Idioma preferido"
-                        data-pt="Idioma preferido" class="required">Language preference</label>
-                    <select id="language_preference" name="language_preference" required>
-                        <option value=""></option>
-                        <option value="English" data-en="English" data-es="Inglés" data-pt="Inglês">English</option>
-                        <option value="Spanish" data-en="Spanish" data-es="Español" data-pt="Espanhol">Spanish</option>
-                        <option value="Portuguese" data-en="Portuguese" data-es="Portugués" data-pt="Português">
-                            Portuguese</option>
-                        <option value="Other" data-en="Other" data-es="Otro" data-pt="Outro">Other</option>
-                    </select>
-
-                    <label for="english_proficiency" data-en="English proficiency" data-es="Dominio del inglés"
-                        data-pt="Proficiência em inglês" class="required">English proficiency</label>
-                    <select id="english_proficiency" name="english_proficiency" required>
-                        <option value=""></option>
-                        <option value="Basic" data-en="Basic" data-es="Básico" data-pt="Básico">Basic</option>
-                        <option value="Conversational" data-en="Conversational" data-es="Conversacional"
-                            data-pt="Conversacional">
-                            Conversational</option>
-                        <option value="Fluent" data-en="Fluent" data-es="Fluido" data-pt="Fluente">Fluent</option>
-                        <option value="Native" data-en="Native" data-es="Nativo" data-pt="Nativo">Native</option>
-                    </select>
-
-                    <label for="site" data-en="Preferred site" data-es="Sitio preferido"
-                        data-pt="Site preferido">Preferred
-                        site</label>
-                    <select id="site" name="site">
-                        <option value=""></option>
-                        <option value="Matthews" data-en="CLT - Matthews" data-es="CLT - Matthews" data-pt="CLT - Matthews">CLT - Matthews</option>
-                        <option value="Steel Creek" data-en="CLT - Steel Creek" data-es="CLT - Steel Creek" data-pt="CLT - Steel Creek">CLT - Steel Creek</option>
-                    </select>
-
-
-                    <label for="shift_preference" data-en="Preferred shift" data-es="Turno preferido"
-                        data-pt="Turno preferido">Preferred shift</label>
-                    <select id="shift_preference" name="shift_preference">
-                        <option value=""></option>
-                        <option value="Day" data-en="Day" data-es="Día" data-pt="Dia">Day</option>
-                        <option value="Evening" data-en="Evening" data-es="Tarde" data-pt="Tarde">Evening</option>
-                        <option value="Night" data-en="Night" data-es="Noche" data-pt="Noite">Night</option>
-                        <option value="Weekends" data-en="Weekends" data-es="Fines de semana" data-pt="Fins de semana">Weekends</option>
-                    </select>
-
-
-                    <label for="experience_level" data-en="Experience level" data-es="Experiencia"
-                        data-pt="Experiência">Experience level</label>
-                    <select id="experience_level" name="experience_level">
-                        <option value=""></option>
-                        <option value="None" data-en="None" data-es="Ninguna" data-pt="Nenhuma">None</option>
-                        <option value="0–6 months" data-en="0–6 months" data-es="0–6 meses" data-pt="0–6 meses">0–6 months</option>
-                        <option value="6–12 months" data-en="6–12 months" data-es="6–12 meses" data-pt="6–12 meses">6–12 months</option>
-                        <option value="1–3 years" data-en="1–3 years" data-es="1–3 años" data-pt="1–3 anos">1–3 years</option>
-                        <option value="3+ years" data-en="3+ years" data-es="3+ años" data-pt="3+ anos">3+ years</option>
-                    </select>
-                    <label for="notes" data-en="Notes" data-es="Notas" data-pt="Observações">Notes</label>
-                    <textarea id="notes" name="notes" rows="4" data-ph-en="Forklift certs, availability, locations"
+              <label for="notes" data-en="Notes" data-es="Notas" data-pt="Observações">Notes</label>
+              <textarea id="notes" name="notes" rows="4"
+                        data-ph-en="Certifications, availability, locations"
                         data-ph-es="Certificados, disponibilidad, ubicaciones"
                         data-ph-pt="Certificados, disponibilidade, locais"></textarea>
+            </div>
+          </section>
 
-                    <div class="full">
-                        <label>
-                            <input type="checkbox" name="consent" required>
-                            <span
-                              data-en='I agree to the <a href="privacyApp.html" target="_blank" style="color:#ffcc00;text-decoration:underline;">Privacy Policy</a>'
-                              data-es='Acepto la <a href="privacyApp.html" target="_blank" style="color:#ffcc00;text-decoration:underline;">Política de Privacidad</a>'
-                              data-pt='Concordo com a <a href="privacyApp.html" target="_blank" style="color:#ffcc00;text-decoration:underline;">Política de Privacidade</a>'>
-                              I agree to the <a href="privacyApp.html" target="_blank" style="color:#ffcc00;text-decoration:underline;">Privacy Policy</a>
-                            </span>
-                        </label>
-                    </div>
+          <!-- STEP 5: Emergency Contact -->
+          <section class="form-step" data-title="Emergency Contact" data-en="Emergency Contact" data-es="Contacto de emergencia" data-pt="Contato de emergência">
+            <div class="form-grid">
+              <label for="emergency_contact_name" class="required"
+                     data-en="Emergency Contact Name" data-es="Nombre del contacto de emergencia" data-pt="Nome do contato de emergência">
+                Emergency Contact Name
+              </label>
+              <input id="emergency_contact_name" name="emergency_contact_name" required>
 
-                    <div class="actions">
-                        <button type="submit" data-en="Submit application" data-es="Enviar solicitud"
-                            data-pt="Enviar candidatura">Submit application</button>
-                        <p id="status" role="status" aria-live="polite"></p>
-                    </div>
-                </div>
-            </form>
-        </div>
+              <label for="emergency_contact_relation"
+                     data-en="Relationship" data-es="Relación" data-pt="Relação">
+                Relationship
+              </label>
+              <input id="emergency_contact_relation" name="emergency_contact_relation">
+
+              <label for="emergency_contact_phone" class="required"
+                     data-en="Emergency Contact Phone" data-es="Teléfono del contacto de emergencia" data-pt="Telefone do contato de emergência">
+                Emergency Contact Phone
+              </label>
+              <input id="emergency_contact_phone" name="emergency_contact_phone" type="tel" required>
+            </div>
+          </section>
+
+          <!-- STEP 6: Language & Privacy -->
+          <section class="form-step" data-title="Language & Privacy" data-en="Language & Privacy" data-es="Idioma y privacidad" data-pt="Idioma e privacidade">
+            <div class="form-grid">
+              <label for="language_preference" class="required"
+                     data-en="Language preference" data-es="Idioma preferido" data-pt="Idioma preferido">
+                Language preference
+              </label>
+              <select id="language_preference" name="language_preference" required>
+                <option value=""></option>
+                <option value="English" data-en="English" data-es="Inglés" data-pt="Inglês">English</option>
+                <option value="Spanish" data-en="Spanish" data-es="Español" data-pt="Espanhol">Spanish</option>
+                <option value="Portuguese" data-en="Portuguese" data-es="Portugués" data-pt="Português">Portuguese</option>
+                <option value="Other" data-en="Other" data-es="Otro" data-pt="Outro">Other</option>
+              </select>
+
+              <label for="english_proficiency" class="required"
+                     data-en="English proficiency" data-es="Dominio del inglés" data-pt="Proficiência em inglês">
+                English proficiency
+              </label>
+              <select id="english_proficiency" name="english_proficiency" required>
+                <option value=""></option>
+                <option value="Basic" data-en="Basic" data-es="Básico" data-pt="Básico">Basic</option>
+                <option value="Conversational" data-en="Conversational" data-es="Conversacional" data-pt="Conversacional">Conversational</option>
+                <option value="Fluent" data-en="Fluent" data-es="Fluido" data-pt="Fluente">Fluent</option>
+                <option value="Native" data-en="Native" data-es="Nativo" data-pt="Nativo">Native</option>
+              </select>
+
+              <div class="full">
+                <label>
+                  <input type="checkbox" name="consent" required>
+                  <span
+                    data-en='I agree to the <a href="privacyApp.html" target="_blank" style="color:#ffcc00;text-decoration:underline;">Privacy Policy</a>'
+                    data-es='Acepto la <a href="privacyApp.html" target="_blank" style="color:#ffcc00;text-decoration:underline;">Política de Privacidad</a>'
+                    data-pt='Concordo com a <a href="privacyApp.html" target="_blank" style="color:#ffcc00;text-decoration:underline;">Política de Privacidade</a>'>
+                    I agree to the <a href="privacyApp.html" target="_blank" style="color:#ffcc00;text-decoration:underline;">Privacy Policy</a>
+                  </span>
+                </label>
+              </div>
+            </div>
+          </section>
+
+          <!-- Wizard nav -->
+          <div class="form-nav">
+            <button type="button" id="backBtn" class="btn btn-secondary" style="display:none;">← <span data-en="Back" data-es="Atrás" data-pt="Voltar">Back</span></button>
+            <button type="button" id="nextBtn" class="btn btn-primary"><span data-en="Next" data-es="Siguiente" data-pt="Próximo">Next</span> →</button>
+            <button type="submit" id="submitBtn" class="btn btn-primary" style="display:none;"><span data-en="Submit application" data-es="Enviar solicitud" data-pt="Enviar candidatura">Submit application</span></button>
+          </div>
+
+          <div id="successMsg" class="success" aria-live="polite" style="display:none;">
+            ✅ <span data-en="Thanks! Your application has been submitted." data-es="¡Gracias! Su solicitud ha sido enviada." data-pt="Obrigado! Sua candidatura foi enviada.">Thanks! Your application has been submitted.</span>
+          </div>
+        </form>
+      </div>
     </section>
+  </main>
 
-    <footer>
-        <p data-en="© 2024 Carolina Lumper Service. All rights reserved."
-            data-es="© 2024 Carolina Lumper Service. Todos los derechos reservados."
-            data-pt="© 2024 Carolina Lumper Service. Todos os direitos reservados.">
-            © 2024 Carolina Lumper Service. All rights reserved.
-        </p>
-        <div class="footer-icons">
-            <a href="https://www.facebook.com/profile.php?id=61569872795390"><img src="assets/facebook-icon.png"
-                    alt="Facebook"></a>
-            <a href="#"><img src="assets/linkedin-icon.png" alt="LinkedIn"></a>
-        </div>
-        <div class="language-toggle">
-            <button onclick="switchLanguage('en')">English</button>
-            <button onclick="switchLanguage('es')">Español</button>
-            <button onclick="switchLanguage('pt')">Português</button>
-        </div>
-    </footer>
-    
-    <script>
-      (function(){
-        const form = document.getElementById('applicationForm');
-        const steps = Array.from(form.querySelectorAll('.form-step'));
-        const stepLabel = document.getElementById('stepLabel');
-        const stepName = document.getElementById('stepName');
-        const barFill = document.getElementById('barFill');
-        const backBtn = document.getElementById('backBtn');
-        const nextBtn = document.getElementById('nextBtn');
-        const submitBtn = document.getElementById('submitBtn');
-        const successMsg = document.getElementById('successMsg');
-        const summaryList = document.getElementById('summaryList');
-        const stepsDots = document.getElementById('stepsDots');
-        const saveDraftBtn = document.getElementById('saveDraftBtn');
+  <!-- Footer -->
+  <footer>
+    <p
+      data-en="© 2024 Carolina Lumper Service. All rights reserved."
+      data-es="© 2024 Carolina Lumper Service. Todos los derechos reservados."
+      data-pt="© 2024 Carolina Lumper Service. Todos os direitos reservados."
+    >
+      © 2024 Carolina Lumper Service. All rights reserved.
+    </p>
+    <div class="footer-icons">
+      <a href="https://www.facebook.com/profile.php?id=61569872795390"><img src="assets/facebook-icon.png" alt="Facebook"></a>
+      <a href="#"><img src="assets/linkedin-icon.png" alt="LinkedIn"></a>
+    </div>
+    <div class="language-toggle">
+      <button onclick="switchLanguage('en')">English</button>
+      <button onclick="switchLanguage('es')">Español</button>
+      <button onclick="switchLanguage('pt')">Português</button>
+    </div>
+  </footer>
 
-        let current = 0;
-        const total = steps.length;
+  <!-- Wizard Logic (mirrors contact page, adapted for cls-apply) -->
+  <script>
+  (function(){
+    const form = document.getElementById('cls-apply');
+    const steps = Array.from(form.querySelectorAll('.form-step'));
+    const stepLabel = document.getElementById('stepLabel');
+    const stepName = document.getElementById('stepName');
+    const barFill = document.getElementById('barFill');
+    const backBtn = document.getElementById('backBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const submitBtn = document.getElementById('submitBtn');
+    const successMsg = document.getElementById('successMsg');
+    const stepsDots = document.getElementById('stepsDots');
 
-        // Build numbered dots
-        const titles = steps.map(s => s.dataset.title || 'Step');
-        titles.forEach((t,i)=>{
-          const dot=document.createElement('button');
-          dot.type='button';
-          dot.className='step-dot';
-          dot.title=t;
-          dot.textContent=(i+1);
-          dot.addEventListener('click',()=>go(i,true));
-          stepsDots.appendChild(dot);
-        });
+    let current = 0;
+    const total = steps.length;
 
-        function updateProgress(){
-          stepLabel.textContent = `Step ${current+1} of ${total}`;
-          stepName.textContent = titles[current] || '';
-          const pct = (current+1)/total;
-          barFill.style.transform = `scaleX(${pct})`;
-          stepsDots.querySelectorAll('.step-dot').forEach((d,i)=>{
-            d.setAttribute('aria-current', i===current ? 'step' : 'false');
-            d.classList.toggle('done', i<current);
-          });
-          backBtn.style.visibility = current === 0 ? 'hidden' : 'visible';
-          nextBtn.style.display = current === total-1 ? 'none' : 'inline-flex';
-          submitBtn.style.display = current === total-1 ? 'inline-flex' : 'none';
-        }
+    // Age limit for DOB max
+    const dobInput = document.getElementById('dob');
+    if (dobInput){
+      const today = new Date();
+      const y = today.getFullYear() - 18;
+      const m = String(today.getMonth() + 1).padStart(2, '0');
+      const d = String(today.getDate()).padStart(2, '0');
+      dobInput.max = `${y}-${m}-${d}`;
+    }
 
-        function go(n, allowSkip=false){
-          // Block skipping required fields going forward
-          if (!allowSkip && n>current) {
-            if (!validateStep(current)) return;
-          }
-          steps[current].classList.remove('active');
-          current = Math.max(0, Math.min(total-1, n));
-          steps[current].classList.add('active');
-          if (current === total-1) buildSummary();
-          updateProgress();
-          scrollToTop();
-        }
+    // Step titles → dots
+    const titles = steps.map(s => s.dataset.title || 'Step');
+    titles.forEach((t,i)=>{
+      const dot=document.createElement('button');
+      dot.type='button';
+      dot.className='step-dot';
+      dot.textContent=(i+1);
+      dot.title=t;
+      dot.addEventListener('click',()=>go(i,true)); // allow back/skip via dots
+      stepsDots.appendChild(dot);
+    });
 
-        function next(){ go(current+1); }
-        function back(){ go(current-1, true); }
+    function updateProgress(){
+      stepLabel.textContent = `Step ${current+1} of ${total}`;
+      stepName.textContent = titles[current];
+      barFill.style.transform = `scaleX(${(current+1)/total})`;
+      stepsDots.querySelectorAll('.step-dot').forEach((d,i)=>{
+        d.setAttribute('aria-current', i===current ? 'step' : 'false');
+        d.classList.toggle('done', i<current);
+      });
+      backBtn.style.display = current === 0 ? 'none' : 'inline-flex';
+      nextBtn.style.display = current === total-1 ? 'none' : 'inline-flex';
+      submitBtn.style.display = current === total-1 ? 'inline-flex' : 'none';
+    }
 
-        function scrollToTop(){
-          document.querySelector('.card').scrollIntoView({behavior:'smooth', block:'start'});
-        }
+    function go(n, skip=false){
+      if (!skip && n>current && !validateStep(current)) return;
+      steps[current].classList.remove('active');
+      current = Math.max(0, Math.min(total-1, n));
+      steps[current].classList.add('active');
+      updateProgress();
+      document.getElementById('apply').scrollIntoView({behavior:'smooth'});
+    }
 
-        function setInvalid(field, msg){
-          field.classList.add('invalid');
-          const err = field.querySelector('.error');
-          if (err && msg) err.textContent = msg;
-        }
-        function clearInvalid(field){ field.classList.remove('invalid'); }
+    function next(){ go(current+1); }
+    function back(){ go(current-1, true); }
+    document.getElementById('nextBtn').addEventListener('click', next);
+    document.getElementById('backBtn').addEventListener('click', back);
 
-        function validateEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(v||'').trim()); }
-        
-        function isOver18(dob) {
-          if (!dob) return false;
-          const today = new Date();
-          const birthDate = new Date(dob);
-          const age = today.getFullYear() - birthDate.getFullYear();
-          const monthDiff = today.getMonth() - birthDate.getMonth();
-          if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-            return age - 1 >= 18;
-          }
-          return age >= 18;
-        }
+    // Basic validators
+    const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    function isOver18(dobStr){
+      if (!dobStr) return false;
+      const today = new Date();
+      const dob = new Date(dobStr);
+      let age = today.getFullYear() - dob.getFullYear();
+      const m = today.getMonth() - dob.getMonth();
+      if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
+      return age >= 18;
+    }
 
-        function validateStep(idx){
-          const stepEl = steps[idx];
-          const fields = stepEl.querySelectorAll('.field');
-          let ok = true;
+    function setInvalid(el){ el && el.classList && el.classList.add('invalid'); }
+    function clearInvalids(scope){ scope.querySelectorAll('.field, label, select, input').forEach(x=>x.classList && x.classList.remove('invalid')); }
 
-          fields.forEach(f=>clearInvalid(f));
+    function validateStep(idx){
+      const step = steps[idx];
+      clearInvalids(step);
+      let ok = true;
 
-          // Step-specific validation
-          if (idx===0){ // Personal Information
-            const firstName = stepEl.querySelector('input[name="first_name"]');
-            const lastName = stepEl.querySelector('input[name="last_name"]');
-            const dob = stepEl.querySelector('input[name="dob"]');
-            const phone = stepEl.querySelector('input[name="phone"]');
-            const email = stepEl.querySelector('input[name="email"]');
-            
-            if (!firstName.value.trim()){ setInvalid(firstName.parentElement); ok=false; }
-            if (!lastName.value.trim()){ setInvalid(lastName.parentElement); ok=false; }
-            if (!dob.value || !isOver18(dob.value)){ setInvalid(dob.parentElement, "You must be at least 18 years old."); ok=false; }
-            if (!phone.value.trim()){ setInvalid(phone.parentElement); ok=false; }
-            if (!validateEmail(email.value)){ setInvalid(email.parentElement); ok=false; }
-          }
-          if (idx===1){ // Location & Transportation
-            const city = stepEl.querySelector('input[name="city"]');
-            const state = stepEl.querySelector('select[name="state"]');
-            const transport = stepEl.querySelector('select[name="reliable_transport"]');
-            const travel = stepEl.querySelector('select[name="willing_travel"]');
-            
-            if (!city.value.trim()){ setInvalid(city.parentElement); ok=false; }
-            if (!state.value){ setInvalid(state.parentElement); ok=false; }
-            if (!transport.value){ setInvalid(transport.parentElement); ok=false; }
-            if (!travel.value){ setInvalid(travel.parentElement); ok=false; }
-          }
-          if (idx===4){ // Authorization
-            const background = stepEl.querySelector('select[name="background_check"]');
-            const consent = stepEl.querySelector('input[name="consent"]');
-            
-            if (!background.value){ setInvalid(background.parentElement); ok=false; }
-            if (!consent.checked){ setInvalid(consent.parentElement); ok=false; }
-          }
-          return ok;
-        }
+      if (idx === 0){ // Personal
+        const fn = form.first_name, ln = form.last_name, dob = form.dob, phone = form.phone, email = form.email;
+        if (!fn.value.trim()) { setInvalid(fn); ok=false; }
+        if (!ln.value.trim()) { setInvalid(ln); ok=false; }
+        if (!dob.value || !isOver18(dob.value)) { setInvalid(dob); ok=false; }
+        if (!phone.value.trim()) { setInvalid(phone); ok=false; }
+        if (!emailRe.test(email.value)) { setInvalid(email); ok=false; }
+      }
 
-        function getAllValues(){
-          const fd = new FormData(form);
-          return { fd };
-        }
+      if (idx === 1){ // Location & transportation
+        const city = form.city, state = form.state, transportation = form.transportation;
+        if (!city.value.trim()) { setInvalid(city); ok=false; }
+        if (!state.value) { setInvalid(state); ok=false; }
+        if (!transportation.value) { setInvalid(transportation); ok=false; }
+      }
 
-        function buildSummary(){
-          const { fd } = getAllValues();
-          const entries = [];
-          const push = (k,v)=>{ if(v && String(v).trim()) entries.push([k,String(v).trim()]); };
+      if (idx === 2){ // Work authorization
+        const wa = form.work_authorization, sd = form.start_date;
+        if (!wa.value) { setInvalid(wa); ok=false; }
+        if (!sd.value) { setInvalid(sd); ok=false; }
+      }
 
-          push('Name', `${fd.get('first_name')} ${fd.get('last_name')}`);
-          push('Date of Birth', fd.get('dob'));
-          push('Phone', fd.get('phone'));
-          push('Email', fd.get('email'));
-          push('Location', `${fd.get('city')}, ${fd.get('state')}`);
-          push('Reliable Transportation', fd.get('reliable_transport'));
-          push('Willing to Travel', fd.get('willing_travel'));
-          push('Preferred Shift', fd.get('shift_preferences'));
-          push('Start Date', fd.get('start_date'));
-          push('Previous Experience', fd.get('previous_experience'));
-          push('Certifications', fd.get('certifications'));
-          push('Background Check Consent', fd.get('background_check'));
-          push('Emergency Contact', fd.get('emergency_contact_name'));
-          push('Emergency Phone', fd.get('emergency_contact_phone'));
-          push('Why Interested', fd.get('why_interested'));
-          push('Availability', fd.get('availability'));
-          push('Notes', fd.get('notes'));
+      if (idx === 5){ // Language & privacy
+        const lang = form.language_preference, eng = form.english_proficiency, consent = form.consent;
+        if (!lang.value) { setInvalid(lang); ok=false; }
+        if (!eng.value) { setInvalid(eng); ok=false; }
+        if (!consent.checked) { setInvalid(consent); ok=false; }
+      }
+      return ok;
+    }
 
-          summaryList.innerHTML = entries.map(([k,v])=>`<dt>${k}</dt><dd>${v}</dd>`).join('');
-        }
+    // Submission via fetch (so we can show on-page success)
+    form.addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      if (!validateStep(current)) return;
 
-        function saveDraft(){
-          const { fd } = getAllValues();
-          const obj = {};
-          fd.forEach((v,k)=>{ obj[k]=v; });
-          try{
-            localStorage.setItem('CLS_APPLICATION_DRAFT', JSON.stringify(obj));
-            saveDraftBtn.textContent = 'Saved ✓';
-            setTimeout(()=>saveDraftBtn.textContent='Save Draft', 1500);
-          }catch(e){}
-        }
+      // Set startedAt if empty
+      if (!form.startedAt.value) form.startedAt.value = Date.now();
 
-        function loadDraft(){
-          try{
-            const raw = localStorage.getItem('CLS_APPLICATION_DRAFT');
-            if(!raw) return;
-            const obj = JSON.parse(raw);
-            for (const [k,v] of Object.entries(obj)){
-              const el = form.elements[k];
-              if (!el) continue;
-              if (el.type === 'checkbox'){
-                el.checked = v === 'on' || v === true || v === 'true';
-              } else {
-                el.value = v;
-              }
-            }
-          }catch(e){}
-        }
+      const endpoint = form.getAttribute('action');
+      const fd = new FormData(form);
 
-        backBtn.addEventListener('click', back);
-        nextBtn.addEventListener('click', next);
-        saveDraftBtn.addEventListener('click', saveDraft);
+      try{
+        const res = await fetch(endpoint, { method:'POST', body: fd });
+        if (!res.ok) throw new Error('Submit failed');
+        successMsg.style.display = 'block';
+        nextBtn.disabled = true; backBtn.disabled = true; submitBtn.disabled = true;
+      }catch(err){
+        successMsg.textContent = '⚠️ Error submitting application. Please try again.';
+        successMsg.style.display = 'block';
+      }
+    });
 
-        // Submit handler
-        form.addEventListener('submit', async (e)=>{
-          e.preventDefault();
-          if (!validateStep(current)) return;
-
-          const { fd } = getAllValues();
-          fd.set('startedAt', Date.now());
-          fd.set('formType', 'job-application');
-
-          try {
-            const API_BASE = "https://script.google.com/macros/s/AKfycbxdD80YrBa6wa271_TtCpwWnQJbQfeRjZVe0iRkAdO36D_t3E44foSn11IdCEq1iJ6OSg/exec";
-            const res = await fetch(API_BASE, { method:'POST', body: fd });
-            
-            if (res.ok) {
-              successMsg.classList.add('show');
-              submitBtn.disabled = true; nextBtn.disabled = true; backBtn.disabled = true;
-              
-              // Clear draft after success
-              try{ localStorage.removeItem('CLS_APPLICATION_DRAFT'); }catch(_){}
-            } else {
-              throw new Error('Submission failed');
-            }
-          } catch (error) {
-            successMsg.textContent = '⚠️ Error submitting application. Please try again.';
-            successMsg.classList.add('show');
-          }
-        });
-
-        // Auto-fill signature date
-        const today = new Date().toISOString().split('T')[0];
-        form.querySelector('input[name="signatureDate"]').value = today;
-
-        // init
-        steps[0].classList.add('active');
-        updateProgress();
-        loadDraft();
-      })();
-    </script>
-    <script src="js/script.js" defer></script>
+    // Init
+    steps[0].classList.add('active');
+    updateProgress();
+  })();
+  </script>
 </body>
-
 </html>
