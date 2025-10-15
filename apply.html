@@ -352,8 +352,11 @@
   <!-- Wizard Logic (mirrors contact page, adapted for cls-apply) -->
   <script>
   (function(){
+    console.log('Apply form script starting...');
     const form = document.getElementById('applicationForm');
+    console.log('Form found:', form);
     const steps = Array.from(form.querySelectorAll('.form-step'));
+    console.log('Steps found:', steps.length, steps);
     const stepLabel = document.getElementById('stepLabel');
     const stepName = document.getElementById('stepName');
     const barFill = document.getElementById('barFill');
@@ -365,6 +368,7 @@
 
     let current = 0;
     const total = steps.length;
+    console.log('Total steps:', total);
 
     // Age limit for DOB max
     const dobInput = document.getElementById('dob');
@@ -490,7 +494,11 @@
 
     // Init
     steps[0].classList.add('active');
+    console.log('First step made active:', steps[0]);
+    console.log('First step classes:', steps[0].className);
+    console.log('First step computed style display:', window.getComputedStyle(steps[0]).display);
     updateProgress();
+    console.log('Apply form initialization complete');
   })();
   </script>
 

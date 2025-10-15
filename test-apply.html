@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Apply Form</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/forms.css">
+</head>
+<body data-page="apply">
+  <div style="background: #222; padding: 20px; margin: 20px;">
+    <h1 style="color: white;">Apply Form Test</h1>
+    
+    <section id="apply">
+      <div class="form-container">
+        <div class="progress">
+          <div class="progress-top">
+            <strong>Step 1 of 6</strong>
+            <span>Personal Information</span>
+          </div>
+          <div class="bar"><div class="bar-fill" style="transform: scaleX(0.16);"></div></div>
+        </div>
+
+        <form id="applicationForm">
+          <section class="form-step active">
+            <div class="form-grid">
+              <label for="first_name" class="required">First name</label>
+              <input id="first_name" name="first_name" placeholder="Test input">
+              
+              <label for="email" class="required">Email</label>
+              <input id="email" name="email" type="email" placeholder="test@example.com">
+            </div>
+          </section>
+        </form>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    console.log('Test page loaded');
+    const step = document.querySelector('.form-step');
+    const inputs = document.querySelectorAll('input');
+    console.log('Step element:', step);
+    console.log('Step display:', window.getComputedStyle(step).display);
+    console.log('Step background:', window.getComputedStyle(step).backgroundColor);
+    console.log('Found inputs:', inputs.length);
+    inputs.forEach((input, i) => {
+      console.log(`Input ${i}:`, input);
+      console.log(`Input ${i} background:`, window.getComputedStyle(input).backgroundColor);
+      console.log(`Input ${i} color:`, window.getComputedStyle(input).color);
+    });
+  </script>
+</body>
+</html>

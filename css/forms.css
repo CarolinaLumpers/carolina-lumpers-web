@@ -382,10 +382,13 @@ label[for="stayLoggedIn"] input {
 
 .form-step input,
 .form-step select,
-.form-step textarea {
-  background: #1a1a1a;
-  color: #fff;
-  border: 1px solid #555;
+.form-step textarea,
+.form-step .form-grid input,
+.form-step .form-grid select,
+.form-step .form-grid textarea {
+  background: #1a1a1a !important;
+  color: #fff !important;
+  border: 1px solid #555 !important;
   border-radius: 6px;
   padding: 10px;
   width: 100%;
