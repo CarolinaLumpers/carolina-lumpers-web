@@ -88,9 +88,9 @@ const CLS_TEXT = {
       pt: "📱 Modo App: PWA Instalado"
     },
     serviceWorkerActive: {
-      en: "🔄 App Mode: Enhanced Features Active",
-      es: "🔄 Modo App: Funciones Mejoradas Activas",
-      pt: "🔄 Modo App: Recursos Avançados Ativos"
+      en: "🔄 App Mode: Online",
+      es: "🔄 Modo App: En Línea",
+      pt: "🔄 Modo App: Online"
     },
     defaultActive: {
       en: "📱 App Mode Active",
