@@ -365,6 +365,38 @@
     // ======================== CONFIG ========================
     const API_URL = "https://script.google.com/macros/s/AKfycbwHBLEQ5QHuhD-O4uI4hRN_5_yS9YsFgtn_dMAdoAO2C7zHLoi3qfHO82vas3Uv0wXXpg/exec";
     
+    // ======================== JSONP HELPER ========================
+    function jsonp(url) {
+      return new Promise((resolve, reject) => {
+        const cb = "cb_" + Math.random().toString(36).slice(2);
+        const s = document.createElement("script");
+        
+        window[cb] = (data) => {
+          resolve(data);
+          document.head.removeChild(s);
+          delete window[cb];
+        };
+        
+        s.onerror = () => {
+          reject(new Error('Network Error: Failed to load script'));
+          document.head.removeChild(s);
+          delete window[cb];
+        };
+        
+        s.src = url + (url.includes('?') ? '&' : '?') + `callback=${cb}`;
+        document.head.appendChild(s);
+        
+        // Timeout after 30 seconds
+        setTimeout(() => {
+          if (window[cb]) {
+            reject(new Error('Request timeout'));
+            document.head.removeChild(s);
+            delete window[cb];
+          }
+        }, 30000);
+      });
+    }
+    
     // Local getText function for dashboard (fallback until script.js loads)
     function getText(path, lang) {
       const dashboardTexts = {
@@ -1004,7 +1036,8 @@
             }</td></tr>`;
         }
       } catch (err) {
-        body.innerHTML = `<tr><td colspan="2">${getMSG('reportError')} ${err.message || err}</td></tr>`;
+        console.error('Report loading error:', err);
+        body.innerHTML = `<tr><td colspan="4">${getMSG('reportError')}: ${err.message || err}</td></tr>`;
       }
     }
     // Label helper for the payroll total line
