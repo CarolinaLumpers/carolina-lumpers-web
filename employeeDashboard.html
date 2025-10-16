@@ -319,11 +319,28 @@
     const displayName = localStorage.getItem("CLS_WorkerName");
     const email = localStorage.getItem("CLS_Email");
 
-    if (!workerId || !displayName || !email) {
+    if (!workerId) {
       alert("Session expired. Please log in again.");
       window.location.href = "employeelogin.html";
+      return;
     }
-    const userData = { workerId, displayName, email };
+    
+    // Check if we have placeholder data from biometric login
+    const hasPlaceholderData = !displayName || !email || 
+                              displayName.startsWith('Worker ') || 
+                              email.includes('@placeholder.com');
+    
+    if (hasPlaceholderData) {
+      console.log('📝 Biometric login detected - user data may need refresh');
+      // For now, continue with available data
+      // TODO: Could fetch fresh user data from API here
+    }
+    
+    const userData = { 
+      workerId, 
+      displayName: displayName || `Worker ${workerId}`, 
+      email: email || `${workerId}@placeholder.com` 
+    };
 
     // View As functionality
     let VIEW_AS_WORKER = null;      // stores workerId being viewed

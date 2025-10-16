@@ -1170,9 +1170,19 @@ async function biometricLogin() {
       // Restore session data
       localStorage.setItem("CLS_WorkerID", registeredFor);
       
-      // If we don't have stored user data, we'll get it on the dashboard
-      if (storedUserName) localStorage.setItem("CLS_WorkerName", storedUserName);
-      if (storedEmail) localStorage.setItem("CLS_Email", storedEmail);
+      // Set user data - use stored data if available, otherwise set placeholders
+      // The dashboard will need to fetch fresh data if placeholders are used
+      if (storedUserName) {
+        localStorage.setItem("CLS_WorkerName", storedUserName);
+      } else {
+        localStorage.setItem("CLS_WorkerName", `Worker ${registeredFor}`);
+      }
+      
+      if (storedEmail) {
+        localStorage.setItem("CLS_Email", storedEmail);
+      } else {
+        localStorage.setItem("CLS_Email", `${registeredFor}@placeholder.com`);
+      }
       
       // Set session preferences - default to remember user for biometric logins
       localStorage.setItem('CLS_RememberUser', 'true');
@@ -1320,22 +1330,14 @@ function initLoginForm() {
       const data = await res.json();
 
       if (data.success) {
-        // Check if user wants to stay logged in
-        const stayLoggedIn = document.getElementById('stayLoggedIn')?.checked;
-        
         // Save user info to localStorage for later use (dashboard, etc.)
         localStorage.setItem("CLS_WorkerID", data.workerId);
         localStorage.setItem("CLS_WorkerName", data.displayName);
         localStorage.setItem("CLS_Email", data.email);
         
-        // Save login preference for session management
-        if (stayLoggedIn) {
-          localStorage.setItem('CLS_RememberUser', 'true');
-          localStorage.removeItem('CLS_SessionExpiry'); // No expiry = infinite
-        } else {
-          localStorage.setItem('CLS_RememberUser', 'false');
-          localStorage.setItem('CLS_SessionExpiry', String(Date.now() + (8 * 60 * 60 * 1000))); // 8 hours
-        }
+        // Always stay logged in by default - no session expiry
+        localStorage.setItem('CLS_RememberUser', 'true');
+        localStorage.removeItem('CLS_SessionExpiry'); // No expiry = infinite session
 
         statusEl.textContent = MESSAGES[currentLang].success;
 
