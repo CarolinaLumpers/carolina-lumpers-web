@@ -884,19 +884,24 @@ function checkBiometricSupport() {
       
       // Check if already registered
       const isRegistered = localStorage.getItem('CLS_BioRegistered') === 'true';
-      const workerId = localStorage.getItem('CLS_WorkerID');
+      const registeredFor = localStorage.getItem('CLS_BioRegisteredFor');
+      const credentialId = localStorage.getItem('CLS_BioCredentialId');
       
-      console.log('📋 Biometric registration status:', { isRegistered, hasWorkerId: !!workerId });
+      console.log('📋 Biometric registration status:', { 
+        isRegistered, 
+        hasRegisteredFor: !!registeredFor,
+        hasCredentialId: !!credentialId 
+      });
       
-      if (isRegistered && workerId) {
+      if (isRegistered && registeredFor && credentialId) {
         // Show button and update text/icon for registered users
         biometricBtn.style.display = 'block';
         updateBiometricButtonText();
-        console.log('👤 Biometric button shown for registered user');
+        console.log('👤 Biometric button shown for registered user:', registeredFor);
       } else {
-        // Hide until first successful login
+        // Hide until first successful login and registration
         biometricBtn.style.display = 'none';
-        console.log('👻 Biometric button hidden - user not registered yet');
+        console.log('👻 Biometric button hidden - user not fully registered yet');
       }
     } else {
       console.log('❌ Biometric button element not found');

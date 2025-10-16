@@ -204,10 +204,11 @@
       // Additional failsafe for biometric button visibility
       if (window.checkBiometricSupport) {
         const isRegistered = localStorage.getItem('CLS_BioRegistered') === 'true';
-        const workerId = localStorage.getItem('CLS_WorkerID');
+        const registeredFor = localStorage.getItem('CLS_BioRegisteredFor');
+        const credentialId = localStorage.getItem('CLS_BioCredentialId');
         const biometricBtn = document.getElementById('biometricLoginBtn');
         
-        if (isRegistered && workerId && biometricBtn && biometricBtn.style.display === 'none') {
+        if (isRegistered && registeredFor && credentialId && biometricBtn && biometricBtn.style.display === 'none') {
           console.log('🚨 Failsafe: Biometric button should be visible, showing it now');
           window.checkBiometricSupport();
         }
