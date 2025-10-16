@@ -790,45 +790,57 @@ function checkBiometricSupport() {
  */
 function updateBiometricButtonText() {
   const biometricBtn = document.getElementById('biometricLoginBtn');
-  if (!biometricBtn) return;
+  const iconEl = document.getElementById('biometricIcon');
+  if (!biometricBtn || !iconEl) return;
   
   const currentLang = localStorage.getItem("CLS_Lang") || "en";
   const deviceType = getDeviceType();
   
+  // Map device types to user-friendly text and icons
   const buttonTexts = {
     en: {
-      'iPhone': '🔒 Sign in with Face ID',
-      'iPad': '🔒 Sign in with Face ID / Touch ID',
-      'Android': '🔒 Sign in with Fingerprint',
-      'Windows': '🔒 Sign in with Windows Hello',
-      'macOS': '🔒 Sign in with Touch ID',
-      'default': '🔒 Sign in with Biometrics'
+      'iOS': 'Sign in with Face ID / Touch ID',
+      'Android': 'Sign in with Fingerprint',
+      'Windows Desktop': 'Sign in with Windows Hello',
+      'Mac Desktop': 'Sign in with Touch ID',
+      'default': 'Sign in with Biometrics'
     },
     es: {
-      'iPhone': '🔒 Iniciar con Face ID',
-      'iPad': '🔒 Iniciar con Face ID / Touch ID',
-      'Android': '🔒 Iniciar con Huella',
-      'Windows': '🔒 Iniciar con Windows Hello',
-      'macOS': '🔒 Iniciar con Touch ID',
-      'default': '🔒 Iniciar con Biometría'
+      'iOS': 'Iniciar con Face ID / Touch ID',
+      'Android': 'Iniciar con Huella',
+      'Windows Desktop': 'Iniciar con Windows Hello',
+      'Mac Desktop': 'Iniciar con Touch ID',
+      'default': 'Iniciar con Biometría'
     },
     pt: {
-      'iPhone': '🔒 Entrar com Face ID',
-      'iPad': '🔒 Entrar com Face ID / Touch ID',
-      'Android': '🔒 Entrar com Impressão Digital',
-      'Windows': '🔒 Entrar com Windows Hello',
-      'macOS': '🔒 Entrar com Touch ID',
-      'default': '🔒 Entrar com Biometria'
+      'iOS': 'Entrar com Face ID / Touch ID',
+      'Android': 'Entrar com Impressão Digital',
+      'Windows Desktop': 'Entrar com Windows Hello',
+      'Mac Desktop': 'Entrar com Touch ID',
+      'default': 'Entrar com Biometria'
     }
   };
   
+  const iconMap = {
+    'iOS': 'assets/biometric/faceid.svg',
+    'Android': 'assets/biometric/fingerprint.svg',
+    'Windows Desktop': 'assets/biometric/windowshello.svg',
+    'Mac Desktop': 'assets/biometric/touchid.svg',
+    'default': 'assets/biometric/biometric-default.svg'
+  };
+  
+  // Update button text
   const textForDevice = buttonTexts[currentLang][deviceType] || buttonTexts[currentLang]['default'];
   const spanElement = biometricBtn.querySelector('span');
   if (spanElement) {
     spanElement.textContent = textForDevice;
   } else {
-    biometricBtn.innerHTML = textForDevice;
+    biometricBtn.innerHTML = `<img id="biometricIcon" class="biometric-icon" src="${iconMap[deviceType] || iconMap['default']}" alt="Biometric icon" /> ${textForDevice}`;
   }
+  
+  // Update icon
+  iconEl.src = iconMap[deviceType] || iconMap['default'];
+  iconEl.alt = `${deviceType} biometric authentication`;
 }
 
 /**

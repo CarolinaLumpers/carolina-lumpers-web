@@ -75,11 +75,16 @@
         <button type="submit" id="loginBtn" data-en="Login" data-es="Iniciar Sesión" data-pt="Entrar">Login</button>
         
         <!-- Biometric Login Section -->
-        <div id="biometricSection" style="margin-top: 16px; border-top: 1px solid rgba(255, 204, 0, 0.3); padding-top: 16px;">
-          <button type="button" id="biometricLoginBtn" style="display: none; width: 100%; background: linear-gradient(135deg, #4CAF50, #45a049); color: white; border: none; padding: 12px 16px; border-radius: 8px; font-size: 16px; cursor: pointer; margin-bottom: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: all 0.3s ease;" onmouseover="this.style.background='linear-gradient(135deg, #45a049, #3d8b40)'; this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 8px rgba(0,0,0,0.3)'" onmouseout="this.style.background='linear-gradient(135deg, #4CAF50, #45a049)'; this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 4px rgba(0,0,0,0.2)'">
-            🔒 <span data-en="Sign in with Face ID / Touch ID" data-es="Iniciar sesión con Face ID / Touch ID" data-pt="Entrar com Face ID / Touch ID">Sign in with Face ID / Touch ID</span>
+        <div id="biometricSection" class="biometric-section">
+          <button type="button" id="biometricLoginBtn" class="biometric-button" style="display:none;">
+            <img id="biometricIcon" class="biometric-icon" src="assets/biometric/biometric-default.svg" alt="Biometric icon" />
+            <span data-en="Sign in with Biometrics"
+                  data-es="Iniciar sesión con biometría"
+                  data-pt="Entrar com biometria">
+              Sign in with Biometrics
+            </span>
           </button>
-          <p id="bioStatus" class="muted" style="font-size: 0.9em; margin: 8px 0; color: #888; text-align: center;"></p>
+          <p id="bioStatus" class="biometric-note">Enable Face ID / Touch ID for faster and secure login.</p>
         </div>
         
         <p id="status" class="message" role="status" aria-live="polite"></p>
