@@ -32,6 +32,113 @@ const PWA_TEXT = {
 // Make PWA_TEXT globally accessible
 window.PWA_TEXT = PWA_TEXT;
 
+/* ================================
+   PWA INSTALL PROMPT SYSTEM
+   ================================ */
+let deferredPrompt;
+
+function initPwaInstallPrompt() {
+  console.log('🔧 Initializing PWA install prompt system');
+  
+  // Listen for the beforeinstallprompt event
+  window.addEventListener('beforeinstallprompt', (e) => {
+    console.log('📲 PWA install prompt available');
+    // Prevent Chrome 67 and earlier from automatically showing the prompt
+    e.preventDefault();
+    // Stash the event so it can be triggered later
+    deferredPrompt = e;
+    
+    // Show install banner if present
+    showInstallBanner();
+    
+    // Show floating install button if present
+    showFloatingInstallButton();
+  });
+  
+  // Listen for app installed event
+  window.addEventListener('appinstalled', (e) => {
+    console.log('✅ PWA was installed successfully');
+    hideInstallElements();
+    deferredPrompt = null;
+  });
+  
+  // Setup install button click handlers
+  setupInstallButtons();
+}
+
+function showInstallBanner() {
+  const banner = document.getElementById('pwaInstallBanner');
+  if (banner) {
+    banner.style.display = 'block';
+    console.log('📱 PWA install banner shown');
+  }
+}
+
+function showFloatingInstallButton() {
+  const floatingBtn = document.querySelector('.floating-install-btn');
+  if (floatingBtn) {
+    floatingBtn.style.display = 'flex';
+    console.log('🎈 PWA floating install button shown');
+  }
+}
+
+function hideInstallElements() {
+  const banner = document.getElementById('pwaInstallBanner');
+  const floatingBtn = document.querySelector('.floating-install-btn');
+  
+  if (banner) banner.style.display = 'none';
+  if (floatingBtn) floatingBtn.style.display = 'none';
+  
+  console.log('👻 PWA install elements hidden');
+}
+
+function setupInstallButtons() {
+  // Setup main install button
+  const installBtn = document.getElementById('installPwaBtn');
+  if (installBtn) {
+    installBtn.addEventListener('click', handleInstallClick);
+  }
+  
+  // Setup floating install button
+  const floatingBtn = document.querySelector('.floating-install-btn');
+  if (floatingBtn) {
+    floatingBtn.addEventListener('click', handleInstallClick);
+  }
+  
+  // Setup banner dismiss button
+  const dismissBtn = document.getElementById('dismissPwaBtn');
+  if (dismissBtn) {
+    dismissBtn.addEventListener('click', () => {
+      const banner = document.getElementById('pwaInstallBanner');
+      if (banner) banner.style.display = 'none';
+    });
+  }
+}
+
+async function handleInstallClick() {
+  if (!deferredPrompt) {
+    console.log('❌ No install prompt available');
+    return;
+  }
+  
+  console.log('🚀 Triggering PWA install prompt');
+  
+  // Show the install prompt
+  deferredPrompt.prompt();
+  
+  // Wait for the user to respond to the prompt
+  const { outcome } = await deferredPrompt.userChoice;
+  
+  if (outcome === 'accepted') {
+    console.log('✅ User accepted the install prompt');
+  } else {
+    console.log('❌ User dismissed the install prompt');
+  }
+  
+  // Clear the deferredPrompt so it can only be used once
+  deferredPrompt = null;
+}
+
 // Device Type Detection Function
 function getDeviceType() {
   const ua = navigator.userAgent || navigator.vendor || window.opera;

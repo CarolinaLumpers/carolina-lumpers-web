@@ -89,15 +89,15 @@
 
 /* [COMPONENT: PWA Install Components] */
 .pwa-banner {
-  background: linear-gradient(135deg, var(--color-primary) 0%, #ffb300 100%);
-  color: var(--text-secondary);
+  background: linear-gradient(135deg, #000 0%, #111 100%);
+  color: white;
   text-align: center;
   border-radius: var(--radius-lg);
   padding: var(--space-lg) var(--space-xl);
   margin: var(--space-xl) auto;
   max-width: 500px;
-  box-shadow: var(--shadow-md);
-  border: 1px solid rgba(255, 204, 0, 0.4);
+  box-shadow: 0 4px 20px rgba(255, 204, 0, 0.3), 0 0 40px rgba(255, 204, 0, 0.1);
+  border: 2px solid #ffcc00;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -134,23 +134,45 @@
 }
 
 .pwa-install-btn {
-  background: var(--color-dark);
-  color: var(--color-primary);
+  background: linear-gradient(135deg, #000 0%, #111 100%);
+  color: #ffcc00;
+  font-weight: 600;
+  border: 1px solid #ffcc00;
+  position: relative;
+  overflow: hidden;
+}
+
+.pwa-install-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 204, 0, 0.4), transparent);
+  transition: left 0.6s;
 }
 
 .pwa-install-btn:hover {
-  background: var(--color-dark-light);
+  background: linear-gradient(135deg, #ffcc00 0%, #ffdd33 100%);
+  color: #000;
   transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(255, 204, 0, 0.5), 0 0 20px rgba(255, 204, 0, 0.3);
+}
+
+.pwa-install-btn:hover::before {
+  left: 100%;
 }
 
 .pwa-dismiss-btn {
   background: transparent;
-  color: var(--text-secondary);
-  border: 1px solid var(--text-secondary);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.5);
 }
 
 .pwa-dismiss-btn:hover {
-  background: rgba(0,0,0,0.1);
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.8);
 }
 
 .floating-install-btn {
@@ -215,13 +237,17 @@
   }
 
   .pwa-buttons {
-    flex-direction: column;
+    flex-direction: row;
     gap: var(--space-sm);
   }
 
   .pwa-install-btn,
   .pwa-dismiss-btn {
-    width: 100%;
+    flex: 1;
+    min-width: 0;
+    max-width: none;
+    padding: var(--space-sm) var(--space-md);
+    font-size: var(--font-size-xs);
   }
   
   .floating-install-btn {
