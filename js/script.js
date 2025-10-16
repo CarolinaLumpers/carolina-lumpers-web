@@ -867,26 +867,42 @@ function initSignupForm() {
  * @returns {boolean} True if WebAuthn is supported
  */
 function checkBiometricSupport() {
+  console.log('🔧 Checking biometric support...');
+  
   const isSupported = window.PublicKeyCredential && 
                      navigator.credentials && 
                      navigator.credentials.create;
   
+  console.log('🔐 WebAuthn supported:', isSupported);
+  
   if (isSupported) {
     const biometricBtn = document.getElementById('biometricLoginBtn');
+    const biometricIcon = document.getElementById('biometricIcon');
+    
     if (biometricBtn) {
-      biometricBtn.style.display = 'block';
+      console.log('✅ Biometric button found');
       
       // Check if already registered
       const isRegistered = localStorage.getItem('CLS_BioRegistered') === 'true';
       const workerId = localStorage.getItem('CLS_WorkerID');
       
+      console.log('📋 Biometric registration status:', { isRegistered, hasWorkerId: !!workerId });
+      
       if (isRegistered && workerId) {
+        // Show button and update text/icon for registered users
+        biometricBtn.style.display = 'block';
         updateBiometricButtonText();
+        console.log('👤 Biometric button shown for registered user');
       } else {
         // Hide until first successful login
         biometricBtn.style.display = 'none';
+        console.log('👻 Biometric button hidden - user not registered yet');
       }
+    } else {
+      console.log('❌ Biometric button element not found');
     }
+  } else {
+    console.log('❌ WebAuthn not supported on this device/browser');
   }
   
   return isSupported;
@@ -896,9 +912,20 @@ function checkBiometricSupport() {
  * Update biometric button text based on device capability
  */
 function updateBiometricButtonText() {
+  console.log('🔧 Updating biometric button text and icon...');
+  
   const biometricBtn = document.getElementById('biometricLoginBtn');
   const iconEl = document.getElementById('biometricIcon');
-  if (!biometricBtn || !iconEl) return;
+  
+  if (!biometricBtn) {
+    console.log('❌ Biometric button not found');
+    return;
+  }
+  
+  if (!iconEl) {
+    console.log('❌ Biometric icon not found');
+    return;
+  }
   
   const currentLang = localStorage.getItem("CLS_Lang") || "en";
   const deviceType = getDeviceType();
@@ -948,6 +975,12 @@ function updateBiometricButtonText() {
   // Update icon
   iconEl.src = iconMap[deviceType] || iconMap['default'];
   iconEl.alt = `${deviceType} biometric authentication`;
+  
+  console.log('✅ Biometric button updated:', { 
+    deviceType, 
+    text: textForDevice, 
+    icon: iconMap[deviceType] || iconMap['default'] 
+  });
 }
 
 /**

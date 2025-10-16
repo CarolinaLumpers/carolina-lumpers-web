@@ -161,17 +161,8 @@
       
       checkOfflineAccess();
       
-      // Initialize biometric login if supported and available
-      function initializeBiometricLogin() {
-        if (window.checkBiometricSupport) {
-          window.checkBiometricSupport();
-          console.log('✅ Biometric login initialized');
-        } else {
-          setTimeout(initializeBiometricLogin, 100);
-        }
-      }
-      
-      initializeBiometricLogin();
+      // Note: Biometric initialization will be handled by initLoginForm() in script.js
+      // This ensures proper timing and prevents duplicate initialization
       
       // Listen for online/offline events
       window.addEventListener('offline', () => {
@@ -205,6 +196,20 @@
         if (!form.hasAttribute('data-initialized')) {
           console.log('🚨 Failsafe: Initializing login form manually');
           window.initLoginForm();
+        } else {
+          console.log('✅ Failsafe check: Login form already properly initialized');
+        }
+      }
+      
+      // Additional failsafe for biometric button visibility
+      if (window.checkBiometricSupport) {
+        const isRegistered = localStorage.getItem('CLS_BioRegistered') === 'true';
+        const workerId = localStorage.getItem('CLS_WorkerID');
+        const biometricBtn = document.getElementById('biometricLoginBtn');
+        
+        if (isRegistered && workerId && biometricBtn && biometricBtn.style.display === 'none') {
+          console.log('🚨 Failsafe: Biometric button should be visible, showing it now');
+          window.checkBiometricSupport();
         }
       }
     }, 1000);
