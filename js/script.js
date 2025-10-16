@@ -325,7 +325,8 @@ function initLanguageSystem() {
 }
 
 /* Run on page load */
-document.addEventListener("DOMContentLoaded", () => {
+// Use a function that works whether DOMContentLoaded has fired or not
+function initializeApp() {
   loadNavbar(); // Load shared navbar component
   loadFooter(); // Load shared footer component
   initLanguageSystem();
@@ -333,8 +334,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Determine current page for page-specific logic
   const page = document.body.dataset.page;
+  console.log('🔧 Initializing page:', page);
   initPage(page);
-});
+}
+
+// Handle both cases: if DOM is already ready or if we need to wait
+if (document.readyState === 'loading') {
+  document.addEventListener("DOMContentLoaded", initializeApp);
+} else {
+  // DOM is already ready, run immediately
+  initializeApp();
+}
 
 
 
@@ -990,8 +1000,20 @@ function clearBiometricData() {
 
 // Employee Login Module
 function initLoginForm() {
+  console.log('🔧 initLoginForm() called');
   const form = document.getElementById("loginForm");
-  if (!form) return;
+  if (!form) {
+    console.error('❌ Login form not found!');
+    return;
+  }
+  
+  // Check if already initialized
+  if (form.hasAttribute('data-initialized')) {
+    console.log('ℹ️ Login form already initialized, skipping');
+    return;
+  }
+  
+  console.log('✅ Login form found, setting up event handlers');
 
   const statusEl = document.getElementById("status");
   const MESSAGES = {
@@ -1037,7 +1059,9 @@ function initLoginForm() {
     });
   }
 
+  console.log('✅ Adding submit event listener to login form');
   form.addEventListener("submit", async (e) => {
+    console.log('🔥 Login form submitted!');
     e.preventDefault();
 
     const currentLang = localStorage.getItem("CLS_Lang") || "en";
@@ -1149,6 +1173,10 @@ function initLoginForm() {
   // Apply current language placeholders on form init
   const currentLang = localStorage.getItem("CLS_Lang") || "en";
   loginPlaceholders(currentLang);
+  
+  // Mark form as initialized
+  form.setAttribute('data-initialized', 'true');
+  console.log('✅ Login form initialization complete and marked');
 }
 
 // Contact Form Module
