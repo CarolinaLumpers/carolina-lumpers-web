@@ -38,17 +38,20 @@
   <!-- Navigation Bar -->
   <div id="navbar-container"></div>
 
+
   <!-- DASHBOARD -->
   <div class="dashboard">
+
+    <!-- PWA Status Indicator - Top Priority -->
+    <div id="pwaStatus"
+      style="display: none; background: rgba(255, 193, 7, 0.1); border: 1px solid #FFC107; color: #FFC107; padding: 8px 16px; border-radius: 8px; font-size: 0.9em; text-align: center; margin: 8px 16px 16px 16px; position: sticky; top: 0; z-index: 100;">
+      <span id="pwaStatusText">📱 App Mode Active</span>
+    </div>
+
     <h1 id="welcomeMessage" data-en="Employee Dashboard" data-es="Panel del Empleado" data-pt="Painel do Funcionário">
       Employee Dashboard</h1>
     <h2 id="welcomeName"></h2>
     <div class="info" id="userInfo"></div>
-    
-    <!-- PWA Status Indicator -->
-    <div id="pwaStatus" style="display: none; background: rgba(255, 193, 7, 0.1); border: 1px solid #FFC107; color: #FFC107; padding: 8px 16px; border-radius: 8px; font-size: 0.9em; text-align: center; margin-bottom: 16px;">
-      <span id="pwaStatusText">📱 App Mode Active</span>
-    </div>
 
     <!-- TABS -->
     <div class="tab-buttons">
@@ -65,7 +68,8 @@
         Clock In / Out
       </button>
       <div id="clockInStatus"></div>
-      <div id="syncStatus" style="display: none; font-size: 0.9em; color: #FFC107; margin-top: 8px; text-align: center;"></div>
+      <div id="syncStatus"
+        style="display: none; font-size: 0.9em; color: #FFC107; margin-top: 8px; text-align: center;"></div>
 
       <h3 class="section-title" data-en="Today's Clock-In Report" data-es="Reporte de Entradas de Hoy"
         data-pt="Relatório de Entradas de Hoje">
@@ -174,7 +178,7 @@
     </div>
 
     <button class="logout" onclick="logout()" data-en="Logout" data-es="Cerrar Sesión" data-pt="Sair">Logout</button>
-    
+
     <!-- Language Toggle -->
     <div class="language-toggle">
       <button data-lang="en" onclick="switchLanguage('en')">English</button>
@@ -228,10 +232,10 @@
     // =================== Offline Sync Utilities ===================
     async function sendMessageToServiceWorker(type, data = {}) {
       if (!('serviceWorker' in navigator)) return null;
-      
+
       const registration = await navigator.serviceWorker.ready;
       if (!registration.active) return null;
-      
+
       return new Promise((resolve) => {
         const channel = new MessageChannel();
         channel.port1.onmessage = (event) => resolve(event.data);
@@ -256,7 +260,7 @@
           const registration = await navigator.serviceWorker.ready;
           await registration.sync.register('sync-clock-data');
         }
-        
+
         // Also trigger manual sync
         await sendMessageToServiceWorker('TRIGGER_SYNC');
       } catch (err) {
@@ -290,7 +294,7 @@
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.addEventListener('message', (event) => {
         const { type, data } = event.data;
-        
+
         switch (type) {
           case 'CLOCK_SYNC_SUCCESS':
             console.log('✅ Clock-in synced:', data);
@@ -323,24 +327,24 @@
       alert("Session expired. Please log in again.");
       window.location.href = "employeelogin.html";
     } else {
-    
-    // Check if we have placeholder data from biometric login
-    const hasPlaceholderData = !displayName || !email || 
-                              displayName.startsWith('Worker ') || 
-                              email.includes('@placeholder.com');
-    
-    if (hasPlaceholderData) {
-      console.log('📝 Biometric login detected - user data may need refresh');
-      // For now, continue with available data
-      // TODO: Could fetch fresh user data from API here
-    }
-    
-    const userData = { 
-      workerId, 
-      displayName: displayName || `Worker ${workerId}`, 
-      email: email || `${workerId}@placeholder.com` 
-    };
-    
+
+      // Check if we have placeholder data from biometric login
+      const hasPlaceholderData = !displayName || !email ||
+        displayName.startsWith('Worker ') ||
+        email.includes('@placeholder.com');
+
+      if (hasPlaceholderData) {
+        console.log('📝 Biometric login detected - user data may need refresh');
+        // For now, continue with available data
+        // TODO: Could fetch fresh user data from API here
+      }
+
+      const userData = {
+        workerId,
+        displayName: displayName || `Worker ${workerId}`,
+        email: email || `${workerId}@placeholder.com`
+      };
+
     } // End of session validation
 
     // View As functionality
@@ -358,7 +362,7 @@
       function updatePWAStatus() {
         const pwaStatus = document.getElementById('pwaStatus');
         const pwaStatusText = document.getElementById('pwaStatusText');
-        
+
         if (!navigator.onLine) {
           // Offline mode
           pwaStatus.style.display = 'block';
@@ -385,9 +389,9 @@
           pwaStatus.style.display = 'none';
         }
       }
-      
+
       updatePWAStatus();
-      
+
       // Listen for online/offline events to update status
       window.addEventListener('online', updatePWAStatus);
       window.addEventListener('offline', updatePWAStatus);
@@ -395,10 +399,10 @@
       // Clock-in
       document.getElementById("clockInBtn").addEventListener("click", handleClockIn);
       loadReport();
-      
+
       // Initialize sync status
       updateSyncStatus();
-      
+
       // Trigger sync if back online
       if (navigator.onLine) {
         triggerSync();
@@ -516,7 +520,7 @@
           // Save offline
           status.textContent = MSG.recordingClockIn[LANG];
           const saved = await saveClockInOffline(clockData);
-          
+
           if (saved) {
             status.textContent = MSG.offlineSaved[LANG];
             updateSyncStatus();
@@ -566,7 +570,7 @@
                   timeout: 5000,
                 })
               );
-              
+
               const clockData = {
                 workerId: workerId,
                 lat: pos.coords.latitude,
@@ -575,7 +579,7 @@
                 email: email || '',
                 timestamp: new Date().toISOString()
               };
-              
+
               const saved = await saveClockInOffline(clockData);
               if (saved) {
                 status.textContent = MSG.offlineSaved[LANG];
@@ -627,8 +631,8 @@
           });
         } else {
           body.innerHTML = `<tr><td colspan="2" class="muted">${LANG === 'es' ? 'Sin registros de hoy.' :
-              LANG === 'pt' ? 'Sem registros de hoje.' :
-                'No clock-ins today.'
+            LANG === 'pt' ? 'Sem registros de hoje.' :
+              'No clock-ins today.'
             }</td></tr>`;
         }
       } catch (err) {

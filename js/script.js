@@ -4,32 +4,175 @@
 const API_BASE = "https://script.google.com/macros/s/AKfycbwHBLEQ5QHuhD-O4uI4hRN_5_yS9YsFgtn_dMAdoAO2C7zHLoi3qfHO82vas3Uv0wXXpg/exec";
 
 /* ================================
-   PWA CONFIGURATION
+   CENTRALIZED MULTILINGUAL TEXT
    ================================ */
-const PWA_TEXT = {
-  installButton: {
-    en: "Install CLS Employee App",
-    es: "Instalar App de Empleado CLS",
-    pt: "Instalar App do Funcionário CLS"
+const CLS_TEXT = {
+  pwa: {
+    installPrompt: {
+      en: "📲 Install CLS Employee App for faster access and offline features!",
+      es: "📲 ¡Instala la App de Empleado CLS para un acceso más rápido y funciones sin conexión!",
+      pt: "📲 Instale o App do Funcionário CLS para acesso mais rápido e recursos offline!"
+    },
+    installButton: {
+      en: "Install CLS Employee App",
+      es: "Instalar App de Empleado CLS",
+      pt: "Instalar App do Funcionário CLS"
+    },
+    installing: {
+      en: "Installing...",
+      es: "Instalando...",
+      pt: "Instalando..."
+    },
+    installed: {
+      en: "App installed successfully!",
+      es: "¡Aplicación instalada con éxito!",
+      pt: "Aplicativo instalado com sucesso!"
+    },
+    dismissed: {
+      en: "Installation skipped.",
+      es: "Instalación omitida.",
+      pt: "Instalação ignorada."
+    },
+    laterButton: {
+      en: "Later",
+      es: "Más tarde",
+      pt: "Depois"
+    }
   },
-  installing: {
-    en: "Installing...",
-    es: "Instalando...",
-    pt: "Instalando..."
+  login: {
+    sending: {
+      en: "⏳ Logging in...",
+      es: "⏳ Iniciando sesión...",
+      pt: "⏳ Entrando..."
+    },
+    success: {
+      en: "✅ Login successful! Redirecting...",
+      es: "✅ ¡Inicio de sesión exitoso! Redirigiendo...",
+      pt: "✅ Login realizado com sucesso! Redirecionando..."
+    },
+    invalid: {
+      en: "❌ Invalid email or password.",
+      es: "❌ Correo o contraseña inválidos.",
+      pt: "❌ E-mail ou senha inválidos."
+    },
+    error: {
+      en: "⚠️ Error connecting to server.",
+      es: "⚠️ Error al conectar con el servidor.",
+      pt: "⚠️ Erro ao conectar ao servidor."
+    },
+    offline: {
+      en: "You're offline — please connect to the internet.",
+      es: "Estás sin conexión — conéctate a Internet.",
+      pt: "Você está offline — conecte-se à Internet."
+    },
+    missing: {
+      en: "⚠️ Please enter both email and password.",
+      es: "⚠️ Por favor ingrese correo y contraseña.",
+      pt: "⚠️ Por favor, insira email e senha."
+    },
+    serverError: {
+      en: "⚠️ Server error. Try again later.",
+      es: "⚠️ Error del servidor. Intente nuevamente.",
+      pt: "⚠️ Erro no servidor. Tente novamente."
+    }
   },
-  bannerText: {
-    en: "📲 Install CLS Employee App for faster access and offline features!",
-    es: "📲 ¡Instala la App de Empleado CLS para un acceso más rápido y funciones sin conexión!",
-    pt: "📲 Instale o App de Funcionário CLS para acesso mais rápido e recursos offline!"
-  },
-  laterButton: {
-    en: "Later",
-    es: "Más tarde",
-    pt: "Depois"
+  biometric: {
+    prompt: {
+      en: "🔒 Enable {0} for faster login on this device?",
+      es: "🔒 ¿Habilitar {0} para un inicio de sesión más rápido en este dispositivo?",
+      pt: "🔒 Ativar {0} para login mais rápido neste dispositivo?"
+    },
+    enabled: {
+      en: "✅ {0} login enabled successfully!",
+      es: "✅ ¡{0} habilitado correctamente!",
+      pt: "✅ {0} habilitado com sucesso!"
+    },
+    available: {
+      en: "🔐 {0} login available — tap to sign in.",
+      es: "🔐 {0} disponible — toca para iniciar sesión.",
+      pt: "� {0} disponível — toque para entrar."
+    },
+    failed: {
+      en: "❌ {0} authentication failed.",
+      es: "❌ Falló la autenticación de {0}.",
+      pt: "❌ Falha na autenticação de {0}."
+    },
+    unavailable: {
+      en: "⚠️ Biometric authentication not supported on this device.",
+      es: "⚠️ Autenticación biométrica no compatible en este dispositivo.",
+      pt: "⚠️ Autenticação biométrica não suportada neste dispositivo."
+    },
+    setting: {
+      en: "🔑 Setting up biometric login...",
+      es: "🔑 Configurando inicio de sesión biométrico...",
+      pt: "🔑 Configurando login biométrico..."
+    },
+    verifying: {
+      en: "🔑 Verifying biometric...",
+      es: "🔑 Verificando biométrico...",
+      pt: "🔑 Verificando biométrico..."
+    },
+    noCredentials: {
+      en: "⚠️ No biometric credentials found. Please register biometrics first.",
+      es: "⚠️ No se encontraron credenciales biométricas. Registre biométricos primero.",
+      pt: "⚠️ Nenhuma credencial biométrica encontrada. Registre biométricos primeiro."
+    },
+    invalidCredentials: {
+      en: "⚠️ Invalid biometric credentials. Please re-register.",
+      es: "⚠️ Credenciales biométricas inválidas. Vuelva a registrarse.",
+      pt: "⚠️ Credenciais biométricas inválidas. Registre novamente."
+    },
+    verified: {
+      en: "✅ Biometric verified — logging in…",
+      es: "✅ Biométrico verificado — iniciando sesión…",
+      pt: "✅ Biométrico verificado — fazendo login…"
+    },
+    cancelled: {
+      en: "⚠️ Biometric setup cancelled or not allowed.",
+      es: "⚠️ Configuración biométrica cancelada o no permitida.",
+      pt: "⚠️ Configuração biométrica cancelada ou não permitida."
+    },
+    setupFailed: {
+      en: "⚠️ Biometric setup failed. Try again later.",
+      es: "⚠️ Falló la configuración biométrica. Intente más tarde.",
+      pt: "⚠️ Falha na configuração biométrica. Tente mais tarde."
+    },
+    loginFailed: {
+      en: "⚠️ Biometric login failed. Please try again.",
+      es: "⚠️ Falló el inicio de sesión biométrico. Intente nuevamente.",
+      pt: "⚠️ Falha no login biométrico. Tente novamente."
+    }
   }
 };
 
-// Make PWA_TEXT globally accessible
+// Helper function to get text with placeholder replacement
+function getText(path, lang, placeholders = []) {
+  const keys = path.split('.');
+  let text = CLS_TEXT;
+  
+  // Navigate through the object structure
+  for (const key of keys) {
+    text = text[key];
+    if (!text) break;
+  }
+  
+  // Get the text for the language, fallback to English
+  let result = text?.[lang] || text?.en || '';
+  
+  // Replace placeholders {0}, {1}, etc.
+  placeholders.forEach((placeholder, index) => {
+    result = result.replace(`{${index}}`, placeholder);
+  });
+  
+  return result;
+}
+
+// Make CLS_TEXT and helper function globally accessible
+window.CLS_TEXT = CLS_TEXT;
+window.getText = getText;
+
+// Legacy PWA_TEXT compatibility
+const PWA_TEXT = CLS_TEXT.pwa;
 window.PWA_TEXT = PWA_TEXT;
 
 /* ================================
@@ -401,20 +544,44 @@ function switchLanguage(lang) {
   const floatingBtn = document.querySelector('.floating-install-btn');
   if (floatingBtn && floatingBtn.dataset.lang !== lang) {
     floatingBtn.dataset.lang = lang;
-    floatingBtn.innerHTML = `📲 <strong>${PWA_TEXT.installButton[lang] || PWA_TEXT.installButton.en}</strong>`;
+    floatingBtn.innerHTML = `📲 <strong>${getText('pwa.installButton', lang)}</strong>`;
   }
 
   // Update PWA banner when language changes
   const bannerTextEl = document.querySelector('#pwaInstallBanner [data-en]');
   if (bannerTextEl) {
-    bannerTextEl.textContent = PWA_TEXT.bannerText[lang] || PWA_TEXT.bannerText.en;
+    bannerTextEl.textContent = getText('pwa.installPrompt', lang);
   }
   
   // Update PWA button texts
   const installBtn = document.getElementById('installPwaBtn');
   const dismissBtn = document.getElementById('dismissPwaBtn');
-  if (installBtn) installBtn.textContent = PWA_TEXT.installButton[lang] || PWA_TEXT.installButton.en;
-  if (dismissBtn) dismissBtn.textContent = PWA_TEXT.laterButton[lang] || PWA_TEXT.laterButton.en;
+  if (installBtn) installBtn.textContent = getText('pwa.installButton', lang);
+  if (dismissBtn) dismissBtn.textContent = getText('pwa.laterButton', lang);
+  
+  // Update biometric button texts if present
+  const biometricBtn = document.getElementById('biometricLoginBtn');
+  if (biometricBtn) {
+    const deviceType = getDeviceType();
+    let biometricName = 'biometric authentication';
+    
+    if (deviceType === 'iOS') {
+      biometricName = 'Face ID / Touch ID';
+    } else if (deviceType === 'Android') {
+      biometricName = 'fingerprint authentication';
+    } else if (deviceType === 'Windows Desktop') {
+      biometricName = 'Windows Hello';
+    } else if (deviceType === 'Mac Desktop') {
+      biometricName = 'Touch ID';
+    }
+    
+    // Update button text based on current state
+    const isRegistered = localStorage.getItem('CLS_BioRegistered') === 'true';
+    if (isRegistered) {
+      const btnText = getText('biometric.available', lang, [biometricName]);
+      biometricBtn.innerHTML = btnText.replace('🔐', '🔐').replace(' — ', '<br><small>').replace('.', '</small>');
+    }
+  }
 
   // Dispatch event for form to handle its own language updates
   window.dispatchEvent(new CustomEvent('languageChanged', {
@@ -1039,7 +1206,8 @@ function updateBiometricButtonText() {
 async function registerBiometric(workerId, email) {
   try {
     const statusEl = document.getElementById('bioStatus');
-    if (statusEl) statusEl.textContent = '🔑 Setting up biometric login...';
+    const currentLang = localStorage.getItem("CLS_Lang") || "en";
+    if (statusEl) statusEl.textContent = getText('biometric.setting', currentLang);
     
     // Generate a cryptographically random challenge
     const challenge = new Uint8Array(32);
@@ -1080,7 +1248,21 @@ async function registerBiometric(workerId, email) {
       
       console.log('✅ Biometric registration successful, credential ID:', credentialIdBase64);
       
-      if (statusEl) statusEl.textContent = '✅ Biometric login enabled!';
+      const currentLang = localStorage.getItem("CLS_Lang") || "en";
+      const deviceType = getDeviceType();
+      let biometricName = 'Biometric authentication';
+      
+      if (deviceType === 'iOS') {
+        biometricName = 'Face ID / Touch ID';
+      } else if (deviceType === 'Android') {
+        biometricName = 'Fingerprint authentication';
+      } else if (deviceType === 'Windows Desktop') {
+        biometricName = 'Windows Hello';
+      } else if (deviceType === 'Mac Desktop') {
+        biometricName = 'Touch ID';
+      }
+      
+      if (statusEl) statusEl.textContent = getText('biometric.enabled', currentLang, [biometricName]);
       
       // Re-evaluate biometric button visibility now that registration is complete
       evaluateBiometricVisibility();
@@ -1093,11 +1275,11 @@ async function registerBiometric(workerId, email) {
     const statusEl = document.getElementById('bioStatus');
     if (statusEl) {
       if (err.name === 'NotAllowedError') {
-        statusEl.textContent = '⚠️ Biometric setup cancelled or not allowed.';
+        statusEl.textContent = getText('biometric.cancelled', currentLang);
       } else if (err.name === 'NotSupportedError') {
-        statusEl.textContent = '⚠️ Biometric authentication not supported on this device.';
+        statusEl.textContent = getText('biometric.unavailable', currentLang);
       } else {
-        statusEl.textContent = '⚠️ Biometric setup failed. Try again later.';
+        statusEl.textContent = getText('biometric.setupFailed', currentLang);
       }
     }
     return false;
@@ -1111,13 +1293,14 @@ async function registerBiometric(workerId, email) {
 async function biometricLogin() {
   try {
     const statusEl = document.getElementById('bioStatus');
-    if (statusEl) statusEl.textContent = '🔑 Verifying biometric...';
+    const currentLang = localStorage.getItem("CLS_Lang") || "en";
+    if (statusEl) statusEl.textContent = getText('biometric.verifying', currentLang);
     
     const registeredFor = localStorage.getItem('CLS_BioRegisteredFor');
     const credentialId = localStorage.getItem('CLS_BioCredentialId');
     
     if (!registeredFor || !credentialId) {
-      if (statusEl) statusEl.textContent = '⚠️ No biometric credentials found. Please register biometrics first.';
+      if (statusEl) statusEl.textContent = getText('biometric.noCredentials', currentLang);
       return false;
     }
     
@@ -1141,7 +1324,7 @@ async function biometricLogin() {
       console.log('✅ Credential ID converted to bytes:', Array.from(credentialIdBytes));
     } catch (err) {
       console.error('❌ Failed to convert credential ID:', err);
-      if (statusEl) statusEl.textContent = '⚠️ Invalid biometric credentials. Please re-register.';
+      if (statusEl) statusEl.textContent = getText('biometric.invalidCredentials', currentLang);
       return false;
     }
     
@@ -1158,7 +1341,7 @@ async function biometricLogin() {
     });
 
     if (credential) {
-      if (statusEl) statusEl.textContent = '✅ Biometric verified — logging in…';
+      if (statusEl) statusEl.textContent = getText('biometric.verified', currentLang);
       
       // Successful biometric authentication - restore session data
       console.log('✅ Biometric authentication successful for worker:', registeredFor);
@@ -1257,29 +1440,6 @@ function initLoginForm() {
   console.log('✅ Login form found, setting up event handlers');
 
   const statusEl = document.getElementById("status");
-  const MESSAGES = {
-    en: {
-      sending: "⏳ Logging in...",
-      success: "✅ Login successful! Redirecting...",
-      error: "❌ Invalid email or password.",
-      missing: "⚠️ Please enter both email and password.",
-      serverError: "⚠️ Server error. Try again later."
-    },
-    es: {
-      sending: "⏳ Iniciando sesión...",
-      success: "✅ Inicio de sesión exitoso. Redirigiendo...",
-      error: "❌ Correo o contraseña inválidos.",
-      missing: "⚠️ Por favor ingrese correo y contraseña.",
-      serverError: "⚠️ Error del servidor. Intente nuevamente."
-    },
-    pt: {
-      sending: "⏳ Entrando...",
-      success: "✅ Login bem-sucedido! Redirecionando...",
-      error: "❌ Email ou senha inválidos.",
-      missing: "⚠️ Por favor, insira email e senha.",
-      serverError: "⚠️ Erro no servidor. Tente novamente."
-    }
-  };
 
   // Initialize biometric support - but defer actual visibility logic
   // This ensures WebAuthn support is checked and button handler is set up
@@ -1295,7 +1455,8 @@ function initLoginForm() {
         console.error('⚠️ Biometric login error:', err);
         const bioStatus = document.getElementById('bioStatus');
         if (bioStatus) {
-          bioStatus.textContent = '⚠️ Biometric login failed. Please try again.';
+          const currentLang = localStorage.getItem("CLS_Lang") || "en";
+          bioStatus.textContent = getText('biometric.loginFailed', currentLang);
         }
       }
     });
@@ -1311,11 +1472,11 @@ function initLoginForm() {
     const password = document.getElementById("password")?.value.trim();
 
     if (!email || !password) {
-      if (statusEl) statusEl.textContent = MESSAGES[currentLang].missing;
+      if (statusEl) statusEl.textContent = getText('login.missing', currentLang);
       return;
     }
 
-    if (statusEl) statusEl.textContent = MESSAGES[currentLang].sending;
+    if (statusEl) statusEl.textContent = getText('login.sending', currentLang);
 
     try {
       // Get device and browser info for tracking
@@ -1339,7 +1500,7 @@ function initLoginForm() {
         localStorage.setItem('CLS_RememberUser', 'true');
         localStorage.removeItem('CLS_SessionExpiry'); // No expiry = infinite session
 
-        statusEl.textContent = MESSAGES[currentLang].success;
+        statusEl.textContent = getText('login.success', currentLang);
 
         // PHASE 6: Preload SW Before Successful Login Redirect
         if ('serviceWorker' in navigator) {
@@ -1371,8 +1532,9 @@ function initLoginForm() {
             biometricName = 'Touch ID';
           }
           
+          const promptText = getText('biometric.prompt', currentLang, [biometricName]);
           const shouldSetupBiometric = confirm(
-            `🔒 Enable ${biometricName} for faster login on this device?\n\n` +
+            `${promptText}\n\n` +
             `This will allow you to log in quickly using your device's built-in security features.`
           );
           
@@ -1396,11 +1558,11 @@ function initLoginForm() {
           window.location.href = "employeeDashboard.html";
         }, 1500);
       } else {
-        statusEl.textContent = data.message || MESSAGES[currentLang].error;
+        statusEl.textContent = data.message || getText('login.invalid', currentLang);
       }
     } catch (err) {
       console.error(err);
-      if (statusEl) statusEl.textContent = MESSAGES[currentLang].serverError;
+      if (statusEl) statusEl.textContent = getText('login.error', currentLang);
     }
   });
 
