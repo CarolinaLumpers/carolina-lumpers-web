@@ -161,8 +161,20 @@
       
       checkOfflineAccess();
       
-      // Note: Biometric initialization will be handled by initLoginForm() in script.js
-      // This ensures proper timing and prevents duplicate initialization
+      // Initialize biometric button visibility after DOM is ready
+      // This happens after the login form and biometric section are fully loaded
+      if (window.evaluateBiometricVisibility) {
+        window.evaluateBiometricVisibility();
+        console.log('✅ Biometric visibility evaluated on page load');
+      } else {
+        // Script.js not loaded yet, try again soon
+        setTimeout(() => {
+          if (window.evaluateBiometricVisibility) {
+            window.evaluateBiometricVisibility();
+            console.log('✅ Biometric visibility evaluated (delayed)');
+          }
+        }, 300);
+      }
       
       // Listen for online/offline events
       window.addEventListener('offline', () => {
@@ -189,8 +201,11 @@
       setTimeout(initLoginPageFeatures, 100); // Small delay to ensure script.js has run
     }
     
-    // Failsafe: Ensure login form is initialized even if timing gets off
+    // Comprehensive failsafe system
     setTimeout(() => {
+      console.log('🛡️ Running comprehensive failsafe checks...');
+      
+      // 1. Ensure login form is initialized
       if (window.initLoginForm && document.getElementById('loginForm')) {
         const form = document.getElementById('loginForm');
         if (!form.hasAttribute('data-initialized')) {
@@ -201,19 +216,37 @@
         }
       }
       
-      // Additional failsafe for biometric button visibility
-      if (window.checkBiometricSupport) {
+      // 2. Ensure biometric button visibility is properly evaluated
+      if (window.evaluateBiometricVisibility) {
+        console.log('🔍 Failsafe: Re-evaluating biometric button visibility');
+        window.evaluateBiometricVisibility();
+      }
+      
+      // 3. Final check for biometric button state
+      const biometricBtn = document.getElementById('biometricLoginBtn');
+      if (biometricBtn) {
+        const isWebAuthnSupported = window.PublicKeyCredential && 
+                                   navigator.credentials && 
+                                   navigator.credentials.create;
         const isRegistered = localStorage.getItem('CLS_BioRegistered') === 'true';
         const registeredFor = localStorage.getItem('CLS_BioRegisteredFor');
         const credentialId = localStorage.getItem('CLS_BioCredentialId');
-        const biometricBtn = document.getElementById('biometricLoginBtn');
         
-        if (isRegistered && registeredFor && credentialId && biometricBtn && biometricBtn.style.display === 'none') {
-          console.log('🚨 Failsafe: Biometric button should be visible, showing it now');
-          window.checkBiometricSupport();
+        console.log('🔍 Failsafe final check:', {
+          webAuthnSupported: isWebAuthnSupported,
+          buttonVisible: biometricBtn.style.display !== 'none',
+          shouldBeVisible: isWebAuthnSupported && isRegistered && registeredFor && credentialId
+        });
+        
+        if (isWebAuthnSupported && isRegistered && registeredFor && credentialId && biometricBtn.style.display === 'none') {
+          console.log('🚨 Failsafe: Biometric button should be visible but is hidden, forcing show');
+          biometricBtn.style.display = 'block';
+          if (window.updateBiometricButtonText) {
+            window.updateBiometricButtonText();
+          }
         }
       }
-    }, 1000);
+    }, 1500);
   </script>
 
   <script src="js/script.js?v=2024-pwa-integration" defer></script>

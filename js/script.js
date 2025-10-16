@@ -866,51 +866,93 @@ function initSignupForm() {
  * Check if biometric authentication is supported
  * @returns {boolean} True if WebAuthn is supported
  */
-function checkBiometricSupport() {
-  console.log('🔧 Checking biometric support...');
+/**
+ * Setup biometric button - separates WebAuthn detection from visibility logic
+ */
+function setupBiometricButton() {
+  console.log('🔧 Setting up biometric button...');
   
+  // Check WebAuthn support first
   const isSupported = window.PublicKeyCredential && 
                      navigator.credentials && 
                      navigator.credentials.create;
   
   console.log('🔐 WebAuthn supported:', isSupported);
   
-  if (isSupported) {
-    const biometricBtn = document.getElementById('biometricLoginBtn');
-    const biometricIcon = document.getElementById('biometricIcon');
-    
-    if (biometricBtn) {
-      console.log('✅ Biometric button found');
-      
-      // Check if already registered
-      const isRegistered = localStorage.getItem('CLS_BioRegistered') === 'true';
-      const registeredFor = localStorage.getItem('CLS_BioRegisteredFor');
-      const credentialId = localStorage.getItem('CLS_BioCredentialId');
-      
-      console.log('📋 Biometric registration status:', { 
-        isRegistered, 
-        hasRegisteredFor: !!registeredFor,
-        hasCredentialId: !!credentialId 
-      });
-      
-      if (isRegistered && registeredFor && credentialId) {
-        // Show button and update text/icon for registered users
-        biometricBtn.style.display = 'block';
-        updateBiometricButtonText();
-        console.log('👤 Biometric button shown for registered user:', registeredFor);
-      } else {
-        // Hide until first successful login and registration
-        biometricBtn.style.display = 'none';
-        console.log('👻 Biometric button hidden - user not fully registered yet');
-      }
-    } else {
-      console.log('❌ Biometric button element not found');
-    }
-  } else {
-    console.log('❌ WebAuthn not supported on this device/browser');
+  if (!isSupported) {
+    console.log('❌ WebAuthn not supported - biometric login unavailable');
+    return false;
   }
   
-  return isSupported;
+  // WebAuthn is supported, now check DOM readiness and handle visibility
+  const biometricBtn = document.getElementById('biometricLoginBtn');
+  if (!biometricBtn) {
+    console.log('⏳ Biometric button not found yet, will check later');
+    // Schedule a check for when DOM is more complete
+    setTimeout(() => evaluateBiometricVisibility(), 200);
+    return true;
+  }
+  
+  // Button exists, evaluate visibility immediately
+  evaluateBiometricVisibility();
+  return true;
+}
+
+/**
+ * Evaluate whether biometric button should be visible
+ * This can be called multiple times safely
+ */
+function evaluateBiometricVisibility() {
+  console.log('🔍 Evaluating biometric button visibility...');
+  
+  const biometricBtn = document.getElementById('biometricLoginBtn');
+  if (!biometricBtn) {
+    console.log('❌ Biometric button element still not found');
+    return;
+  }
+  
+  // Check if WebAuthn is supported
+  const isWebAuthnSupported = window.PublicKeyCredential && 
+                             navigator.credentials && 
+                             navigator.credentials.create;
+  
+  if (!isWebAuthnSupported) {
+    biometricBtn.style.display = 'none';
+    console.log('👻 Biometric button hidden - WebAuthn not supported');
+    return;
+  }
+  
+  // Check registration status
+  const isRegistered = localStorage.getItem('CLS_BioRegistered') === 'true';
+  const registeredFor = localStorage.getItem('CLS_BioRegisteredFor');
+  const credentialId = localStorage.getItem('CLS_BioCredentialId');
+  
+  console.log('📋 Biometric registration status:', { 
+    isRegistered, 
+    hasRegisteredFor: !!registeredFor,
+    hasCredentialId: !!credentialId 
+  });
+  
+  if (isRegistered && registeredFor && credentialId) {
+    // User has completed biometric registration - show button
+    biometricBtn.style.display = 'block';
+    updateBiometricButtonText();
+    console.log('👤 Biometric button shown for registered user:', registeredFor);
+  } else {
+    // User hasn't registered biometrics yet - hide button
+    biometricBtn.style.display = 'none';
+    console.log('👻 Biometric button hidden - user not registered for biometrics yet');
+  }
+}
+
+function checkBiometricSupport() {
+  console.log('🔧 checkBiometricSupport() called - delegating to evaluateBiometricVisibility()');
+  // This function is kept for backward compatibility but now just calls the new logic
+  evaluateBiometricVisibility();
+  
+  return window.PublicKeyCredential && 
+         navigator.credentials && 
+         navigator.credentials.create;
 }
 
 /**
@@ -1036,12 +1078,8 @@ async function registerBiometric(workerId, email) {
       
       if (statusEl) statusEl.textContent = '✅ Biometric login enabled!';
       
-      // Show and update the biometric login button
-      const biometricBtn = document.getElementById('biometricLoginBtn');
-      if (biometricBtn) {
-        biometricBtn.style.display = 'block';
-        updateBiometricButtonText();
-      }
+      // Re-evaluate biometric button visibility now that registration is complete
+      evaluateBiometricVisibility();
       
       console.log('✅ Biometric registration successful');
       return true;
@@ -1197,8 +1235,9 @@ function initLoginForm() {
     }
   };
 
-  // Initialize biometric support
-  checkBiometricSupport();
+  // Initialize biometric support - but defer actual visibility logic
+  // This ensures WebAuthn support is checked and button handler is set up
+  setupBiometricButton();
   
   // Biometric login button handler
   const biometricBtn = document.getElementById('biometricLoginBtn');
