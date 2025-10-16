@@ -927,8 +927,8 @@
         });
         
         const editData = {
-          entryId: currentEditEntry,
-          workerId: workerId,
+          employeeId: workerId, // Correctly set employeeId
+          recordId: currentEditEntry, // Correctly set recordId (ClockinID)
           originalTime: document.getElementById('originalTime').textContent,
           requestedTime: formattedTime,
           requestedDateTime: requestedTime,
