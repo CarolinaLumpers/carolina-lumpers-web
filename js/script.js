@@ -76,6 +76,28 @@ const CLS_TEXT = {
       pt: "⚠️ Erro no servidor. Tente novamente."
     }
   },
+  pwaStatus: {
+    offlineMode: {
+      en: "📱 Offline Mode Active",
+      es: "📱 Modo Sin Conexión Activo",
+      pt: "📱 Modo Offline Ativo"
+    },
+    installedPwa: {
+      en: "📱 App Mode: Installed PWA",
+      es: "📱 Modo App: PWA Instalada",
+      pt: "📱 Modo App: PWA Instalado"
+    },
+    serviceWorkerActive: {
+      en: "🔄 App Mode: Enhanced Features Active",
+      es: "🔄 Modo App: Funciones Mejoradas Activas",
+      pt: "🔄 Modo App: Recursos Avançados Ativos"
+    },
+    defaultActive: {
+      en: "📱 App Mode Active",
+      es: "📱 Modo App Activo",
+      pt: "📱 Modo App Ativo"
+    }
+  },
   biometric: {
     prompt: {
       en: "🔒 Enable {0} for faster login on this device?",
@@ -141,6 +163,23 @@ const CLS_TEXT = {
       en: "⚠️ Biometric login failed. Please try again.",
       es: "⚠️ Falló el inicio de sesión biométrico. Intente nuevamente.",
       pt: "⚠️ Falha no login biométrico. Tente novamente."
+    }
+  },
+  dashboard: {
+    greeting: {
+      en: "Welcome",
+      es: "¡Bienvenido",
+      pt: "Bem-vindo"
+    },
+    sessionExpired: {
+      en: "Session expired. Please log in again.",
+      es: "Sesión expirada. Por favor, inicie sesión nuevamente.",
+      pt: "Sessão expirada. Por favor, faça login novamente."
+    },
+    workerIdLabel: {
+      en: "Worker ID",
+      es: "ID de Empleado",
+      pt: "ID do Funcionário"
     }
   }
 };
@@ -581,6 +620,11 @@ function switchLanguage(lang) {
       const btnText = getText('biometric.available', lang, [biometricName]);
       biometricBtn.innerHTML = btnText.replace('🔐', '🔐').replace(' — ', '<br><small>').replace('.', '</small>');
     }
+  }
+  
+  // Update PWA status if present (for dashboard page)
+  if (typeof updatePWAStatus === 'function') {
+    updatePWAStatus();
   }
 
   // Dispatch event for form to handle its own language updates

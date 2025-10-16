@@ -45,7 +45,12 @@
     <!-- PWA Status Indicator - Top Priority -->
     <div id="pwaStatus"
       style="display: none; background: rgba(255, 193, 7, 0.1); border: 1px solid #FFC107; color: #FFC107; padding: 8px 16px; border-radius: 8px; font-size: 0.9em; text-align: center; margin: 8px 16px 16px 16px; position: sticky; top: 0; z-index: 100;">
-      <span id="pwaStatusText">📱 App Mode Active</span>
+      <span id="pwaStatusText" 
+            data-en="📱 App Mode Active" 
+            data-es="📱 Modo App Activo" 
+            data-pt="📱 Modo App Ativo">
+        📱 App Mode Active
+      </span>
     </div>
 
     <h1 id="welcomeMessage" data-en="Employee Dashboard" data-es="Panel del Empleado" data-pt="Painel do Funcionário">
@@ -187,12 +192,48 @@
     </div>
   </div>
 
-  <!-- APP SCRIPT -->
   <script>
     // ======================== CONFIG ========================
     const API_URL = "https://cls-proxy.s-garay.workers.dev"; // Proxy to your Apps Script
-    const LANG = localStorage.getItem("CLS_Lang") || "en";
-    const GREETINGS = { en: "Welcome", es: "¡Bienvenido", pt: "Bem-vindo" };
+    
+    // Local getText function for dashboard (fallback until script.js loads)
+    function getText(path, lang) {
+      const dashboardTexts = {
+        'dashboard.sessionExpired': {
+          en: "Session expired. Please log in again.",
+          es: "Sesión expirada. Por favor, inicie sesión nuevamente.",
+          pt: "Sessão expirada. Por favor, faça login novamente."
+        },
+        'dashboard.greeting': {
+          en: "Welcome",
+          es: "¡Bienvenido",
+          pt: "Bem-vindo"
+        },
+        'dashboard.workerIdLabel': {
+          en: "Worker ID",
+          es: "ID de Empleado",
+          pt: "ID do Funcionário"
+        },
+        'pwaStatus.offlineMode': {
+          en: "📱 Offline Mode Active",
+          es: "📱 Modo Sin Conexión Activo",
+          pt: "📱 Modo Offline Ativo"
+        },
+        'pwaStatus.installedPwa': {
+          en: "📱 App Mode: Installed PWA",
+          es: "📱 Modo App: PWA Instalada",
+          pt: "📱 Modo App: PWA Instalado"
+        },
+        'pwaStatus.serviceWorkerActive': {
+          en: "🔄 App Mode: Enhanced Features Active",
+          es: "🔄 Modo App: Funciones Mejoradas Activas",
+          pt: "🔄 Modo App: Recursos Avançados Ativos"
+        }
+      };
+      
+      const text = dashboardTexts[path];
+      return text ? (text[lang] || text.en) : '';
+    }
 
     // ================= Multilingual Messages =================
     const MSG = {
@@ -213,6 +254,12 @@
       syncComplete: { en: "✅ All clock-ins synced successfully", es: "✅ Todos los registros sincronizados", pt: "✅ Todos os registros sincronizados" },
       pendingSync: { en: "🟡 pending sync", es: "🟡 sincronización pendiente", pt: "🟡 sincronização pendente" }
     };
+
+    // Helper function to get MSG translations
+    function getMSG(key, lang = null) {
+      const currentLang = lang || localStorage.getItem("CLS_Lang") || "en";
+      return MSG[key] && MSG[key][currentLang] ? MSG[key][currentLang] : MSG[key]["en"] || "";
+    }
 
     // =================== JSONP Helper ===================
     function jsonp(url) {
@@ -283,7 +330,7 @@
       const pendingCount = await getPendingSyncCount();
       const syncStatus = document.getElementById('syncStatus');
       if (syncStatus && pendingCount > 0) {
-        syncStatus.textContent = `${pendingCount} ${MSG.pendingSync[LANG]}`;
+        syncStatus.textContent = `${pendingCount} ${getMSG('pendingSync')}`;
         syncStatus.style.display = 'block';
       } else if (syncStatus) {
         syncStatus.style.display = 'none';
@@ -309,7 +356,7 @@
     window.addEventListener('online', () => {
       const status = document.getElementById('clockInStatus');
       if (status) {
-        status.textContent = MSG.syncInProgress[LANG];
+        status.textContent = getMSG('syncInProgress');
       }
       triggerSync();
     });
@@ -324,7 +371,8 @@
     const email = localStorage.getItem("CLS_Email");
 
     if (!workerId) {
-      alert("Session expired. Please log in again.");
+      const currentLang = localStorage.getItem("CLS_Lang") || "en";
+      alert(getText('dashboard.sessionExpired', currentLang));
       window.location.href = "employeelogin.html";
     } else {
 
@@ -353,48 +401,60 @@
     let USER_ROLE = null;           // cached role
 
     // =================== INIT (All Event Bindings + Defaults) ===================
-    window.addEventListener("DOMContentLoaded", () => {
-      const greeting = GREETINGS[LANG] || GREETINGS.en;
-      document.getElementById("welcomeName").textContent = `${greeting}, ${displayName || "Employee"}!`;
-      document.getElementById("userInfo").textContent = `Worker ID: ${workerId} | ${email}`;
+    
+    // PWA Status Detection and Display (Global scope for switchLanguage access)
+    window.updatePWAStatus = function() {
+      const pwaStatus = document.getElementById('pwaStatus');
+      const pwaStatusText = document.getElementById('pwaStatusText');
+      const currentLang = localStorage.getItem("CLS_Lang") || "en";
 
-      // PWA Status Detection and Display
-      function updatePWAStatus() {
-        const pwaStatus = document.getElementById('pwaStatus');
-        const pwaStatusText = document.getElementById('pwaStatusText');
-
-        if (!navigator.onLine) {
-          // Offline mode
-          pwaStatus.style.display = 'block';
-          pwaStatus.style.background = 'rgba(255, 152, 0, 0.1)';
-          pwaStatus.style.borderColor = '#ff9800';
-          pwaStatus.style.color = '#ff9800';
-          pwaStatusText.textContent = '📱 Offline Mode Active';
-        } else if (window.matchMedia('(display-mode: standalone)').matches) {
-          // Running as installed PWA
-          pwaStatus.style.display = 'block';
-          pwaStatus.style.background = 'rgba(255, 193, 7, 0.1)';
-          pwaStatus.style.borderColor = '#FFC107';
-          pwaStatus.style.color = '#FFC107';
-          pwaStatusText.textContent = '📱 App Mode: Installed PWA';
-        } else if (navigator.serviceWorker && navigator.serviceWorker.controller) {
-          // Service worker active but not installed
-          pwaStatus.style.display = 'block';
-          pwaStatus.style.background = 'rgba(255, 193, 7, 0.1)';
-          pwaStatus.style.borderColor = '#FFC107';
-          pwaStatus.style.color = '#FFC107';
-          pwaStatusText.textContent = '🔄 App Mode: Service Worker Active';
-        } else {
-          // Regular web browser
-          pwaStatus.style.display = 'none';
-        }
+      if (!navigator.onLine) {
+        // Offline mode
+        pwaStatus.style.display = 'block';
+        pwaStatus.style.background = 'rgba(255, 152, 0, 0.1)';
+        pwaStatus.style.borderColor = '#ff9800';
+        pwaStatus.style.color = '#ff9800';
+        pwaStatusText.textContent = getText('pwaStatus.offlineMode', currentLang);
+      } else if (window.matchMedia('(display-mode: standalone)').matches) {
+        // Running as installed PWA
+        pwaStatus.style.display = 'block';
+        pwaStatus.style.background = 'rgba(255, 193, 7, 0.1)';
+        pwaStatus.style.borderColor = '#FFC107';
+        pwaStatus.style.color = '#FFC107';
+        pwaStatusText.textContent = getText('pwaStatus.installedPwa', currentLang);
+      } else if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+        // Service worker active but not installed
+        pwaStatus.style.display = 'block';
+        pwaStatus.style.background = 'rgba(255, 193, 7, 0.1)';
+        pwaStatus.style.borderColor = '#FFC107';
+        pwaStatus.style.color = '#FFC107';
+        pwaStatusText.textContent = getText('pwaStatus.serviceWorkerActive', currentLang);
+      } else {
+        // Regular web browser
+        pwaStatus.style.display = 'none';
       }
+    };
+    
+    window.addEventListener("DOMContentLoaded", () => {
+      const currentLang = localStorage.getItem("CLS_Lang") || "en";
+      const greeting = getText('dashboard.greeting', currentLang);
+      document.getElementById("welcomeName").textContent = `${greeting}, ${displayName || "Employee"}!`;
+      document.getElementById("userInfo").textContent = `${getText('dashboard.workerIdLabel', currentLang)}: ${workerId} | ${email}`;
 
       updatePWAStatus();
 
       // Listen for online/offline events to update status
       window.addEventListener('online', updatePWAStatus);
       window.addEventListener('offline', updatePWAStatus);
+      
+      // Listen for language changes to update dashboard content
+      window.addEventListener('languageChanged', (event) => {
+        const newLang = event.detail.language;
+        const greeting = getText('dashboard.greeting', newLang);
+        document.getElementById("welcomeName").textContent = `${greeting}, ${displayName || "Employee"}!`;
+        document.getElementById("userInfo").textContent = `${getText('dashboard.workerIdLabel', newLang)}: ${workerId} | ${email}`;
+        updatePWAStatus(); // This will now work since it's in global scope
+      });
 
       // Clock-in
       document.getElementById("clockInBtn").addEventListener("click", handleClockIn);
@@ -493,7 +553,7 @@
       const btn = document.getElementById("clockInBtn");
       const status = document.getElementById("clockInStatus");
       btn.disabled = true;
-      status.textContent = MSG.gettingLocation[LANG];
+      status.textContent = getMSG('gettingLocation');
 
       try {
         const pos = await new Promise((resolve, reject) =>
@@ -518,20 +578,20 @@
         // Check if online
         if (!navigator.onLine) {
           // Save offline
-          status.textContent = MSG.recordingClockIn[LANG];
+          status.textContent = getMSG('recordingClockIn');
           const saved = await saveClockInOffline(clockData);
 
           if (saved) {
-            status.textContent = MSG.offlineSaved[LANG];
+            status.textContent = getMSG('offlineSaved');
             updateSyncStatus();
           } else {
-            status.textContent = MSG.clockInFailed[LANG] + " (Offline save failed)";
+            status.textContent = getMSG('clockInFailed') + " (Offline save failed)";
           }
           return;
         }
 
         // Online: send immediately
-        status.textContent = MSG.recordingClockIn[LANG];
+        status.textContent = getMSG('recordingClockIn');
         const res = await jsonp(
           `${API_URL}?action=clockin&workerId=${encodeURIComponent(workerId)}&lat=${latitude}&lng=${longitude}&lang=${lang}&email=${encodeURIComponent(email)}`
         );
@@ -543,23 +603,23 @@
           } else {
             const site = res.site || "Job Site";
             const dist = res.distance ? ` (${res.distance} mi)` : "";
-            status.textContent = `${MSG.clockInSuccess[LANG]} ${site}${dist}`;
+            status.textContent = `${getMSG('clockInSuccess')} ${site}${dist}`;
           }
           await loadReport();
         } else if (res && res.message) {
           const site = res.site ? ` (${res.site} - ${res.distance} mi)` : "";
-          status.textContent = `${MSG.clockInFailed[LANG]} ${site}. ${res.message}`;
+          status.textContent = `${getMSG('clockInFailed')} ${site}. ${res.message}`;
         } else {
-          status.textContent = MSG.clockInFailed[LANG];
+          status.textContent = getMSG('clockInFailed');
         }
       } catch (err) {
         // Handle geolocation errors
         if (err && err.code === 1)
-          status.textContent = MSG.locationDenied[LANG];
+          status.textContent = getMSG('locationDenied');
         else if (err && err.code === 2)
-          status.textContent = MSG.locationUnavailable[LANG];
+          status.textContent = getMSG('locationUnavailable');
         else if (err && err.code === 3)
-          status.textContent = MSG.locationTimeout[LANG];
+          status.textContent = getMSG('locationTimeout');
         else {
           // Network error - try to save offline
           if (err.message && err.message.includes("Network")) {
@@ -582,16 +642,16 @@
 
               const saved = await saveClockInOffline(clockData);
               if (saved) {
-                status.textContent = MSG.offlineSaved[LANG];
+                status.textContent = getMSG('offlineSaved');
                 updateSyncStatus();
               } else {
-                status.textContent = `${MSG.errorPrefix[LANG]} ${err.message || err}`;
+                status.textContent = `${getMSG('errorPrefix')} ${err.message || err}`;
               }
             } catch (geoErr) {
-              status.textContent = `${MSG.errorPrefix[LANG]} ${err.message || err}`;
+              status.textContent = `${getMSG('errorPrefix')} ${err.message || err}`;
             }
           } else {
-            status.textContent = `${MSG.errorPrefix[LANG]} ${err.message || err}`;
+            status.textContent = `${getMSG('errorPrefix')} ${err.message || err}`;
           }
         }
       } finally {
@@ -603,7 +663,7 @@
     // =================== Clock-In Report (Today Only, Latest First) ===================
     async function loadReport() {
       const body = document.getElementById("reportBody");
-      body.innerHTML = `<tr><td colspan='2' class="muted">${MSG.loadingReport[LANG]}</td></tr>`;
+      body.innerHTML = `<tr><td colspan='2' class="muted">${getMSG('loadingReport')}</td></tr>`;
 
       try {
         let data;
@@ -636,7 +696,7 @@
             }</td></tr>`;
         }
       } catch (err) {
-        body.innerHTML = `<tr><td colspan="2">${MSG.reportError[LANG]} ${err.message || err}</td></tr>`;
+        body.innerHTML = `<tr><td colspan="2">${getMSG('reportError')} ${err.message || err}</td></tr>`;
       }
     }
     // Label helper for the payroll total line
@@ -666,7 +726,7 @@
       const none = document.getElementById("payrollNone");
       const tbody = document.querySelector("#payrollTable tbody");
       const totalsEl = document.getElementById("payrollTotals");
-      tbody.innerHTML = `<tr><td colspan="3" class="muted">${MSG.loadingReport[LANG]}</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="3" class="muted">${getMSG('loadingReport')}</td></tr>`;
       none.classList.add("hidden");
       totalsEl.textContent = "";
 
@@ -800,7 +860,7 @@
       // ✅ Update greeting text with the right language
       const displayName = localStorage.getItem("CLS_WorkerName");
       if (displayName) {
-        const greeting = GREETINGS[lang] || GREETINGS.en;
+        const greeting = getText('dashboard.greeting', lang);
         document.getElementById("welcomeName").textContent = `${greeting}, ${displayName}!`;
       }
 
