@@ -41,18 +41,15 @@
   <!-- LOGIN FORM (centered vertically) -->
   <main>
     <!-- PWA Install Prompt -->
-    <div id="pwaInstallBanner" class="pwa-banner-clean" style="display:none;">
-      <span
-        data-en="📲 Install CLS Employee App for faster access and offline features!"
-        data-es="📲 ¡Instala la App de Empleado CLS para un acceso más rápido y funciones sin conexión!"
-        data-pt="📲 Instale o App de Funcionário CLS para acesso mais rápido e recursos offline!">
-        � Install CLS Employee App for faster access and offline features!
+    <div id="pwaInstallBanner" class="pwa-banner" style="display:none;">
+      <span data-en="📲 Install CLS Employee App for faster access and offline features!"
+            data-es="📲 ¡Instala la App de Empleado CLS para un acceso más rápido y funciones sin conexión!"
+            data-pt="📲 Instale o App de Funcionário CLS para acesso mais rápido e recursos offline!">
+        📲 Install CLS Employee App for faster access and offline features!
       </span>
       <div class="pwa-buttons">
-        <button id="installPwaBtn" class="pwa-install-btn" 
-                data-en="Install" data-es="Instalar" data-pt="Instalar">Install</button>
-        <button id="dismissPwaBtn" class="pwa-dismiss-btn" 
-                data-en="Later" data-es="Más tarde" data-pt="Depois">Later</button>
+        <button id="installPwaBtn" class="pwa-install-btn">Install</button>
+        <button id="dismissPwaBtn" class="pwa-dismiss-btn">Later</button>
       </div>
     </div>
     
@@ -101,27 +98,7 @@
 
   <!-- PWA Service Worker Registration -->
   <script>
-    // PWA Installation Prompt Management
-    let deferredPrompt;
-    
-    // Lightweight PWA Install Text
-    const PWA_TEXT = {
-      installButton: {
-        en: "Install CLS Employee App",
-        es: "Instalar App de Empleado CLS",
-        pt: "Instalar App do Funcionário CLS"
-      },
-      installing: {
-        en: "Installing...",
-        es: "Instalando...",
-        pt: "Instalando..."
-      }
-    };
-    
-    // Make PWA_TEXT globally accessible for language switching
-    window.PWA_TEXT = PWA_TEXT;
-    
-    // PHASE 5: Service Worker Registration on Login Page
+    // Service Worker Registration
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('service-worker-employee.js', { scope: './' })
         .then(registration => {
@@ -133,7 +110,6 @@
             newWorker.addEventListener('statechange', () => {
               if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
                 console.log('🔄 New SW version available');
-                // Optionally show update notification
               }
             });
           });
@@ -141,87 +117,7 @@
         .catch(err => console.error('❌ SW registration failed:', err));
     }
     
-    // Enhanced PWA Install Prompt Handling (only if app not installed)
-    if (!window.matchMedia('(display-mode: standalone)').matches && !window.navigator.standalone) {
-      // Show banner with smooth animation if not dismissed
-      if (!localStorage.getItem('pwaInstallDismissed')) {
-        const banner = document.getElementById('pwaInstallBanner');
-        setTimeout(() => {
-          banner.style.display = 'flex';
-        }, 600); // fade in after 0.6s
-      }
-      
-      // Wrap in DOMContentLoaded to ensure DOM is ready
-      document.addEventListener('DOMContentLoaded', () => {
-        window.addEventListener('beforeinstallprompt', (e) => {
-          e.preventDefault();
-          deferredPrompt = e;
-          
-          // Banner is already shown above, just handle floating button
-          const floatingDismissed = localStorage.getItem('floatingPwaDismissed');
-          if (!floatingDismissed) {
-            // Create floating install button for better visibility
-          const currentLang = localStorage.getItem("CLS_Lang") || "en";
-          const installBtn = document.createElement('button');
-          installBtn.innerHTML = `📲 ${PWA_TEXT.installButton[currentLang] || PWA_TEXT.installButton.en}`;
-          installBtn.className = "floating-install-btn";
-          installBtn.setAttribute('data-lang', currentLang);
-
-          document.body.appendChild(installBtn);
-
-          // Add dismissible functionality (right-click to hide)
-          installBtn.addEventListener('contextmenu', (e) => {
-            e.preventDefault();
-            installBtn.style.opacity = "0";
-            setTimeout(() => installBtn.remove(), 300);
-            localStorage.setItem('floatingPwaDismissed', 'true');
-          });
-
-          installBtn.addEventListener('click', async () => {
-            installBtn.innerHTML = `⏳ ${PWA_TEXT.installing[currentLang] || PWA_TEXT.installing.en}`;
-            installBtn.disabled = true;
-            
-            deferredPrompt.prompt();
-            const { outcome } = await deferredPrompt.userChoice;
-            console.log(`PWA install outcome: ${outcome}`);
-            deferredPrompt = null;
-            
-            installBtn.style.opacity = "0";
-            setTimeout(() => installBtn.remove(), 500);
-            
-            // Also hide banner
-            document.getElementById('pwaInstallBanner').style.display = 'none';
-          });
-          } // End floating button dismissal check
-        });
-
-        window.addEventListener('appinstalled', () => {
-          console.log('✅ CLS Employee App installed');
-          const btn = document.querySelector('.floating-install-btn');
-          if (btn) btn.remove();
-          document.getElementById('pwaInstallBanner').style.display = 'none';
-        });
-      });
-    }
-    
     document.addEventListener('DOMContentLoaded', () => {
-      // PWA Install Button
-      document.getElementById('installPwaBtn')?.addEventListener('click', async () => {
-        if (deferredPrompt) {
-          deferredPrompt.prompt();
-          const { outcome } = await deferredPrompt.userChoice;
-          console.log(`PWA install ${outcome}`);
-          deferredPrompt = null;
-          document.getElementById('pwaInstallBanner').style.display = 'none';
-        }
-      });
-      
-      // PWA Dismiss Button
-      document.getElementById('dismissPwaBtn')?.addEventListener('click', () => {
-        document.getElementById('pwaInstallBanner').style.display = 'none';
-        localStorage.setItem('pwaInstallDismissed', 'true');
-      });
-      
       // Update offline indicator
       function updateOfflineStatus() {
         const indicator = document.getElementById('offlineIndicator');
@@ -232,21 +128,19 @@
       
       updateOfflineStatus();
       
-      // PHASE 7: Offline Login Experience
+      // Offline Login Experience
       function checkOfflineAccess() {
         if (!navigator.onLine) {
           const workerId = localStorage.getItem('CLS_WorkerID');
           const sessionExpiry = localStorage.getItem('CLS_SessionExpiry');
           
           if (workerId && sessionExpiry && new Date(sessionExpiry) > new Date()) {
-            // Allow offline continuation for valid sessions with delay
             console.log('📱 Offline mode: Redirecting to cached dashboard');
             setTimeout(() => {
               window.location.href = 'employeeDashboard.html';
-            }, 500); // 500ms delay to show offline message
+            }, 500);
             return;
           } else {
-            // Show offline message for new users
             const statusEl = document.getElementById('status');
             if (statusEl) {
               statusEl.textContent = '📱 Offline: Please reconnect to log in or try again when online.';
@@ -260,11 +154,9 @@
       
       // Initialize biometric login if supported and available
       function initializeBiometricLogin() {
-        // This will be called from script.js once it loads
         if (window.checkBiometricSupport) {
           window.checkBiometricSupport();
         } else {
-          // If script.js hasn't loaded yet, wait for it
           setTimeout(initializeBiometricLogin, 100);
         }
       }
@@ -286,11 +178,6 @@
           statusEl.textContent = '';
         }
       });
-      
-      // Hide install banner if already installed (standalone mode)
-      if (window.matchMedia('(display-mode: standalone)').matches) {
-        document.getElementById('pwaInstallBanner').style.display = 'none';
-      }
     });
   </script>
 

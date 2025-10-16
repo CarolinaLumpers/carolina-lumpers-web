@@ -3,6 +3,35 @@
    ================================ */
 const API_BASE = "https://script.google.com/macros/s/AKfycbwHBLEQ5QHuhD-O4uI4hRN_5_yS9YsFgtn_dMAdoAO2C7zHLoi3qfHO82vas3Uv0wXXpg/exec";
 
+/* ================================
+   PWA CONFIGURATION
+   ================================ */
+const PWA_TEXT = {
+  installButton: {
+    en: "Install CLS Employee App",
+    es: "Instalar App de Empleado CLS",
+    pt: "Instalar App do Funcionário CLS"
+  },
+  installing: {
+    en: "Installing...",
+    es: "Instalando...",
+    pt: "Instalando..."
+  },
+  bannerText: {
+    en: "📲 Install CLS Employee App for faster access and offline features!",
+    es: "📲 ¡Instala la App de Empleado CLS para un acceso más rápido y funciones sin conexión!",
+    pt: "📲 Instale o App de Funcionário CLS para acesso mais rápido e recursos offline!"
+  },
+  laterButton: {
+    en: "Later",
+    es: "Más tarde",
+    pt: "Depois"
+  }
+};
+
+// Make PWA_TEXT globally accessible
+window.PWA_TEXT = PWA_TEXT;
+
 // Device Type Detection Function
 function getDeviceType() {
   const ua = navigator.userAgent || navigator.vendor || window.opera;
@@ -265,17 +294,20 @@ function switchLanguage(lang) {
   const floatingBtn = document.querySelector('.floating-install-btn');
   if (floatingBtn && floatingBtn.dataset.lang !== lang) {
     floatingBtn.dataset.lang = lang;
-    // Access PWA_TEXT from window object if available
-    if (window.PWA_TEXT) {
-      floatingBtn.innerHTML = `📲 ${window.PWA_TEXT.installButton[lang] || window.PWA_TEXT.installButton.en}`;
-    }
+    floatingBtn.innerHTML = `📲 <strong>${PWA_TEXT.installButton[lang] || PWA_TEXT.installButton.en}</strong>`;
   }
 
   // Update PWA banner when language changes
-  document.querySelectorAll('#pwaInstallBanner [data-en]').forEach(el => {
-    const text = el.dataset[lang] || el.dataset.en;
-    if (text) el.textContent = text;
-  });
+  const bannerTextEl = document.querySelector('#pwaInstallBanner [data-en]');
+  if (bannerTextEl) {
+    bannerTextEl.textContent = PWA_TEXT.bannerText[lang] || PWA_TEXT.bannerText.en;
+  }
+  
+  // Update PWA button texts
+  const installBtn = document.getElementById('installPwaBtn');
+  const dismissBtn = document.getElementById('dismissPwaBtn');
+  if (installBtn) installBtn.textContent = PWA_TEXT.installButton[lang] || PWA_TEXT.installButton.en;
+  if (dismissBtn) dismissBtn.textContent = PWA_TEXT.laterButton[lang] || PWA_TEXT.laterButton.en;
 
   // Dispatch event for form to handle its own language updates
   window.dispatchEvent(new CustomEvent('languageChanged', {
@@ -297,6 +329,7 @@ document.addEventListener("DOMContentLoaded", () => {
   loadNavbar(); // Load shared navbar component
   loadFooter(); // Load shared footer component
   initLanguageSystem();
+  initPwaInstallPrompt(); // Initialize unified PWA install system
 
   // Determine current page for page-specific logic
   const page = document.body.dataset.page;

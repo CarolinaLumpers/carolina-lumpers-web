@@ -979,105 +979,11 @@
   </script>
 
   <script>
-    // Temporarily disable service worker to force fresh CSS loading
+    // Service Worker Registration for Dashboard
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.getRegistrations().then(function(registrations) {
-        for(let registration of registrations) {
-          registration.unregister();
-          console.log('🗑️ Unregistered service worker');
-        }
-      });
-      
-      // Clear all caches
-      if ('caches' in window) {
-        caches.keys().then(function(names) {
-          for (let name of names) {
-            caches.delete(name);
-            console.log('🗑️ Cleared cache:', name);
-          }
-        });
-      }
-      
-      // Register the updated service worker
-      setTimeout(() => {
-        navigator.serviceWorker.register('service-worker-employee.js')
-          .then(() => console.log('✅ Employee service worker registered'))
-          .catch(err => console.error('❌ SW registration failed:', err));
-      }, 1000);
-    }
-  </script>
-
-  <script>
-    // ======================================================
-    // 📲  CLS Employee PWA Install Prompt (Multilingual)
-    // ======================================================
-    let deferredPrompt;
-
-    // Multilingual text for PWA install
-    const PWA_TEXT = {
-      installButton: {
-        en: "📲 Install CLS Employee App",
-        es: "📲 Instalar App de Empleado CLS",
-        pt: "📲 Instalar App do Funcionário CLS"
-      },
-      installing: {
-        en: "Installing...",
-        es: "Instalando...",
-        pt: "Instalando..."
-      }
-    };
-
-    // Check if app is already installed/running as PWA
-    if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
-      console.log('✅ Already running as installed app');
-    } else {
-      // Only add install prompt if not already installed
-      window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();               // stop Chrome's default banner
-      deferredPrompt = e;
-
-      // Create button with current language
-      const currentLang = localStorage.getItem("CLS_Lang") || "en";
-      const installBtn = document.createElement('button');
-      installBtn.textContent = PWA_TEXT.installButton[currentLang] || PWA_TEXT.installButton.en;
-      installBtn.className = "install-btn";
-      installBtn.style.position = "fixed";
-      installBtn.style.bottom = "20px";
-      installBtn.style.left = "50%";
-      installBtn.style.transform = "translateX(-50%)";
-      installBtn.style.background = "#ffcc00";
-      installBtn.style.color = "#000";
-      installBtn.style.padding = "12px 20px";
-      installBtn.style.fontSize = "1rem";
-      installBtn.style.border = "none";
-      installBtn.style.borderRadius = "10px";
-      installBtn.style.boxShadow = "0 0 10px rgba(255, 204, 0, 0.4)";
-      installBtn.style.cursor = "pointer";
-      installBtn.style.zIndex = "1000";
-      installBtn.style.transition = "opacity 0.3s";
-
-      document.body.appendChild(installBtn);
-
-      // Handle click
-      installBtn.addEventListener('click', async () => {
-        const currentLang = localStorage.getItem("CLS_Lang") || "en";
-        installBtn.disabled = true;
-        installBtn.textContent = PWA_TEXT.installing[currentLang] || PWA_TEXT.installing.en;
-        deferredPrompt.prompt();
-        const { outcome } = await deferredPrompt.userChoice;
-        console.log(`User install response: ${outcome}`);
-        deferredPrompt = null;
-        installBtn.style.opacity = "0";
-        setTimeout(() => installBtn.remove(), 500);
-      });
-    });
-
-    // Remove button once installed
-    window.addEventListener('appinstalled', () => {
-      console.log('✅ CLS Employee App installed');
-      const btn = document.querySelector('.install-btn');
-      if (btn) btn.remove();
-    });
+      navigator.serviceWorker.register('service-worker-employee.js')
+        .then(() => console.log('✅ Employee service worker registered'))
+        .catch(err => console.error('❌ SW registration failed:', err));
     }
   </script>
 
