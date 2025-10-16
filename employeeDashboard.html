@@ -322,8 +322,7 @@
     if (!workerId) {
       alert("Session expired. Please log in again.");
       window.location.href = "employeelogin.html";
-      return;
-    }
+    } else {
     
     // Check if we have placeholder data from biometric login
     const hasPlaceholderData = !displayName || !email || 
@@ -341,6 +340,8 @@
       displayName: displayName || `Worker ${workerId}`, 
       email: email || `${workerId}@placeholder.com` 
     };
+    
+    } // End of session validation
 
     // View As functionality
     let VIEW_AS_WORKER = null;      // stores workerId being viewed
