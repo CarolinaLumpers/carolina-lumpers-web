@@ -28,323 +28,14 @@
   <meta name="apple-mobile-web-app-title" content="CLS Employee">
   <link rel="apple-touch-icon" href="assets/CLS-favicon.png">
 
+  <!-- Global CSS System -->
+  <link rel="stylesheet" href="css/style.css?v=2024-pwa-integration">
+  <link rel="stylesheet" href="css/dashboard.css?v=2024-pwa-integration">
   <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet" />
-
-  <style>
-    :root {
-      --cls-yellow: #ffcc00;
-      --cls-yellow-hover: #ffd633;
-      --bg: #000;
-      --card: #111;
-      --text: #fff;
-      --muted: #aaa;
-      --muted2: #888;
-      --border: #333;
-      --thead: #222;
-      --rowalt: #111;
-    }
-
-    * {
-      box-sizing: border-box
-    }
-
-    body {
-      background-color: var(--bg);
-      color: var(--text);
-      font-family: Arial, sans-serif;
-      margin: 0;
-      text-align: center
-    }
-
-    .navbar {
-      background: #111;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 10px 20px;
-      flex-wrap: wrap
-    }
-
-    .logo {
-      height: 40px;
-      margin-right: 10px
-    }
-
-    .company-name {
-      font-family: "Anton", sans-serif;
-      color: var(--cls-yellow);
-      text-decoration: none;
-      font-size: 1.3em
-    }
-
-    .nav-links {
-      list-style: none;
-      display: flex;
-      gap: 15px;
-      margin: 0;
-      padding: 0;
-      flex-wrap: wrap
-    }
-
-    .nav-links a {
-      color: #fff;
-      text-decoration: none;
-      font-size: .9em;
-      transition: color .2s
-    }
-
-    .nav-links a:hover {
-      color: var(--cls-yellow)
-    }
-
-    .dashboard {
-      padding: 40px 16px;
-      max-width: 980px;
-      margin: 0 auto
-    }
-
-    h1 {
-      color: var(--cls-yellow);
-      font-family: "Anton", sans-serif;
-      font-size: 2.3em;
-      margin: .1em 0 .2em
-    }
-
-    h2#welcomeName {
-      color: var(--cls-yellow);
-      font-weight: normal;
-      font-size: 1.2em;
-      margin: .1em 0 1em
-    }
-
-    .info {
-      margin-bottom: 18px;
-      font-size: 1.05em
-    }
-
-    /* Tabs */
-    .tab-buttons {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin: 12px auto 22px;
-      flex-wrap: wrap
-    }
-
-    .tab-btn {
-      background: #111;
-      color: var(--cls-yellow);
-      border: none;
-      border-radius: 10px;
-      padding: 12px 22px;
-      font-size: 1.05em;
-      cursor: pointer;
-      transition: all .2s;
-      font-family: "Anton", sans-serif
-    }
-
-    .tab-btn:hover,
-    .tab-btn.active {
-      background: var(--cls-yellow);
-      color: #000
-    }
-
-    .hidden {
-      display: none
-    }
-
-    #adminPanel table {
-      font-size: 0.9em
-    }
-
-    /* Cards / sections */
-    .card {
-      background: #0b0b0b;
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 18px;
-      margin: 0 auto 22px;
-      max-width: 900px
-    }
-
-    .section-title {
-      color: var(--cls-yellow);
-      margin: 0 0 10px;
-      font-size: 1.2em
-    }
-
-    /* Clock in button */
-    #clockInBtn {
-      background: var(--cls-yellow);
-      color: #000;
-      border: none;
-      border-radius: 10px;
-      padding: 14px 36px;
-      font-size: 1.1em;
-      cursor: pointer;
-      transition: background-color .2s
-    }
-
-    #clockInBtn:hover {
-      background: var(--cls-yellow-hover)
-    }
-
-    #clockInStatus {
-      margin-top: 12px;
-      font-size: 1.05em;
-      min-height: 28px
-    }
-
-    /* Tables */
-    table {
-      margin: 16px auto;
-      width: 96%;
-      max-width: 860px;
-      border-collapse: collapse;
-      color: #f2f2f2
-    }
-
-    th,
-    td {
-      padding: 10px;
-      border: 1px solid var(--border)
-    }
-
-    th {
-      background: var(--thead)
-    }
-
-    tr:nth-child(even) {
-      background: var(--rowalt)
-    }
-
-    .t-right {
-      text-align: right
-    }
-
-    .muted {
-      color: var(--muted)
-    }
-
-    /* Payroll controls */
-    .controls {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      justify-content: flex-start;
-      margin: 10px auto;
-      max-width: 860px;
-    }
-
-    .btn {
-      border: none;
-      border-radius: 8px;
-      padding: 10px 16px;
-      font-size: .95em;
-      cursor: pointer;
-      transition: .2s;
-    }
-
-    .btn-blue {
-      background: #2563eb;
-      color: white;
-    }
-
-    .btn-blue:hover {
-      filter: brightness(1.1);
-    }
-
-    .btn-gray {
-      background: #6b7280;
-      color: white;
-    }
-
-    .btn-gray:hover {
-      filter: brightness(1.1);
-    }
-
-    .btn-green {
-      background: #16a34a;
-      color: white;
-      margin-left: auto;
-    }
-
-    .btn-green:hover {
-      filter: brightness(1.1);
-    }
-
-    footer {
-      background: #111;
-      color: var(--muted);
-      text-align: center;
-      padding: 18px;
-      font-size: .9em;
-      margin-top: 46px;
-    }
-
-    footer a img {
-      width: 24px;
-      margin: 0 5px;
-    }
-
-    .language-toggle {
-      margin-top: 10px;
-    }
-
-    .language-toggle button {
-      margin: 4px;
-      padding: 8px 12px;
-      border: none;
-      background: #111;
-      color: var(--cls-yellow);
-      border-radius: 6px;
-      cursor: pointer;
-      transition: all .2s;
-    }
-
-    .language-toggle button:hover,
-    .language-toggle button.active {
-      background: var(--cls-yellow);
-      color: #000;
-    }
-
-    @media (max-width: 640px) {
-      #clockInBtn {
-        width: 100%;
-      }
-
-      .controls {
-        gap: 10px;
-      }
-
-      .btn {
-        flex: 1;
-        min-width: 44%;
-      }
-
-      .btn-green {
-        flex-basis: 100%;
-        margin-left: 0;
-      }
-    }
-
-    /* Payroll tab active state */
-    .btn-active {
-      background: var(--cls-yellow) !important;
-      color: #000 !important;
-    }
-
-    /* Flash effect for Download PDF button */
-    .btn-flash {
-      background: var(--cls-yellow) !important;
-      color: #000 !important;
-      transition: background-color 0.3s ease;
-    }
-  </style>
 </head>
 
-<body>
-  <!-- NAVBAR -->
+<body data-page="employeeDashboard" class="dashboard-page">
+  <!-- Navigation Bar -->
   <div id="navbar-container"></div>
 
   <!-- DASHBOARD -->
@@ -353,6 +44,11 @@
       Employee Dashboard</h1>
     <h2 id="welcomeName"></h2>
     <div class="info" id="userInfo"></div>
+    
+    <!-- PWA Status Indicator -->
+    <div id="pwaStatus" style="display: none; background: rgba(255, 193, 7, 0.1); border: 1px solid #FFC107; color: #FFC107; padding: 8px 16px; border-radius: 8px; font-size: 0.9em; text-align: center; margin-bottom: 16px;">
+      <span id="pwaStatusText">📱 App Mode Active</span>
+    </div>
 
     <!-- TABS -->
     <div class="tab-buttons">
@@ -369,6 +65,7 @@
         Clock In / Out
       </button>
       <div id="clockInStatus"></div>
+      <div id="syncStatus" style="display: none; font-size: 0.9em; color: #FFC107; margin-top: 8px; text-align: center;"></div>
 
       <h3 class="section-title" data-en="Today's Clock-In Report" data-es="Reporte de Entradas de Hoy"
         data-pt="Relatório de Entradas de Hoje">
@@ -476,27 +173,15 @@
       </div>
     </div>
 
-    <div class="logout" onclick="logout()" data-en="Logout" data-es="Cerrar Sesión" data-pt="Sair">Logout</div>
-  </div>
-
-  <!-- FOOTER -->
-  <footer>
-    <p data-en="© 2024 Carolina Lumper Service. All rights reserved."
-      data-es="© 2024 Carolina Lumper Service. Todos los derechos reservados."
-      data-pt="© 2024 Carolina Lumper Service. Todos os direitos reservados.">
-      © 2024 Carolina Lumper Service. All rights reserved.
-    </p>
-    <div class="footer-icons">
-      <a href="https://www.facebook.com/profile.php?id=61569872795390"><img src="assets/facebook-icon.png"
-          alt="Facebook" /></a>
-      <a href="#"><img src="assets/linkedin-icon.png" alt="LinkedIn" /></a>
-    </div>
+    <button class="logout" onclick="logout()" data-en="Logout" data-es="Cerrar Sesión" data-pt="Sair">Logout</button>
+    
+    <!-- Language Toggle -->
     <div class="language-toggle">
       <button data-lang="en" onclick="switchLanguage('en')">English</button>
       <button data-lang="es" onclick="switchLanguage('es')">Español</button>
       <button data-lang="pt" onclick="switchLanguage('pt')">Português</button>
     </div>
-  </footer>
+  </div>
 
   <!-- APP SCRIPT -->
   <script>
@@ -517,7 +202,12 @@
       errorPrefix: { en: "⚠️ Error:", es: "⚠️ Error:", pt: "⚠️ Erro:" },
       loadingReport: { en: "Loading...", es: "Cargando...", pt: "Carregando..." },
       noClockIns: { en: "No clock-ins this week.", es: "No hay registros esta semana.", pt: "Sem registros esta semana." },
-      reportError: { en: "⚠️ Error loading report:", es: "⚠️ Error al cargar el informe:", pt: "⚠️ Erro ao carregar o relatório:" }
+      reportError: { en: "⚠️ Error loading report:", es: "⚠️ Error al cargar el informe:", pt: "⚠️ Erro ao carregar o relatório:" },
+      // Offline sync messages
+      offlineSaved: { en: "📱 Clock-in saved offline — will sync when online", es: "📱 Registro guardado sin conexión — se sincronizará cuando esté en línea", pt: "📱 Registro salvo offline — será sincronizado quando online" },
+      syncInProgress: { en: "🔄 Connection restored — syncing clock data...", es: "🔄 Conexión restaurada — sincronizando datos...", pt: "🔄 Conexão restaurada — sincronizando dados..." },
+      syncComplete: { en: "✅ All clock-ins synced successfully", es: "✅ Todos los registros sincronizados", pt: "✅ Todos os registros sincronizados" },
+      pendingSync: { en: "🟡 pending sync", es: "🟡 sincronización pendiente", pt: "🟡 sincronização pendente" }
     };
 
     // =================== JSONP Helper ===================
@@ -534,6 +224,95 @@
         document.body.appendChild(s);
       });
     }
+
+    // =================== Offline Sync Utilities ===================
+    async function sendMessageToServiceWorker(type, data = {}) {
+      if (!('serviceWorker' in navigator)) return null;
+      
+      const registration = await navigator.serviceWorker.ready;
+      if (!registration.active) return null;
+      
+      return new Promise((resolve) => {
+        const channel = new MessageChannel();
+        channel.port1.onmessage = (event) => resolve(event.data);
+        registration.active.postMessage({ type, data }, [channel.port2]);
+      });
+    }
+
+    async function saveClockInOffline(clockData) {
+      try {
+        const result = await sendMessageToServiceWorker('QUEUE_CLOCK_IN', clockData);
+        return result && result.success;
+      } catch (err) {
+        console.error('Failed to save offline:', err);
+        return false;
+      }
+    }
+
+    async function triggerSync() {
+      try {
+        // Try background sync first
+        if ('serviceWorker' in navigator && 'SyncManager' in window) {
+          const registration = await navigator.serviceWorker.ready;
+          await registration.sync.register('sync-clock-data');
+        }
+        
+        // Also trigger manual sync
+        await sendMessageToServiceWorker('TRIGGER_SYNC');
+      } catch (err) {
+        console.warn('Sync trigger failed:', err);
+      }
+    }
+
+    async function getPendingSyncCount() {
+      try {
+        const result = await sendMessageToServiceWorker('GET_PENDING_COUNT');
+        return result ? result.count : 0;
+      } catch (err) {
+        console.error('Failed to get pending count:', err);
+        return 0;
+      }
+    }
+
+    // Update sync status in UI
+    async function updateSyncStatus() {
+      const pendingCount = await getPendingSyncCount();
+      const syncStatus = document.getElementById('syncStatus');
+      if (syncStatus && pendingCount > 0) {
+        syncStatus.textContent = `${pendingCount} ${MSG.pendingSync[LANG]}`;
+        syncStatus.style.display = 'block';
+      } else if (syncStatus) {
+        syncStatus.style.display = 'none';
+      }
+    }
+
+    // Listen for sync messages from service worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.addEventListener('message', (event) => {
+        const { type, data } = event.data;
+        
+        switch (type) {
+          case 'CLOCK_SYNC_SUCCESS':
+            console.log('✅ Clock-in synced:', data);
+            updateSyncStatus();
+            loadReport(); // Refresh the report
+            break;
+        }
+      });
+    }
+
+    // Handle online/offline events
+    window.addEventListener('online', () => {
+      const status = document.getElementById('clockInStatus');
+      if (status) {
+        status.textContent = MSG.syncInProgress[LANG];
+      }
+      triggerSync();
+    });
+
+    window.addEventListener('offline', () => {
+      console.log('📱 Device offline');
+    });
 
     // =================== Session ===================
     const workerId = localStorage.getItem("CLS_WorkerID");
@@ -557,9 +336,55 @@
       document.getElementById("welcomeName").textContent = `${greeting}, ${displayName || "Employee"}!`;
       document.getElementById("userInfo").textContent = `Worker ID: ${workerId} | ${email}`;
 
+      // PWA Status Detection and Display
+      function updatePWAStatus() {
+        const pwaStatus = document.getElementById('pwaStatus');
+        const pwaStatusText = document.getElementById('pwaStatusText');
+        
+        if (!navigator.onLine) {
+          // Offline mode
+          pwaStatus.style.display = 'block';
+          pwaStatus.style.background = 'rgba(255, 152, 0, 0.1)';
+          pwaStatus.style.borderColor = '#ff9800';
+          pwaStatus.style.color = '#ff9800';
+          pwaStatusText.textContent = '📱 Offline Mode Active';
+        } else if (window.matchMedia('(display-mode: standalone)').matches) {
+          // Running as installed PWA
+          pwaStatus.style.display = 'block';
+          pwaStatus.style.background = 'rgba(255, 193, 7, 0.1)';
+          pwaStatus.style.borderColor = '#FFC107';
+          pwaStatus.style.color = '#FFC107';
+          pwaStatusText.textContent = '📱 App Mode: Installed PWA';
+        } else if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+          // Service worker active but not installed
+          pwaStatus.style.display = 'block';
+          pwaStatus.style.background = 'rgba(255, 193, 7, 0.1)';
+          pwaStatus.style.borderColor = '#FFC107';
+          pwaStatus.style.color = '#FFC107';
+          pwaStatusText.textContent = '🔄 App Mode: Service Worker Active';
+        } else {
+          // Regular web browser
+          pwaStatus.style.display = 'none';
+        }
+      }
+      
+      updatePWAStatus();
+      
+      // Listen for online/offline events to update status
+      window.addEventListener('online', updatePWAStatus);
+      window.addEventListener('offline', updatePWAStatus);
+
       // Clock-in
       document.getElementById("clockInBtn").addEventListener("click", handleClockIn);
       loadReport();
+      
+      // Initialize sync status
+      updateSyncStatus();
+      
+      // Trigger sync if back online
+      if (navigator.onLine) {
+        triggerSync();
+      }
 
       // Tabs
       document.getElementById("tabClock").addEventListener("click", () => switchTab("clock"));
@@ -656,13 +481,38 @@
           })
         );
         const { latitude, longitude } = pos.coords;
-        status.textContent = MSG.recordingClockIn[LANG];
 
+        // Prepare clock-in data
         const lang = localStorage.getItem("CLS_Lang") || "en";
+        const clockData = {
+          workerId: workerId,
+          lat: latitude,
+          lng: longitude,
+          lang: lang,
+          email: email || '',
+          timestamp: new Date().toISOString()
+        };
+
+        // Check if online
+        if (!navigator.onLine) {
+          // Save offline
+          status.textContent = MSG.recordingClockIn[LANG];
+          const saved = await saveClockInOffline(clockData);
+          
+          if (saved) {
+            status.textContent = MSG.offlineSaved[LANG];
+            updateSyncStatus();
+          } else {
+            status.textContent = MSG.clockInFailed[LANG] + " (Offline save failed)";
+          }
+          return;
+        }
+
+        // Online: send immediately
+        status.textContent = MSG.recordingClockIn[LANG];
         const res = await jsonp(
           `${API_URL}?action=clockin&workerId=${encodeURIComponent(workerId)}&lat=${latitude}&lng=${longitude}&lang=${lang}&email=${encodeURIComponent(email)}`
         );
-
 
         if (res && res.success) {
           // If backend provided a localized message (e.g. late message), show it directly
@@ -681,14 +531,47 @@
           status.textContent = MSG.clockInFailed[LANG];
         }
       } catch (err) {
+        // Handle geolocation errors
         if (err && err.code === 1)
           status.textContent = MSG.locationDenied[LANG];
         else if (err && err.code === 2)
           status.textContent = MSG.locationUnavailable[LANG];
         else if (err && err.code === 3)
           status.textContent = MSG.locationTimeout[LANG];
-        else
-          status.textContent = `${MSG.errorPrefix[LANG]} ${err.message || err}`;
+        else {
+          // Network error - try to save offline
+          if (err.message && err.message.includes("Network")) {
+            try {
+              const pos = await new Promise((resolve, reject) =>
+                navigator.geolocation.getCurrentPosition(resolve, reject, {
+                  enableHighAccuracy: true,
+                  timeout: 5000,
+                })
+              );
+              
+              const clockData = {
+                workerId: workerId,
+                lat: pos.coords.latitude,
+                lng: pos.coords.longitude,
+                lang: localStorage.getItem("CLS_Lang") || "en",
+                email: email || '',
+                timestamp: new Date().toISOString()
+              };
+              
+              const saved = await saveClockInOffline(clockData);
+              if (saved) {
+                status.textContent = MSG.offlineSaved[LANG];
+                updateSyncStatus();
+              } else {
+                status.textContent = `${MSG.errorPrefix[LANG]} ${err.message || err}`;
+              }
+            } catch (geoErr) {
+              status.textContent = `${MSG.errorPrefix[LANG]} ${err.message || err}`;
+            }
+          } else {
+            status.textContent = `${MSG.errorPrefix[LANG]} ${err.message || err}`;
+          }
+        }
       } finally {
         btn.disabled = false;
       }
@@ -1096,10 +979,31 @@
   </script>
 
   <script>
+    // Temporarily disable service worker to force fresh CSS loading
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('service-worker-employee.js')
-        .then(() => console.log('✅ Employee service worker registered'))
-        .catch(err => console.error('❌ SW registration failed:', err));
+      navigator.serviceWorker.getRegistrations().then(function(registrations) {
+        for(let registration of registrations) {
+          registration.unregister();
+          console.log('🗑️ Unregistered service worker');
+        }
+      });
+      
+      // Clear all caches
+      if ('caches' in window) {
+        caches.keys().then(function(names) {
+          for (let name of names) {
+            caches.delete(name);
+            console.log('🗑️ Cleared cache:', name);
+          }
+        });
+      }
+      
+      // Register the updated service worker
+      setTimeout(() => {
+        navigator.serviceWorker.register('service-worker-employee.js')
+          .then(() => console.log('✅ Employee service worker registered'))
+          .catch(err => console.error('❌ SW registration failed:', err));
+      }, 1000);
     }
   </script>
 
@@ -1177,7 +1081,7 @@
     }
   </script>
 
-  <script src="js/script.js" defer></script>
+  <script src="js/script.js?v=2024-dashboard-logout-menu" defer></script>
 </body>
 
 </html>

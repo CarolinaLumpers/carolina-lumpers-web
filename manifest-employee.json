@@ -1,21 +1,26 @@
 {
-  "name": "CLS Employee Dashboard",
+  "name": "CLS Employee App",
   "short_name": "CLS Employee",
-  "start_url": "./employeeDashboard.html",
+  "start_url": "./employeelogin.html",
   "scope": "./",
   "display": "standalone",
   "background_color": "#000000",
   "theme_color": "#ffcc00",
+  "orientation": "portrait-primary",
+  "categories": ["business", "productivity"],
+  "description": "Carolina Lumper Service Employee App - Clock in, view schedules, and manage work tasks",
   "icons": [
     {
       "src": "assets/CLS-icon-192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
       "src": "assets/CLS-icon-512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }

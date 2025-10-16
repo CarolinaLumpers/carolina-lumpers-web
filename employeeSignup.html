@@ -19,9 +19,18 @@
   </title>
 
   <link rel="icon" type="image/png" href="assets/CLS-favicon.png">
+  <link rel="manifest" href="manifest-employee.json">
+  <meta name="theme-color" content="#ffcc00">
+  
+  <!-- iOS PWA Support -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="CLS Employee">
+  <link rel="apple-touch-icon" href="assets/CLS-icon-192.png">
+  
   <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20251015-mobile-fix">
-  <link rel="stylesheet" href="css/forms.css">
+  <link rel="stylesheet" href="css/style.css?v=2024-pwa-integration">
+  <link rel="stylesheet" href="css/forms.css?v=2024-pwa-integration">
 </head>
 
 <body data-page="signup">
@@ -32,7 +41,7 @@
   <div class="signup-container">
     <h1 data-en="Employee Sign Up" data-es="Registro de Empleado" data-pt="Cadastro de Funcionário">Employee Sign Up</h1>
     
-    <form id="signupForm" action="https://script.google.com/macros/s/AKfycbwHBLEQ5QHuhD-O4uI4hRN_5_yS9YsFgtn_dMAdoAO2C7zHLoi3qfHO82vas3Uv0wXXpg/exec" method="POST">
+    <form id="signupForm" class="amber-glow" action="https://script.google.com/macros/s/AKfycbwHBLEQ5QHuhD-O4uI4hRN_5_yS9YsFgtn_dMAdoAO2C7zHLoi3qfHO82vas3Uv0wXXpg/exec" method="POST">
       <input type="email" id="email" name="email" placeholder="Work Email" required
              data-en="Work Email" data-es="Correo de Trabajo" data-pt="Email de Trabalho">
       <input type="password" id="password" name="password" placeholder="Create Password" required

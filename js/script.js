@@ -137,11 +137,31 @@ async function loadNavbar() {
     if (navbarContainer) {
       navbarContainer.innerHTML = navbarHTML;
       
-      // Initialize navbar functionality after loading
-      initializeNavbar();
-      
-      // Set active page highlighting
-      setActiveNavLink();
+      // Check if we're on the dashboard page and customize navigation
+      const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+      if (currentPage === 'employeeDashboard.html') {
+        const navLinks = document.querySelector('.nav-links');
+        const hamburger = document.querySelector('.hamburger');
+        const navOverlay = document.querySelector('.nav-overlay');
+        
+        // Hide all navigation elements for dashboard
+        if (navLinks) navLinks.style.display = 'none';
+        if (hamburger) hamburger.style.display = 'none';
+        if (navOverlay) navOverlay.style.display = 'none';
+        
+        console.log('Dashboard detected - all navigation elements hidden');
+        
+        // Still initialize language and basic functionality for dashboard
+        window.switchLanguage = switchLanguage;
+        const storedLang = localStorage.getItem("CLS_Lang") || "en";
+        switchLanguage(storedLang);
+      } else {
+        // Initialize navbar functionality for other pages
+        initializeNavbar();
+        
+        // Set active page highlighting
+        setActiveNavLink();
+      }
       
       console.log('Navbar loaded successfully');
     } else {
@@ -195,7 +215,11 @@ async function loadFooter() {
       const storedLang = localStorage.getItem("CLS_Lang") || "en";
       switchLanguage(storedLang);
     } else {
-      console.error('Footer container not found!');
+      console.log('Footer container not found - page may have static footer');
+      // Still make switchLanguage available and initialize language for pages with static footers
+      window.switchLanguage = switchLanguage;
+      const storedLang = localStorage.getItem("CLS_Lang") || "en";
+      switchLanguage(storedLang);
     }
   } catch (error) {
     console.error('Error loading footer:', error);
@@ -205,19 +229,7 @@ async function loadFooter() {
 /* ================================
    GLOBAL NAVIGATION & LANGUAGE
    ================================ */
-function adjustNavbarFontSize() {
-  const navLinks = document.querySelector('.nav-links');
-  if (!navLinks) return; // Prevents errors if no navbar present
 
-  const links = navLinks.querySelectorAll('a');
-  const maxWidth = navLinks.offsetWidth;
-  let totalWidth = 0;
-
-  for (const link of links) totalWidth += link.offsetWidth;
-
-  navLinks.style.fontSize =
-    totalWidth > maxWidth ? (maxWidth / totalWidth) * 0.9 + 'em' : '0.9em';
-}
 
 function switchLanguage(lang) {
   localStorage.setItem("CLS_Lang", lang);
@@ -249,12 +261,28 @@ function switchLanguage(lang) {
     contactPlaceholders(lang);
   }
 
+  // Update floating install button if present
+  const floatingBtn = document.querySelector('.floating-install-btn');
+  if (floatingBtn && floatingBtn.dataset.lang !== lang) {
+    floatingBtn.dataset.lang = lang;
+    // Access PWA_TEXT from window object if available
+    if (window.PWA_TEXT) {
+      floatingBtn.innerHTML = `📲 ${window.PWA_TEXT.installButton[lang] || window.PWA_TEXT.installButton.en}`;
+    }
+  }
+
+  // Update PWA banner when language changes
+  document.querySelectorAll('#pwaInstallBanner [data-en]').forEach(el => {
+    const text = el.dataset[lang] || el.dataset.en;
+    if (text) el.textContent = text;
+  });
+
   // Dispatch event for form to handle its own language updates
   window.dispatchEvent(new CustomEvent('languageChanged', {
     detail: { language: lang }
   }));
 
-  adjustNavbarFontSize(); // readjust after translation
+
 }
 
 function initLanguageSystem() {
@@ -266,7 +294,6 @@ function initLanguageSystem() {
 
 /* Run on page load */
 document.addEventListener("DOMContentLoaded", () => {
-  adjustNavbarFontSize();
   loadNavbar(); // Load shared navbar component
   loadFooter(); // Load shared footer component
   initLanguageSystem();
@@ -276,11 +303,25 @@ document.addEventListener("DOMContentLoaded", () => {
   initPage(page);
 });
 
-window.addEventListener("resize", adjustNavbarFontSize);
+
 
 /* ================================
    SESSION MANAGEMENT
    ================================ */
+
+// Logout function for dashboard
+function logout() {
+  // Clear all session data
+  localStorage.removeItem("CLS_WorkerID");
+  localStorage.removeItem("CLS_DisplayName");
+  localStorage.removeItem("CLS_Email");
+  localStorage.removeItem("CLS_RememberUser");
+  localStorage.removeItem("CLS_SessionExpiry");
+  
+  // Redirect to login page
+  window.location.href = "employeelogin.html";
+}
+
 function checkValidSession() {
   const workerId = localStorage.getItem("CLS_WorkerID");
   const rememberUser = localStorage.getItem("CLS_RememberUser");
@@ -377,6 +418,11 @@ function loginPlaceholders(lang) {
       el.setAttribute('placeholder', placeholders[id][lang]);
     }
   });
+  
+  // Update biometric button text if present
+  if (window.updateBiometricButtonText) {
+    updateBiometricButtonText();
+  }
 }
 
 // Global placeholder function for Contact form (accessible from language switcher)
@@ -662,6 +708,253 @@ function initSignupForm() {
   });
 }
 
+// ======================================================
+// BIOMETRIC AUTHENTICATION MODULE (WebAuthn)
+// ======================================================
+
+/**
+ * Check if biometric authentication is supported
+ * @returns {boolean} True if WebAuthn is supported
+ */
+function checkBiometricSupport() {
+  const isSupported = window.PublicKeyCredential && 
+                     navigator.credentials && 
+                     navigator.credentials.create;
+  
+  if (isSupported) {
+    const biometricBtn = document.getElementById('biometricLoginBtn');
+    if (biometricBtn) {
+      biometricBtn.style.display = 'block';
+      
+      // Check if already registered
+      const isRegistered = localStorage.getItem('CLS_BioRegistered') === 'true';
+      const workerId = localStorage.getItem('CLS_WorkerID');
+      
+      if (isRegistered && workerId) {
+        updateBiometricButtonText();
+      } else {
+        // Hide until first successful login
+        biometricBtn.style.display = 'none';
+      }
+    }
+  }
+  
+  return isSupported;
+}
+
+/**
+ * Update biometric button text based on device capability
+ */
+function updateBiometricButtonText() {
+  const biometricBtn = document.getElementById('biometricLoginBtn');
+  if (!biometricBtn) return;
+  
+  const currentLang = localStorage.getItem("CLS_Lang") || "en";
+  const deviceType = getDeviceType();
+  
+  const buttonTexts = {
+    en: {
+      'iPhone': '🔒 Sign in with Face ID',
+      'iPad': '🔒 Sign in with Face ID / Touch ID',
+      'Android': '🔒 Sign in with Fingerprint',
+      'Windows': '🔒 Sign in with Windows Hello',
+      'macOS': '🔒 Sign in with Touch ID',
+      'default': '🔒 Sign in with Biometrics'
+    },
+    es: {
+      'iPhone': '🔒 Iniciar con Face ID',
+      'iPad': '🔒 Iniciar con Face ID / Touch ID',
+      'Android': '🔒 Iniciar con Huella',
+      'Windows': '🔒 Iniciar con Windows Hello',
+      'macOS': '🔒 Iniciar con Touch ID',
+      'default': '🔒 Iniciar con Biometría'
+    },
+    pt: {
+      'iPhone': '🔒 Entrar com Face ID',
+      'iPad': '🔒 Entrar com Face ID / Touch ID',
+      'Android': '🔒 Entrar com Impressão Digital',
+      'Windows': '🔒 Entrar com Windows Hello',
+      'macOS': '🔒 Entrar com Touch ID',
+      'default': '🔒 Entrar com Biometria'
+    }
+  };
+  
+  const textForDevice = buttonTexts[currentLang][deviceType] || buttonTexts[currentLang]['default'];
+  const spanElement = biometricBtn.querySelector('span');
+  if (spanElement) {
+    spanElement.textContent = textForDevice;
+  } else {
+    biometricBtn.innerHTML = textForDevice;
+  }
+}
+
+/**
+ * Register biometric credentials for the current user
+ * @param {string} workerId - The worker ID
+ * @param {string} email - The user's email
+ * @returns {Promise<boolean>} True if registration successful
+ */
+async function registerBiometric(workerId, email) {
+  try {
+    const statusEl = document.getElementById('bioStatus');
+    if (statusEl) statusEl.textContent = '🔑 Setting up biometric login...';
+    
+    // Generate a cryptographically random challenge
+    const challenge = new Uint8Array(32);
+    crypto.getRandomValues(challenge);
+    
+    const credential = await navigator.credentials.create({
+      publicKey: {
+        challenge: challenge,
+        rp: { 
+          name: 'Carolina Lumper Service',
+          id: window.location.hostname 
+        },
+        user: {
+          id: new TextEncoder().encode(workerId),
+          name: email,
+          displayName: email
+        },
+        pubKeyCredParams: [
+          { type: 'public-key', alg: -7 }, // ES256
+          { type: 'public-key', alg: -257 } // RS256 fallback
+        ],
+        authenticatorSelection: { 
+          userVerification: 'preferred',
+          authenticatorAttachment: 'platform' // Prefer built-in authenticators
+        },
+        timeout: 60000,
+        attestation: 'none'
+      }
+    });
+    
+    if (credential) {
+      // Store registration info
+      localStorage.setItem('CLS_BioRegistered', 'true');
+      localStorage.setItem('CLS_BioCredentialId', credential.id);
+      localStorage.setItem('CLS_BioRegisteredFor', workerId);
+      
+      if (statusEl) statusEl.textContent = '✅ Biometric login enabled!';
+      
+      // Show and update the biometric login button
+      const biometricBtn = document.getElementById('biometricLoginBtn');
+      if (biometricBtn) {
+        biometricBtn.style.display = 'block';
+        updateBiometricButtonText();
+      }
+      
+      console.log('✅ Biometric registration successful');
+      return true;
+    }
+  } catch (err) {
+    console.warn('⚠️ Biometric setup failed:', err);
+    const statusEl = document.getElementById('bioStatus');
+    if (statusEl) {
+      if (err.name === 'NotAllowedError') {
+        statusEl.textContent = '⚠️ Biometric setup cancelled or not allowed.';
+      } else if (err.name === 'NotSupportedError') {
+        statusEl.textContent = '⚠️ Biometric authentication not supported on this device.';
+      } else {
+        statusEl.textContent = '⚠️ Biometric setup failed. Try again later.';
+      }
+    }
+    return false;
+  }
+}
+
+/**
+ * Authenticate using biometric credentials
+ * @returns {Promise<boolean>} True if authentication successful
+ */
+async function biometricLogin() {
+  try {
+    const statusEl = document.getElementById('bioStatus');
+    if (statusEl) statusEl.textContent = '🔑 Verifying biometric...';
+    
+    const workerId = localStorage.getItem('CLS_WorkerID');
+    const registeredFor = localStorage.getItem('CLS_BioRegisteredFor');
+    const credentialId = localStorage.getItem('CLS_BioCredentialId');
+    
+    if (!workerId || !registeredFor || !credentialId) {
+      if (statusEl) statusEl.textContent = '⚠️ No biometric credentials found. Please log in normally first.';
+      return false;
+    }
+    
+    if (workerId !== registeredFor) {
+      if (statusEl) statusEl.textContent = '⚠️ Biometric credentials are for a different user.';
+      return false;
+    }
+    
+    // Generate a cryptographically random challenge
+    const challenge = new Uint8Array(32);
+    crypto.getRandomValues(challenge);
+    
+    const credential = await navigator.credentials.get({
+      publicKey: {
+        challenge: challenge,
+        allowCredentials: [{
+          type: 'public-key',
+          id: Uint8Array.from(atob(credentialId), c => c.charCodeAt(0))
+        }],
+        userVerification: 'preferred',
+        timeout: 60000
+      }
+    });
+
+    if (credential) {
+      // Verify session validity for offline mode
+      const sessionExpiry = localStorage.getItem('CLS_SessionExpiry');
+      const rememberUser = localStorage.getItem('CLS_RememberUser') === 'true';
+      
+      if (!rememberUser && sessionExpiry && new Date(sessionExpiry) < new Date()) {
+        if (statusEl) statusEl.textContent = '⚠️ Session expired. Please log in normally.';
+        return false;
+      }
+      
+      if (statusEl) statusEl.textContent = '✅ Verified — logging in…';
+      
+      // Successful biometric authentication
+      console.log('✅ Biometric authentication successful');
+      
+      // Redirect to dashboard
+      setTimeout(() => {
+        window.location.href = 'employeeDashboard.html';
+      }, 1000);
+      
+      return true;
+    }
+  } catch (err) {
+    console.error('⚠️ Biometric authentication failed:', err);
+    const statusEl = document.getElementById('bioStatus');
+    if (statusEl) {
+      if (err.name === 'NotAllowedError') {
+        statusEl.textContent = '⚠️ Biometric verification cancelled.';
+      } else if (err.name === 'InvalidStateError') {
+        statusEl.textContent = '⚠️ Biometric credentials not found. Please log in normally.';
+      } else {
+        statusEl.textContent = '⚠️ Biometric verification failed.';
+      }
+    }
+    return false;
+  }
+}
+
+/**
+ * Clear biometric registration data
+ */
+function clearBiometricData() {
+  localStorage.removeItem('CLS_BioRegistered');
+  localStorage.removeItem('CLS_BioCredentialId');
+  localStorage.removeItem('CLS_BioRegisteredFor');
+  
+  const biometricBtn = document.getElementById('biometricLoginBtn');
+  if (biometricBtn) {
+    biometricBtn.style.display = 'none';
+  }
+  
+  console.log('🧹 Biometric data cleared');
+}
+
 // Employee Login Module
 function initLoginForm() {
   const form = document.getElementById("loginForm");
@@ -691,6 +984,25 @@ function initLoginForm() {
       serverError: "⚠️ Erro no servidor. Tente novamente."
     }
   };
+
+  // Initialize biometric support
+  checkBiometricSupport();
+  
+  // Biometric login button handler
+  const biometricBtn = document.getElementById('biometricLoginBtn');
+  if (biometricBtn) {
+    biometricBtn.addEventListener('click', async () => {
+      try {
+        await biometricLogin();
+      } catch (err) {
+        console.error('⚠️ Biometric login error:', err);
+        const bioStatus = document.getElementById('bioStatus');
+        if (bioStatus) {
+          bioStatus.textContent = '⚠️ Biometric login failed. Please try again.';
+        }
+      }
+    });
+  }
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -737,6 +1049,56 @@ function initLoginForm() {
         }
 
         statusEl.textContent = MESSAGES[currentLang].success;
+
+        // PHASE 6: Preload SW Before Successful Login Redirect
+        if ('serviceWorker' in navigator) {
+          try {
+            await navigator.serviceWorker.register('service-worker-employee.js', { scope: './' });
+            console.log('✅ Service Worker preloaded before redirect');
+          } catch (err) {
+            console.warn('⚠️ SW pre-registration failed:', err);
+          }
+        }
+
+        // BIOMETRIC REGISTRATION PROMPT
+        // Offer biometric registration if supported and not already registered
+        const isBiometricSupported = checkBiometricSupport();
+        const isAlreadyRegistered = localStorage.getItem('CLS_BioRegistered') === 'true';
+        
+        if (isBiometricSupported && !isAlreadyRegistered) {
+          const deviceType = getDeviceType();
+          let biometricName = 'biometric authentication';
+          
+          // Customize prompt based on device
+          if (deviceType === 'iPhone' || deviceType === 'iPad') {
+            biometricName = 'Face ID / Touch ID';
+          } else if (deviceType === 'Android') {
+            biometricName = 'fingerprint authentication';
+          } else if (deviceType === 'Windows') {
+            biometricName = 'Windows Hello';
+          } else if (deviceType === 'macOS') {
+            biometricName = 'Touch ID';
+          }
+          
+          const shouldSetupBiometric = confirm(
+            `🔒 Enable ${biometricName} for faster login on this device?\n\n` +
+            `This will allow you to log in quickly using your device's built-in security features.`
+          );
+          
+          if (shouldSetupBiometric) {
+            try {
+              await registerBiometric(data.workerId, data.email);
+              // Give user time to see the success message
+              setTimeout(() => {
+                window.location.href = "employeeDashboard.html";
+              }, 2500);
+              return; // Exit early to show biometric setup status
+            } catch (err) {
+              console.warn('⚠️ Biometric registration failed during login:', err);
+              // Continue with normal redirect
+            }
+          }
+        }
 
         // Redirect after short delay
         setTimeout(() => {

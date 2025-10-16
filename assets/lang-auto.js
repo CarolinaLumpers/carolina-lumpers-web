@@ -3,25 +3,6 @@
    Shared across all CLS pages
    ============================================ */
 
-// Adjusts font size of navbar links when text width changes
-function adjustNavbarFontSize() {
-  const navLinks = document.querySelector('.nav-links');
-  if (!navLinks) return;
-
-  const links = navLinks.querySelectorAll('a');
-  const maxWidth = navLinks.offsetWidth;
-  let totalWidth = 0;
-
-  for (const link of links) totalWidth += link.offsetWidth;
-
-  if (totalWidth > maxWidth) {
-    const scaleFactor = maxWidth / totalWidth;
-    navLinks.style.fontSize = scaleFactor * 0.9 + 'em';
-  } else {
-    navLinks.style.fontSize = '0.9em';
-  }
-}
-
 // Switches visible language text sitewide
 function switchLanguage(lang) {
   localStorage.setItem("CLS_Lang", lang); // Persist user choice
@@ -35,8 +16,6 @@ function switchLanguage(lang) {
   document.querySelectorAll(".language-toggle button").forEach(btn => {
     btn.classList.toggle("active", btn.dataset.lang === lang);
   });
-
-  adjustNavbarFontSize();
 }
 
 // Initialize on page load

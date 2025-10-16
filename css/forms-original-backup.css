@@ -1,0 +1,1123 @@
+/* ================================
+   Forms CSS - Form-specific styling using component system
+   ================================ */
+
+/* [COMPONENT: Form Container] - Uses .form-section from layout.css */
+.form-container, 
+.login-container, 
+.signup-container {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-accent);
+  padding: var(--space-2xl) var(--space-xl);
+  max-width: 500px;
+  width: 100%;
+  text-align: center;
+  margin: 0 auto;
+}
+
+/* Form container variations */
+.form-container {
+  display: block;
+  width: 100%;
+  max-width: 800px; /* Apply form is wider */
+  margin: 0 auto;
+  padding: var(--space-xl);
+}
+
+/* For login/signup pages, use the centered flex layout */
+body[data-page="login"] .form-container,
+body[data-page="signup"] .form-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 80vh;
+  max-width: 400px;
+}
+
+.login-container, .signup-container {
+  max-width: 400px;
+}
+
+/* [COMPONENT: Form Headings] */
+.form-container h1, .form-container h2,
+.login-container h1, .signup-container h1 {
+  color: var(--color-primary);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-3xl);
+  margin-top: 0;
+  margin-bottom: var(--space-lg);
+}
+
+/* [COMPONENT: Form Styling] - Enhanced dark theme forms */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  max-width: 600px;
+  margin: var(--space-xl) auto;
+  padding: var(--space-xl);
+  background-color: var(--bg-secondary);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+}
+
+/* Dark theme form fields for better contrast */
+form input, 
+form select, 
+form textarea {
+  background-color: var(--color-dark);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-base);
+  transition: var(--transition-base);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Focus states for better accessibility */
+form input:focus, 
+form select:focus, 
+form textarea:focus {
+  border-color: var(--color-primary);
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-primary-light);
+}
+
+/* [COMPONENT: Form Grid Layout] */
+.form-grid {
+  width: 100%;
+  max-width: 800px;
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: var(--space-md) var(--space-md);
+  text-align: left;
+  align-items: center;
+}
+
+.form-grid .full {
+  grid-column: 1 / -1;
+}
+
+.form-grid label {
+  display: block;
+  margin-bottom: var(--space-xs);
+  font-weight: 500;
+  color: var(--color-primary);
+  font-size: var(--font-size-sm);
+}
+
+.form-grid input,
+.form-grid select,
+.form-grid textarea {
+  width: 100%;
+  padding: var(--space-md);
+  border: 2px solid var(--border-light);
+  border-radius: var(--radius-md);
+  background: var(--color-dark);
+  color: var(--text-primary);
+  transition: var(--transition-base);
+}
+
+.form-grid input:focus,
+.form-grid select:focus,
+.form-grid textarea:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-light);
+}
+
+/* [COMPONENT: Form Actions] - Uses .btn from components.css */
+.actions {
+  margin-top: var(--space-2xl);
+  text-align: center;
+}
+
+.actions button {
+  /* Inherits from .btn in components.css */
+  background-color: var(--color-primary);
+  color: var(--text-secondary);
+  border: none;
+  padding: var(--space-md) var(--space-2xl);
+  font-size: var(--font-size-base);
+  font-weight: bold;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: var(--transition-base);
+  min-width: 120px;
+}
+
+.actions button:hover {
+  background-color: var(--color-primary-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* [COMPONENT: Field Groups] */
+.field-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: var(--space-lg);
+}
+
+.field-group label {
+  color: var(--text-primary);
+  font-weight: 600;
+  margin-bottom: var(--space-sm);
+  font-size: var(--font-size-sm);
+}
+
+.field-group label.required::after {
+  content: " *";
+  color: #e74c3c;
+}
+
+/* [COMPONENT: Multi-step Forms] */
+.form-step {
+  display: none;
+}
+
+.form-step.active {
+  display: block;
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* [COMPONENT: Form Progress] - Uses .progress from components.css */
+.form-progress {
+  margin: var(--space-xl) 0;
+}
+
+.form-progress .progress-bar {
+  background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+}
+
+/* [COMPONENT: Input Validation] */
+.field.invalid input,
+.field.invalid select,
+.field.invalid textarea {
+  border-color: #e74c3c;
+  background-color: rgba(231, 76, 60, 0.1);
+}
+
+.field .error {
+  color: #e74c3c;
+  font-size: var(--font-size-sm);
+  margin-top: var(--space-xs);
+  display: none;
+}
+
+.field.invalid .error {
+  display: block;
+}
+
+.helper {
+  font-size: var(--font-size-sm);
+  color: var(--text-muted);
+  margin-top: var(--space-xs);
+}
+
+/* [COMPONENT: Language Toggle] - Uses .lang-toggle from components.css */
+.language-toggle {
+  margin-top: var(--space-md);
+  display: inline-block;
+}
+
+.language-toggle button {
+  margin: var(--space-xs);
+  padding: var(--space-sm) var(--space-md);
+  border: none;
+  background: var(--color-dark-lighter);
+  color: var(--color-primary);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: var(--transition-fast);
+  display: inline-block;
+  width: auto;
+  font-size: var(--font-size-sm);
+}
+
+.language-toggle button:hover,
+.language-toggle button.active {
+  background: var(--color-primary);
+  color: var(--text-secondary);
+}
+
+/* [COMPONENT: Form Navigation] - Uses .btn variants from components.css */
+.form-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: var(--space-lg);
+  border-top: 1px solid var(--border-light);
+  margin-top: var(--space-2xl);
+}
+
+.form-nav .left {
+  flex: 1;
+}
+
+.form-nav .right {
+  display: flex;
+  gap: var(--space-md);
+}
+
+.form-nav button {
+  /* Inherits from .btn in components.css */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-md) var(--space-lg);
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: var(--transition-base);
+  min-width: 120px;
+  background: var(--text-muted);
+  color: var(--text-primary);
+}
+
+.form-nav button:hover {
+  background: var(--color-dark-light);
+  transform: translateY(-1px);
+}
+
+.form-nav button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.form-nav button:disabled:hover {
+  background: var(--text-muted);
+  transform: none;
+}
+
+/* Primary button styling for submit */
+.form-nav button.btn-primary {
+  background: var(--color-primary);
+  color: var(--text-secondary);
+  border-color: var(--color-primary);
+}
+
+.form-nav button.btn-primary:hover {
+  background: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px var(--color-primary-light);
+}
+
+/* [COMPONENT: Messages] */
+.message {
+  margin-top: var(--space-lg);
+  font-size: var(--font-size-sm);
+  min-height: 20px;
+  text-align: center;
+}
+
+.message.success {
+  color: #27ae60;
+}
+
+.message.error {
+  color: #e74c3c;
+}
+
+/* [COMPONENT: File Upload] */
+.field.attach input[type="file"] {
+  padding: var(--space-sm);
+  border-style: dashed;
+  background: var(--color-primary-light);
+  color: var(--text-secondary);
+}
+
+/* [COMPONENT: Checkboxes and Radio Groups] - Uses .chip from components.css */
+.checklist {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  background: var(--color-primary-light);
+  border: 2px solid var(--border-light);
+  border-radius: 25px;
+  padding: var(--space-sm) var(--space-md);
+  cursor: pointer;
+  transition: var(--transition-base);
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+}
+
+.chip input[type="checkbox"],
+.chip input[type="radio"] {
+  margin-right: var(--space-sm);
+  margin-bottom: 0;
+}
+
+.chip:hover {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+  color: var(--text-secondary);
+}
+
+.chip:has(input:checked) {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--text-secondary);
+}
+
+/* [COMPONENT: Form Summary] */
+.summary {
+  background: var(--color-primary-light);
+  border-radius: var(--radius-md);
+  padding: var(--space-xl);
+  margin-bottom: var(--space-lg);
+  color: var(--text-secondary);
+}
+
+.summary h3 {
+  color: var(--text-secondary);
+  margin-bottom: var(--space-lg);
+  font-size: var(--font-size-xl);
+}
+
+.summary dl {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: var(--space-sm) var(--space-lg);
+  margin: 0;
+}
+
+.summary dt {
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.summary dd {
+  margin: 0;
+  color: var(--text-secondary);
+}
+
+/* [RESPONSIVE: Mobile Form Adjustments] */
+@media (max-width: 768px) {
+  /* Form container mobile */
+  .form-container,
+  .login-container,
+  .signup-container {
+    max-width: 90%;
+    padding: var(--space-lg);
+  }
+
+  /* Form grid mobile */
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-sm);
+  }
+
+  .form-grid label {
+    margin-bottom: var(--space-xs);
+  }
+
+  /* Form navigation mobile */
+  .form-nav {
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+
+  .form-nav .right {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  /* Form inputs mobile */
+  form input,
+  form select,
+  form textarea {
+    font-size: var(--font-size-base);
+    padding: var(--space-md);
+  }
+
+  /* Chip list mobile */
+  .checklist {
+    flex-direction: column;
+  }
+
+  .chip {
+    justify-content: flex-start;
+    width: 100%;
+  }
+
+  /* Summary mobile */
+  .summary dl {
+    grid-template-columns: 1fr;
+    gap: var(--space-sm);
+  }
+}
+
+/* Shared input and button styling - specific overrides for forms */
+/* Dark theme form fields for better contrast */
+form input, form select, form textarea {
+  background-color: #1a1a1a;
+  color: #fff;
+  border: 1px solid #555;
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 16px;
+  transition: border-color 0.3s ease;
+}
+
+/* Focus states for better accessibility */
+form input:focus, form select:focus, form textarea:focus {
+  border-color: var(--accent-color);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(255, 191, 0, 0.2);
+}
+
+.message {
+  margin-top: 15px;
+  font-size: 0.95em;
+  min-height: 20px;
+}
+
+/* Apply form specific grid layout */
+.form-grid {
+  width: 100%;
+  max-width: 800px;
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 10px 12px;
+  text-align: left;
+  align-items: center;
+}
+
+.form-grid .full {
+  grid-column: 1 / -1;
+}
+
+.form-grid label {
+  display: block;
+  margin-bottom: 3px;
+  font-weight: 500;
+  color: #ffcc00; /* CLS yellow for dark theme */
+}
+
+.form-grid input,
+.form-grid select,
+.form-grid textarea {
+  width: 100%;
+  padding: 10px;
+  background: #1a1a1a; /* Dark background */
+  color: #fff; /* White text */
+  border: 1px solid #555; /* Dark border */
+  border-radius: 6px;
+  font-size: 14px;
+  margin-bottom: 14px;
+  transition: border-color 0.3s ease;
+}
+
+.form-grid input:focus,
+.form-grid select:focus,
+.form-grid textarea:focus {
+  border-color: #ffcc00; /* Yellow focus border */
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(255, 204, 0, 0.2);
+}
+
+/* Required field indicators */
+.form-grid label.required::after {
+  content: " *";
+  color: #d00;
+  font-weight: bold;
+}
+
+/* Actions section for form buttons */
+.actions {
+  grid-column: 1 / -1;
+  text-align: left;
+}
+
+.actions button {
+  background-color: #002e63;
+  color: #fff;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.actions button:hover {
+  background-color: #004b99;
+}
+
+#status {
+  margin-top: 10px;
+  font-weight: 600;
+  min-height: 1.5em;
+}
+
+/* Enhanced contrast for work authorization notes */
+#authDescription {
+  color: #ddd !important;
+}
+
+#docNote {
+  color: #ffda66 !important;
+}
+
+/* Privacy policy checkbox styling */
+.form-grid .full label {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: left;
+  margin: 20px 0;
+  padding: 15px;
+  background: #000;
+  color: #fff;
+  border: 1px solid #333;
+  border-radius: 6px;
+}
+
+.form-grid .full label input[type="checkbox"] {
+  margin-right: 10px;
+  margin-bottom: 0;
+  width: auto;
+  transform: scale(1.2);
+}
+
+.form-grid .full label a {
+  color: #ffcc00 !important;
+  text-decoration: underline;
+}
+
+.form-grid .full label a:hover {
+  color: #ffd633 !important;
+}
+
+/* Login/Signup specific styles */
+.login-container, .signup-container {
+  /* Vertically center the form box */
+  max-width: 400px;
+  width: 100%;
+  padding: 30px 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(255, 191, 0, 0.3);
+  text-align: center;
+}
+
+/* Stay logged in alignment */
+label[for="stayLoggedIn"] {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 10px;
+  color: var(--text-muted);
+  font-size: 0.9em;
+}
+
+label[for="stayLoggedIn"] input {
+  width: 18px;
+  height: 18px;
+}
+
+.link {
+  margin-top: 20px;
+  font-size: 0.95em;
+}
+
+.link a {
+  color: var(--accent-color);
+  text-decoration: none;
+}
+
+.link a:hover {
+  text-decoration: underline;
+}
+
+/* Language toggle for forms - matches employeeDashboard style */
+.language-toggle {
+  margin-top: 10px;
+  text-align: center;
+  display: inline-block;
+  width: 100%;
+}
+
+.language-toggle button {
+  margin: 4px;
+  padding: 8px 12px;
+  border: none;
+  background: #111;
+  color: var(--cls-yellow);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all .2s;
+  display: inline-block;
+  width: auto;
+}
+
+.language-toggle button:hover,
+.language-toggle button.active {
+  background: var(--cls-yellow);
+  color: #000;
+}
+
+/* Form navigation buttons */
+.form-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 30px 0 20px 0;
+  gap: 15px;
+}
+
+.form-nav button {
+  margin: 0;
+  padding: 10px 20px;
+  border: none;
+  background: #111;
+  color: var(--cls-yellow);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all .2s;
+  display: inline-flex;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 500;
+  min-width: 100px;
+  justify-content: center;
+}
+
+.form-nav button:hover {
+  background: var(--cls-yellow);
+  color: #000;
+}
+
+.form-nav button:disabled {
+  background: #333;
+  color: #666;
+  cursor: not-allowed;
+}
+
+.form-nav button:disabled:hover {
+  background: #333;
+  color: #666;
+}
+
+/* Primary button styling for submit */
+.form-nav button.btn-primary {
+  background: var(--cls-yellow);
+  color: #000;
+}
+
+.form-nav button.btn-primary:hover {
+  background: #ffd633;
+  color: #000;
+}
+
+/* Multi-step form specific styles */
+.wrap {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.card {
+  /* background: #fff; */
+  /* box-shadow: 0 4px 20px rgba(0,0,0,0.1); */
+  background: transparent;
+  border: none;
+  border-radius: 12px;
+  overflow: hidden;
+  margin: 20px 0;
+}
+
+/* Progress styles for multi-step forms */
+.progress {
+  background: linear-gradient(135deg, var(--accent-color), #E8A317);
+  color: white;
+  padding: 20px;
+  text-align: center;
+}
+
+.progress-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.bar {
+  height: 6px;
+  background: rgba(255,255,255,0.3);
+  border-radius: 3px;
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  background: white;
+  border-radius: 3px;
+  transition: transform 0.3s ease;
+  transform-origin: left;
+}
+
+/* Form step containers */
+.form-step {
+  background: #111;
+  color: #fff;
+  border-radius: 12px;
+  padding: 25px 30px;
+  margin-top: 20px;
+  box-shadow: 0 0 10px rgba(255, 204, 0, 0.15);
+  display: none;
+  min-height: 400px;
+}
+
+.form-step.active {
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  position: relative;
+  z-index: 5;
+}
+
+.form-step label {
+  color: #ffcc00;
+  font-weight: 600;
+}
+
+.form-step input,
+.form-step select,
+.form-step textarea,
+.form-step .form-grid input,
+.form-step .form-grid select,
+.form-step .form-grid textarea {
+  background: #1a1a1a !important;
+  color: #fff !important;
+  border: 1px solid #555 !important;
+  border-radius: 6px;
+  padding: 10px;
+  width: 100%;
+}
+
+/* Grid layouts for forms */
+.grid {
+  display: grid;
+  gap: 20px;
+}
+
+.grid-2 {
+  grid-template-columns: 1fr 1fr;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-grid label {
+    margin-top: 8px;
+  }
+  
+  .form-grid input,
+  .form-grid select,
+  .form-grid textarea {
+    margin-bottom: 18px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+
+  .actions {
+    text-align: center;
+  }
+
+  .grid-2 {
+    grid-template-columns: 1fr;
+  }
+
+  .wrap {
+    padding: 10px;
+  }
+
+  .form-step {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-container, .signup-container {
+    margin: 20px auto;
+    padding: 25px 15px;
+  }
+
+  .login-container h1, .signup-container h1 {
+    font-size: 1.6em;
+  }
+}
+
+/* Login page specific body styling */
+body[data-page="login"] {
+  background-color: var(--secondary-bg);
+  color: var(--text-color);
+  font-family: 'Roboto', Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  margin: 0;
+}
+
+body[data-page="login"] main {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+/* === Contact Form Progress Styling === */
+/* Progress bar styling for quote form */
+.progress-top {
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  text-align: center;
+}
+
+/* Form step responsive padding */
+@media (max-width: 768px) {
+  .form-step { 
+    padding: 20px 15px; 
+  }
+}
+
+/* Success message styling */
+.success.show {
+  display: block;
+  margin-top: 25px;
+}
+
+/* Quote request section consistency */
+
+/* === CLS Step Progress Visuals === */
+#apply .progress,
+#apply .form-container .progress,
+#quote-request .progress {
+  background: #111;            /* dark backdrop instead of full gold */
+  border-radius: 10px;
+  padding: 12px 18px;
+  margin: 0 auto 20px auto;    /* Center the progress bar */
+  max-width: 700px;            /* Wider container */
+  width: fit-content;          /* Only take space needed */
+  min-width: 300px;            /* Reduced minimum width */
+  box-shadow: 0 0 6px rgba(255, 204, 0, 0.2);
+}
+
+/* Mobile responsive progress bar */
+@media (max-width: 768px) {
+  #apply .progress,
+  #apply .form-container .progress,
+  #quote-request .progress {
+    max-width: 90%;            /* Use percentage of screen width */
+    min-width: 280px;          /* Smaller minimum for mobile */
+    padding: 10px 14px;        /* Reduce padding on mobile */
+    margin: 0 auto 15px auto;  /* Reduce bottom margin */
+    width: 90%;                /* Force consistent width */
+    display: block;            /* Ensure block display for centering */
+  }
+}
+
+#apply .progress-top,
+#apply .form-container .progress-top,
+#quote-request .progress-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #ffcc00;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+#apply .bar,
+#apply .form-container .bar,
+#quote-request .bar {
+  height: 6px;                /* thinner bar */
+  background: #333;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+#apply .bar-fill,
+#apply .form-container .bar-fill,
+#quote-request .bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #ffcc00, #ffdb4d);
+  transform-origin: left center;
+  transform: scaleX(0);
+  transition: transform 0.4s ease;
+}
+
+/* Step dots below progress bar */
+#apply .steps,
+#apply .form-container .steps,
+#quote-request .steps {
+  display: flex;
+  justify-content: space-between; /* Distribute across full width */
+  align-items: center;
+  gap: 0;                      /* Remove gap, use space-between instead */
+  margin: 12px auto 0 auto;    /* Center the steps container */
+  max-width: 700px;            /* Match progress bar max-width */
+  width: 100%;                 /* Take full available width */
+  padding: 0 40px;             /* Add padding on sides */
+  box-sizing: border-box;
+}
+
+/* Mobile responsive steps */
+@media (max-width: 768px) {
+  #apply .steps,
+  #apply .form-container .steps,
+  #quote-request .steps {
+    max-width: 90%;            /* Match mobile progress bar width */
+    width: 90%;                /* Force same width as progress bar */
+    padding: 0 20px;           /* Reduce side padding on mobile */
+    margin: 10px auto 0 auto;  /* Reduce top margin */
+    display: flex;             /* Ensure flex display */
+  }
+}
+
+#apply .step-dot,
+#apply .form-container .step-dot,
+#quote-request .step-dot {
+  width: 24px !important;      /* Force exact width */
+  height: 24px !important;     /* Force exact height */
+  min-width: 24px !important;  /* Prevent shrinking */
+  min-height: 24px !important; /* Prevent shrinking */
+  max-width: 24px !important;  /* Prevent growing */
+  max-height: 24px !important; /* Prevent growing */
+  border-radius: 50% !important;
+  border: 2px solid #ffcc00;
+  color: #ffcc00;
+  background: transparent;
+  font-weight: 600;
+  font-size: 12px;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  flex-shrink: 0 !important;
+  box-sizing: border-box !important;
+  padding: 0 !important;
+  transition: all 0.3s ease;
+}
+
+/* Mobile responsive step dots */
+@media (max-width: 768px) {
+  #apply .step-dot,
+  #apply .form-container .step-dot,
+  #quote-request .step-dot {
+    width: 20px !important;      /* Smaller dots for mobile */
+    height: 20px !important;
+    min-width: 20px !important;
+    min-height: 20px !important;
+    max-width: 20px !important;
+    max-height: 20px !important;
+    font-size: 10px;             /* Smaller font for mobile */
+  }
+}
+
+/* Mobile responsive progress text */
+@media (max-width: 768px) {
+  #apply .progress-top,
+  #apply .form-container .progress-top,
+  #quote-request .progress-top {
+    font-size: 14px;             /* Smaller text on mobile */
+    margin-bottom: 6px;          /* Reduce margin */
+  }
+}
+
+#apply .step-dot[aria-current="step"],
+#apply .form-container .step-dot[aria-current="step"],
+#quote-request .step-dot[aria-current="step"] {
+  background: #ffcc00;
+  color: #000;
+  transform: scale(1.1);
+}
+
+#apply .step-dot.done,
+#apply .form-container .step-dot.done,
+#quote-request .step-dot.done {
+  background: #ffcc00;
+  color: #000;
+  opacity: 0.9;
+}
+
+/* Success message display */
+.success {
+  background: #d4edda;
+  color: #155724;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid #c3e6cb;
+  text-align: center;
+  font-weight: 600;
+}
+
+.success.show {
+  display: block !important;
+}
+
+#quote-request {
+  background-color: var(--secondary-bg);
+  color: var(--text-color);
+  padding: 40px 0;
+}
+
+/* Form validation visual feedback */
+.field.invalid input,
+.field.invalid select {
+  border-color: #ff4c4c !important;
+  box-shadow: 0 0 4px #ff4c4c;
+}
+
+/* Field label styling for visibility */
+.field label {
+  color: var(--text-color) !important;
+  font-weight: 600;
+  margin-bottom: 8px;
+  font-size: 14px;
+  display: block;
+}
+
+/* Ensure chip labels are also visible */
+.checklist .chip,
+label.chip {
+  color: var(--text-color);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 8px 12px;
+  border-radius: 6px;
+  display: inline-block;
+  margin: 4px;
+  cursor: pointer;
+}
+
+.checklist .chip:hover,
+label.chip:hover {
+  background: rgba(255, 255, 255, 0.2);
+}

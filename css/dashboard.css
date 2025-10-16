@@ -1,0 +1,278 @@
+/* ================================
+   Employee Dashboard - Specific Styles
+   ================================ */
+
+/* [DASHBOARD: Layout] */
+.dashboard {
+  padding: 40px var(--space-md);
+  max-width: 980px;
+  margin: 0 auto;
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+/* [DASHBOARD: Navigation Overrides] */
+.dashboard-page .hamburger,
+.dashboard-page .nav-links,
+.dashboard-page .nav-overlay {
+  display: none !important;
+}
+
+/* [DASHBOARD: Typography] */
+.dashboard h1 {
+  color: var(--color-primary);
+  font-family: "Anton", sans-serif;
+  font-size: 2.3em;
+  margin: 0.1em 0 0.2em;
+  text-align: center;
+}
+
+.dashboard h2#welcomeName {
+  color: var(--color-primary);
+  font-weight: normal;
+  font-size: 1.2em;
+  margin: 0.1em 0 1em;
+  text-align: center;
+}
+
+.dashboard .info {
+  margin-bottom: var(--space-lg);
+  font-size: 1.05em;
+  text-align: center;
+}
+
+/* [DASHBOARD: Tab Navigation] */
+.tab-buttons {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-sm);
+  margin: var(--space-md) auto var(--space-lg);
+  flex-wrap: wrap;
+}
+
+.tab-btn {
+  background: var(--bg-secondary);
+  color: var(--color-primary);
+  border: none;
+  border-radius: var(--border-radius);
+  padding: 12px 22px;
+  font-size: 1.05em;
+  cursor: pointer;
+  transition: var(--transition-base);
+  font-family: "Anton", sans-serif;
+  min-width: auto;
+  width: auto;
+}
+
+.tab-btn:hover,
+.tab-btn.active {
+  background: var(--color-primary);
+  color: var(--bg-secondary);
+}
+
+/* [DASHBOARD: Cards/Sections] */
+.dashboard .card {
+  background: #0b0b0b;
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  padding: var(--space-lg);
+  margin: 0 auto var(--space-lg);
+  max-width: 900px;
+}
+
+.dashboard .section-title {
+  color: var(--color-primary);
+  margin: 0 0 var(--space-sm);
+  font-size: 1.2em;
+}
+
+/* [DASHBOARD: Clock-in Button] */
+#clockInBtn {
+  background: var(--color-primary);
+  color: var(--bg-secondary);
+  border: none;
+  border-radius: var(--border-radius);
+  padding: 14px 36px;
+  font-size: 1.1em;
+  cursor: pointer;
+  transition: var(--transition-base);
+  display: inline-block;
+  margin: 0 auto;
+  width: auto;
+  min-width: auto;
+}
+
+#clockInBtn:hover {
+  background: var(--color-primary-hover);
+}
+
+#clockInStatus {
+  margin-top: var(--space-md);
+  font-size: 1.05em;
+  min-height: 28px;
+  text-align: center;
+}
+
+/* [DASHBOARD: Tables] */
+.dashboard table {
+  margin: var(--space-md) auto;
+  width: 96%;
+  max-width: 860px;
+  border-collapse: collapse;
+  color: var(--text-primary);
+}
+
+.dashboard th,
+.dashboard td {
+  padding: var(--space-sm);
+  border: 1px solid var(--border-color);
+}
+
+.dashboard th {
+  background: #222;
+}
+
+.dashboard tr:nth-child(even) {
+  background: var(--bg-secondary);
+}
+
+.dashboard .t-right {
+  text-align: right;
+}
+
+.dashboard .muted {
+  color: var(--text-muted);
+}
+
+/* [DASHBOARD: Controls] */
+.dashboard .controls {
+  display: flex;
+  gap: var(--space-xs);
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  margin: var(--space-sm) auto;
+  max-width: 860px;
+}
+
+.dashboard .btn {
+  border: none;
+  border-radius: var(--border-radius-sm);
+  padding: var(--space-sm) var(--space-md);
+  font-size: 0.95em;
+  cursor: pointer;
+  transition: var(--transition-base);
+}
+
+.dashboard .btn-blue {
+  background: #2563eb;
+  color: white;
+}
+
+.dashboard .btn-blue:hover {
+  filter: brightness(1.1);
+}
+
+.dashboard .btn-gray {
+  background: #6b7280;
+  color: white;
+}
+
+.dashboard .btn-gray:hover {
+  filter: brightness(1.1);
+}
+
+.dashboard .btn-green {
+  background: #16a34a;
+  color: white;
+  margin-left: auto;
+}
+
+.dashboard .btn-green:hover {
+  filter: brightness(1.1);
+}
+
+/* [DASHBOARD: Utility Classes] */
+.dashboard .hidden {
+  display: none;
+}
+
+.dashboard .btn-active {
+  background: var(--color-primary) !important;
+  color: var(--bg-secondary) !important;
+}
+
+.dashboard .btn-flash {
+  background: var(--color-primary) !important;
+  color: var(--bg-secondary) !important;
+  transition: background-color 0.3s ease;
+}
+
+/* [DASHBOARD: Admin Panel] */
+.dashboard #adminPanel table {
+  font-size: 0.9em;
+}
+
+/* [DASHBOARD: Language Toggle] */
+.dashboard .language-toggle {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-sm);
+  margin-top: var(--space-lg);
+  padding: var(--space-md);
+  background-color: var(--bg-secondary);
+  border-radius: var(--radius-md);
+}
+
+.dashboard .language-toggle button {
+  background: var(--color-dark-lighter);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: var(--space-sm) var(--space-md);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  transition: var(--transition-base);
+  min-width: 80px;
+}
+
+.dashboard .language-toggle button:hover,
+.dashboard .language-toggle button.active {
+  background: var(--color-primary);
+  color: var(--text-secondary);
+  border-color: var(--color-primary);
+}
+
+/* [DASHBOARD: Responsive Design] */
+@media (max-width: 640px) {
+  .dashboard {
+    padding: var(--space-lg) var(--space-sm);
+  }
+  
+  #clockInBtn {
+    width: 100%;
+  }
+
+  .dashboard .controls {
+    gap: var(--space-sm);
+  }
+
+  .dashboard .btn {
+    flex: 1;
+    min-width: 44%;
+  }
+
+  .dashboard .btn-green {
+    flex-basis: 100%;
+    margin-left: 0;
+  }
+
+  .dashboard .language-toggle {
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  .dashboard .language-toggle button {
+    min-width: auto;
+    width: 100%;
+  }
+}

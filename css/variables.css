@@ -1,0 +1,114 @@
+/* ================================
+   CSS Variables - Design System
+   ================================ */
+
+:root {
+  /* Brand Colors */
+  --cls-amber: #FFBF00;
+  --cls-amber-hover: #E8A317;
+  --cls-amber-light: #FFF8E1;
+  --cls-orange: #FBB040;
+  --cls-charcoal: #1A1A1A;
+  --cls-charcoal-light: #2E2E2E;
+  --cls-charcoal-lighter: #333333;
+
+  /* Semantic Colors */
+  --color-primary: var(--cls-amber);
+  --color-primary-hover: var(--cls-amber-hover);
+  --color-primary-light: var(--cls-amber-light);
+  --color-secondary: var(--cls-orange);
+  --color-dark: var(--cls-charcoal);
+  --color-dark-light: var(--cls-charcoal-light);
+  --color-dark-lighter: var(--cls-charcoal-lighter);
+
+  /* Background Colors */
+  --bg-primary: #bdbdbd;
+  --bg-secondary: var(--cls-charcoal);
+  --bg-card: var(--cls-orange);
+  --bg-service: var(--cls-charcoal-light);
+  --bg-overlay: rgba(26, 26, 26, 0.8);
+
+  /* Text Colors */
+  --text-primary: #FFFFFF;
+  --text-secondary: #FFFFFF;
+  --text-muted: #CCCCCC;
+  --text-light-muted: #B3B3B3;
+  --text-very-muted: #999999;
+
+  /* Border & Shadow */
+  --border-color: var(--cls-charcoal-lighter);
+  --border-light: #E1E5E9;
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.15);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.25), 0 2px 4px rgba(255, 191, 0, 0.1);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.35), 0 4px 8px rgba(255, 191, 0, 0.15);
+  --shadow-accent: 0 0 20px rgba(255, 191, 0, 0.4), 0 4px 12px rgba(0, 0, 0, 0.2);
+
+  /* Typography */
+  --font-heading: 'Anton', sans-serif;
+  --font-body: 'Roboto', Arial, sans-serif;
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 2rem;
+  --font-size-4xl: 2.5rem;
+
+  /* Spacing */
+  --space-xs: 0.25rem;  /* 4px */
+  --space-sm: 0.5rem;   /* 8px */
+  --space-md: 1rem;     /* 16px */
+  --space-lg: 1.5rem;   /* 24px */
+  --space-xl: 2rem;     /* 32px */
+  --space-2xl: 3rem;    /* 48px */
+  --space-3xl: 4rem;    /* 64px */
+
+  /* Border Radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 50%;
+
+  /* Transitions */
+  --transition-fast: 0.15s ease;
+  --transition-base: 0.3s ease;
+  --transition-slow: 0.5s ease;
+
+  /* Breakpoints (for reference in media queries) */
+  --mobile-max: 768px;
+  --tablet-min: 769px;
+  --desktop-min: 1024px;
+  --desktop-large-min: 1200px;
+
+  /* Z-Index Scale */
+  --z-dropdown: 1000;
+  --z-sticky: 1010;
+  --z-fixed: 1020;
+  --z-modal-backdrop: 1030;
+  --z-modal: 1040;
+  --z-popover: 1050;
+  --z-tooltip: 1060;
+
+  /* Legacy Support - Transitional aliases for existing code */
+  --primary-bg: var(--bg-primary);
+  --accent-color: var(--color-primary);
+  --secondary-bg: var(--bg-secondary);
+  --text-color: var(--text-primary);
+  --button-hover-bg: var(--bg-primary);
+  --service-bg: var(--bg-service);
+  --card-bg: var(--bg-card);
+  --text-muted: var(--text-muted);
+  --text-color-2: var(--text-secondary);
+  --cls-yellow: var(--cls-amber);
+  --cls-yellow-hover: var(--cls-amber-hover);
+  --bg: var(--color-dark);
+  --card: var(--cls-charcoal-lighter);
+  --text: var(--text-primary);
+  --muted: var(--text-very-muted);
+  --muted2: var(--text-light-muted);
+  --border: var(--border-color);
+  --thead: #222;
+  --rowalt: var(--cls-charcoal-lighter);
+}
