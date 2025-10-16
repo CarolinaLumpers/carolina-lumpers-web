@@ -1071,10 +1071,14 @@ async function registerBiometric(workerId, email) {
     });
     
     if (credential) {
-      // Store registration info
+      // Store registration info - encode credential ID as base64
+      const credentialIdBase64 = btoa(String.fromCharCode(...new Uint8Array(credential.rawId)));
+      
       localStorage.setItem('CLS_BioRegistered', 'true');
-      localStorage.setItem('CLS_BioCredentialId', credential.id);
+      localStorage.setItem('CLS_BioCredentialId', credentialIdBase64);
       localStorage.setItem('CLS_BioRegisteredFor', workerId);
+      
+      console.log('✅ Biometric registration successful, credential ID:', credentialIdBase64);
       
       if (statusEl) statusEl.textContent = '✅ Biometric login enabled!';
       
@@ -1118,17 +1122,35 @@ async function biometricLogin() {
     }
     
     console.log('🔐 Attempting biometric login for worker:', registeredFor);
+    console.log('🔑 Using credential ID:', credentialId);
     
     // Generate a cryptographically random challenge
     const challenge = new Uint8Array(32);
     crypto.getRandomValues(challenge);
+    
+    console.log('📋 WebAuthn get request:', {
+      challenge: Array.from(challenge),
+      credentialId: credentialId,
+      credentialIdLength: credentialId.length
+    });
+    
+    let credentialIdBytes;
+    try {
+      // Convert base64 credential ID to bytes
+      credentialIdBytes = Uint8Array.from(atob(credentialId), c => c.charCodeAt(0));
+      console.log('✅ Credential ID converted to bytes:', Array.from(credentialIdBytes));
+    } catch (err) {
+      console.error('❌ Failed to convert credential ID:', err);
+      if (statusEl) statusEl.textContent = '⚠️ Invalid biometric credentials. Please re-register.';
+      return false;
+    }
     
     const credential = await navigator.credentials.get({
       publicKey: {
         challenge: challenge,
         allowCredentials: [{
           type: 'public-key',
-          id: Uint8Array.from(atob(credentialId), c => c.charCodeAt(0))
+          id: credentialIdBytes
         }],
         userVerification: 'preferred',
         timeout: 60000
@@ -1165,14 +1187,26 @@ async function biometricLogin() {
     }
   } catch (err) {
     console.error('⚠️ Biometric authentication failed:', err);
+    console.error('Error details:', {
+      name: err.name,
+      message: err.message,
+      code: err.code
+    });
+    
     const statusEl = document.getElementById('bioStatus');
     if (statusEl) {
       if (err.name === 'NotAllowedError') {
-        statusEl.textContent = '⚠️ Biometric verification cancelled.';
+        statusEl.textContent = '⚠️ Biometric verification cancelled or not allowed.';
       } else if (err.name === 'InvalidStateError') {
-        statusEl.textContent = '⚠️ Biometric credentials not found. Please log in normally.';
+        statusEl.textContent = '⚠️ Biometric device not available or credentials not found.';
+      } else if (err.name === 'NotSupportedError') {
+        statusEl.textContent = '⚠️ Biometric authentication not supported on this device.';
+      } else if (err.name === 'SecurityError') {
+        statusEl.textContent = '⚠️ Security error. Please try again or log in normally.';
+      } else if (err.name === 'AbortError') {
+        statusEl.textContent = '⚠️ Biometric verification timed out.';
       } else {
-        statusEl.textContent = '⚠️ Biometric verification failed.';
+        statusEl.textContent = `⚠️ Biometric verification failed: ${err.message}`;
       }
     }
     return false;
