@@ -31,6 +31,128 @@
   <!-- Global CSS System -->
   <link rel="stylesheet" href="css/style.css?v=2024-pwa-integration">
   <link rel="stylesheet" href="css/dashboard.css?v=2024-pwa-integration">
+  <style>
+    /* Time Edit Modal Styles */
+    .modal {
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(4px);
+    }
+    .modal-content {
+      background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+      margin: 5% auto;
+      padding: 0;
+      border: 1px solid #FFC107;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 500px;
+      box-shadow: 0 8px 32px rgba(255, 193, 7, 0.3);
+    }
+    .modal-header {
+      padding: 20px;
+      border-bottom: 1px solid #333;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .modal-header h3 {
+      margin: 0;
+      color: #FFC107;
+    }
+    .close {
+      color: #aaa;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+    .close:hover {
+      color: #FFC107;
+    }
+    .modal-body {
+      padding: 20px;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      color: #FFC107;
+      font-weight: bold;
+    }
+    .form-input {
+      width: 100%;
+      padding: 10px;
+      background: #000;
+      border: 1px solid #333;
+      border-radius: 6px;
+      color: #fff;
+      font-size: 14px;
+    }
+    .form-input:focus {
+      border-color: #FFC107;
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(255, 193, 7, 0.2);
+    }
+    .readonly-field {
+      padding: 10px;
+      background: #111;
+      border: 1px solid #333;
+      border-radius: 6px;
+      color: #aaa;
+      display: block;
+    }
+    .info-text {
+      font-size: 12px;
+      color: #aaa;
+      font-style: italic;
+      margin: 0;
+    }
+    .modal-footer {
+      padding: 20px;
+      border-top: 1px solid #333;
+      text-align: right;
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+    .status-badge {
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+    .status-confirmed { background: rgba(76, 175, 80, 0.2); color: #4CAF50; }
+    .status-pending { background: rgba(255, 193, 7, 0.2); color: #FFC107; }
+    .status-editing { background: rgba(33, 150, 243, 0.2); color: #2196F3; }
+    .action-btn {
+      padding: 4px 8px;
+      font-size: 11px;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.3s;
+    }
+    .edit-btn {
+      background: rgba(33, 150, 243, 0.2);
+      color: #2196F3;
+      border: 1px solid #2196F3;
+    }
+    .edit-btn:hover {
+      background: rgba(33, 150, 243, 0.4);
+    }
+    .edit-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  </style>
   <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet" />
 </head>
 
@@ -88,6 +210,8 @@
           <tr>
             <th data-en="Date" data-es="Fecha" data-pt="Data">Date</th>
             <th data-en="Time" data-es="Hora" data-pt="Hora">Time</th>
+            <th data-en="Status" data-es="Estado" data-pt="Status">Status</th>
+            <th data-en="Actions" data-es="Acciones" data-pt="Ações">Actions</th>
           </tr>
         </thead>
         <tbody id="reportBody">
@@ -192,9 +316,54 @@
     </div>
   </div>
 
+  <!-- Time Entry Edit Modal -->
+  <div id="timeEditModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 data-en="Request Time Adjustment" data-es="Solicitar Ajuste de Tiempo" data-pt="Solicitar Ajuste de Tempo">
+          Request Time Adjustment
+        </h3>
+        <span class="close" onclick="closeTimeEditModal()">&times;</span>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label data-en="Original Time:" data-es="Tiempo Original:" data-pt="Tempo Original:">Original Time:</label>
+          <span id="originalTime" class="readonly-field"></span>
+        </div>
+        <div class="form-group">
+          <label for="requestedTime" data-en="Requested Time:" data-es="Tiempo Solicitado:" data-pt="Tempo Solicitado:">Requested Time:</label>
+          <input type="datetime-local" id="requestedTime" class="form-input" required>
+        </div>
+        <div class="form-group">
+          <label for="editReason" data-en="Reason for Change:" data-es="Razón del Cambio:" data-pt="Motivo da Mudança:">Reason for Change:</label>
+          <textarea id="editReason" class="form-input" rows="3" 
+                    data-en="Please explain why this time adjustment is needed..." 
+                    data-es="Por favor explique por qué se necesita este ajuste de tiempo..."
+                    data-pt="Por favor explique por que esse ajuste de tempo é necessário..."
+                    placeholder="Please explain why this time adjustment is needed..." required></textarea>
+        </div>
+        <div class="form-group">
+          <label data-en="Note:" data-es="Nota:" data-pt="Nota:">Note:</label>
+          <p class="info-text" 
+             data-en="This request will be sent to your supervisor for approval. You will be notified once it's reviewed."
+             data-es="Esta solicitud será enviada a su supervisor para aprobación. Se le notificará una vez que sea revisada."
+             data-pt="Esta solicitação será enviada ao seu supervisor para aprovação. Você será notificado assim que for revisada.">
+            This request will be sent to your supervisor for approval. You will be notified once it's reviewed.
+          </p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-gray" onclick="closeTimeEditModal()" 
+                data-en="Cancel" data-es="Cancelar" data-pt="Cancelar">Cancel</button>
+        <button type="button" class="btn btn-blue" onclick="submitTimeEditRequest()" 
+                data-en="Submit Request" data-es="Enviar Solicitud" data-pt="Enviar Solicitação">Submit Request</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     // ======================== CONFIG ========================
-    const API_URL = "https://cls-proxy.s-garay.workers.dev"; // Proxy to your Apps Script
+    const API_URL = "https://script.google.com/macros/s/AKfycbwHBLEQ5QHuhD-O4uI4hRN_5_yS9YsFgtn_dMAdoAO2C7zHLoi3qfHO82vas3Uv0wXXpg/exec";
     
     // Local getText function for dashboard (fallback until script.js loads)
     function getText(path, lang) {
@@ -252,7 +421,14 @@
       offlineSaved: { en: "📱 Clock-in saved offline — will sync when online", es: "📱 Registro guardado sin conexión — se sincronizará cuando esté en línea", pt: "📱 Registro salvo offline — será sincronizado quando online" },
       syncInProgress: { en: "🔄 Connection restored — syncing clock data...", es: "🔄 Conexión restaurada — sincronizando datos...", pt: "🔄 Conexão restaurada — sincronizando dados..." },
       syncComplete: { en: "✅ All clock-ins synced successfully", es: "✅ Todos los registros sincronizados", pt: "✅ Todos os registros sincronizados" },
-      pendingSync: { en: "🟡 pending sync", es: "🟡 sincronización pendiente", pt: "🟡 sincronização pendente" }
+      pendingSync: { en: "🟡 pending sync", es: "🟡 sincronización pendiente", pt: "🟡 sincronização pendente" },
+      // Time edit messages
+      timeEditRequest: { en: "Time adjustment request submitted", es: "Solicitud de ajuste de tiempo enviada", pt: "Solicitação de ajuste de tempo enviada" },
+      timeEditError: { en: "Failed to submit time adjustment request", es: "Error al enviar solicitud de ajuste", pt: "Falha ao enviar solicitação de ajuste" },
+      editButton: { en: "Edit", es: "Editar", pt: "Editar" },
+      statusConfirmed: { en: "Confirmed", es: "Confirmado", pt: "Confirmado" },
+      statusPending: { en: "Pending Approval", es: "Pendiente de Aprobación", pt: "Pendente de Aprovação" },
+      statusEditing: { en: "Edit Requested", es: "Edición Solicitada", pt: "Edição Solicitada" }
     };
 
     // Helper function to get MSG translations
@@ -660,10 +836,115 @@
     }
 
 
+    // =================== Time Entry Edit Functions ===================
+    let currentEditEntry = null;
+
+    function openTimeEditModal(entryId, originalTime, canEdit = true) {
+      if (!canEdit) {
+        alert(getMSG('timeEditError')); // Use a better message for 'cannot edit'
+        return;
+      }
+      
+      currentEditEntry = entryId;
+      document.getElementById('originalTime').textContent = originalTime;
+      
+      // Set default requested time to original time
+      const timeInput = document.getElementById('requestedTime');
+      // Convert display time to datetime-local format
+      const date = new Date();
+      const [time, period] = originalTime.split(' ');
+      const [hours, minutes] = time.split(':');
+      let hour24 = parseInt(hours);
+      
+      if (period === 'PM' && hour24 !== 12) hour24 += 12;
+      if (period === 'AM' && hour24 === 12) hour24 = 0;
+      
+      const isoString = date.getFullYear() + '-' + 
+                       String(date.getMonth() + 1).padStart(2, '0') + '-' + 
+                       String(date.getDate()).padStart(2, '0') + 'T' + 
+                       String(hour24).padStart(2, '0') + ':' + 
+                       String(minutes).padStart(2, '0');
+      
+      timeInput.value = isoString;
+      document.getElementById('editReason').value = '';
+      
+      document.getElementById('timeEditModal').style.display = 'block';
+    }
+
+    function closeTimeEditModal() {
+      document.getElementById('timeEditModal').style.display = 'none';
+      currentEditEntry = null;
+    }
+
+    async function submitTimeEditRequest() {
+      const requestedTime = document.getElementById('requestedTime').value;
+      const reason = document.getElementById('editReason').value.trim();
+      
+      if (!requestedTime || !reason) {
+        alert('Please fill in all required fields.');
+        return;
+      }
+      
+      try {
+        // Format the requested time for display
+        const requestedDate = new Date(requestedTime);
+        const formattedTime = requestedDate.toLocaleTimeString('en-US', {
+          hour: 'numeric',
+          minute: '2-digit',
+          hour12: true
+        });
+        
+        const editData = {
+          entryId: currentEditEntry,
+          workerId: workerId,
+          originalTime: document.getElementById('originalTime').textContent,
+          requestedTime: formattedTime,
+          requestedDateTime: requestedTime,
+          reason: reason,
+          status: 'pending',
+          submittedAt: new Date().toISOString()
+        };
+        
+        // Submit to backend API
+        const queryParams = new URLSearchParams({
+          action: 'submitTimeEdit',
+          employeeId: editData.employeeId,
+          recordId: editData.recordId,
+          originalTime: editData.originalTime,
+          requestedTime: editData.requestedTime,
+          requestedDateTime: editData.requestedDateTime,
+          reason: editData.reason,
+          status: editData.status,
+          submittedAt: editData.submittedAt
+        });
+        
+        const response = await fetch(`${API_URL}?${queryParams.toString()}`);
+        
+        if (response.ok) {
+          alert(getMSG('timeEditRequest'));
+          closeTimeEditModal();
+          loadReport(); // Refresh the report to show pending status
+        } else {
+          throw new Error('Failed to submit request');
+        }
+      } catch (err) {
+        console.error('Time edit submission error:', err);
+        alert(getMSG('timeEditError'));
+      }
+    }
+
+    // Close modal when clicking outside
+    window.addEventListener('click', (event) => {
+      const modal = document.getElementById('timeEditModal');
+      if (event.target === modal) {
+        closeTimeEditModal();
+      }
+    });
+
     // =================== Clock-In Report (Today Only, Latest First) ===================
     async function loadReport() {
       const body = document.getElementById("reportBody");
-      body.innerHTML = `<tr><td colspan='2' class="muted">${getMSG('loadingReport')}</td></tr>`;
+      body.innerHTML = `<tr><td colspan='4' class="muted">${getMSG('loadingReport')}</td></tr>`;
 
       try {
         let data;
@@ -684,13 +965,40 @@
             const t2 = b.time ? new Date(`1970-01-01T${b.time}`) : 0;
             return t2 - t1;
           });
-          todayRecords.forEach(r => {
+          todayRecords.forEach((r, index) => {
             const tr = document.createElement("tr");
-            tr.innerHTML = `<td>${r.date}</td><td>${r.time}</td>`;
+            
+            // Determine status and edit capability
+            const status = r.editStatus || 'confirmed';
+            const canEdit = status === 'confirmed';
+            const entryId = r.id || `entry_${index}`;
+            
+            let statusBadge = '';
+            let statusText = '';
+            
+            switch (status) {
+              case 'pending':
+                statusBadge = 'status-pending';
+                statusText = getMSG('statusPending');
+                break;
+              case 'editing':
+                statusBadge = 'status-editing';
+                statusText = getMSG('statusEditing');
+                break;
+              default:
+                statusBadge = 'status-confirmed';
+                statusText = getMSG('statusConfirmed');
+            }
+            
+            const editButton = canEdit 
+              ? `<button class=\"action-btn edit-btn\" onclick=\"openTimeEditModal('${entryId}', '${r.time}', true)\">${getMSG('editButton')}</button>`
+              : `<button class=\"action-btn edit-btn\" disabled>${getMSG('editButton')}</button>`;
+            
+            tr.innerHTML = `<td>${r.date}</td><td>${r.time}</td><td><span class=\"status-badge ${statusBadge}\">${statusText}</span></td><td>${editButton}</td>`;
             body.appendChild(tr);
           });
         } else {
-          body.innerHTML = `<tr><td colspan="2" class="muted">${LANG === 'es' ? 'Sin registros de hoy.' :
+          body.innerHTML = `<tr><td colspan="4" class="muted">${LANG === 'es' ? 'Sin registros de hoy.' :
             LANG === 'pt' ? 'Sem registros de hoje.' :
               'No clock-ins today.'
             }</td></tr>`;
