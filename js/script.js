@@ -1109,19 +1109,15 @@ async function biometricLogin() {
     const statusEl = document.getElementById('bioStatus');
     if (statusEl) statusEl.textContent = '🔑 Verifying biometric...';
     
-    const workerId = localStorage.getItem('CLS_WorkerID');
     const registeredFor = localStorage.getItem('CLS_BioRegisteredFor');
     const credentialId = localStorage.getItem('CLS_BioCredentialId');
     
-    if (!workerId || !registeredFor || !credentialId) {
-      if (statusEl) statusEl.textContent = '⚠️ No biometric credentials found. Please log in normally first.';
+    if (!registeredFor || !credentialId) {
+      if (statusEl) statusEl.textContent = '⚠️ No biometric credentials found. Please register biometrics first.';
       return false;
     }
     
-    if (workerId !== registeredFor) {
-      if (statusEl) statusEl.textContent = '⚠️ Biometric credentials are for a different user.';
-      return false;
-    }
+    console.log('🔐 Attempting biometric login for worker:', registeredFor);
     
     // Generate a cryptographically random challenge
     const challenge = new Uint8Array(32);
@@ -1140,19 +1136,25 @@ async function biometricLogin() {
     });
 
     if (credential) {
-      // Verify session validity for offline mode
-      const sessionExpiry = localStorage.getItem('CLS_SessionExpiry');
-      const rememberUser = localStorage.getItem('CLS_RememberUser') === 'true';
+      if (statusEl) statusEl.textContent = '✅ Biometric verified — logging in…';
       
-      if (!rememberUser && sessionExpiry && new Date(sessionExpiry) < new Date()) {
-        if (statusEl) statusEl.textContent = '⚠️ Session expired. Please log in normally.';
-        return false;
-      }
+      // Successful biometric authentication - restore session data
+      console.log('✅ Biometric authentication successful for worker:', registeredFor);
       
-      if (statusEl) statusEl.textContent = '✅ Verified — logging in…';
+      // Get stored user data for this worker (if available)
+      const storedUserName = localStorage.getItem('CLS_WorkerName');
+      const storedEmail = localStorage.getItem('CLS_Email');
       
-      // Successful biometric authentication
-      console.log('✅ Biometric authentication successful');
+      // Restore session data
+      localStorage.setItem("CLS_WorkerID", registeredFor);
+      
+      // If we don't have stored user data, we'll get it on the dashboard
+      if (storedUserName) localStorage.setItem("CLS_WorkerName", storedUserName);
+      if (storedEmail) localStorage.setItem("CLS_Email", storedEmail);
+      
+      // Set session preferences - default to remember user for biometric logins
+      localStorage.setItem('CLS_RememberUser', 'true');
+      localStorage.removeItem('CLS_SessionExpiry'); // No expiry for biometric logins
       
       // Redirect to dashboard
       setTimeout(() => {
