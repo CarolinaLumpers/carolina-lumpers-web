@@ -181,14 +181,47 @@
       background: rgba(255, 193, 7, 0.05);
       border: 1px solid rgba(255, 193, 7, 0.2);
       border-radius: 8px;
-      padding: 16px;
-      margin-bottom: 20px;
+      padding: 20px;
+      margin: 20px 0;
+      text-align: left;
+      max-width: 860px;
     }
     .admin-subsection h4 {
       margin-top: 0;
-      margin-bottom: 12px;
+      margin-bottom: 16px;
       color: #FFC107;
       font-size: 1.1em;
+    }
+    /* Action Buttons for Time Edit Approvals */
+    .approve-btn {
+      padding: 4px 10px;
+      font-size: 11px;
+      border-radius: 4px;
+      cursor: pointer;
+      border: 1px solid;
+      background: rgba(76, 175, 80, 0.1);
+      color: #4CAF50;
+      border-color: #4CAF50;
+      transition: all 0.3s;
+      margin: 0 4px;
+    }
+    .approve-btn:hover {
+      background: rgba(76, 175, 80, 0.3);
+    }
+    .deny-btn {
+      padding: 4px 10px;
+      font-size: 11px;
+      border-radius: 4px;
+      cursor: pointer;
+      border: 1px solid;
+      background: rgba(244, 67, 54, 0.1);
+      color: #f44336;
+      border-color: #f44336;
+      transition: all 0.3s;
+      margin: 0 4px;
+    }
+    .deny-btn:hover {
+      background: rgba(244, 67, 54, 0.3);
     }
   </style>
   <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet" />
@@ -242,9 +275,6 @@
         data-pt="Registros de Tempo de Hoje">
         Today's Time Entries
       </h3>
-
-      
-      </h3>
       <table id="reportTable">
         <thead>
           <tr>
@@ -269,11 +299,11 @@
       </h3>
 
       <div class="controls">
-        <button id="btnPayrollCurrent" class="btn btn-blue" data-en="Current Week" data-es="Semana Actual"
+        <button id="btnPayrollCurrent" class="btn btn-primary" data-en="Current Week" data-es="Semana Actual"
           data-pt="Semana Atual">Current Week</button>
-        <button id="btnPayrollPrevious" class="btn btn-gray" data-en="Previous Week" data-es="Semana Anterior"
+        <button id="btnPayrollPrevious" class="btn btn-ghost" data-en="Previous Week" data-es="Semana Anterior"
           data-pt="Semana Anterior">Previous Week</button>
-        <button id="btnPayrollPdf" class="btn btn-green" data-en="Send Payroll Report"
+        <button id="btnPayrollPdf" class="btn btn-secondary" data-en="Send Payroll Report"
           data-es="Enviar Informe de Nómina" data-pt="Enviar Relatório de Pagamento">
           Send Payroll Report
         </button>
@@ -308,36 +338,39 @@
       </h3>
 
       <!-- Clock-In Manager Subsection -->
-      <div id="clockinManager" class="admin-subsection" style="text-align:left;max-width:860px;margin:0 auto;">
-        <label style="display:block;margin:8px 0;">
+      <div id="clockinManager" class="admin-subsection">
+        <h4 class="section-title" data-en="Clock-In Manager" data-es="Gestor de Entradas" data-pt="Gerenciador de Registros">
+          Clock-In Manager
+        </h4>
+        <label style="display:block;margin:12px 0;">
           <span data-en="Filter by worker(s):" data-es="Filtrar por empleado(s):" data-pt="Filtrar por funcionário(s):">
             Filter by worker(s):
           </span>
           <select id="workerFilter" multiple size="6"
-            style="width:100%;background:#000;color:#fff;border:1px solid #333;border-radius:6px;padding:6px;"></select>
+            style="width:100%;background:#000;color:#fff;border:1px solid #333;border-radius:6px;padding:8px;margin-top:6px;"></select>
         </label>
 
-        <div style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 16px;">
-          <button id="btnLoadAll" class="btn btn-blue">📋 Load All Clock-Ins</button>
-          <button id="btnClearFilter" class="btn btn-gray">Clear Filter</button>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
+          <button id="btnLoadAll" class="btn btn-primary" data-en="Load All Clock-Ins" data-es="Cargar Todas las Entradas" data-pt="Carregar Todos os Registros">Load All Clock-Ins</button>
+          <button id="btnClearFilter" class="btn btn-ghost" data-en="Clear Filter" data-es="Borrar Filtro" data-pt="Limpar Filtro">Clear Filter</button>
         </div>
 
         <div id="allReportsContainer" style="overflow:auto;"></div>
       </div>
 
       <!-- TIME EDIT REQUESTS Subsection -->
-      <div id="timeEditRequestsWrap" class="admin-subsection" style="margin-top:24px;text-align:left;max-width:860px;">
+      <div id="timeEditRequestsWrap" class="admin-subsection">
         <h4 class="section-title" data-en="Time Edit Requests" data-es="Solicitudes de Edición de Tiempo"
           data-pt="Solicitações de Edição de Tempo">
-          ⏰ Time Edit Requests
+          Time Edit Requests
         </h4>
         
-        <div style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0;">
-          <button id="btnLoadPendingEdits" class="btn btn-blue" data-en="Load Pending Requests" 
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
+          <button id="btnLoadPendingEdits" class="btn btn-primary" data-en="Load Pending Requests" 
                   data-es="Cargar Solicitudes Pendientes" data-pt="Carregar Solicitações Pendentes">
-            📋 Load Pending Requests
+            Load Pending Requests
           </button>
-          <button id="btnLoadAllEdits" class="btn btn-gray" data-en="Load All Requests" 
+          <button id="btnLoadAllEdits" class="btn btn-ghost" data-en="Load All Requests" 
                   data-es="Cargar Todas" data-pt="Carregar Todas">
             Load All Requests
           </button>
@@ -353,21 +386,21 @@
       </div>
 
       <!-- VIEW AS Subsection -->
-      <div id="viewAsWrap" class="admin-subsection" style="margin-top:24px;text-align:left;max-width:860px;">
+      <div id="viewAsWrap" class="admin-subsection">
         <h4 class="section-title" data-en="View As (Admin only)" data-es="Ver Como (solo Admin)"
           data-pt="Ver Como (somente Admin)">
-          👤 View As (Admin only)
+          View As (Admin only)
         </h4>
-        <label style="display:block;margin:8px 0;">
+        <label style="display:block;margin:12px 0;">
           <span data-en="Choose a worker:" data-es="Elija un empleado:" data-pt="Escolha um funcionário:">Choose a
             worker:</span>
           <select id="viewAsSelect"
-            style="width:100%;background:#000;color:#fff;border:1px solid #333;border-radius:6px;padding:6px;"></select>
+            style="width:100%;background:#000;color:#fff;border:1px solid #333;border-radius:6px;padding:8px;margin-top:6px;"></select>
         </label>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;margin:8px 0;">
-          <button id="btnActivateViewAs" class="btn btn-blue" data-en="Activate View As" data-es="Activar Ver Como"
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
+          <button id="btnActivateViewAs" class="btn btn-primary" data-en="Activate View As" data-es="Activar Ver Como"
             data-pt="Ativar Ver Como">Activate View As</button>
-          <button id="btnExitViewAs" class="btn btn-gray hidden" data-en="Exit View As" data-es="Salir de Ver Como"
+          <button id="btnExitViewAs" class="btn btn-ghost hidden" data-en="Exit View As" data-es="Salir de Ver Como"
             data-pt="Sair do Ver Como">Exit View As</button>
         </div>
         <div id="viewAsBanner" class="muted hidden"></div>
@@ -421,9 +454,9 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-gray" onclick="closeTimeEditModal()" 
+        <button type="button" class="btn btn-ghost" onclick="closeTimeEditModal()" 
                 data-en="Cancel" data-es="Cancelar" data-pt="Cancelar">Cancel</button>
-        <button type="button" class="btn btn-blue" onclick="submitTimeEditRequest()" 
+        <button type="button" class="btn btn-primary" onclick="submitTimeEditRequest()" 
                 data-en="Submit Request" data-es="Enviar Solicitud" data-pt="Enviar Solicitação">Submit Request</button>
       </div>
     </div>
@@ -754,6 +787,9 @@
       if (tabAdmin) {
         tabAdmin.addEventListener("click", () => switchTab("admin"));
       }
+
+      // Initialize to Clock-Ins tab on page load
+      switchTab("clock");
 
       // Payroll buttons
       document.getElementById("btnPayrollCurrent").addEventListener("click", () => {
@@ -1337,13 +1373,12 @@
         }
         USER_ROLE = storedRole;
 
-        // Show Admin tab and section for Admin/Lead users
+        // Show Admin tab button for Admin/Lead users (section stays hidden until tab clicked)
         if (USER_ROLE === 'Admin' || USER_ROLE === 'Lead') {
           const adminTab = document.getElementById('tabAdmin');
-          const adminSection = document.getElementById('admin-section');
           
           if (adminTab) adminTab.classList.remove('hidden');
-          if (adminSection) adminSection.classList.remove('hidden');
+          // Note: admin-section stays hidden until user clicks Admin Tools tab
         }
 
         // Admin-only features (View As, Time Edit Requests)
@@ -1519,17 +1554,22 @@
         const data = await jsonp(url);
 
         if (!data || !data.success) {
-          container.innerHTML = `<p class="muted">${data?.message || 'Failed to load requests'}</p>`;
+          const errorMsg = data?.message || 'Failed to load requests';
+          container.innerHTML = `<p style="color:#f44336;padding:12px;background:rgba(244,67,54,0.1);border:1px solid rgba(244,67,54,0.3);border-radius:6px;">
+            ⚠️ ${errorMsg}
+          </p>`;
+          console.error('Time edit requests error:', data);
           return;
         }
 
         const requests = data.requests || [];
         
         if (requests.length === 0) {
-          container.innerHTML = `<p class="muted" data-en="No ${status} time edit requests found" 
+          const statusText = status === 'all' ? 'time edit requests' : `${status} time edit requests`;
+          container.innerHTML = `<p class="muted" data-en="No ${statusText} found" 
                                     data-es="No se encontraron solicitudes ${status}" 
                                     data-pt="Nenhuma solicitação ${status} encontrada">
-                                  No ${status} time edit requests found
+                                  No ${statusText} found
                                 </p>`;
           return;
         }
@@ -1566,11 +1606,11 @@
               </td>
               <td style="padding:8px;text-align:center;">
                 ${isPending ? `
-                  <button class="btn btn-green" style="padding:4px 10px;font-size:11px;margin:0 4px;" 
+                  <button class="approve-btn" 
                           onclick="approveTimeEditRequest('${req.requestId}')">
                     ✓ Approve
                   </button>
-                  <button class="btn btn-red" style="padding:4px 10px;font-size:11px;margin:0 4px;background:rgba(244,67,54,0.1);color:#f44336;border-color:#f44336;" 
+                  <button class="deny-btn" 
                           onclick="denyTimeEditRequest('${req.requestId}')">
                     ✗ Deny
                   </button>
