@@ -4,6 +4,65 @@
 const API_BASE = "https://cls-proxy.s-garay.workers.dev";
 
 /* ================================
+   DEVICE DETECTION UTILITIES
+   ================================ */
+/**
+ * Detect device type from user agent
+ * @returns {string} Device type (iPhone, iPad, Android, Windows, macOS, Linux, Unknown)
+ */
+function getDeviceType() {
+  const ua = navigator.userAgent;
+  
+  if (/iPhone/.test(ua)) return 'iPhone';
+  if (/iPad/.test(ua)) return 'iPad';
+  if (/Android/.test(ua)) return 'Android';
+  if (/Windows/.test(ua)) return 'Windows';
+  if (/Macintosh|Mac OS X/.test(ua)) return 'macOS';
+  if (/Linux/.test(ua)) return 'Linux';
+  
+  return 'Unknown';
+}
+
+/**
+ * Detect browser type from user agent
+ * @returns {string} Browser name
+ */
+function getBrowserType() {
+  const ua = navigator.userAgent;
+  
+  // Check for specific browsers
+  if (/Edg\//.test(ua)) return 'Edge';
+  if (/Chrome/.test(ua) && !/Edg/.test(ua)) return 'Chrome';
+  if (/Safari/.test(ua) && !/Chrome/.test(ua)) return 'Safari';
+  if (/Firefox/.test(ua)) return 'Firefox';
+  if (/MSIE|Trident/.test(ua)) return 'IE';
+  if (/Opera|OPR/.test(ua)) return 'Opera';
+  
+  return 'Unknown Browser';
+}
+
+/**
+ * Get comprehensive device information for logging
+ * @returns {Object} Device info object
+ */
+function getDeviceInfo() {
+  const deviceType = getDeviceType();
+  const browserType = getBrowserType();
+  const isMobile = /Mobile|Android|iPhone|iPad/.test(navigator.userAgent);
+  
+  return {
+    type: deviceType,
+    browser: browserType,
+    isMobile: isMobile,
+    platform: navigator.platform || 'Unknown',
+    language: navigator.language || 'en',
+    userAgent: navigator.userAgent,
+    screenSize: `${screen.width}x${screen.height}`,
+    displayString: `${deviceType} - ${browserType}`
+  };
+}
+
+/* ================================
    CENTRALIZED MULTILINGUAL TEXT
    ================================ */
 const CLS_TEXT = {

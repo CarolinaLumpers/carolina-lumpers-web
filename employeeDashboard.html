@@ -953,12 +953,15 @@
 
         // Prepare clock-in data
         const lang = localStorage.getItem("CLS_Lang") || "en";
+        const deviceInfo = window.getDeviceInfo ? window.getDeviceInfo() : { displayString: 'Unknown Device' };
+        
         const clockData = {
           workerId: workerId,
           lat: latitude,
           lng: longitude,
           lang: lang,
           email: email || '',
+          device: deviceInfo.displayString,
           timestamp: new Date().toISOString()
         };
 
@@ -980,7 +983,7 @@
         // Online: send immediately
         status.textContent = getMSG('recordingClockIn');
         const res = await jsonp(
-          `${API_URL}?action=clockin&workerId=${encodeURIComponent(workerId)}&lat=${latitude}&lng=${longitude}&lang=${lang}&email=${encodeURIComponent(email)}`
+          `${API_URL}?action=clockin&workerId=${encodeURIComponent(workerId)}&lat=${latitude}&lng=${longitude}&lang=${lang}&email=${encodeURIComponent(email)}&device=${encodeURIComponent(deviceInfo.displayString)}`
         );
 
         if (res && res.success) {
