@@ -444,7 +444,6 @@ function initializeNavbar() {
 // Load Navbar Component
 async function loadNavbar() {
   try {
-    console.log('Loading navbar...');
     const response = await fetch('components/navbar.html');
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -459,17 +458,34 @@ async function loadNavbar() {
       const currentPage = window.location.pathname.split('/').pop() || 'index.html';
       if (currentPage === 'employeeDashboard.html') {
         const navLinks = document.querySelector('.nav-links');
-        const hamburger = document.querySelector('.hamburger');
-        const navOverlay = document.querySelector('.nav-overlay');
         
-        // Hide all navigation elements for dashboard
-        if (navLinks) navLinks.style.display = 'none';
-        if (hamburger) hamburger.style.display = 'none';
-        if (navOverlay) navOverlay.style.display = 'none';
+        // Replace nav links with logout-only menu
+        if (navLinks) {
+          navLinks.innerHTML = `
+            <li><a href="#" id="navLogout" data-en="Logout" data-es="Cerrar Sesión" data-pt="Sair">Logout</a></li>
+          `;
+          
+          // Attach logout handler
+          setTimeout(() => {
+            const logoutLink = document.getElementById('navLogout');
+            if (logoutLink) {
+              logoutLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (typeof window.logout === 'function') {
+                  window.logout();
+                } else {
+                  localStorage.clear();
+                  window.location.href = 'employeelogin.html';
+                }
+              });
+            }
+          }, 100);
+        }
         
-        console.log('Dashboard detected - all navigation elements hidden');
+        // Initialize navbar functionality
+        initializeNavbar();
         
-        // Still initialize language and basic functionality for dashboard
+        // Initialize language
         window.switchLanguage = switchLanguage;
         const storedLang = localStorage.getItem("CLS_Lang") || "en";
         switchLanguage(storedLang);
@@ -480,8 +496,6 @@ async function loadNavbar() {
         // Set active page highlighting
         setActiveNavLink();
       }
-      
-      console.log('Navbar loaded successfully');
     } else {
       console.warn('Navbar container not found');
     }
@@ -513,18 +527,15 @@ function setActiveNavLink() {
 
 async function loadFooter() {
   try {
-    console.log('Loading footer...');
     const response = await fetch('components/footer.html');
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     const footerHTML = await response.text();
-    console.log('Footer HTML loaded:', footerHTML.substring(0, 100) + '...');
     
     const footerContainer = document.getElementById('footer-container');
     if (footerContainer) {
       footerContainer.innerHTML = footerHTML;
-      console.log('Footer injected into container');
       
       // Make sure switchLanguage is globally available
       window.switchLanguage = switchLanguage;
@@ -652,7 +663,6 @@ function initializeApp() {
 
   // Determine current page for page-specific logic
   const page = document.body.dataset.page;
-  console.log('🔧 Initializing page:', page);
   initPage(page);
 }
 

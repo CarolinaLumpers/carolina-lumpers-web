@@ -268,11 +268,11 @@
         Payroll Summary
       </h3>
 
-      <div class="controls">
-        <label style="display:inline-block;margin-right:12px;">
+      <div class="controls" style="justify-content: center; flex-direction: column; align-items: center;">
+        <label for="weekPeriodSelect" style="display:flex;flex-direction:column;align-items:center;gap:8px;">
           <span data-en="Week Period:" data-es="Período de Semana:" data-pt="Período da Semana:">Week Period:</span>
           <select id="weekPeriodSelect"
-            style="background:#000;color:#fff;border:1px solid #333;border-radius:6px;padding:8px;margin-left:8px;min-width:200px;">
+            style="background:#000;color:#fff;border:1px solid #333;border-radius:6px;padding:8px;min-width:200px;">
             <option value="" data-en="Loading..." data-es="Cargando..." data-pt="Carregando...">Loading...</option>
           </select>
         </label>
@@ -315,7 +315,7 @@
         <h4 class="section-title" data-en="Clock-In Manager" data-es="Gestor de Entradas" data-pt="Gerenciador de Registros">
           Clock-In Manager
         </h4>
-        <label style="display:block;margin:12px 0;">
+        <label for="workerFilter" style="display:block;margin:12px 0;">
           <span data-en="Filter by worker:" data-es="Filtrar por empleado:" data-pt="Filtrar por funcionário:">Filter by worker:</span>
           <select id="workerFilter"
             style="width:100%;background:#000;color:#fff;border:1px solid #333;border-radius:6px;padding:8px;margin-top:6px;">
@@ -357,30 +357,27 @@
           </p>
         </div>
       </div>
-
-      <!-- VIEW AS Subsection -->
-      <div id="viewAsWrap" class="admin-subsection">
-        <h4 class="section-title" data-en="View As (Admin only)" data-es="Ver Como (solo Admin)"
-          data-pt="Ver Como (somente Admin)">
-          View As (Admin only)
-        </h4>
-        <label style="display:block;margin:12px 0;">
-          <span data-en="Choose a worker:" data-es="Elija un empleado:" data-pt="Escolha um funcionário:">Choose a
-            worker:</span>
-          <select id="viewAsSelect"
-            style="width:100%;background:#000;color:#fff;border:1px solid #333;border-radius:6px;padding:8px;margin-top:6px;"></select>
-        </label>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
-          <button id="btnActivateViewAs" class="btn btn-primary" data-en="Activate View As" data-es="Activar Ver Como"
-            data-pt="Ativar Ver Como">Activate View As</button>
-          <button id="btnExitViewAs" class="btn btn-ghost hidden" data-en="Exit View As" data-es="Salir de Ver Como"
-            data-pt="Sair do Ver Como">Exit View As</button>
-        </div>
-        <div id="viewAsBanner" class="muted hidden"></div>
-      </div>
     </div>
 
-    <button class="logout" onclick="logout()" data-en="Logout" data-es="Cerrar Sesión" data-pt="Sair">Logout</button>
+    <!-- VIEW AS Section (Always visible for admins, above language toggle) -->
+    <div id="viewAsWrap" class="hidden" style="margin: var(--space-lg) auto; max-width: 860px; padding: var(--space-md); background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: var(--radius-md);">
+      <h4 style="color: var(--color-primary); margin: 0 0 var(--space-md) 0; text-align: center;" 
+          data-en="View As (Admin)" data-es="Ver Como (Admin)" data-pt="Ver Como (Admin)">
+        View As (Admin)
+      </h4>
+      <label for="viewAsSelect" style="display:block;margin:12px 0;">
+        <span data-en="Choose a worker:" data-es="Elija un empleado:" data-pt="Escolha um funcionário:">Choose a worker:</span>
+        <select id="viewAsSelect"
+          style="width:100%;background:#000;color:#fff;border:1px solid #333;border-radius:6px;padding:8px;margin-top:6px;"></select>
+      </label>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:12px 0;">
+        <button id="btnActivateViewAs" class="btn btn-primary" data-en="Activate View As" data-es="Activar Ver Como"
+          data-pt="Ativar Ver Como">Activate View As</button>
+        <button id="btnExitViewAs" class="btn btn-ghost hidden" data-en="Exit View As" data-es="Salir de Ver Como"
+          data-pt="Sair do Ver Como">Exit View As</button>
+      </div>
+      <div id="viewAsBanner" class="muted hidden" style="text-align: center;"></div>
+    </div>
 
     <!-- Language Toggle -->
     <div class="language-toggle">
@@ -401,7 +398,7 @@
       </div>
       <div class="modal-body">
         <div class="form-group">
-          <label data-en="Original Time:" data-es="Tiempo Original:" data-pt="Tempo Original:">Original Time:</label>
+          <span style="font-weight:600;display:block;margin-bottom:8px;" data-en="Original Time:" data-es="Tiempo Original:" data-pt="Tempo Original:">Original Time:</span>
           <span id="originalTime" class="readonly-field"></span>
         </div>
         <div class="form-group">
@@ -417,7 +414,7 @@
                     placeholder="Please explain why this time adjustment is needed..." required></textarea>
         </div>
         <div class="form-group">
-          <label data-en="Note:" data-es="Nota:" data-pt="Nota:">Note:</label>
+          <span style="font-weight:600;display:block;margin-bottom:8px;" data-en="Note:" data-es="Nota:" data-pt="Nota:">Note:</span>
           <p class="info-text" 
              data-en="This request will be sent to your supervisor for approval. You will be notified once it's reviewed."
              data-es="Esta solicitud será enviada a su supervisor para aprobación. Se le notificará una vez que sea revisada."
@@ -840,15 +837,23 @@
       dropdown.innerHTML = '<option value="">Loading...</option>';
 
       try {
-        const url = `${API_URL}?action=payrollWeekPeriods&workerId=${encodeURIComponent(workerId)}`;
+        const targetWorkerId = VIEW_AS_ACTIVE ? VIEW_AS_WORKER : workerId;
+        console.log('🔄 Loading payroll week periods for workerId:', targetWorkerId);
+        const url = `${API_URL}?action=payrollWeekPeriods&workerId=${encodeURIComponent(targetWorkerId)}`;
+        console.log('📡 API URL:', url);
+        
         const data = await apiCallWithRetry(url);
+        console.log('📥 API Response:', data);
 
         if (!data || !data.success) {
+          console.warn('⚠️ API returned unsuccessful response:', data);
           dropdown.innerHTML = '<option value="">No data available</option>';
           return;
         }
 
         const periods = data.periods || [];
+        console.log(`📊 Found ${periods.length} periods:`, periods);
+        
         if (periods.length === 0) {
           dropdown.innerHTML = '<option value="">No payroll periods found</option>';
           return;
@@ -866,7 +871,7 @@
         loadPayroll(periods[0]);
 
       } catch (err) {
-        console.error('Error loading payroll week periods:', err);
+        console.error('❌ Error loading payroll week periods:', err);
         dropdown.innerHTML = '<option value="">Error loading periods</option>';
       }
     }
@@ -1426,10 +1431,13 @@
 
         // Admin-only features (View As, Time Edit Requests)
         if (USER_ROLE === 'Admin') {
+          // Show View As section for admins
+          const viewAsWrap = document.getElementById('viewAsWrap');
+          if (viewAsWrap) viewAsWrap.classList.remove('hidden');
+          
           // Populate View As list and worker filter using workers from Workers sheet
           try {
             const data = await jsonp(`${API_URL}?action=reportAll&workerId=${encodeURIComponent(workerId)}`);
-            console.log('reportAll data for View As:', data);
             
             const viewAsSelect = document.getElementById('viewAsSelect');
             const workerFilter = document.getElementById('workerFilter');
@@ -1446,7 +1454,6 @@
                   opt.textContent = `${w.name} (${w.id})`;
                   viewAsSelect.appendChild(opt);
                 });
-                console.log(`✅ Populated View As dropdown with ${workers.length} workers`);
               }
               
               // Populate worker filter dropdown
@@ -1458,18 +1465,14 @@
                   opt.textContent = `${w.name} (${w.id})`;
                   workerFilter.appendChild(opt);
                 });
-                console.log(`✅ Populated worker filter with ${workers.length} workers`);
               }
             } else {
-              console.warn('⚠️ No workers data returned from reportAll');
               if (viewAsSelect) viewAsSelect.innerHTML = '<option value="">No workers found</option>';
               if (workerFilter) workerFilter.innerHTML = '<option value="">No workers found</option>';
-            }
-          } catch (err) {
-            console.error('Error populating View As dropdown:', err);
-          }
-
-          document.getElementById('btnActivateViewAs').onclick = () => activateViewAs();
+              }
+            } catch (err) {
+              // Silently fail - admin features not critical
+            }          document.getElementById('btnActivateViewAs').onclick = () => activateViewAs();
           document.getElementById('btnExitViewAs').onclick = () => exitViewAs();
         }
       } catch (e) {
@@ -1605,7 +1608,8 @@
 
       // Refresh sections in View As mode
       await loadReport();
-      await loadPayroll('current');
+      await loadPayrollWeekPeriods(); // Reload week periods for the viewed worker
+      // loadPayroll will be called automatically when a period is selected from the dropdown
     }
 
     function exitViewAs() {
@@ -1615,7 +1619,7 @@
       document.getElementById('btnExitViewAs').classList.add('hidden');
       document.getElementById('btnActivateViewAs').classList.remove('hidden');
       loadReport();
-      loadPayroll('current');
+      loadPayrollWeekPeriods(); // Reload admin's own week periods
     }
 
     // ===== Time Edit Request Management (Admin Only) =====
@@ -1766,7 +1770,7 @@
     }
   </script>
 
-  <script src="js/script.js?v=2024-dashboard-logout-menu" defer></script>
+  <script src="js/script.js?v=2025-01-clean-console" defer></script>
 </body>
 
 </html>

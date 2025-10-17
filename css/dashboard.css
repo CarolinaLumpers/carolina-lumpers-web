@@ -12,10 +12,9 @@
 }
 
 /* [DASHBOARD: Navigation Overrides] */
-.dashboard-page .hamburger,
-.dashboard-page .nav-links,
-.dashboard-page .nav-overlay {
-  display: none !important;
+/* Show hamburger menu on dashboard for logout access */
+.dashboard-page .hamburger {
+  display: flex !important;
 }
 
 /* [DASHBOARD: Typography] */
