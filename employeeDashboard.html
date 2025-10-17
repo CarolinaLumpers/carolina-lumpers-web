@@ -123,34 +123,72 @@
       justify-content: flex-end;
     }
     .status-badge {
-      padding: 4px 8px;
+      padding: 4px 10px;
       border-radius: 12px;
       font-size: 11px;
       font-weight: bold;
       text-transform: uppercase;
+      display: inline-block;
+      border: 1px solid;
     }
-    .status-confirmed { background: rgba(76, 175, 80, 0.2); color: #4CAF50; }
-    .status-pending { background: rgba(255, 193, 7, 0.2); color: #FFC107; }
-    .status-editing { background: rgba(33, 150, 243, 0.2); color: #2196F3; }
+    .status-confirmed { 
+      background: rgba(76, 175, 80, 0.2); 
+      color: #4CAF50; 
+      border-color: rgba(76, 175, 80, 0.4);
+    }
+    .status-pending { 
+      background: rgba(255, 193, 7, 0.2); 
+      color: #FFC107; 
+      border-color: rgba(255, 193, 7, 0.4);
+    }
+    .status-editing { 
+      background: rgba(255, 193, 7, 0.2); 
+      color: #FFC107; 
+      border-color: rgba(255, 193, 7, 0.4);
+    }
+    .status-denied { 
+      background: rgba(244, 67, 54, 0.2); 
+      color: #f44336; 
+      border-color: rgba(244, 67, 54, 0.4);
+    }
     .action-btn {
-      padding: 4px 8px;
+      padding: 5px 10px;
       font-size: 11px;
       border-radius: 4px;
       cursor: pointer;
       text-decoration: none;
       transition: all 0.3s;
+      background: transparent;
+      border: 1px solid;
     }
     .edit-btn {
-      background: rgba(33, 150, 243, 0.2);
+      background: rgba(33, 150, 243, 0.1);
       color: #2196F3;
-      border: 1px solid #2196F3;
+      border-color: #2196F3;
     }
-    .edit-btn:hover {
-      background: rgba(33, 150, 243, 0.4);
+    .edit-btn:hover:not(:disabled) {
+      background: rgba(33, 150, 243, 0.3);
     }
     .edit-btn:disabled {
-      opacity: 0.5;
+      opacity: 0.4;
       cursor: not-allowed;
+      color: #666;
+      border-color: #666;
+      background: transparent;
+    }
+    /* Admin Subsection Styles */
+    .admin-subsection {
+      background: rgba(255, 193, 7, 0.05);
+      border: 1px solid rgba(255, 193, 7, 0.2);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+    .admin-subsection h4 {
+      margin-top: 0;
+      margin-bottom: 12px;
+      color: #FFC107;
+      font-size: 1.1em;
     }
   </style>
   <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet" />
@@ -186,6 +224,8 @@
         data-pt="Registros">Clock-Ins</button>
       <button id="tabPayroll" class="tab-btn" data-en="Payroll" data-es="Nómina"
         data-pt="Folha de Pagamento">Payroll</button>
+      <button id="tabAdmin" class="tab-btn hidden" data-en="Admin Tools" data-es="Herramientas Admin"
+        data-pt="Ferramentas Admin">Admin Tools</button>
     </div>
 
     <!-- CLOCK-IN SECTION -->
@@ -261,13 +301,14 @@
       </p>
     </div>
 
-    <!-- ADMIN / LEAD PANEL -->
-    <div id="adminPanel" class="card hidden">
+    <!-- ADMIN SECTION -->
+    <div id="admin-section" class="card hidden">
       <h3 class="section-title" data-en="Admin Tools" data-es="Herramientas de Admin" data-pt="Ferramentas de Admin">
         Admin Tools
       </h3>
 
-      <div id="clockinManager" style="text-align:left;max-width:860px;margin:0 auto;">
+      <!-- Clock-In Manager Subsection -->
+      <div id="clockinManager" class="admin-subsection" style="text-align:left;max-width:860px;margin:0 auto;">
         <label style="display:block;margin:8px 0;">
           <span data-en="Filter by worker(s):" data-es="Filtrar por empleado(s):" data-pt="Filtrar por funcionário(s):">
             Filter by worker(s):
@@ -284,11 +325,38 @@
         <div id="allReportsContainer" style="overflow:auto;"></div>
       </div>
 
-      <!-- VIEW AS (Admin-only) -->
-      <div id="viewAsWrap" class="card hidden" style="margin-top:12px;text-align:left;max-width:860px;">
+      <!-- TIME EDIT REQUESTS Subsection -->
+      <div id="timeEditRequestsWrap" class="admin-subsection" style="margin-top:24px;text-align:left;max-width:860px;">
+        <h4 class="section-title" data-en="Time Edit Requests" data-es="Solicitudes de Edición de Tiempo"
+          data-pt="Solicitações de Edição de Tempo">
+          ⏰ Time Edit Requests
+        </h4>
+        
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0;">
+          <button id="btnLoadPendingEdits" class="btn btn-blue" data-en="Load Pending Requests" 
+                  data-es="Cargar Solicitudes Pendientes" data-pt="Carregar Solicitações Pendentes">
+            📋 Load Pending Requests
+          </button>
+          <button id="btnLoadAllEdits" class="btn btn-gray" data-en="Load All Requests" 
+                  data-es="Cargar Todas" data-pt="Carregar Todas">
+            Load All Requests
+          </button>
+        </div>
+        
+        <div id="timeEditRequestsContainer" style="overflow:auto;margin-top:12px;">
+          <p class="muted" data-en="Click 'Load Pending Requests' to view time edit requests" 
+             data-es="Haga clic en 'Cargar Solicitudes Pendientes' para ver las solicitudes"
+             data-pt="Clique em 'Carregar Solicitações Pendentes' para ver as solicitações">
+            Click 'Load Pending Requests' to view time edit requests
+          </p>
+        </div>
+      </div>
+
+      <!-- VIEW AS Subsection -->
+      <div id="viewAsWrap" class="admin-subsection" style="margin-top:24px;text-align:left;max-width:860px;">
         <h4 class="section-title" data-en="View As (Admin only)" data-es="Ver Como (solo Admin)"
           data-pt="Ver Como (somente Admin)">
-          View As (Admin only)
+          👤 View As (Admin only)
         </h4>
         <label style="display:block;margin:8px 0;">
           <span data-en="Choose a worker:" data-es="Elija un empleado:" data-pt="Escolha um funcionário:">Choose a
@@ -460,7 +528,8 @@
       editButton: { en: "Edit", es: "Editar", pt: "Editar" },
       statusConfirmed: { en: "Confirmed", es: "Confirmado", pt: "Confirmado" },
       statusPending: { en: "Pending Approval", es: "Pendiente de Aprobación", pt: "Pendente de Aprovação" },
-      statusEditing: { en: "Edit Requested", es: "Edición Solicitada", pt: "Edição Solicitada" }
+      statusEditing: { en: "Edit Requested", es: "Edición Solicitada", pt: "Edição Solicitada" },
+      statusDenied: { en: "Edit Denied", es: "Edición Denegada", pt: "Edição Negada" }
     };
 
     // Helper function to get MSG translations
@@ -679,6 +748,12 @@
       // Tabs
       document.getElementById("tabClock").addEventListener("click", () => switchTab("clock"));
       document.getElementById("tabPayroll").addEventListener("click", () => switchTab("payroll"));
+      
+      // Admin tab (only if visible)
+      const tabAdmin = document.getElementById("tabAdmin");
+      if (tabAdmin) {
+        tabAdmin.addEventListener("click", () => switchTab("admin"));
+      }
 
       // Payroll buttons
       document.getElementById("btnPayrollCurrent").addEventListener("click", () => {
@@ -717,6 +792,16 @@
         });
       }
 
+      // Time Edit Request buttons (Admin only)
+      const btnLoadPendingEdits = document.getElementById('btnLoadPendingEdits');
+      const btnLoadAllEdits = document.getElementById('btnLoadAllEdits');
+      if (btnLoadPendingEdits) {
+        btnLoadPendingEdits.addEventListener('click', () => loadTimeEditRequests('pending'));
+      }
+      if (btnLoadAllEdits) {
+        btnLoadAllEdits.addEventListener('click', () => loadTimeEditRequests('all'));
+      }
+
       // Language init
       initLanguage();
     });
@@ -734,14 +819,31 @@
     function switchTab(tab) {
       const clockBtn = document.getElementById("tabClock");
       const payBtn = document.getElementById("tabPayroll");
+      const adminBtn = document.getElementById("tabAdmin");
       const clockSec = document.getElementById("clockin-section");
       const paySec = document.getElementById("payroll-section");
+      const adminSec = document.getElementById("admin-section");
+      
+      // Remove active class from all tabs
+      clockBtn.classList.remove("active");
+      payBtn.classList.remove("active");
+      if (adminBtn) adminBtn.classList.remove("active");
+      
+      // Hide all sections
+      clockSec.classList.add("hidden");
+      paySec.classList.add("hidden");
+      if (adminSec) adminSec.classList.add("hidden");
+      
+      // Show selected tab
       if (tab === "clock") {
-        clockBtn.classList.add("active"); payBtn.classList.remove("active");
-        clockSec.classList.remove("hidden"); paySec.classList.add("hidden");
-      } else {
-        payBtn.classList.add("active"); clockBtn.classList.remove("active");
-        paySec.classList.remove("hidden"); clockSec.classList.add("hidden");
+        clockBtn.classList.add("active");
+        clockSec.classList.remove("hidden");
+      } else if (tab === "payroll") {
+        payBtn.classList.add("active");
+        paySec.classList.remove("hidden");
+      } else if (tab === "admin" && adminBtn && adminSec) {
+        adminBtn.classList.add("active");
+        adminSec.classList.remove("hidden");
       }
     }
 
@@ -1000,23 +1102,24 @@
           todayRecords.forEach((r, index) => {
             const tr = document.createElement("tr");
             
-            // Determine status and edit capability
+            // Determine status and edit capability from backend
             const status = r.editStatus || 'confirmed';
-            const canEdit = status === 'confirmed';
+            const canEdit = (status === 'confirmed');
             const entryId = r.id || `entry_${index}`;
             
             let statusBadge = '';
             let statusText = '';
             
             switch (status) {
-              case 'pending':
-                statusBadge = 'status-pending';
-                statusText = getMSG('statusPending');
-                break;
               case 'editing':
                 statusBadge = 'status-editing';
                 statusText = getMSG('statusEditing');
                 break;
+              case 'denied':
+                statusBadge = 'status-denied';
+                statusText = getMSG('statusDenied');
+                break;
+              case 'confirmed':
               default:
                 statusBadge = 'status-confirmed';
                 statusText = getMSG('statusConfirmed');
@@ -1024,7 +1127,7 @@
             
             const editButton = canEdit 
               ? `<button class=\"action-btn edit-btn\" onclick=\"openTimeEditModal('${entryId}', '${r.time}', true)\">${getMSG('editButton')}</button>`
-              : `<button class=\"action-btn edit-btn\" disabled>${getMSG('editButton')}</button>`;
+              : `<button class=\"action-btn edit-btn\" disabled title=\"${status === 'editing' ? 'Edit request pending' : 'Cannot edit this entry'}\">${getMSG('editButton')}</button>`;
             
             tr.innerHTML = `<td>${r.date}</td><td>${r.time}</td><td><span class=\"status-badge ${statusBadge}\">${statusText}</span></td><td>${editButton}</td>`;
             body.appendChild(tr);
@@ -1234,32 +1337,38 @@
         }
         USER_ROLE = storedRole;
 
+        // Show Admin tab and section for Admin/Lead users
         if (USER_ROLE === 'Admin' || USER_ROLE === 'Lead') {
-          document.getElementById('adminPanel').classList.remove('hidden');
+          const adminTab = document.getElementById('tabAdmin');
+          const adminSection = document.getElementById('admin-section');
+          
+          if (adminTab) adminTab.classList.remove('hidden');
+          if (adminSection) adminSection.classList.remove('hidden');
         }
 
-        // View As is Admin ONLY
+        // Admin-only features (View As, Time Edit Requests)
         if (USER_ROLE === 'Admin') {
-          document.getElementById('viewAsWrap').classList.remove('hidden');
-
           // Populate View As list using the same workers list we get from reportAll
           const data = await jsonp(`${API_URL}?action=reportAll&workerId=${encodeURIComponent(workerId)}`);
           const sel = document.getElementById('viewAsSelect');
-          sel.innerHTML = '';
-          (data.workers || [])
-            .sort((a, b) => (a.name || a.id).localeCompare(b.name || b.id))
-            .forEach(w => {
-              const opt = document.createElement('option');
-              opt.value = w.id;
-              opt.textContent = `${w.name} (${w.id})`;
-              sel.appendChild(opt);
-            });
+          if (sel) {
+            sel.innerHTML = '';
+            (data.workers || [])
+              .sort((a, b) => (a.name || a.id).localeCompare(b.name || b.id))
+              .forEach(w => {
+                const opt = document.createElement('option');
+                opt.value = w.id;
+                opt.textContent = `${w.name} (${w.id})`;
+                sel.appendChild(opt);
+              });
+          }
 
           document.getElementById('btnActivateViewAs').onclick = () => activateViewAs();
           document.getElementById('btnExitViewAs').onclick = () => exitViewAs();
         }
       } catch (e) {
-        // silently ignore; non-admins won't see panel
+        // silently ignore; non-admins won't see admin features
+        console.log('Admin role check:', e);
       }
     }
 
@@ -1398,6 +1507,125 @@
       document.getElementById('btnActivateViewAs').classList.remove('hidden');
       loadReport();
       loadPayroll('current');
+    }
+
+    // ===== Time Edit Request Management (Admin Only) =====
+    async function loadTimeEditRequests(status = 'pending') {
+      const container = document.getElementById('timeEditRequestsContainer');
+      container.innerHTML = `<p class="muted">${getMSG('loadingReport')}</p>`;
+
+      try {
+        const url = `${API_URL}?action=getTimeEditRequests&requesterId=${encodeURIComponent(workerId)}&status=${status}`;
+        const data = await jsonp(url);
+
+        if (!data || !data.success) {
+          container.innerHTML = `<p class="muted">${data?.message || 'Failed to load requests'}</p>`;
+          return;
+        }
+
+        const requests = data.requests || [];
+        
+        if (requests.length === 0) {
+          container.innerHTML = `<p class="muted" data-en="No ${status} time edit requests found" 
+                                    data-es="No se encontraron solicitudes ${status}" 
+                                    data-pt="Nenhuma solicitação ${status} encontrada">
+                                  No ${status} time edit requests found
+                                </p>`;
+          return;
+        }
+
+        // Build table
+        let html = `
+          <table style="width:100%;border-collapse:collapse;margin-top:8px;">
+            <thead>
+              <tr style="background:rgba(255,193,7,0.1);border-bottom:2px solid #FFC107;">
+                <th style="padding:8px;text-align:left;" data-en="Employee" data-es="Empleado" data-pt="Funcionário">Employee</th>
+                <th style="padding:8px;text-align:left;" data-en="Original Time" data-es="Hora Original" data-pt="Hora Original">Original Time</th>
+                <th style="padding:8px;text-align:left;" data-en="Requested Time" data-es="Hora Solicitada" data-pt="Hora Solicitada">Requested Time</th>
+                <th style="padding:8px;text-align:left;" data-en="Reason" data-es="Razón" data-pt="Motivo">Reason</th>
+                <th style="padding:8px;text-align:left;" data-en="Status" data-es="Estado" data-pt="Status">Status</th>
+                <th style="padding:8px;text-align:center;" data-en="Actions" data-es="Acciones" data-pt="Ações">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+        `;
+
+        requests.forEach(req => {
+          const isPending = req.status === 'pending';
+          const statusClass = isPending ? 'status-editing' : 
+                            req.status === 'approved' ? 'status-confirmed' : 'status-denied';
+          
+          html += `
+            <tr style="border-bottom:1px solid #333;">
+              <td style="padding:8px;">${req.employeeId}</td>
+              <td style="padding:8px;">${req.originalTime}</td>
+              <td style="padding:8px;color:#FFC107;font-weight:bold;">${req.requestedTime}</td>
+              <td style="padding:8px;font-size:12px;color:#aaa;">${req.reason || '-'}</td>
+              <td style="padding:8px;">
+                <span class="status-badge ${statusClass}">${req.status}</span>
+              </td>
+              <td style="padding:8px;text-align:center;">
+                ${isPending ? `
+                  <button class="btn btn-green" style="padding:4px 10px;font-size:11px;margin:0 4px;" 
+                          onclick="approveTimeEditRequest('${req.requestId}')">
+                    ✓ Approve
+                  </button>
+                  <button class="btn btn-red" style="padding:4px 10px;font-size:11px;margin:0 4px;background:rgba(244,67,54,0.1);color:#f44336;border-color:#f44336;" 
+                          onclick="denyTimeEditRequest('${req.requestId}')">
+                    ✗ Deny
+                  </button>
+                ` : `<span style="color:#666;font-size:11px;">Reviewed</span>`}
+              </td>
+            </tr>
+          `;
+        });
+
+        html += '</tbody></table>';
+        container.innerHTML = html;
+
+      } catch (err) {
+        console.error('Error loading time edit requests:', err);
+        container.innerHTML = `<p style="color:#f44336;">Error: ${err.message || err}</p>`;
+      }
+    }
+
+    async function approveTimeEditRequest(requestId) {
+      if (!confirm('Approve this time edit request?')) return;
+
+      try {
+        const url = `${API_URL}?action=approveTimeEdit&requesterId=${encodeURIComponent(workerId)}&requestId=${encodeURIComponent(requestId)}`;
+        const result = await jsonp(url);
+
+        if (result && result.success) {
+          alert('✅ Time edit request approved!');
+          loadTimeEditRequests('pending'); // Reload pending requests
+        } else {
+          alert('❌ Failed to approve: ' + (result?.message || 'Unknown error'));
+        }
+      } catch (err) {
+        console.error('Error approving request:', err);
+        alert('❌ Error: ' + (err.message || err));
+      }
+    }
+
+    async function denyTimeEditRequest(requestId) {
+      const reason = prompt('Enter reason for denial (optional):');
+      if (reason === null) return; // Cancelled
+
+      try {
+        const url = `${API_URL}?action=denyTimeEdit&requesterId=${encodeURIComponent(workerId)}&requestId=${encodeURIComponent(requestId)}&reason=${encodeURIComponent(reason || '')}`;
+        const result = await jsonp(url);
+
+        if (result && result.success) {
+          alert('✅ Time edit request denied!');
+          loadTimeEditRequests('pending'); // Reload pending requests
+        } else {
+          alert('❌ Failed to deny: ' + (result?.message || 'Unknown error'));
+        }
+      } catch (err) {
+        console.error('Error denying request:', err);
+        alert('❌ Error: ' + (err.message || err));
+      }
     }
   </script>
 

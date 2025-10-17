@@ -1,7 +1,7 @@
 /* ================================
    API CONFIGURATION
    ================================ */
-const API_BASE = "https://script.google.com/macros/s/AKfycbwHBLEQ5QHuhD-O4uI4hRN_5_yS9YsFgtn_dMAdoAO2C7zHLoi3qfHO82vas3Uv0wXXpg/exec";
+const API_BASE = "https://cls-proxy.s-garay.workers.dev";
 
 /* ================================
    CENTRALIZED MULTILINGUAL TEXT
