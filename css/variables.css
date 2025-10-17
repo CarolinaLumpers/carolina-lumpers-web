@@ -17,6 +17,12 @@
   --color-primary-hover: var(--cls-amber-hover);
   --color-primary-light: var(--cls-amber-light);
   --color-secondary: var(--cls-orange);
+  --color-success: #4CAF50;
+  --color-success-hover: #45a049;
+  --color-danger: #f44336;
+  --color-danger-hover: #da190b;
+  --color-warning: #ff9800;
+  --color-info: #2196F3;
   --color-dark: var(--cls-charcoal);
   --color-dark-light: var(--cls-charcoal-light);
   --color-dark-lighter: var(--cls-charcoal-lighter);

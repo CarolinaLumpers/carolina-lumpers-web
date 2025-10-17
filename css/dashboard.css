@@ -200,7 +200,30 @@
   color: var(--text-primary);
 }
 
-/* Legacy button classes for backward compatibility */
+.dashboard .btn-success {
+  background: var(--color-success);
+  color: white;
+  border-color: var(--color-success);
+}
+
+.dashboard .btn-success:hover {
+  background: var(--color-success-hover);
+  transform: translateY(-1px);
+}
+
+.dashboard .btn-danger {
+  background: var(--color-danger);
+  color: white;
+  border-color: var(--color-danger);
+}
+
+.dashboard .btn-danger:hover {
+  background: var(--color-danger-hover);
+  transform: translateY(-1px);
+}
+
+/* Legacy button classes for backward compatibility - DEPRECATED */
+/* Use btn-primary, btn-secondary, btn-ghost instead */
 .dashboard .btn-blue {
   background: var(--color-primary);
   color: var(--bg-secondary);

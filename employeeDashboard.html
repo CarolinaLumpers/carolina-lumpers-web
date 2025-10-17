@@ -192,37 +192,7 @@
       color: #FFC107;
       font-size: 1.1em;
     }
-    /* Action Buttons for Time Edit Approvals */
-    .approve-btn {
-      padding: 4px 10px;
-      font-size: 11px;
-      border-radius: 4px;
-      cursor: pointer;
-      border: 1px solid;
-      background: rgba(76, 175, 80, 0.1);
-      color: #4CAF50;
-      border-color: #4CAF50;
-      transition: all 0.3s;
-      margin: 0 4px;
-    }
-    .approve-btn:hover {
-      background: rgba(76, 175, 80, 0.3);
-    }
-    .deny-btn {
-      padding: 4px 10px;
-      font-size: 11px;
-      border-radius: 4px;
-      cursor: pointer;
-      border: 1px solid;
-      background: rgba(244, 67, 54, 0.1);
-      color: #f44336;
-      border-color: #f44336;
-      transition: all 0.3s;
-      margin: 0 4px;
-    }
-    .deny-btn:hover {
-      background: rgba(244, 67, 54, 0.3);
-    }
+    /* Note: Action buttons now use .btn-success and .btn-danger from dashboard.css */
   </style>
   <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet" />
 </head>
@@ -235,7 +205,7 @@
   <!-- DASHBOARD -->
   <div class="dashboard">
 
-    <!-- PWA Status Indicator - Top Priority -->
+    <!-- PWA Status Indicator - Sticky when active -->
     <div id="pwaStatus"
       style="display: none; background: rgba(255, 193, 7, 0.1); border: 1px solid #FFC107; color: #FFC107; padding: 8px 16px; border-radius: 8px; font-size: 0.9em; text-align: center; margin: 8px 16px 16px 16px; position: sticky; top: 0; z-index: 100;">
       <span id="pwaStatusText" 
@@ -299,10 +269,13 @@
       </h3>
 
       <div class="controls">
-        <button id="btnPayrollCurrent" class="btn btn-primary" data-en="Current Week" data-es="Semana Actual"
-          data-pt="Semana Atual">Current Week</button>
-        <button id="btnPayrollPrevious" class="btn btn-ghost" data-en="Previous Week" data-es="Semana Anterior"
-          data-pt="Semana Anterior">Previous Week</button>
+        <label style="display:inline-block;margin-right:12px;">
+          <span data-en="Week Period:" data-es="Período de Semana:" data-pt="Período da Semana:">Week Period:</span>
+          <select id="weekPeriodSelect"
+            style="background:#000;color:#fff;border:1px solid #333;border-radius:6px;padding:8px;margin-left:8px;min-width:200px;">
+            <option value="" data-en="Loading..." data-es="Cargando..." data-pt="Carregando...">Loading...</option>
+          </select>
+        </label>
         <button id="btnPayrollPdf" class="btn btn-secondary" data-en="Send Payroll Report"
           data-es="Enviar Informe de Nómina" data-pt="Enviar Relatório de Pagamento">
           Send Payroll Report
@@ -343,11 +316,11 @@
           Clock-In Manager
         </h4>
         <label style="display:block;margin:12px 0;">
-          <span data-en="Filter by worker(s):" data-es="Filtrar por empleado(s):" data-pt="Filtrar por funcionário(s):">
-            Filter by worker(s):
-          </span>
-          <select id="workerFilter" multiple size="6"
-            style="width:100%;background:#000;color:#fff;border:1px solid #333;border-radius:6px;padding:8px;margin-top:6px;"></select>
+          <span data-en="Filter by worker:" data-es="Filtrar por empleado:" data-pt="Filtrar por funcionário:">Filter by worker:</span>
+          <select id="workerFilter"
+            style="width:100%;background:#000;color:#fff;border:1px solid #333;border-radius:6px;padding:8px;margin-top:6px;">
+            <option value="">-- All Workers --</option>
+          </select>
         </label>
 
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
@@ -562,7 +535,11 @@
       statusConfirmed: { en: "Confirmed", es: "Confirmado", pt: "Confirmado" },
       statusPending: { en: "Pending Approval", es: "Pendiente de Aprobación", pt: "Pendente de Aprovação" },
       statusEditing: { en: "Edit Requested", es: "Edición Solicitada", pt: "Edição Solicitada" },
-      statusDenied: { en: "Edit Denied", es: "Edición Denegada", pt: "Edição Negada" }
+      statusDenied: { en: "Edit Denied", es: "Edición Denegada", pt: "Edição Negada" },
+      // Time edit approval buttons
+      approveButton: { en: "✓ Approve", es: "✓ Aprobar", pt: "✓ Aprovar" },
+      denyButton: { en: "✗ Deny", es: "✗ Denegar", pt: "✗ Negar" },
+      reviewed: { en: "Reviewed", es: "Revisado", pt: "Revisado" }
     };
 
     // Helper function to get MSG translations
@@ -718,30 +695,48 @@
       const pwaStatusText = document.getElementById('pwaStatusText');
       const currentLang = localStorage.getItem("CLS_Lang") || "en";
 
+      // Only show when offline or in PWA mode
       if (!navigator.onLine) {
-        // Offline mode
+        // Offline mode - show sticky banner
         pwaStatus.style.display = 'block';
         pwaStatus.style.background = 'rgba(255, 152, 0, 0.1)';
         pwaStatus.style.borderColor = '#ff9800';
         pwaStatus.style.color = '#ff9800';
         pwaStatusText.textContent = getText('pwaStatus.offlineMode', currentLang);
       } else if (window.matchMedia('(display-mode: standalone)').matches) {
-        // Running as installed PWA
+        // Running as installed PWA - show sticky banner
         pwaStatus.style.display = 'block';
         pwaStatus.style.background = 'rgba(255, 193, 7, 0.1)';
         pwaStatus.style.borderColor = '#FFC107';
         pwaStatus.style.color = '#FFC107';
         pwaStatusText.textContent = getText('pwaStatus.installedPwa', currentLang);
       } else if (navigator.serviceWorker && navigator.serviceWorker.controller) {
-        // Service worker active but not installed
+        // Service worker active but not installed - show sticky banner
         pwaStatus.style.display = 'block';
         pwaStatus.style.background = 'rgba(255, 193, 7, 0.1)';
         pwaStatus.style.borderColor = '#FFC107';
         pwaStatus.style.color = '#FFC107';
         pwaStatusText.textContent = getText('pwaStatus.serviceWorkerActive', currentLang);
       } else {
-        // Regular web browser
+        // Regular web browser - hide banner
         pwaStatus.style.display = 'none';
+      }
+    };
+
+    // API call with retry logic and exponential backoff
+    window.apiCallWithRetry = async function(url, maxRetries = 3) {
+      for (let i = 0; i < maxRetries; i++) {
+        try {
+          return await jsonp(url);
+        } catch (e) {
+          console.warn(`API call attempt ${i + 1} failed:`, e);
+          if (i === maxRetries - 1) {
+            console.error('All retry attempts failed');
+            throw e;
+          }
+          // Exponential backoff: 1s, 2s, 4s
+          await new Promise(resolve => setTimeout(resolve, 1000 * Math.pow(2, i)));
+        }
       }
     };
     
@@ -791,22 +786,19 @@
       // Initialize to Clock-Ins tab on page load
       switchTab("clock");
 
-      // Payroll buttons
-      document.getElementById("btnPayrollCurrent").addEventListener("click", () => {
-        highlightPayrollButton("btnPayrollCurrent");
-        loadPayroll("current");
-      });
-      document.getElementById("btnPayrollPrevious").addEventListener("click", () => {
-        highlightPayrollButton("btnPayrollPrevious");
-        loadPayroll("previous");
+      // Load week periods for payroll dropdown
+      loadPayrollWeekPeriods();
+
+      // Week period dropdown change handler
+      document.getElementById("weekPeriodSelect").addEventListener("change", (e) => {
+        const selectedPeriod = e.target.value;
+        if (selectedPeriod) {
+          loadPayroll(selectedPeriod); // Pass the ISO date directly
+        }
       });
 
       // PDF download button
       document.getElementById("btnPayrollPdf").addEventListener("click", downloadPayrollPdf);
-
-      // Default highlight & load
-      highlightPayrollButton("btnPayrollCurrent");
-      loadPayroll("current");
 
       // Admin panel wiring
       ensureRoleAndRevealAdmin();
@@ -816,14 +808,14 @@
 
       if (btnLoadAll) {
         btnLoadAll.addEventListener('click', () => {
-          const selected = Array.from(filterEl.selectedOptions).map(o => o.value).filter(Boolean);
-          // If any selected, server-filter via CSV to keep payload small; else load all
-          loadAllReports(selected.join(','));
+          const selectedWorker = filterEl.value; // Single select value
+          // If a worker is selected, filter by that worker; else load all
+          loadAllReports(selectedWorker);
         });
       }
       if (btnClear) {
         btnClear.addEventListener('click', () => {
-          Array.from(filterEl.options).forEach(o => o.selected = false);
+          filterEl.value = ''; // Reset to "-- All Workers --"
           loadAllReports('');
         });
       }
@@ -842,13 +834,57 @@
       initLanguage();
     });
 
-    // =================== Highlight Active Payroll Button ===================
-    function highlightPayrollButton(activeId) {
-      const current = document.getElementById("btnPayrollCurrent");
-      const previous = document.getElementById("btnPayrollPrevious");
-      [current, previous].forEach(btn => btn.classList.remove("btn-active"));
-      const activeBtn = document.getElementById(activeId);
-      if (activeBtn) activeBtn.classList.add("btn-active");
+    // =================== Load Payroll Week Periods ===================
+    async function loadPayrollWeekPeriods() {
+      const dropdown = document.getElementById("weekPeriodSelect");
+      dropdown.innerHTML = '<option value="">Loading...</option>';
+
+      try {
+        const url = `${API_URL}?action=payrollWeekPeriods&workerId=${encodeURIComponent(workerId)}`;
+        const data = await apiCallWithRetry(url);
+
+        if (!data || !data.success) {
+          dropdown.innerHTML = '<option value="">No data available</option>';
+          return;
+        }
+
+        const periods = data.periods || [];
+        if (periods.length === 0) {
+          dropdown.innerHTML = '<option value="">No payroll periods found</option>';
+          return;
+        }
+
+        // Build dropdown options (newest first)
+        dropdown.innerHTML = periods.map((period, index) => {
+          const weekStart = getWeekStartFromPeriod(period);
+          const label = `${formatDateRange(weekStart, period)}${index === 0 ? ' (Current)' : ''}`;
+          return `<option value="${period}">${label}</option>`;
+        }).join('');
+
+        // Auto-select the first (current) period and load it
+        dropdown.value = periods[0];
+        loadPayroll(periods[0]);
+
+      } catch (err) {
+        console.error('Error loading payroll week periods:', err);
+        dropdown.innerHTML = '<option value="">Error loading periods</option>';
+      }
+    }
+
+    // Helper: Get week start from week end (Saturday)
+    function getWeekStartFromPeriod(weekEndISO) {
+      const weekEnd = new Date(weekEndISO + 'T00:00:00');
+      const weekStart = new Date(weekEnd);
+      weekStart.setDate(weekEnd.getDate() - 6);
+      return weekStart.toISOString().split('T')[0];
+    }
+
+    // Helper: Format date range for display
+    function formatDateRange(startISO, endISO) {
+      const start = new Date(startISO + 'T00:00:00');
+      const end = new Date(endISO + 'T00:00:00');
+      const options = { month: 'short', day: 'numeric' };
+      return `${start.toLocaleDateString('en-US', options)} - ${end.toLocaleDateString('en-US', options)}`;
     }
 
     // =================== Tabs ===================
@@ -1169,8 +1205,9 @@
             body.appendChild(tr);
           });
         } else {
-          body.innerHTML = `<tr><td colspan="4" class="muted">${LANG === 'es' ? 'Sin registros de hoy.' :
-            LANG === 'pt' ? 'Sem registros de hoje.' :
+          const lang = localStorage.getItem("CLS_Lang") || "en";
+          body.innerHTML = `<tr><td colspan="4" class="muted">${lang === 'es' ? 'Sin registros de hoy.' :
+            lang === 'pt' ? 'Sem registros de hoje.' :
               'No clock-ins today.'
             }</td></tr>`;
         }
@@ -1181,7 +1218,8 @@
     }
     // Label helper for the payroll total line
     function getTotalLabelByLang() {
-      switch (LANG) {
+      const lang = localStorage.getItem("CLS_Lang") || "en";
+      switch (lang) {
         case 'es': return 'Total';
         case 'pt': return 'Total';
         default: return 'Total';
@@ -1254,10 +1292,11 @@
       const btn = document.getElementById("btnPayrollPdf");
 
       if (!currentWeekPeriod) {
+        const lang = localStorage.getItem("CLS_Lang") || "en";
         alert(
-          LANG === 'es'
+          lang === 'es'
             ? 'Primero cargue la semana actual o anterior'
-            : LANG === 'pt'
+            : lang === 'pt'
               ? 'Carregue primeiro a semana atual ou anterior'
               : 'Load current or previous week first'
         );
@@ -1265,12 +1304,13 @@
       }
 
       // 🌟 Visual feedback (flash gold + disable)
+      const lang = localStorage.getItem("CLS_Lang") || "en";
       btn.classList.add("btn-flash");
       btn.disabled = true;
       btn.textContent =
-        LANG === 'es'
+        lang === 'es'
           ? 'Enviando...'
-          : LANG === 'pt'
+          : lang === 'pt'
             ? 'Enviando...'
             : 'Sending...';
 
@@ -1283,37 +1323,40 @@
 
         const res = await jsonp(url);
 
+        const lang = localStorage.getItem("CLS_Lang") || "en";
         if (res && res.success !== false) {
           alert(
-            LANG === 'es'
+            lang === 'es'
               ? '✅ Informe de nómina enviado a info@carolinalumpers.com'
-              : LANG === 'pt'
+              : lang === 'pt'
                 ? '✅ Relatório de pagamento enviado para info@carolinalumpers.com'
                 : '✅ Payroll report sent to info@carolinalumpers.com'
           );
         } else {
           alert(
-            LANG === 'es'
+            lang === 'es'
               ? '⚠️ No se pudo enviar el informe de nómina.'
-              : LANG === 'pt'
+              : lang === 'pt'
                 ? '⚠️ Não foi possível enviar o relatório de pagamento.'
                 : '⚠️ Unable to send payroll report.'
           );
         }
       } catch (err) {
+        const lang = localStorage.getItem("CLS_Lang") || "en";
         alert(
-          (LANG === 'es'
+          (lang === 'es'
             ? 'Error al enviar informe: '
-            : LANG === 'pt'
+            : lang === 'pt'
               ? 'Erro ao enviar relatório: '
               : 'Error sending report: ') + (err.message || err)
         );
       } finally {
+        const lang = localStorage.getItem("CLS_Lang") || "en";
         btn.disabled = false;
         btn.textContent =
-          LANG === 'es'
+          lang === 'es'
             ? 'Enviar Informe de Nómina'
-            : LANG === 'pt'
+            : lang === 'pt'
               ? 'Enviar Relatório de Pagamento'
               : 'Send Payroll Report';
         btn.classList.remove("btn-flash");
@@ -1383,19 +1426,47 @@
 
         // Admin-only features (View As, Time Edit Requests)
         if (USER_ROLE === 'Admin') {
-          // Populate View As list using the same workers list we get from reportAll
-          const data = await jsonp(`${API_URL}?action=reportAll&workerId=${encodeURIComponent(workerId)}`);
-          const sel = document.getElementById('viewAsSelect');
-          if (sel) {
-            sel.innerHTML = '';
-            (data.workers || [])
-              .sort((a, b) => (a.name || a.id).localeCompare(b.name || b.id))
-              .forEach(w => {
-                const opt = document.createElement('option');
-                opt.value = w.id;
-                opt.textContent = `${w.name} (${w.id})`;
-                sel.appendChild(opt);
-              });
+          // Populate View As list and worker filter using workers from Workers sheet
+          try {
+            const data = await jsonp(`${API_URL}?action=reportAll&workerId=${encodeURIComponent(workerId)}`);
+            console.log('reportAll data for View As:', data);
+            
+            const viewAsSelect = document.getElementById('viewAsSelect');
+            const workerFilter = document.getElementById('workerFilter');
+            
+            if (data && data.workers && data.workers.length > 0) {
+              const workers = data.workers.sort((a, b) => (a.name || a.id).localeCompare(b.name || b.id));
+              
+              // Populate View As dropdown
+              if (viewAsSelect) {
+                viewAsSelect.innerHTML = '';
+                workers.forEach(w => {
+                  const opt = document.createElement('option');
+                  opt.value = w.id;
+                  opt.textContent = `${w.name} (${w.id})`;
+                  viewAsSelect.appendChild(opt);
+                });
+                console.log(`✅ Populated View As dropdown with ${workers.length} workers`);
+              }
+              
+              // Populate worker filter dropdown
+              if (workerFilter) {
+                workerFilter.innerHTML = '';
+                workers.forEach(w => {
+                  const opt = document.createElement('option');
+                  opt.value = w.id;
+                  opt.textContent = `${w.name} (${w.id})`;
+                  workerFilter.appendChild(opt);
+                });
+                console.log(`✅ Populated worker filter with ${workers.length} workers`);
+              }
+            } else {
+              console.warn('⚠️ No workers data returned from reportAll');
+              if (viewAsSelect) viewAsSelect.innerHTML = '<option value="">No workers found</option>';
+              if (workerFilter) workerFilter.innerHTML = '<option value="">No workers found</option>';
+            }
+          } catch (err) {
+            console.error('Error populating View As dropdown:', err);
           }
 
           document.getElementById('btnActivateViewAs').onclick = () => activateViewAs();
@@ -1447,9 +1518,10 @@
       );
 
       if (!ids.length) {
-        container.innerHTML = LANG === 'es'
+        const lang = localStorage.getItem("CLS_Lang") || "en";
+        container.innerHTML = lang === 'es'
           ? '<div class="muted">Sin registros.</div>'
-          : LANG === 'pt'
+          : lang === 'pt'
             ? '<div class="muted">Sem registros.</div>'
             : '<div class="muted">No records.</div>';
         return;
@@ -1489,19 +1561,21 @@
     // ===== View As Helper Functions =====
     function setViewAsBanner(targetId, name) {
       const b = document.getElementById('viewAsBanner');
+      const lang = localStorage.getItem("CLS_Lang") || "en";
+      
       b.classList.remove('hidden');
       b.textContent =
-        (LANG === 'es')
+        (lang === 'es')
           ? `Viendo como: ${name || targetId}`
-          : (LANG === 'pt')
+          : (lang === 'pt')
             ? `Visualizando como: ${name || targetId}`
             : `Viewing as: ${name || targetId}`;
 
       // Disable clock-in while viewing to avoid accidental actions
       const btn = document.getElementById('clockInBtn');
       btn.disabled = true;
-      btn.title = (LANG === 'es') ? 'Deshabilitado en modo Ver Como' :
-        (LANG === 'pt') ? 'Desativado no modo Ver Como' :
+      btn.title = (lang === 'es') ? 'Deshabilitado en modo Ver Como' :
+        (lang === 'pt') ? 'Desativado no modo Ver Como' :
           'Disabled in View As mode';
     }
 
@@ -1547,11 +1621,12 @@
     // ===== Time Edit Request Management (Admin Only) =====
     async function loadTimeEditRequests(status = 'pending') {
       const container = document.getElementById('timeEditRequestsContainer');
+      const currentLang = localStorage.getItem("CLS_Lang") || "en";
       container.innerHTML = `<p class="muted">${getMSG('loadingReport')}</p>`;
 
       try {
         const url = `${API_URL}?action=getTimeEditRequests&requesterId=${encodeURIComponent(workerId)}&status=${status}`;
-        const data = await jsonp(url);
+        const data = await apiCallWithRetry(url);
 
         if (!data || !data.success) {
           const errorMsg = data?.message || 'Failed to load requests';
@@ -1597,7 +1672,7 @@
           
           html += `
             <tr style="border-bottom:1px solid #333;">
-              <td style="padding:8px;">${req.employeeId}</td>
+              <td style="padding:8px;">${req.employeeName || req.employeeId}</td>
               <td style="padding:8px;">${req.originalTime}</td>
               <td style="padding:8px;color:#FFC107;font-weight:bold;">${req.requestedTime}</td>
               <td style="padding:8px;font-size:12px;color:#aaa;">${req.reason || '-'}</td>
@@ -1606,15 +1681,28 @@
               </td>
               <td style="padding:8px;text-align:center;">
                 ${isPending ? `
-                  <button class="approve-btn" 
-                          onclick="approveTimeEditRequest('${req.requestId}')">
-                    ✓ Approve
+                  <button class="btn btn-success" 
+                          style="padding:4px 10px;font-size:11px;margin:0 4px;"
+                          onclick="approveTimeEditRequest('${req.requestId}')"
+                          data-en="${getMSG('approveButton')}" 
+                          data-es="${getMSG('approveButton', 'es')}" 
+                          data-pt="${getMSG('approveButton', 'pt')}">
+                    ${getMSG('approveButton', currentLang)}
                   </button>
-                  <button class="deny-btn" 
-                          onclick="denyTimeEditRequest('${req.requestId}')">
-                    ✗ Deny
+                  <button class="btn btn-danger" 
+                          style="padding:4px 10px;font-size:11px;margin:0 4px;"
+                          onclick="denyTimeEditRequest('${req.requestId}')"
+                          data-en="${getMSG('denyButton')}" 
+                          data-es="${getMSG('denyButton', 'es')}" 
+                          data-pt="${getMSG('denyButton', 'pt')}">
+                    ${getMSG('denyButton', currentLang)}
                   </button>
-                ` : `<span style="color:#666;font-size:11px;">Reviewed</span>`}
+                ` : `<span style="color:#666;font-size:11px;" 
+                            data-en="${getMSG('reviewed')}" 
+                            data-es="${getMSG('reviewed', 'es')}" 
+                            data-pt="${getMSG('reviewed', 'pt')}">
+                      ${getMSG('reviewed', currentLang)}
+                    </span>`}
               </td>
             </tr>
           `;
