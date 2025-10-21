@@ -2101,13 +2101,21 @@
     // =================== TOGGLE ADMIN SECTIONS ===================
     function toggleAdminSection(contentId) {
       console.log('🔧 toggleAdminSection called with:', contentId);
+      console.log('Looking for element IDs:', contentId, contentId + 'Toggle');
+      
       const content = document.getElementById(contentId);
       const toggle = document.getElementById(contentId + 'Toggle');
       
-      console.log('Found elements:', { content, toggle });
+      console.log('Found content:', content);
+      console.log('Found toggle:', toggle);
+      console.log('Content exists?', !!content, 'Toggle exists?', !!toggle);
       
       if (!content || !toggle) {
         console.error('❌ Missing elements for:', contentId);
+        console.error('Content element:', content);
+        console.error('Toggle element:', toggle);
+        console.error('All elements with id containing "' + contentId + '":', 
+          Array.from(document.querySelectorAll('[id*="' + contentId + '"]')).map(el => el.id));
         return;
       }
       
