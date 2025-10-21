@@ -971,6 +971,24 @@
         btnRunPayroll.addEventListener('click', () => triggerRunPayroll());
       }
 
+      // Populate Run Payroll week selector
+      populateRunPayrollWeeks();
+
+      // Set all admin sections to collapsed by default
+      const sections = ['clockinManagerContent', 'timeEditRequestsContent', 'runPayrollContent', 'qbSyncContent'];
+      sections.forEach(sectionId => {
+        const state = localStorage.getItem('adminSection_dev_' + sectionId);
+        // Default to collapsed unless explicitly set to open
+        if (state !== 'open') {
+          const content = document.getElementById(sectionId);
+          const toggle = document.getElementById(sectionId + 'Toggle');
+          if (content && toggle) {
+            content.style.display = 'none';
+            toggle.textContent = '▶';
+          }
+        }
+      });
+
       // Language init
       initLanguage();
     });
@@ -2136,21 +2154,48 @@
       localStorage.setItem('adminSection_dev_' + contentId, isHidden ? 'open' : 'closed');
     }
 
-    // Restore admin section states on load
-    window.addEventListener('DOMContentLoaded', () => {
-      const sections = ['clockinManagerContent', 'timeEditRequestsContent', 'runPayrollContent', 'qbSyncContent'];
-      sections.forEach(sectionId => {
-        const state = localStorage.getItem('adminSection_dev_' + sectionId);
-        if (state === 'closed') {
-          const content = document.getElementById(sectionId);
-          const toggle = document.getElementById(sectionId + 'Toggle');
-          if (content && toggle) {
-            content.style.display = 'none';
-            toggle.textContent = '▶';
-          }
-        }
-      });
-    });
+    // =================== POPULATE RUN PAYROLL WEEK SELECTOR ===================
+    function populateRunPayrollWeeks() {
+      const dropdown = document.getElementById('weekPeriodSelect');
+      if (!dropdown) return;
+      
+      const weeks = [];
+      const today = new Date();
+      
+      // Generate only 2 Saturdays: This week and last week
+      for (let i = 0; i < 2; i++) {
+        const date = new Date(today);
+        // Get current day of week (0=Sun, 6=Sat)
+        const dayOfWeek = date.getDay();
+        // Calculate days to add/subtract to get to Saturday
+        const daysToSaturday = (6 - dayOfWeek + 7) % 7;
+        // Go to this/next Saturday, then subtract weeks
+        date.setDate(date.getDate() + daysToSaturday - (i * 7));
+        
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const saturday = `${year}-${month}-${day}`;
+        
+        weeks.push(saturday);
+      }
+      
+      // Build dropdown with only 2 options
+      dropdown.innerHTML = '<option value="">-- Select Week --</option>' + 
+        weeks.map((sat, index) => {
+          const date = new Date(sat + 'T00:00:00');
+          const label = date.toLocaleDateString('en-US', { 
+            month: 'short', 
+            day: 'numeric', 
+            year: 'numeric' 
+          });
+          const tag = index === 0 ? ' (This Week)' : ' (Last Week)';
+          return `<option value="${sat}">${label}${tag}</option>`;
+        }).join('');
+      
+      // Auto-select last week (index 1) as that's the typical payroll run
+      dropdown.value = weeks[1];
+    }
 
     // Helper function to escape HTML
     function escapeHtml(text) {
