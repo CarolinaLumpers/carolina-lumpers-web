@@ -358,6 +358,46 @@
         </div>
       </div>
 
+      <!-- RUN PAYROLL Subsection -->
+      <div id="runPayrollWrap" class="admin-subsection">
+        <h4 class="section-title" data-en="Run Payroll" data-es="Ejecutar Nómina"
+          data-pt="Executar Folha de Pagamento">
+          Run Payroll
+        </h4>
+        
+        <p class="muted" style="margin-bottom:12px;" 
+           data-en="Process weekly payroll and create bills in QuickBooks" 
+           data-es="Procesar nómina semanal y crear facturas en QuickBooks"
+           data-pt="Processar folha de pagamento semanal e criar contas no QuickBooks">
+          Process weekly payroll and create bills in QuickBooks
+        </p>
+        
+        <div style="margin-bottom:12px;">
+          <label for="weekPeriodSelect" 
+                 data-en="Select Week Period:" 
+                 data-es="Seleccionar Período Semanal:" 
+                 data-pt="Selecionar Período Semanal:"
+                 style="display:block;margin-bottom:8px;font-weight:600;">
+            Select Week Period:
+          </label>
+          <select id="weekPeriodSelect" style="width:100%;padding:8px;border-radius:6px;border:1px solid #ddd;font-size:1rem;">
+            <option value="" data-en="-- Select Week --" data-es="-- Seleccionar Semana --" data-pt="-- Selecionar Semana --">-- Select Week --</option>
+          </select>
+        </div>
+        
+        <button id="btnRunPayroll" class="btn btn-primary" style="width:100%;"
+                data-en="Run Payroll" 
+                data-es="Ejecutar Nómina" 
+                data-pt="Executar Folha de Pagamento">
+          Run Payroll
+        </button>
+        
+        <div id="payrollResults" style="margin-top:12px;padding:12px;background:#f9f9f9;border:1px solid #ddd;border-radius:6px;display:none;">
+          <div id="payrollStatus" style="font-weight:600;margin-bottom:8px;"></div>
+          <div id="payrollMessage" style="color:#666;"></div>
+        </div>
+      </div>
+
       <!-- QUICKBOOKS SYNC Subsection -->
       <div id="qbSyncWrap" class="admin-subsection">
         <h4 class="section-title" data-en="QuickBooks Sync" data-es="Sincronización de QuickBooks"
@@ -873,6 +913,12 @@
       }
       if (btnSyncVendorsLive) {
         btnSyncVendorsLive.addEventListener('click', () => triggerVendorSync(false));
+      }
+
+      // Run Payroll button (Admin only)
+      const btnRunPayroll = document.getElementById('btnRunPayroll');
+      if (btnRunPayroll) {
+        btnRunPayroll.addEventListener('click', () => triggerRunPayroll());
       }
 
       // Language init
@@ -1935,6 +1981,82 @@
         // Re-enable buttons
         if (btnDryRun) btnDryRun.disabled = false;
         if (btnLive) btnLive.disabled = false;
+      }
+    }
+
+    // =================== RUN PAYROLL ===================
+    async function triggerRunPayroll() {
+      const dropdown = document.getElementById('weekPeriodSelect');
+      const button = document.getElementById('btnRunPayroll');
+      const resultsDiv = document.getElementById('payrollResults');
+      const statusDiv = document.getElementById('payrollStatus');
+      const messageDiv = document.getElementById('payrollMessage');
+      
+      const weekPeriod = dropdown.value;
+      
+      if (!weekPeriod) {
+        alert('Please select a week period first');
+        return;
+      }
+
+      // Confirm before running
+      const confirm = window.confirm(
+        `⚠️ WARNING: This will process payroll and create bills in QuickBooks Online.\n\n` +
+        `Week Period: ${weekPeriod}\n\n` +
+        `This action cannot be undone. Continue?`
+      );
+      if (!confirm) return;
+
+      // Show loading state
+      button.disabled = true;
+      button.innerHTML = '<span>Processing...</span>';
+      resultsDiv.style.display = 'block';
+      statusDiv.innerHTML = '🔄 Running payroll...';
+      statusDiv.style.color = '#FF9800';
+      messageDiv.innerHTML = 'This may take 10-30 seconds. Please wait...';
+
+      try {
+        // Payroll Web App URL (via Cloudflare proxy for CORS)
+        // TODO: Create payroll-proxy.s-garay.workers.dev
+        const PAYROLL_URL = 'https://payroll-proxy.s-garay.workers.dev';
+        
+        const payload = {
+          "Webhook Type": "Run Payroll",
+          "Week Period": weekPeriod
+        };
+        
+        console.log('🔄 Triggering Run Payroll:', payload);
+        
+        // POST request to run payroll
+        const response = await fetch(PAYROLL_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+        console.log('📥 Payroll response:', data);
+
+        if (!data || (data.status && data.status !== 200)) {
+          throw new Error(data?.message || 'Payroll processing failed');
+        }
+
+        // Success
+        statusDiv.innerHTML = '✅ Payroll Complete';
+        statusDiv.style.color = '#4CAF50';
+        messageDiv.innerHTML = `Payroll processed successfully for week ${weekPeriod}. Bills have been created/updated in QuickBooks Online.`;
+
+      } catch (err) {
+        console.error('Payroll error:', err);
+        statusDiv.innerHTML = '❌ Payroll Failed';
+        statusDiv.style.color = '#f44336';
+        messageDiv.innerHTML = `Error: ${err.message || err}<br><br>Check that PayrollProject script is deployed and accessible.`;
+      } finally {
+        button.disabled = false;
+        button.innerHTML = '<span data-en="Run Payroll" data-es="Ejecutar Nómina" data-pt="Executar Folha de Pagamento">Run Payroll</span>';
       }
     }
 
