@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-JPETF03TJ0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-JPETF03TJ0');
+  </script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-en="Employee Sign Up (DEV) | Carolina Lumper Service"
+          data-es="Registro de Empleado (DEV) | Carolina Lumper Service"
+          data-pt="Cadastro de Funcionário (DEV) | Carolina Lumper Service">
+          Employee Sign Up (DEV) | Carolina Lumper Service
+  </title>
+
+  <link rel="icon" type="image/png" href="assets/CLS-favicon.png">
+  <link rel="manifest" href="manifest-employee-dev.json">
+  <meta name="theme-color" content="#ff9800">
+  
+  <!-- iOS PWA Support -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="CLS Employee DEV">
+  <link rel="apple-touch-icon" href="assets/CLS-icon-192.png">
+  
+  <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css?v=2025-dev-offline">
+  <link rel="stylesheet" href="css/forms.css?v=2025-dev-offline">
+  
+  <style>
+    /* DEV Environment Indicator */
+    .dev-banner {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(135deg, #ff9800, #f57c00);
+      color: #000;
+      padding: 8px;
+      text-align: center;
+      font-weight: bold;
+      font-size: 14px;
+      z-index: 10000;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+    
+    body {
+      padding-top: 40px; /* Account for dev banner */
+    }
+  </style>
+</head>
+
+<body data-page="signup-dev">
+  <!-- DEV Environment Banner -->
+  <div class="dev-banner">
+    🚧 DEVELOPMENT VERSION - Testing Offline Features 🚧
+  </div>
+  
+  <!-- NAVBAR -->
+  <div id="navbar-container"></div>
+
+  <!-- SIGN UP FORM -->
+  <div class="signup-container">
+    <h1 data-en="Employee Sign Up (DEV)" data-es="Registro de Empleado (DEV)" data-pt="Cadastro de Funcionário (DEV)">Employee Sign Up (DEV)</h1>
+    
+    <form id="signupForm" class="amber-glow" action="https://script.google.com/macros/s/AKfycbwHBLEQ5QHuhD-O4uI4hRN_5_yS9YsFgtn_dMAdoAO2C7zHLoi3qfHO82vas3Uv0wXXpg/exec" method="POST">
+      <input type="email" id="email" name="email" placeholder="Work Email" required
+             data-en="Work Email" data-es="Correo de Trabajo" data-pt="Email de Trabalho">
+      <input type="password" id="password" name="password" placeholder="Create Password" required
+             data-en="Create Password" data-es="Crear Contraseña" data-pt="Criar Senha">
+      <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password" required
+             data-en="Confirm Password" data-es="Confirmar Contraseña" data-pt="Confirmar Senha">
+      <button type="submit" data-en="Create Account" data-es="Crear Cuenta" data-pt="Criar Conta">Create Account</button>
+      <p id="status" role="status" aria-live="polite"></p>
+    </form>
+
+    <p style="margin-top:20px;">
+      <span data-en="Already have an account?" data-es="¿Ya tienes una cuenta?" data-pt="Já tem uma conta?">Already have an account?</span>
+      <a href="employeelogin-dev.html" data-en="Login here" data-es="Inicia sesión aquí" data-pt="Entre aqui">Login here</a>
+    </p>
+    
+    <div class="link" style="margin-top: 20px; border-top: 1px solid #333; padding-top: 20px;">
+      <a href="employeeSignup.html" style="color: #ff9800; font-weight: bold;">
+        ← Back to Production Version
+      </a>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div id="footer-container"></div>
+
+  <script>
+    // Service Worker Registration (DEV VERSION)
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker-employee-dev.js', { scope: './' })
+        .then(registration => {
+          console.log('✅ [DEV] SW ready on signup page:', registration.scope);
+        })
+        .catch(err => console.error('❌ [DEV] SW registration failed:', err));
+    }
+  </script>
+
+  <script src="js/script.js?v=2025-dev-offline" defer></script>
+</body>
+</html>
