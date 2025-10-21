@@ -387,6 +387,44 @@
           </p>
         </div>
       </div>
+
+      <!-- QUICKBOOKS SYNC Subsection -->
+      <div id="qbSyncWrap" class="admin-subsection">
+        <h4 class="section-title" data-en="QuickBooks Sync" data-es="Sincronización de QuickBooks"
+          data-pt="Sincronização do QuickBooks">
+          QuickBooks Sync
+        </h4>
+        
+        <p class="muted" style="margin-bottom:12px;" 
+           data-en="Sync active workers to QuickBooks Online as Vendors" 
+           data-es="Sincronizar empleados activos a QuickBooks Online como Proveedores"
+           data-pt="Sincronizar funcionários ativos ao QuickBooks Online como Fornecedores">
+          Sync active workers to QuickBooks Online as Vendors
+        </p>
+        
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
+          <button id="btnSyncVendorsDryRun" class="btn btn-primary" 
+                  data-en="Preview Sync (Dry Run)" 
+                  data-es="Vista Previa de Sincronización" 
+                  data-pt="Visualizar Sincronização">
+            Preview Sync (Dry Run)
+          </button>
+          <button id="btnSyncVendorsLive" class="btn btn-success" 
+                  data-en="Run Sync (Live)" 
+                  data-es="Ejecutar Sincronización" 
+                  data-pt="Executar Sincronização">
+            Run Sync (Live)
+          </button>
+        </div>
+        
+        <div id="qbSyncResultsContainer" style="overflow:auto;margin-top:12px;max-height:400px;">
+          <p class="muted" data-en="Click 'Preview Sync' to see what changes would be made" 
+             data-es="Haga clic en 'Vista Previa' para ver qué cambios se harían"
+             data-pt="Clique em 'Visualizar' para ver quais alterações seriam feitas">
+            Click 'Preview Sync' to see what changes would be made
+          </p>
+        </div>
+      </div>
     </div>
 
     <!-- VIEW AS Section (Always visible for admins, above language toggle) -->
@@ -855,6 +893,16 @@
       }
       if (btnLoadAllEdits) {
         btnLoadAllEdits.addEventListener('click', () => loadTimeEditRequests('all'));
+      }
+
+      // QuickBooks Sync buttons (Admin only)
+      const btnSyncVendorsDryRun = document.getElementById('btnSyncVendorsDryRun');
+      const btnSyncVendorsLive = document.getElementById('btnSyncVendorsLive');
+      if (btnSyncVendorsDryRun) {
+        btnSyncVendorsDryRun.addEventListener('click', () => triggerVendorSync(true));
+      }
+      if (btnSyncVendorsLive) {
+        btnSyncVendorsLive.addEventListener('click', () => triggerVendorSync(false));
       }
 
       // Language init
@@ -1457,18 +1505,29 @@
             localStorage.setItem("CLS_Role", storedRole);
           }
         }
-        USER_ROLE = storedRole;
+        // Normalize role (handle case variations)
+        USER_ROLE = storedRole ? storedRole.charAt(0).toUpperCase() + storedRole.slice(1).toLowerCase() : null;
+        console.log('[DEV] 👤 User Role:', USER_ROLE, '(from:', storedRole, ')');
 
         // Show Admin tab button for Admin/Lead users (section stays hidden until tab clicked)
         if (USER_ROLE === 'Admin' || USER_ROLE === 'Lead') {
+          console.log('[DEV] ✅ Showing Admin tab for role:', USER_ROLE);
           const adminTab = document.getElementById('tabAdmin');
           
-          if (adminTab) adminTab.classList.remove('hidden');
+          if (adminTab) {
+            adminTab.classList.remove('hidden');
+            console.log('[DEV] ✅ Admin tab button revealed');
+          } else {
+            console.warn('[DEV] ⚠️ Admin tab button element not found');
+          }
           // Note: admin-section stays hidden until user clicks Admin Tools tab
+        } else {
+          console.log('[DEV] ℹ️ Admin tab not shown - role is:', USER_ROLE);
         }
 
         // Admin-only features (View As, Time Edit Requests)
         if (USER_ROLE === 'Admin') {
+          console.log('[DEV] ✅ Loading admin-only features');
           // Show View As section for admins
           const viewAsWrap = document.getElementById('viewAsWrap');
           if (viewAsWrap) viewAsWrap.classList.remove('hidden');
@@ -1796,6 +1855,134 @@
         console.error('Error denying request:', err);
         alert('❌ Error: ' + (err.message || err));
       }
+    }
+
+    // =================== QUICKBOOKS VENDOR SYNC ===================
+    async function triggerVendorSync(dryRun = true) {
+      const container = document.getElementById('qbSyncResultsContainer');
+      const btnDryRun = document.getElementById('btnSyncVendorsDryRun');
+      const btnLive = document.getElementById('btnSyncVendorsLive');
+      
+      // Confirm if live run
+      if (!dryRun) {
+        const confirm = window.confirm(
+          '⚠️ WARNING: This will create/update vendors in QuickBooks Online.\n\n' +
+          'Have you run a Preview Sync first?\n\n' +
+          'Click OK to proceed with LIVE sync.'
+        );
+        if (!confirm) return;
+      }
+
+      // Disable buttons and show loading
+      if (btnDryRun) btnDryRun.disabled = true;
+      if (btnLive) btnLive.disabled = true;
+      container.innerHTML = `
+        <div style="padding:20px;text-align:center;">
+          <div class="loading-spinner" style="margin:0 auto 12px;"></div>
+          <p class="muted">${dryRun ? 'Running preview sync...' : 'Running LIVE sync...'}</p>
+          <p style="font-size:12px;color:#666;">This may take 10-30 seconds</p>
+        </div>
+      `;
+
+      try {
+        // VendorSync Web App URL
+        const VENDOR_SYNC_URL = 'https://script.google.com/macros/s/AKfycbytEq3pGl3O3oV66g2RKkLcQR6-ctIzosy6_N_y0LQ6_-btNNhkj35T9oi2BiudU3nC/exec';
+        const url = `${VENDOR_SYNC_URL}?action=syncVendors&dryRun=${dryRun}`;
+        
+        console.log(`🔄 [DEV] Triggering VendorSync (dryRun=${dryRun})...`);
+        
+        // Call the VendorSync endpoint
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: { 'Accept': 'application/json' }
+        });
+
+        const data = await response.json();
+        console.log('[DEV] 📥 VendorSync response:', data);
+
+        if (!data || !data.success) {
+          throw new Error(data?.message || 'VendorSync failed');
+        }
+
+        // Display results
+        const results = data.results || {};
+        const created = results.created || 0;
+        const updated = results.updated || 0;
+        const noChange = results.noChange || 0;
+        const errors = results.errors || [];
+        const details = results.details || [];
+
+        let html = `
+          <div style="background:rgba(76,175,80,0.1);border:1px solid rgba(76,175,80,0.3);border-radius:8px;padding:16px;margin-bottom:12px;">
+            <h4 style="margin:0 0 12px 0;color:#4CAF50;">
+              ✅ ${dryRun ? 'Preview Complete' : 'Sync Complete'}
+            </h4>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;">
+              <div style="background:rgba(33,150,243,0.1);padding:12px;border-radius:6px;text-align:center;">
+                <div style="font-size:24px;font-weight:bold;color:#2196F3;">${created}</div>
+                <div style="font-size:12px;color:#aaa;">${dryRun ? 'To Create' : 'Created'}</div>
+              </div>
+              <div style="background:rgba(255,152,0,0.1);padding:12px;border-radius:6px;text-align:center;">
+                <div style="font-size:24px;font-weight:bold;color:#FF9800;">${updated}</div>
+                <div style="font-size:12px;color:#aaa;">${dryRun ? 'To Update' : 'Updated'}</div>
+              </div>
+              <div style="background:rgba(158,158,158,0.1);padding:12px;border-radius:6px;text-align:center;">
+                <div style="font-size:24px;font-weight:bold;color:#9E9E9E;">${noChange}</div>
+                <div style="font-size:12px;color:#aaa;">No Change</div>
+              </div>
+            </div>
+          </div>
+        `;
+
+        // Show details if available
+        if (details && details.length > 0) {
+          html += `
+            <div style="max-height:300px;overflow-y:auto;background:rgba(0,0,0,0.2);padding:12px;border-radius:6px;font-family:monospace;font-size:12px;">
+              ${details.map(line => `<div style="margin:2px 0;">${escapeHtml(line)}</div>`).join('')}
+            </div>
+          `;
+        }
+
+        // Show errors if any
+        if (errors && errors.length > 0) {
+          html += `
+            <div style="background:rgba(244,67,54,0.1);border:1px solid rgba(244,67,54,0.3);border-radius:6px;padding:12px;margin-top:12px;">
+              <h4 style="margin:0 0 8px 0;color:#f44336;">⚠️ Errors (${errors.length})</h4>
+              ${errors.map(err => `<div style="font-size:12px;color:#f44336;margin:4px 0;">• ${escapeHtml(err)}</div>`).join('')}
+            </div>
+          `;
+        }
+
+        container.innerHTML = html;
+
+      } catch (err) {
+        console.error('[DEV] VendorSync error:', err);
+        container.innerHTML = `
+          <div style="background:rgba(244,67,54,0.1);border:1px solid rgba(244,67,54,0.3);border-radius:8px;padding:16px;">
+            <h4 style="margin:0 0 8px 0;color:#f44336;">❌ Sync Failed</h4>
+            <p style="color:#f44336;font-size:14px;">${escapeHtml(err.message || err)}</p>
+            <p style="font-size:12px;color:#666;margin-top:8px;">
+              Check that VendorSync script is deployed and accessible.
+            </p>
+          </div>
+        `;
+      } finally {
+        // Re-enable buttons
+        if (btnDryRun) btnDryRun.disabled = false;
+        if (btnLive) btnLive.disabled = false;
+      }
+    }
+
+    // Helper function to escape HTML
+    function escapeHtml(text) {
+      const map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+      };
+      return String(text).replace(/[&<>"']/g, m => map[m]);
     }
   </script>
 
