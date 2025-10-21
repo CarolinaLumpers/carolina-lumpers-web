@@ -312,9 +312,13 @@
 
       <!-- Clock-In Manager Subsection -->
       <div id="clockinManager" class="admin-subsection">
-        <h4 class="section-title" data-en="Clock-In Manager" data-es="Gestor de Entradas" data-pt="Gerenciador de Registros">
-          Clock-In Manager
+        <h4 class="section-title" data-en="Clock-In Manager" data-es="Gestor de Entradas" data-pt="Gerenciador de Registros" 
+            style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:12px;background:rgba(255,193,7,0.1);border-radius:6px;margin-bottom:12px;" 
+            onclick="toggleAdminSection('clockinManagerContent')">
+          <span>Clock-In Manager</span>
+          <span id="clockinManagerToggle" style="font-size:1.2em;">▼</span>
         </h4>
+        <div id="clockinManagerContent" class="admin-section-content">
         <label for="workerFilter" style="display:block;margin:12px 0;">
           <span data-en="Filter by worker:" data-es="Filtrar por empleado:" data-pt="Filtrar por funcionário:">Filter by worker:</span>
           <select id="workerFilter"
@@ -329,14 +333,19 @@
         </div>
 
         <div id="allReportsContainer" style="overflow:auto;"></div>
+        </div>
       </div>
 
       <!-- TIME EDIT REQUESTS Subsection -->
       <div id="timeEditRequestsWrap" class="admin-subsection">
         <h4 class="section-title" data-en="Time Edit Requests" data-es="Solicitudes de Edición de Tiempo"
-          data-pt="Solicitações de Edição de Tempo">
-          Time Edit Requests
+          data-pt="Solicitações de Edição de Tempo"
+          style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:12px;background:rgba(255,193,7,0.1);border-radius:6px;margin-bottom:12px;"
+          onclick="toggleAdminSection('timeEditRequestsContent')">
+          <span>Time Edit Requests</span>
+          <span id="timeEditRequestsContentToggle" style="font-size:1.2em;">▼</span>
         </h4>
+        <div id="timeEditRequestsContent" class="admin-section-content">
         
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
           <button id="btnLoadPendingEdits" class="btn btn-primary" data-en="Load Pending Requests" 
@@ -356,14 +365,19 @@
             Click 'Load Pending Requests' to view time edit requests
           </p>
         </div>
+        </div>
       </div>
 
       <!-- RUN PAYROLL Subsection -->
       <div id="runPayrollWrap" class="admin-subsection">
         <h4 class="section-title" data-en="Run Payroll" data-es="Ejecutar Nómina"
-          data-pt="Executar Folha de Pagamento">
-          Run Payroll
+          data-pt="Executar Folha de Pagamento"
+          style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:12px;background:rgba(255,193,7,0.1);border-radius:6px;margin-bottom:12px;"
+          onclick="toggleAdminSection('runPayrollContent')">
+          <span>Run Payroll</span>
+          <span id="runPayrollContentToggle" style="font-size:1.2em;">▼</span>
         </h4>
+        <div id="runPayrollContent" class="admin-section-content">
         
         <p class="muted" style="margin-bottom:12px;" 
            data-en="Process weekly payroll and create bills in QuickBooks" 
@@ -396,14 +410,19 @@
           <div id="payrollStatus" style="font-weight:600;margin-bottom:8px;"></div>
           <div id="payrollMessage" style="color:#666;"></div>
         </div>
+        </div>
       </div>
 
       <!-- QUICKBOOKS SYNC Subsection -->
       <div id="qbSyncWrap" class="admin-subsection">
         <h4 class="section-title" data-en="QuickBooks Sync" data-es="Sincronización de QuickBooks"
-          data-pt="Sincronização do QuickBooks">
-          QuickBooks Sync
+          data-pt="Sincronização do QuickBooks"
+          style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:12px;background:rgba(255,193,7,0.1);border-radius:6px;margin-bottom:12px;"
+          onclick="toggleAdminSection('qbSyncContent')">
+          <span>QuickBooks Sync</span>
+          <span id="qbSyncContentToggle" style="font-size:1.2em;">▼</span>
         </h4>
+        <div id="qbSyncContent" class="admin-section-content">
         
         <p class="muted" style="margin-bottom:12px;" 
            data-en="Sync active workers to QuickBooks Online as Vendors" 
@@ -433,6 +452,7 @@
              data-pt="Clique em 'Visualizar' para ver quais alterações seriam feitas">
             Click 'Preview Sync' to see what changes would be made
           </p>
+        </div>
         </div>
       </div>
     </div>
@@ -2059,6 +2079,43 @@
         button.innerHTML = '<span data-en="Run Payroll" data-es="Ejecutar Nómina" data-pt="Executar Folha de Pagamento">Run Payroll</span>';
       }
     }
+
+    // =================== TOGGLE ADMIN SECTIONS ===================
+    function toggleAdminSection(contentId) {
+      const content = document.getElementById(contentId);
+      const toggle = document.getElementById(contentId + 'Toggle');
+      
+      if (!content || !toggle) return;
+      
+      const isHidden = content.style.display === 'none';
+      
+      if (isHidden) {
+        content.style.display = 'block';
+        toggle.textContent = '▼';
+      } else {
+        content.style.display = 'none';
+        toggle.textContent = '▶';
+      }
+      
+      // Store state in localStorage
+      localStorage.setItem('adminSection_' + contentId, isHidden ? 'open' : 'closed');
+    }
+
+    // Restore admin section states on load
+    window.addEventListener('DOMContentLoaded', () => {
+      const sections = ['clockinManagerContent', 'timeEditRequestsContent', 'runPayrollContent', 'qbSyncContent'];
+      sections.forEach(sectionId => {
+        const state = localStorage.getItem('adminSection_' + sectionId);
+        if (state === 'closed') {
+          const content = document.getElementById(sectionId);
+          const toggle = document.getElementById(sectionId + 'Toggle');
+          if (content && toggle) {
+            content.style.display = 'none';
+            toggle.textContent = '▶';
+          }
+        }
+      });
+    });
 
     // Helper function to escape HTML
     function escapeHtml(text) {
