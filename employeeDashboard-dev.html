@@ -346,9 +346,9 @@
             style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:12px;background:rgba(255,152,0,0.1);border-radius:6px;margin-bottom:12px;" 
             onclick="toggleAdminSection('clockinManagerContent')">
           <span>Clock-In Manager</span>
-          <span id="clockinManagerToggle" style="font-size:1.2em;">▼</span>
+          <span id="clockinManagerToggle" style="font-size:1.2em;">▶</span>
         </h4>
-        <div id="clockinManagerContent" class="admin-section-content">
+        <div id="clockinManagerContent" class="admin-section-content" style="display:none;">
         <label for="workerFilter" style="display:block;margin:12px 0;">
           <span data-en="Filter by worker:" data-es="Filtrar por empleado:" data-pt="Filtrar por funcionário:">Filter by worker:</span>
           <select id="workerFilter"
@@ -373,9 +373,9 @@
           style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:12px;background:rgba(255,152,0,0.1);border-radius:6px;margin-bottom:12px;"
           onclick="toggleAdminSection('timeEditRequestsContent')">
           <span>Time Edit Requests</span>
-          <span id="timeEditRequestsContentToggle" style="font-size:1.2em;">▼</span>
+          <span id="timeEditRequestsContentToggle" style="font-size:1.2em;">▶</span>
         </h4>
-        <div id="timeEditRequestsContent" class="admin-section-content">
+        <div id="timeEditRequestsContent" class="admin-section-content" style="display:none;">
         
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
           <button id="btnLoadPendingEdits" class="btn btn-primary" data-en="Load Pending Requests" 
@@ -405,9 +405,9 @@
           style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:12px;background:rgba(255,152,0,0.1);border-radius:6px;margin-bottom:12px;"
           onclick="toggleAdminSection('runPayrollContent')">
           <span>Run Payroll</span>
-          <span id="runPayrollContentToggle" style="font-size:1.2em;">▼</span>
+          <span id="runPayrollContentToggle" style="font-size:1.2em;">▶</span>
         </h4>
-        <div id="runPayrollContent" class="admin-section-content">
+        <div id="runPayrollContent" class="admin-section-content" style="display:none;">
         
         <p class="muted" style="margin-bottom:12px;" 
            data-en="Process weekly payroll and create bills in QuickBooks" 
@@ -450,9 +450,9 @@
           style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:12px;background:rgba(255,152,0,0.1);border-radius:6px;margin-bottom:12px;"
           onclick="toggleAdminSection('qbSyncContent')">
           <span>QuickBooks Sync</span>
-          <span id="qbSyncContentToggle" style="font-size:1.2em;">▼</span>
+          <span id="qbSyncContentToggle" style="font-size:1.2em;">▶</span>
         </h4>
-        <div id="qbSyncContent" class="admin-section-content">
+        <div id="qbSyncContent" class="admin-section-content" style="display:none;">
         
         <p class="muted" style="margin-bottom:12px;" 
            data-en="Sync active workers to QuickBooks Online as Vendors" 

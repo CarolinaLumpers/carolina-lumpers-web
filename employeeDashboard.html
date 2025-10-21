@@ -313,12 +313,10 @@
       <!-- Clock-In Manager Subsection -->
       <div id="clockinManager" class="admin-subsection">
         <h4 class="section-title" data-en="Clock-In Manager" data-es="Gestor de Entradas" data-pt="Gerenciador de Registros" 
-            style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:12px;background:rgba(255,193,7,0.1);border-radius:6px;margin-bottom:12px;" 
-            onclick="toggleAdminSection('clockinManagerContent')">
+            style="padding:12px;background:rgba(255,193,7,0.1);border-radius:6px;margin-bottom:12px;">
           <span>Clock-In Manager</span>
-          <span id="clockinManagerContentToggle" style="font-size:1.2em;">▶</span>
         </h4>
-        <div id="clockinManagerContent" class="admin-section-content" style="display:none;">
+        <div id="clockinManagerContent" class="admin-section-content">
         <label for="workerFilter" style="display:block;margin:12px 0;">
           <span data-en="Filter by worker:" data-es="Filtrar por empleado:" data-pt="Filtrar por funcionário:">Filter by worker:</span>
           <select id="workerFilter"
@@ -340,12 +338,10 @@
       <div id="timeEditRequestsWrap" class="admin-subsection">
         <h4 class="section-title" data-en="Time Edit Requests" data-es="Solicitudes de Edición de Tiempo"
           data-pt="Solicitações de Edição de Tempo"
-          style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:12px;background:rgba(255,193,7,0.1);border-radius:6px;margin-bottom:12px;"
-          onclick="toggleAdminSection('timeEditRequestsContent')">
+          style="padding:12px;background:rgba(255,193,7,0.1);border-radius:6px;margin-bottom:12px;">
           <span>Time Edit Requests</span>
-          <span id="timeEditRequestsContentToggle" style="font-size:1.2em;">▶</span>
         </h4>
-        <div id="timeEditRequestsContent" class="admin-section-content" style="display:none;">
+        <div id="timeEditRequestsContent" class="admin-section-content">
         
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
           <button id="btnLoadPendingEdits" class="btn btn-primary" data-en="Load Pending Requests" 
@@ -417,12 +413,10 @@
       <div id="qbSyncWrap" class="admin-subsection">
         <h4 class="section-title" data-en="QuickBooks Sync" data-es="Sincronización de QuickBooks"
           data-pt="Sincronização do QuickBooks"
-          style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:12px;background:rgba(255,193,7,0.1);border-radius:6px;margin-bottom:12px;"
-          onclick="toggleAdminSection('qbSyncContent')">
+          style="padding:12px;background:rgba(255,193,7,0.1);border-radius:6px;margin-bottom:12px;">
           <span>QuickBooks Sync</span>
-          <span id="qbSyncContentToggle" style="font-size:1.2em;">▶</span>
         </h4>
-        <div id="qbSyncContent" class="admin-section-content" style="display:none;">
+        <div id="qbSyncContent" class="admin-section-content">
         
         <p class="muted" style="margin-bottom:12px;" 
            data-en="Sync active workers to QuickBooks Online as Vendors" 
@@ -943,21 +937,6 @@
 
       // Populate Run Payroll week selector
       populateRunPayrollWeeks();
-
-      // Set all admin sections to collapsed by default
-      const sections = ['clockinManagerContent', 'timeEditRequestsContent', 'runPayrollContent', 'qbSyncContent'];
-      sections.forEach(sectionId => {
-        const state = localStorage.getItem('adminSection_' + sectionId);
-        // Default to collapsed unless explicitly set to open
-        if (state !== 'open') {
-          const content = document.getElementById(sectionId);
-          const toggle = document.getElementById(sectionId + 'Toggle');
-          if (content && toggle) {
-            content.style.display = 'none';
-            toggle.textContent = '▶';
-          }
-        }
-      });
 
       // Language init
       initLanguage();
@@ -2097,55 +2076,6 @@
         button.innerHTML = '<span data-en="Run Payroll" data-es="Ejecutar Nómina" data-pt="Executar Folha de Pagamento">Run Payroll</span>';
       }
     }
-
-    // =================== TOGGLE ADMIN SECTIONS ===================
-    function toggleAdminSection(contentId) {
-      console.log('🔧 toggleAdminSection called with:', contentId);
-      console.log('Looking for element IDs:', contentId, contentId + 'Toggle');
-      
-      // Check if page has fully loaded
-      console.log('Document ready state:', document.readyState);
-      console.log('Admin section visible?', document.getElementById('admin-section')?.classList.contains('hidden'));
-      
-      const content = document.getElementById(contentId);
-      const toggle = document.getElementById(contentId + 'Toggle');
-      
-      console.log('Found content:', content);
-      console.log('Found toggle:', toggle);
-      console.log('Content exists?', !!content, 'Toggle exists?', !!toggle);
-      
-      // List ALL elements with Toggle in their ID
-      const allToggles = Array.from(document.querySelectorAll('[id$="Toggle"]'));
-      console.log('All toggle elements on page:', allToggles.map(el => el.id));
-      
-      if (!content || !toggle) {
-        console.error('❌ Missing elements for:', contentId);
-        console.error('Content element:', content);
-        console.error('Toggle element:', toggle);
-        console.error('All elements with id containing "' + contentId + '":', 
-          Array.from(document.querySelectorAll('[id*="' + contentId + '"]')).map(el => el.id));
-        return;
-      }
-      
-      const isHidden = content.style.display === 'none';
-      console.log('Current state - isHidden:', isHidden);
-      
-      if (isHidden) {
-        content.style.display = 'block';
-        toggle.textContent = '▼';
-        console.log('✅ Expanded section');
-      } else {
-        content.style.display = 'none';
-        toggle.textContent = '▶';
-        console.log('✅ Collapsed section');
-      }
-      
-      // Store state in localStorage
-      localStorage.setItem('adminSection_' + contentId, isHidden ? 'open' : 'closed');
-    }
-    
-    // Make function globally accessible for onclick handlers
-    window.toggleAdminSection = toggleAdminSection;
 
     // =================== POPULATE RUN PAYROLL WEEK SELECTOR ===================
     function populateRunPayrollWeeks() {
