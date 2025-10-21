@@ -1,4 +1,4 @@
-const CACHE_NAME = "cls-employee-v9";
+const CACHE_NAME = "cls-employee-v10";
 const ASSETS = [
   "./employeelogin.html",
   "./employeeDashboard.html",

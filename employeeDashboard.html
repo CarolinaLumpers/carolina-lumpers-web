@@ -388,7 +388,7 @@
                  style="display:block;margin-bottom:8px;font-weight:600;">
             Select Week Period:
           </label>
-          <select id="runPayrollWeekSelect" style="width:100%;padding:8px;border-radius:6px;border:1px solid #ddd;font-size:1rem;">
+          <select id="runPayrollWeekSelect" style="width:100%;background:#000;color:#fff;border:1px solid #333;border-radius:6px;padding:8px;margin-top:6px;">
             <option value="" data-en="-- Select Week --" data-es="-- Seleccionar Semana --" data-pt="-- Selecionar Semana --">-- Select Week --</option>
           </select>
         </div>
@@ -2104,14 +2104,9 @@
       // Build dropdown with only 2 options
       dropdown.innerHTML = '<option value="">-- Select Week --</option>' + 
         weeks.map((sat, index) => {
-          const date = new Date(sat + 'T00:00:00');
-          const label = date.toLocaleDateString('en-US', { 
-            month: 'short', 
-            day: 'numeric', 
-            year: 'numeric' 
-          });
+          // sat is already in MM/DD/YYYY format, just add tag
           const tag = index === 0 ? ' (This Week)' : ' (Last Week)';
-          return `<option value="${sat}">${label}${tag}</option>`;
+          return `<option value="${sat}">${sat}${tag}</option>`;
         }).join('');
       
       // Auto-select last week (index 1) as that's the typical payroll run
