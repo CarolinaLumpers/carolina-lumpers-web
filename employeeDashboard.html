@@ -394,7 +394,7 @@
                  style="display:block;margin-bottom:8px;font-weight:600;">
             Select Week Period:
           </label>
-          <select id="weekPeriodSelect" style="width:100%;padding:8px;border-radius:6px;border:1px solid #ddd;font-size:1rem;">
+          <select id="runPayrollWeekSelect" style="width:100%;padding:8px;border-radius:6px;border:1px solid #ddd;font-size:1rem;">
             <option value="" data-en="-- Select Week --" data-es="-- Seleccionar Semana --" data-pt="-- Selecionar Semana --">-- Select Week --</option>
           </select>
         </div>
@@ -2024,7 +2024,7 @@
 
     // =================== RUN PAYROLL ===================
     async function triggerRunPayroll() {
-      const dropdown = document.getElementById('weekPeriodSelect');
+      const dropdown = document.getElementById('runPayrollWeekSelect');
       const button = document.getElementById('btnRunPayroll');
       const resultsDiv = document.getElementById('payrollResults');
       const statusDiv = document.getElementById('payrollStatus');
@@ -2133,7 +2133,7 @@
 
     // =================== POPULATE RUN PAYROLL WEEK SELECTOR ===================
     function populateRunPayrollWeeks() {
-      const dropdown = document.getElementById('weekPeriodSelect');
+      const dropdown = document.getElementById('runPayrollWeekSelect');
       if (!dropdown) return;
       
       const weeks = [];
