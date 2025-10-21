@@ -2103,12 +2103,20 @@
       console.log('🔧 toggleAdminSection called with:', contentId);
       console.log('Looking for element IDs:', contentId, contentId + 'Toggle');
       
+      // Check if page has fully loaded
+      console.log('Document ready state:', document.readyState);
+      console.log('Admin section visible?', document.getElementById('admin-section')?.classList.contains('hidden'));
+      
       const content = document.getElementById(contentId);
       const toggle = document.getElementById(contentId + 'Toggle');
       
       console.log('Found content:', content);
       console.log('Found toggle:', toggle);
       console.log('Content exists?', !!content, 'Toggle exists?', !!toggle);
+      
+      // List ALL elements with Toggle in their ID
+      const allToggles = Array.from(document.querySelectorAll('[id$="Toggle"]'));
+      console.log('All toggle elements on page:', allToggles.map(el => el.id));
       
       if (!content || !toggle) {
         console.error('❌ Missing elements for:', contentId);
