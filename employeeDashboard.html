@@ -1850,8 +1850,8 @@
       `;
 
       try {
-        // VendorSync Web App URL
-        const VENDOR_SYNC_URL = 'https://script.google.com/macros/s/AKfycbytEq3pGl3O3oV66g2RKkLcQR6-ctIzosy6_N_y0LQ6_-btNNhkj35T9oi2BiudU3nC/exec';
+        // VendorSync Web App URL (via Cloudflare proxy for CORS)
+        const VENDOR_SYNC_URL = 'https://vendorsync-proxy.s-garay.workers.dev';
         const url = `${VENDOR_SYNC_URL}?action=syncVendors&dryRun=${dryRun}`;
         
         console.log(`🔄 Triggering VendorSync (dryRun=${dryRun})...`);
