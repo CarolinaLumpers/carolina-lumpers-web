@@ -13,14 +13,14 @@
 
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title data-en="Employee Dashboard (DEV) | Carolina Lumper Service" data-es="Panel del Empleado | Carolina Lumper Service"
+  <title data-en="Employee Dashboard | Carolina Lumper Service" data-es="Panel del Empleado | Carolina Lumper Service"
     data-pt="Painel do Funcionário | Carolina Lumper Service">
     Employee Dashboard | Carolina Lumper Service
   </title>
 
   <link rel="icon" type="image/png" href="assets/CLS-favicon.png" />
-  <link rel="manifest" href="manifest-employee-dev.json">
-  <meta name="theme-color" content="#ff9800">
+  <link rel="manifest" href="manifest-employee.json">
+  <meta name="theme-color" content="#ffcc00">
 
   <!-- iOS support -->
   <meta name="mobile-web-app-capable" content="yes">
@@ -28,9 +28,27 @@
   <meta name="apple-mobile-web-app-title" content="CLS Employee">
   <link rel="apple-touch-icon" href="assets/CLS-favicon.png">
 
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'cls-amber': '#FFC107',
+            'cls-yellow': '#FFEB3B',
+            'cls-charcoal': '#1a1a1a',
+            'cls-dark': '#0a0a0a',
+            'cls-gray': '#333',
+          }
+        }
+      }
+    }
+  </script>
+  
   <!-- Global CSS System -->
-  <link rel="stylesheet" href="css/style.css?v=2025-dev-offline">
-  <link rel="stylesheet" href="css/dashboard.css?v=2025-dev-offline">
+  <link rel="stylesheet" href="css/style.css?v=2024-pwa-integration">
+  <link rel="stylesheet" href="css/dashboard.css?v=2024-pwa-integration">
   <style>
     /* Time Edit Modal Styles */
     .modal {
@@ -194,38 +212,82 @@
     }
     /* Note: Action buttons now use .btn-success and .btn-danger from dashboard.css */
     
-    /* DEV Environment Banner */
-    .dev-banner {
+    /* Full-Screen Loading Overlay for Page Transitions */
+    .loading-overlay {
       position: fixed;
-      top: 60px;
+      top: 0;
       left: 0;
-      right: 0;
-      background: linear-gradient(135deg, #ff9800, #f57c00);
-      color: #000;
-      padding: 8px;
+      width: 100vw;
+      height: 100vh;
+      background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 99999;
+      opacity: 1;
+      transition: opacity 0.5s ease-out;
+    }
+    
+    .loading-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    
+    .loading-content {
       text-align: center;
+      animation: fadeInUp 0.6s ease-out;
+    }
+    
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .loading-spinner-large {
+      width: 80px;
+      height: 80px;
+      border: 6px solid #333;
+      border-top: 6px solid #FFC107;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 24px;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .loading-text {
+      color: #FFC107;
+      font-size: 24px;
       font-weight: bold;
+      margin-bottom: 12px;
+    }
+    
+    .loading-subtext {
+      color: #666;
       font-size: 14px;
-      z-index: 1000;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-    }
-    .dev-banner a {
-      margin-left: 20px;
-      color: #000;
-      text-decoration: underline;
-    }
-    .dashboard {
-      margin-top: 40px !important;
     }
   </style>
   <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet" />
 </head>
 
-<body data-page="employeeDashboard-dev" class="dashboard-page">
-  <!-- DEV Environment Banner -->
-  <div class="dev-banner">
-    🚧 DEVELOPMENT VERSION - Testing Offline Features 🚧
-    <a href="employeeDashboard.html">Back to Production</a>
+<body data-page="employeeDashboard" class="dashboard-page">
+  <!-- Full-Screen Loading Overlay (Shows on initial load) -->
+  <div id="loadingOverlay" class="loading-overlay">
+    <div class="loading-content">
+      <div class="loading-spinner-large"></div>
+      <div class="loading-text">Loading Dashboard...</div>
+      <div class="loading-subtext">Please wait while we fetch your data</div>
+    </div>
   </div>
   
   <!-- Navigation Bar -->
@@ -343,12 +405,10 @@
       <!-- Clock-In Manager Subsection -->
       <div id="clockinManager" class="admin-subsection">
         <h4 class="section-title" data-en="Clock-In Manager" data-es="Gestor de Entradas" data-pt="Gerenciador de Registros" 
-            style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:12px;background:rgba(255,152,0,0.1);border-radius:6px;margin-bottom:12px;" 
-            onclick="toggleAdminSection('clockinManagerContent')">
+            style="padding:12px;background:rgba(255,193,7,0.1);border-radius:6px;margin-bottom:12px;">
           <span>Clock-In Manager</span>
-          <span id="clockinManagerToggle" style="font-size:1.2em;">▶</span>
         </h4>
-        <div id="clockinManagerContent" class="admin-section-content" style="display:none;">
+        <div id="clockinManagerContent" class="admin-section-content">
         <label for="workerFilter" style="display:block;margin:12px 0;">
           <span data-en="Filter by worker:" data-es="Filtrar por empleado:" data-pt="Filtrar por funcionário:">Filter by worker:</span>
           <select id="workerFilter"
@@ -370,12 +430,10 @@
       <div id="timeEditRequestsWrap" class="admin-subsection">
         <h4 class="section-title" data-en="Time Edit Requests" data-es="Solicitudes de Edición de Tiempo"
           data-pt="Solicitações de Edição de Tempo"
-          style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:12px;background:rgba(255,152,0,0.1);border-radius:6px;margin-bottom:12px;"
-          onclick="toggleAdminSection('timeEditRequestsContent')">
+          style="padding:12px;background:rgba(255,193,7,0.1);border-radius:6px;margin-bottom:12px;">
           <span>Time Edit Requests</span>
-          <span id="timeEditRequestsContentToggle" style="font-size:1.2em;">▶</span>
         </h4>
-        <div id="timeEditRequestsContent" class="admin-section-content" style="display:none;">
+        <div id="timeEditRequestsContent" class="admin-section-content">
         
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
           <button id="btnLoadPendingEdits" class="btn btn-primary" data-en="Load Pending Requests" 
@@ -402,12 +460,10 @@
       <div id="runPayrollWrap" class="admin-subsection">
         <h4 class="section-title" data-en="Run Payroll" data-es="Ejecutar Nómina"
           data-pt="Executar Folha de Pagamento"
-          style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:12px;background:rgba(255,152,0,0.1);border-radius:6px;margin-bottom:12px;"
-          onclick="toggleAdminSection('runPayrollContent')">
+          style="padding:12px;background:rgba(255,193,7,0.1);border-radius:6px;margin-bottom:12px;">
           <span>Run Payroll</span>
-          <span id="runPayrollContentToggle" style="font-size:1.2em;">▶</span>
         </h4>
-        <div id="runPayrollContent" class="admin-section-content" style="display:none;">
+        <div id="runPayrollContent" class="admin-section-content">
         
         <p class="muted" style="margin-bottom:12px;" 
            data-en="Process weekly payroll and create bills in QuickBooks" 
@@ -424,7 +480,7 @@
                  style="display:block;margin-bottom:8px;font-weight:600;">
             Select Week Period:
           </label>
-          <select id="weekPeriodSelect" style="width:100%;padding:8px;border-radius:6px;border:1px solid #ddd;font-size:1rem;">
+          <select id="runPayrollWeekSelect" style="width:100%;background:#000;color:#fff;border:1px solid #333;border-radius:6px;padding:8px;margin-top:6px;">
             <option value="" data-en="-- Select Week --" data-es="-- Seleccionar Semana --" data-pt="-- Selecionar Semana --">-- Select Week --</option>
           </select>
         </div>
@@ -447,12 +503,10 @@
       <div id="qbSyncWrap" class="admin-subsection">
         <h4 class="section-title" data-en="QuickBooks Sync" data-es="Sincronización de QuickBooks"
           data-pt="Sincronização do QuickBooks"
-          style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:12px;background:rgba(255,152,0,0.1);border-radius:6px;margin-bottom:12px;"
-          onclick="toggleAdminSection('qbSyncContent')">
+          style="padding:12px;background:rgba(255,193,7,0.1);border-radius:6px;margin-bottom:12px;">
           <span>QuickBooks Sync</span>
-          <span id="qbSyncContentToggle" style="font-size:1.2em;">▶</span>
         </h4>
-        <div id="qbSyncContent" class="admin-section-content" style="display:none;">
+        <div id="qbSyncContent" class="admin-section-content">
         
         <p class="muted" style="margin-bottom:12px;" 
            data-en="Sync active workers to QuickBooks Online as Vendors" 
@@ -871,6 +925,14 @@
       document.getElementById("welcomeName").textContent = `${greeting}, ${displayName || "Employee"}!`;
       document.getElementById("userInfo").textContent = `${getText('dashboard.workerIdLabel', currentLang)}: ${workerId} | ${email}`;
 
+      // Hide loading overlay after content is ready
+      setTimeout(() => {
+        const overlay = document.getElementById('loadingOverlay');
+        if (overlay) {
+          overlay.classList.add('hidden');
+        }
+      }, 500);
+
       updatePWAStatus();
 
       // Listen for online/offline events to update status
@@ -973,21 +1035,6 @@
 
       // Populate Run Payroll week selector
       populateRunPayrollWeeks();
-
-      // Set all admin sections to collapsed by default
-      const sections = ['clockinManagerContent', 'timeEditRequestsContent', 'runPayrollContent', 'qbSyncContent'];
-      sections.forEach(sectionId => {
-        const state = localStorage.getItem('adminSection_dev_' + sectionId);
-        // Default to collapsed unless explicitly set to open
-        if (state !== 'open') {
-          const content = document.getElementById(sectionId);
-          const toggle = document.getElementById(sectionId + 'Toggle');
-          if (content && toggle) {
-            content.style.display = 'none';
-            toggle.textContent = '▶';
-          }
-        }
-      });
 
       // Language init
       initLanguage();
@@ -1183,17 +1230,12 @@
                 })
               );
 
-              // Get device info for offline tracking
-              const deviceInfo = window.getDeviceInfo ? window.getDeviceInfo() : 
-                                 { displayString: 'Unknown Device' };
-
               const clockData = {
                 workerId: workerId,
                 lat: pos.coords.latitude,
                 lng: pos.coords.longitude,
                 lang: localStorage.getItem("CLS_Lang") || "en",
                 email: email || '',
-                device: deviceInfo.displayString,  // Added for offline tracking
                 timestamp: new Date().toISOString()
               };
 
@@ -1591,27 +1633,27 @@
         }
         // Normalize role (handle case variations)
         USER_ROLE = storedRole ? storedRole.charAt(0).toUpperCase() + storedRole.slice(1).toLowerCase() : null;
-        console.log('[DEV] 👤 User Role:', USER_ROLE, '(from:', storedRole, ')');
+        console.log('👤 User Role:', USER_ROLE, '(from:', storedRole, ')');
 
         // Show Admin tab button for Admin/Lead users (section stays hidden until tab clicked)
         if (USER_ROLE === 'Admin' || USER_ROLE === 'Lead') {
-          console.log('[DEV] ✅ Showing Admin tab for role:', USER_ROLE);
+          console.log('✅ Showing Admin tab for role:', USER_ROLE);
           const adminTab = document.getElementById('tabAdmin');
           
           if (adminTab) {
             adminTab.classList.remove('hidden');
-            console.log('[DEV] ✅ Admin tab button revealed');
+            console.log('✅ Admin tab button revealed');
           } else {
-            console.warn('[DEV] ⚠️ Admin tab button element not found');
+            console.warn('⚠️ Admin tab button element not found');
           }
           // Note: admin-section stays hidden until user clicks Admin Tools tab
         } else {
-          console.log('[DEV] ℹ️ Admin tab not shown - role is:', USER_ROLE);
+          console.log('ℹ️ Admin tab not shown - role is:', USER_ROLE);
         }
 
         // Admin-only features (View As, Time Edit Requests)
         if (USER_ROLE === 'Admin') {
-          console.log('[DEV] ✅ Loading admin-only features');
+          console.log('✅ Loading admin-only features');
           // Show View As section for admins
           const viewAsWrap = document.getElementById('viewAsWrap');
           if (viewAsWrap) viewAsWrap.classList.remove('hidden');
@@ -1662,87 +1704,7 @@
       }
     }
 
-    async function loadAllReports(workersCSV = '') {
-      const container = document.getElementById('allReportsContainer');
-      const filterEl = document.getElementById('workerFilter');
-      container.textContent = '⏳ Loading all clock-ins...';
-
-      try {
-        const url = `${API_URL}?action=reportAll&workerId=${encodeURIComponent(workerId)}${workersCSV ? `&workers=${encodeURIComponent(workersCSV)}` : ''}`;
-        const data = await jsonp(url);
-        if (!data || data.ok === false) {
-          container.textContent = data?.message || '⚠️ Failed to load.';
-          return;
-        }
-
-        // Build filter options
-        filterEl.innerHTML = '';
-        (data.workers || [])
-          .sort((a, b) => (a.name || a.id).localeCompare(b.name || b.id))
-          .forEach(w => {
-            const opt = document.createElement('option');
-            opt.value = w.id;
-            opt.textContent = `${w.name} (${w.id})`;
-            filterEl.appendChild(opt);
-          });
-
-        renderAllReports(container, data.records, data.workers);
-      } catch (err) {
-        container.textContent = `⚠️ ${err.message || err}`;
-      }
-    }
-
-    function renderAllReports(container, recordsByWorker, workersList = []) {
-      container.innerHTML = '';
-      const nameMap = {};
-      (workersList || []).forEach(w => nameMap[w.id] = w.name);
-
-      const ids = Object.keys(recordsByWorker || {}).sort((a, b) =>
-        (nameMap[a] || a).localeCompare(nameMap[b] || b)
-      );
-
-      if (!ids.length) {
-        const lang = localStorage.getItem("CLS_Lang") || "en";
-        container.innerHTML = lang === 'es'
-          ? '<div class="muted">Sin registros.</div>'
-          : lang === 'pt'
-            ? '<div class="muted">Sem registros.</div>'
-            : '<div class="muted">No records.</div>';
-        return;
-      }
-
-      ids.forEach(id => {
-        const wrap = document.createElement('div');
-        wrap.style.margin = '14px 0';
-
-        const h = document.createElement('h4');
-        h.style.color = 'var(--cls-yellow)';
-        h.textContent = `Worker: ${nameMap[id] || id}`;
-        wrap.appendChild(h);
-
-        const tbl = document.createElement('table');
-        tbl.innerHTML = `
-          <thead>
-            <tr>
-              <th data-en="Date" data-es="Fecha" data-pt="Data">Date</th>
-              <th data-en="Time" data-es="Hora" data-pt="Hora">Time</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        `;
-        const tb = tbl.querySelector('tbody');
-        (recordsByWorker[id] || []).forEach(r => {
-          const tr = document.createElement('tr');
-          tr.innerHTML = `<td>${r.date || ''}</td><td>${r.time || ''}</td>`;
-          tb.appendChild(tr);
-        });
-
-        wrap.appendChild(tbl);
-        container.appendChild(wrap);
-      });
-    }
-
-    // ===== View As Helper Functions =====
+    // ===== View As Helper Functions (kept for non-admin usage) =====
     function setViewAsBanner(targetId, name) {
       const b = document.getElementById('viewAsBanner');
       const lang = localStorage.getItem("CLS_Lang") || "en";
@@ -1802,418 +1764,30 @@
       loadReport();
       loadPayrollWeekPeriods(); // Reload admin's own week periods
     }
+  </script>
 
-    // ===== Time Edit Request Management (Admin Only) =====
-    async function loadTimeEditRequests(status = 'pending') {
-      const container = document.getElementById('timeEditRequestsContainer');
-      const currentLang = localStorage.getItem("CLS_Lang") || "en";
-      container.innerHTML = `<p class="muted">${getMSG('loadingReport')}</p>`;
-
-      try {
-        const url = `${API_URL}?action=getTimeEditRequests&requesterId=${encodeURIComponent(workerId)}&status=${status}`;
-        const data = await apiCallWithRetry(url);
-
-        if (!data || !data.success) {
-          const errorMsg = data?.message || 'Failed to load requests';
-          container.innerHTML = `<p style="color:#f44336;padding:12px;background:rgba(244,67,54,0.1);border:1px solid rgba(244,67,54,0.3);border-radius:6px;">
-            ⚠️ ${errorMsg}
-          </p>`;
-          console.error('Time edit requests error:', data);
-          return;
-        }
-
-        const requests = data.requests || [];
-        
-        if (requests.length === 0) {
-          const statusText = status === 'all' ? 'time edit requests' : `${status} time edit requests`;
-          container.innerHTML = `<p class="muted" data-en="No ${statusText} found" 
-                                    data-es="No se encontraron solicitudes ${status}" 
-                                    data-pt="Nenhuma solicitação ${status} encontrada">
-                                  No ${statusText} found
-                                </p>`;
-          return;
-        }
-
-        // Build table
-        let html = `
-          <table style="width:100%;border-collapse:collapse;margin-top:8px;">
-            <thead>
-              <tr style="background:rgba(255,193,7,0.1);border-bottom:2px solid #FFC107;">
-                <th style="padding:8px;text-align:left;" data-en="Employee" data-es="Empleado" data-pt="Funcionário">Employee</th>
-                <th style="padding:8px;text-align:left;" data-en="Original Time" data-es="Hora Original" data-pt="Hora Original">Original Time</th>
-                <th style="padding:8px;text-align:left;" data-en="Requested Time" data-es="Hora Solicitada" data-pt="Hora Solicitada">Requested Time</th>
-                <th style="padding:8px;text-align:left;" data-en="Reason" data-es="Razón" data-pt="Motivo">Reason</th>
-                <th style="padding:8px;text-align:left;" data-en="Status" data-es="Estado" data-pt="Status">Status</th>
-                <th style="padding:8px;text-align:center;" data-en="Actions" data-es="Acciones" data-pt="Ações">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-        `;
-
-        requests.forEach(req => {
-          const isPending = req.status === 'pending';
-          const statusClass = isPending ? 'status-editing' : 
-                            req.status === 'approved' ? 'status-confirmed' : 'status-denied';
-          
-          html += `
-            <tr style="border-bottom:1px solid #333;">
-              <td style="padding:8px;">${req.employeeName || req.employeeId}</td>
-              <td style="padding:8px;">${req.originalTime}</td>
-              <td style="padding:8px;color:#FFC107;font-weight:bold;">${req.requestedTime}</td>
-              <td style="padding:8px;font-size:12px;color:#aaa;">${req.reason || '-'}</td>
-              <td style="padding:8px;">
-                <span class="status-badge ${statusClass}">${req.status}</span>
-              </td>
-              <td style="padding:8px;text-align:center;">
-                ${isPending ? `
-                  <button class="btn btn-success" 
-                          style="padding:4px 10px;font-size:11px;margin:0 4px;"
-                          onclick="approveTimeEditRequest('${req.requestId}')"
-                          data-en="${getMSG('approveButton')}" 
-                          data-es="${getMSG('approveButton', 'es')}" 
-                          data-pt="${getMSG('approveButton', 'pt')}">
-                    ${getMSG('approveButton', currentLang)}
-                  </button>
-                  <button class="btn btn-danger" 
-                          style="padding:4px 10px;font-size:11px;margin:0 4px;"
-                          onclick="denyTimeEditRequest('${req.requestId}')"
-                          data-en="${getMSG('denyButton')}" 
-                          data-es="${getMSG('denyButton', 'es')}" 
-                          data-pt="${getMSG('denyButton', 'pt')}">
-                    ${getMSG('denyButton', currentLang)}
-                  </button>
-                ` : `<span style="color:#666;font-size:11px;" 
-                            data-en="${getMSG('reviewed')}" 
-                            data-es="${getMSG('reviewed', 'es')}" 
-                            data-pt="${getMSG('reviewed', 'pt')}">
-                      ${getMSG('reviewed', currentLang)}
-                    </span>`}
-              </td>
-            </tr>
-          `;
-        });
-
-        html += '</tbody></table>';
-        container.innerHTML = html;
-
-      } catch (err) {
-        console.error('Error loading time edit requests:', err);
-        container.innerHTML = `<p style="color:#f44336;">Error: ${err.message || err}</p>`;
-      }
-    }
-
-    async function approveTimeEditRequest(requestId) {
-      if (!confirm('Approve this time edit request?')) return;
-
-      try {
-        const url = `${API_URL}?action=approveTimeEdit&requesterId=${encodeURIComponent(workerId)}&requestId=${encodeURIComponent(requestId)}`;
-        const result = await jsonp(url);
-
-        if (result && result.success) {
-          alert('✅ Time edit request approved!');
-          loadTimeEditRequests('pending'); // Reload pending requests
-        } else {
-          alert('❌ Failed to approve: ' + (result?.message || 'Unknown error'));
-        }
-      } catch (err) {
-        console.error('Error approving request:', err);
-        alert('❌ Error: ' + (err.message || err));
-      }
-    }
-
-    async function denyTimeEditRequest(requestId) {
-      const reason = prompt('Enter reason for denial (optional):');
-      if (reason === null) return; // Cancelled
-
-      try {
-        const url = `${API_URL}?action=denyTimeEdit&requesterId=${encodeURIComponent(workerId)}&requestId=${encodeURIComponent(requestId)}&reason=${encodeURIComponent(reason || '')}`;
-        const result = await jsonp(url);
-
-        if (result && result.success) {
-          alert('✅ Time edit request denied!');
-          loadTimeEditRequests('pending'); // Reload pending requests
-        } else {
-          alert('❌ Failed to deny: ' + (result?.message || 'Unknown error'));
-        }
-      } catch (err) {
-        console.error('Error denying request:', err);
-        alert('❌ Error: ' + (err.message || err));
-      }
-    }
-
-    // =================== QUICKBOOKS VENDOR SYNC ===================
-    async function triggerVendorSync(dryRun = true) {
-      const container = document.getElementById('qbSyncResultsContainer');
-      const btnDryRun = document.getElementById('btnSyncVendorsDryRun');
-      const btnLive = document.getElementById('btnSyncVendorsLive');
+  <!-- Admin Tools Module (ES6) -->
+  <script type="module">
+    import { AdminTools } from './js/admin/admin-tools.js';
+    
+    // Initialize admin tools after DOM is ready
+    document.addEventListener('DOMContentLoaded', () => {
+      const apiUrl = window.API_URL || 'https://cls-proxy.s-garay.workers.dev';
       
-      // Confirm if live run
-      if (!dryRun) {
-        const confirm = window.confirm(
-          '⚠️ WARNING: This will create/update vendors in QuickBooks Online.\n\n' +
-          'Have you run a Preview Sync first?\n\n' +
-          'Click OK to proceed with LIVE sync.'
-        );
-        if (!confirm) return;
-      }
-
-      // Disable buttons and show loading
-      if (btnDryRun) btnDryRun.disabled = true;
-      if (btnLive) btnLive.disabled = true;
-      container.innerHTML = `
-        <div style="padding:20px;text-align:center;">
-          <div class="loading-spinner" style="margin:0 auto 12px;"></div>
-          <p class="muted">${dryRun ? 'Running preview sync...' : 'Running LIVE sync...'}</p>
-          <p style="font-size:12px;color:#666;">This may take 10-30 seconds</p>
-        </div>
-      `;
-
-      try {
-        // VendorSync Web App URL (via Cloudflare proxy for CORS)
-        const VENDOR_SYNC_URL = 'https://vendorsync-proxy.s-garay.workers.dev';
-        const url = `${VENDOR_SYNC_URL}?action=syncVendors&dryRun=${dryRun}`;
-        
-        console.log(`🔄 [DEV] Triggering VendorSync (dryRun=${dryRun})...`);
-        
-        // Call the VendorSync endpoint
-        const response = await fetch(url, {
-          method: 'GET',
-          headers: { 'Accept': 'application/json' }
-        });
-
-        const data = await response.json();
-        console.log('[DEV] 📥 VendorSync response:', data);
-
-        if (!data || !data.success) {
-          throw new Error(data?.message || 'VendorSync failed');
-        }
-
-        // Display results
-        const results = data.results || {};
-        const created = results.created || 0;
-        const updated = results.updated || 0;
-        const noChange = results.noChange || 0;
-        const errors = results.errors || [];
-        const details = results.details || [];
-
-        let html = `
-          <div style="background:rgba(76,175,80,0.1);border:1px solid rgba(76,175,80,0.3);border-radius:8px;padding:16px;margin-bottom:12px;">
-            <h4 style="margin:0 0 12px 0;color:#4CAF50;">
-              ✅ ${dryRun ? 'Preview Complete' : 'Sync Complete'}
-            </h4>
-            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;">
-              <div style="background:rgba(33,150,243,0.1);padding:12px;border-radius:6px;text-align:center;">
-                <div style="font-size:24px;font-weight:bold;color:#2196F3;">${created}</div>
-                <div style="font-size:12px;color:#aaa;">${dryRun ? 'To Create' : 'Created'}</div>
-              </div>
-              <div style="background:rgba(255,152,0,0.1);padding:12px;border-radius:6px;text-align:center;">
-                <div style="font-size:24px;font-weight:bold;color:#FF9800;">${updated}</div>
-                <div style="font-size:12px;color:#aaa;">${dryRun ? 'To Update' : 'Updated'}</div>
-              </div>
-              <div style="background:rgba(158,158,158,0.1);padding:12px;border-radius:6px;text-align:center;">
-                <div style="font-size:24px;font-weight:bold;color:#9E9E9E;">${noChange}</div>
-                <div style="font-size:12px;color:#aaa;">No Change</div>
-              </div>
-            </div>
-          </div>
-        `;
-
-        // Show details if available
-        if (details && details.length > 0) {
-          html += `
-            <div style="max-height:300px;overflow-y:auto;background:rgba(0,0,0,0.2);padding:12px;border-radius:6px;font-family:monospace;font-size:12px;">
-              ${details.map(line => `<div style="margin:2px 0;">${escapeHtml(line)}</div>`).join('')}
-            </div>
-          `;
-        }
-
-        // Show errors if any
-        if (errors && errors.length > 0) {
-          html += `
-            <div style="background:rgba(244,67,54,0.1);border:1px solid rgba(244,67,54,0.3);border-radius:6px;padding:12px;margin-top:12px;">
-              <h4 style="margin:0 0 8px 0;color:#f44336;">⚠️ Errors (${errors.length})</h4>
-              ${errors.map(err => `<div style="font-size:12px;color:#f44336;margin:4px 0;">• ${escapeHtml(err)}</div>`).join('')}
-            </div>
-          `;
-        }
-
-        container.innerHTML = html;
-
-      } catch (err) {
-        console.error('[DEV] VendorSync error:', err);
-        container.innerHTML = `
-          <div style="background:rgba(244,67,54,0.1);border:1px solid rgba(244,67,54,0.3);border-radius:8px;padding:16px;">
-            <h4 style="margin:0 0 8px 0;color:#f44336;">❌ Sync Failed</h4>
-            <p style="color:#f44336;font-size:14px;">${escapeHtml(err.message || err)}</p>
-            <p style="font-size:12px;color:#666;margin-top:8px;">
-              Check that VendorSync script is deployed and accessible.
-            </p>
-          </div>
-        `;
-      } finally {
-        // Re-enable buttons
-        if (btnDryRun) btnDryRun.disabled = false;
-        if (btnLive) btnLive.disabled = false;
-      }
-    }
-
-    // =================== RUN PAYROLL ===================
-    async function triggerRunPayroll() {
-      const dropdown = document.getElementById('weekPeriodSelect');
-      const button = document.getElementById('btnRunPayroll');
-      const resultsDiv = document.getElementById('payrollResults');
-      const statusDiv = document.getElementById('payrollStatus');
-      const messageDiv = document.getElementById('payrollMessage');
+      const adminTools = new AdminTools(apiUrl);
+      adminTools.init();
       
-      const weekPeriod = dropdown.value;
+      // Expose to window for debugging
+      window.adminTools = adminTools;
       
-      if (!weekPeriod) {
-        alert('Please select a week period first');
-        return;
-      }
-
-      // Confirm before running
-      const confirm = window.confirm(
-        `⚠️ [DEV] WARNING: This will process payroll and create bills in QuickBooks Online.\n\n` +
-        `Week Period: ${weekPeriod}\n\n` +
-        `This action cannot be undone. Continue?`
-      );
-      if (!confirm) return;
-
-      // Show loading state
-      button.disabled = true;
-      button.innerHTML = '<span>Processing...</span>';
-      resultsDiv.style.display = 'block';
-      statusDiv.innerHTML = '🔄 [DEV] Running payroll...';
-      statusDiv.style.color = '#FF9800';
-      messageDiv.innerHTML = 'This may take 10-30 seconds. Please wait...';
-
-      try {
-        // Payroll Web App URL (via Cloudflare proxy for CORS)
-        // TODO: Create payroll-proxy.s-garay.workers.dev
-        const PAYROLL_URL = 'https://payroll-proxy.s-garay.workers.dev';
-        
-        const payload = {
-          "Webhook Type": "Run Payroll",
-          "Week Period": weekPeriod
-        };
-        
-        console.log('[DEV] 🔄 Triggering Run Payroll:', payload);
-        
-        // POST request to run payroll
-        const response = await fetch(PAYROLL_URL, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          },
-          body: JSON.stringify(payload)
-        });
-
-        const data = await response.json();
-        console.log('[DEV] 📥 Payroll response:', data);
-
-        if (!data || (data.status && data.status !== 200)) {
-          throw new Error(data?.message || 'Payroll processing failed');
-        }
-
-        // Success
-        statusDiv.innerHTML = '✅ [DEV] Payroll Complete';
-        statusDiv.style.color = '#4CAF50';
-        messageDiv.innerHTML = `Payroll processed successfully for week ${weekPeriod}. Bills have been created/updated in QuickBooks Online.`;
-
-      } catch (err) {
-        console.error('[DEV] Payroll error:', err);
-        statusDiv.innerHTML = '❌ [DEV] Payroll Failed';
-        statusDiv.style.color = '#f44336';
-        messageDiv.innerHTML = `Error: ${err.message || err}<br><br>Check that PayrollProject script is deployed and accessible.`;
-      } finally {
-        button.disabled = false;
-        button.innerHTML = '<span data-en="Run Payroll" data-es="Ejecutar Nómina" data-pt="Executar Folha de Pagamento">Run Payroll</span>';
-      }
-    }
-
-    // =================== TOGGLE ADMIN SECTIONS ===================
-    function toggleAdminSection(contentId) {
-      const content = document.getElementById(contentId);
-      const toggle = document.getElementById(contentId + 'Toggle');
-      
-      if (!content || !toggle) return;
-      
-      const isHidden = content.style.display === 'none';
-      
-      if (isHidden) {
-        content.style.display = 'block';
-        toggle.textContent = '▼';
-      } else {
-        content.style.display = 'none';
-        toggle.textContent = '▶';
-      }
-      
-      // Store state in localStorage (with dev prefix)
-      localStorage.setItem('adminSection_dev_' + contentId, isHidden ? 'open' : 'closed');
-    }
-
-    // =================== POPULATE RUN PAYROLL WEEK SELECTOR ===================
-    function populateRunPayrollWeeks() {
-      const dropdown = document.getElementById('weekPeriodSelect');
-      if (!dropdown) return;
-      
-      const weeks = [];
-      const today = new Date();
-      
-      // Generate only 2 Saturdays: This week and last week
-      for (let i = 0; i < 2; i++) {
-        const date = new Date(today);
-        // Get current day of week (0=Sun, 6=Sat)
-        const dayOfWeek = date.getDay();
-        // Calculate days to add/subtract to get to Saturday
-        const daysToSaturday = (6 - dayOfWeek + 7) % 7;
-        // Go to this/next Saturday, then subtract weeks
-        date.setDate(date.getDate() + daysToSaturday - (i * 7));
-        
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
-        const saturday = `${year}-${month}-${day}`;
-        
-        weeks.push(saturday);
-      }
-      
-      // Build dropdown with only 2 options
-      dropdown.innerHTML = '<option value="">-- Select Week --</option>' + 
-        weeks.map((sat, index) => {
-          const date = new Date(sat + 'T00:00:00');
-          const label = date.toLocaleDateString('en-US', { 
-            month: 'short', 
-            day: 'numeric', 
-            year: 'numeric' 
-          });
-          const tag = index === 0 ? ' (This Week)' : ' (Last Week)';
-          return `<option value="${sat}">${label}${tag}</option>`;
-        }).join('');
-      
-      // Auto-select last week (index 1) as that's the typical payroll run
-      dropdown.value = weeks[1];
-    }
-
-    // Helper function to escape HTML
-    function escapeHtml(text) {
-      const map = {
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#039;'
-      };
-      return String(text).replace(/[&<>"']/g, m => map[m]);
-    }
+      console.log('✅ Admin tools modules loaded');
+    });
   </script>
 
   <script>
     // Service Worker Registration for Dashboard
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('service-worker-employee-dev.js')
+      navigator.serviceWorker.register('service-worker-employee.js')
         .then(() => console.log('✅ Employee service worker registered'))
         .catch(err => console.error('❌ SW registration failed:', err));
     }

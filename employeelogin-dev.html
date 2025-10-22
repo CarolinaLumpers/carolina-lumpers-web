@@ -29,6 +29,25 @@
   <link rel="apple-touch-icon" href="assets/CLS-icon-192.png">
   
   <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'cls-amber': '#FFC107',
+            'cls-yellow': '#FFEB3B',
+            'cls-charcoal': '#1a1a1a',
+            'cls-dark': '#0a0a0a',
+            'cls-gray': '#333',
+          }
+        }
+      }
+    }
+  </script>
+  
   <link rel="stylesheet" href="css/style.css?v=2025-dev-offline">
   <link rel="stylesheet" href="css/forms.css?v=2025-dev-offline">
   
@@ -52,11 +71,92 @@
     body {
       padding-top: 40px; /* Account for dev banner */
     }
+    
+    /* Full-Screen Loading Overlay */
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 99999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease-in-out;
+    }
+    
+    .loading-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+    
+    .loading-content {
+      text-align: center;
+      animation: fadeInUp 0.6s ease-out;
+    }
+    
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .loading-spinner-large {
+      width: 80px;
+      height: 80px;
+      border: 6px solid #333;
+      border-top: 6px solid #FFC107;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 24px;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .loading-text {
+      color: #FFC107;
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 12px;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+    
+    .loading-subtext {
+      color: #666;
+      font-size: 14px;
+    }
   </style>
 
 </head>
 
 <body data-page="login-dev">
+  <!-- Full-Screen Loading Overlay -->
+  <div id="loadingOverlay" class="loading-overlay">
+    <div class="loading-content">
+      <div class="loading-spinner-large"></div>
+      <div class="loading-text" id="loadingText">⏳ Logging in...</div>
+      <div class="loading-subtext">Verifying credentials and loading your dashboard</div>
+    </div>
+  </div>
+  
   <!-- DEV Environment Banner -->
   <div class="dev-banner">
     🚧 DEVELOPMENT VERSION - Testing Offline Features 🚧

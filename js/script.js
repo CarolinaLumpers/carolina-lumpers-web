@@ -1407,12 +1407,24 @@ async function biometricLogin() {
   try {
     const statusEl = document.getElementById('bioStatus');
     const currentLang = localStorage.getItem("CLS_Lang") || "en";
+    
+    // Show loading overlay
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    const loadingText = document.getElementById('loadingText');
+    if (loadingOverlay) {
+      loadingOverlay.classList.add('active');
+      if (loadingText) {
+        loadingText.textContent = '🔐 Verifying biometric...';
+      }
+    }
+    
     if (statusEl) statusEl.textContent = getText('biometric.verifying', currentLang);
     
     const registeredFor = localStorage.getItem('CLS_BioRegisteredFor');
     const credentialId = localStorage.getItem('CLS_BioCredentialId');
     
     if (!registeredFor || !credentialId) {
+      if (loadingOverlay) loadingOverlay.classList.remove('active');
       if (statusEl) statusEl.textContent = getText('biometric.noCredentials', currentLang);
       return false;
     }
@@ -1484,9 +1496,16 @@ async function biometricLogin() {
       localStorage.setItem('CLS_RememberUser', 'true');
       localStorage.removeItem('CLS_SessionExpiry'); // No expiry for biometric logins
       
+      // Update loading text
+      if (loadingText) {
+        loadingText.textContent = '✅ Verified! Loading dashboard...';
+      }
+      
       // Redirect to dashboard
       setTimeout(() => {
-        window.location.href = 'employeeDashboard.html';
+        // Check if we're on a dev page
+        const isDev = window.location.pathname.includes('-dev');
+        window.location.href = isDev ? 'employeeDashboard-dev.html' : 'employeeDashboard.html';
       }, 1000);
       
       return true;
@@ -1498,6 +1517,12 @@ async function biometricLogin() {
       message: err.message,
       code: err.code
     });
+    
+    // Hide loading overlay on error
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    if (loadingOverlay) {
+      loadingOverlay.classList.remove('active');
+    }
     
     const statusEl = document.getElementById('bioStatus');
     if (statusEl) {
@@ -1589,6 +1614,17 @@ function initLoginForm() {
       return;
     }
 
+    // Show full-screen loading overlay
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    const loadingText = document.getElementById('loadingText');
+    if (loadingOverlay) {
+      loadingOverlay.classList.add('active');
+      if (loadingText) {
+        loadingText.textContent = '⏳ Logging in...';
+      }
+    }
+    
+    // Also show status below form
     if (statusEl) statusEl.textContent = getText('login.sending', currentLang);
 
     try {
@@ -1654,9 +1690,18 @@ function initLoginForm() {
           if (shouldSetupBiometric) {
             try {
               await registerBiometric(data.workerId, data.email);
+              
+              // Update loading text
+              const loadingText = document.getElementById('loadingText');
+              if (loadingText) {
+                loadingText.textContent = '✅ Setup complete! Redirecting...';
+              }
+              
               // Give user time to see the success message
               setTimeout(() => {
-                window.location.href = "employeeDashboard.html";
+                // Check if we're on a dev page
+                const isDev = window.location.pathname.includes('-dev');
+                window.location.href = isDev ? "employeeDashboard-dev.html" : "employeeDashboard.html";
               }, 2500);
               return; // Exit early to show biometric setup status
             } catch (err) {
@@ -1666,15 +1711,33 @@ function initLoginForm() {
           }
         }
 
+        // Update loading text for redirect
+        const loadingText = document.getElementById('loadingText');
+        if (loadingText) {
+          loadingText.textContent = '✅ Login successful! Loading dashboard...';
+        }
+
         // Redirect after short delay
         setTimeout(() => {
-          window.location.href = "employeeDashboard.html";
+          // Check if we're on a dev page
+          const isDev = window.location.pathname.includes('-dev');
+          window.location.href = isDev ? "employeeDashboard-dev.html" : "employeeDashboard.html";
         }, 1500);
       } else {
+        // Hide loading overlay on error
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        if (loadingOverlay) {
+          loadingOverlay.classList.remove('active');
+        }
         statusEl.textContent = data.message || getText('login.invalid', currentLang);
       }
     } catch (err) {
       console.error(err);
+      // Hide loading overlay on error
+      const loadingOverlay = document.getElementById('loadingOverlay');
+      if (loadingOverlay) {
+        loadingOverlay.classList.remove('active');
+      }
       if (statusEl) statusEl.textContent = getText('login.error', currentLang);
     }
   });
