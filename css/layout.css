@@ -615,17 +615,17 @@ footer .language-toggle button.active,
 
   /* Mobile navigation font size */
   .nav-links a {
-    font-size: 1.5rem !important;
+    font-size: 1.1rem !important;
     color: var(--text-primary) !important;
     text-decoration: none !important;
-    padding: var(--space-lg) var(--space-lg) !important;
+    padding: var(--space-md) var(--space-lg) !important;
     width: 100% !important;
     text-align: center !important;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
     transition: var(--transition-base) !important;
     font-weight: 600 !important;
     display: block !important;
-    line-height: 0.5 !important;
+    line-height: 1.2 !important;
   }
 
   .nav-links a:hover,
