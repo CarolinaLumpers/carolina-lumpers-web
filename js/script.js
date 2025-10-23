@@ -1215,7 +1215,7 @@ function evaluateBiometricVisibility() {
   
   if (isRegistered && registeredFor && credentialId) {
     // User has completed biometric registration - show button
-    biometricBtn.style.display = 'block';
+    biometricBtn.style.display = 'flex';
     updateBiometricButtonText();
     console.log('👤 Biometric button shown for registered user:', registeredFor);
   } else {

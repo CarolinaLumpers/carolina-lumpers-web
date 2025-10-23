@@ -30,46 +30,17 @@
   
   <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
   
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            'cls-amber': '#FFC107',
-            'cls-yellow': '#FFEB3B',
-            'cls-charcoal': '#1a1a1a',
-            'cls-dark': '#0a0a0a',
-            'cls-gray': '#333',
-          }
-        }
-      }
-    }
-  </script>
-  
+  <!-- Legacy CSS (loaded first) -->
   <link rel="stylesheet" href="css/style.css?v=2025-dev-offline">
   <link rel="stylesheet" href="css/forms.css?v=2025-dev-offline">
   
+  <!-- Tailwind CSS (compiled with custom components - loaded last to override legacy) -->
+  <link rel="stylesheet" href="css/tailwind.output.css?v=2025-tailwind">
+  
   <style>
-    /* DEV Environment Indicator */
-    .dev-banner {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      background: linear-gradient(135deg, #ff9800, #f57c00);
-      color: #000;
-      padding: 8px;
-      text-align: center;
-      font-weight: bold;
-      font-size: 14px;
-      z-index: 10000;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-    }
-    
+    /* Body padding for dev banner */
     body {
-      padding-top: 40px; /* Account for dev banner */
+      padding-top: 40px;
     }
     
     /* Full-Screen Loading Overlay */
@@ -158,7 +129,7 @@
   </div>
   
   <!-- DEV Environment Banner -->
-  <div class="dev-banner">
+  <div class="fixed top-0 left-0 right-0 bg-gradient-to-r from-cls-warning to-cls-orange text-cls-charcoal py-2 px-4 text-center font-bold text-sm z-[10000] shadow-lg">
     🚧 DEVELOPMENT VERSION - Testing Offline Features 🚧
   </div>
   
@@ -168,60 +139,114 @@
   <!-- LOGIN FORM (centered vertically) -->
   <main>
     <!-- PWA Install Prompt -->
-    <div id="pwaInstallBanner" class="pwa-banner" style="display:none;">
-      <span data-en="📲 Install CLS Employee App (DEV) for faster access and offline features!"
+    <div id="pwaInstallBanner" class="hidden card-cls border-l-4 border-cls-amber mb-4">
+      <span class="text-white font-medium block mb-2" 
+            data-en="📲 Install CLS Employee App (DEV) for faster access and offline features!"
             data-es="📲 ¡Instala la App de Empleado CLS (DEV) para un acceso más rápido!"
             data-pt="📲 Instale o App de Funcionário CLS (DEV) para acesso mais rápido!">
         📲 Install CLS Employee App (DEV) for faster access and offline features!
       </span>
-      <div class="pwa-buttons">
-        <button id="installPwaBtn" class="pwa-install-btn">Install</button>
-        <button id="dismissPwaBtn" class="pwa-dismiss-btn">Later</button>
+      <div class="flex gap-3 mt-4">
+        <button id="installPwaBtn" class="btn-cls">
+          Install
+        </button>
+        <button id="dismissPwaBtn" class="btn-cls-outline">
+          Later
+        </button>
       </div>
     </div>
     
     <!-- Offline Status Indicator -->
-    <div id="offlineIndicator" style="display: none; background: #ff9800; color: #000; padding: 8px; text-align: center; font-size: 0.9em;">
+    <div id="offlineIndicator" class="hidden bg-cls-warning text-black px-4 py-2 text-center text-sm font-bold rounded-lg shadow-lg">
       📱 You're offline - Some features may be limited
     </div>
 
-    <div class="login-container">
-      <h1 data-en="Employee Login (DEV)" data-es="Inicio de Sesión de Empleado (DEV)" data-pt="Login de Funcionário (DEV)">Employee Login (DEV)</h1>
+    <div class="max-w-md mx-auto px-4 py-8">
+      <!-- Title in Dark Container -->
+      <div class="card-cls mb-6">
+        <h1 class="text-4xl font-bold text-center text-white" 
+            data-en="Employee Login (DEV)" 
+            data-es="Inicio de Sesión de Empleado (DEV)" 
+            data-pt="Login de Funcionário (DEV)">
+          Employee Login (DEV)
+        </h1>
+      </div>
 
-      <form id="loginForm" class="amber-glow">
-        <input type="email" id="email" name="email" autocomplete="email" placeholder="Work Email" 
-               data-en="Work Email" data-es="Correo de Trabajo" data-pt="Email de Trabalho" required>
-        <input type="password" id="password" name="password" autocomplete="current-password" placeholder="Password" 
-               data-en="Password" data-es="Contraseña" data-pt="Senha" required>
+      <form id="loginForm" class="card-cls space-y-6">
+        <input type="email" 
+               id="email" 
+               name="email" 
+               autocomplete="email" 
+               placeholder="Work Email" 
+               class="input-cls"
+               data-en="Work Email" 
+               data-es="Correo de Trabajo" 
+               data-pt="Email de Trabalho" 
+               required>
+        
+        <input type="password" 
+               id="password" 
+               name="password" 
+               autocomplete="current-password" 
+               placeholder="Password" 
+               class="input-cls"
+               data-en="Password" 
+               data-es="Contraseña" 
+               data-pt="Senha" 
+               required>
 
-        <button type="submit" id="loginBtn" data-en="Login" data-es="Iniciar Sesión" data-pt="Entrar">Login</button>
+        <button type="submit" 
+                id="loginBtn" 
+                class="btn-cls"
+                data-en="Login" 
+                data-es="Iniciar Sesión" 
+                data-pt="Entrar">
+          Login
+        </button>
         
         <!-- Biometric Login Section -->
-        <div id="biometricSection" class="biometric-section">
-          <button type="button" id="biometricLoginBtn" class="biometric-button" style="display:none;">
-            <img id="biometricIcon" class="biometric-icon" src="assets/biometric/biometric-default.svg" alt="Biometric icon" />
+        <div id="biometricSection" class="space-y-3">
+          <button type="button" 
+                  id="biometricLoginBtn" 
+                  style="display:none;"
+                  class="btn-cls-outline flex items-center justify-center gap-2">
+            <img id="biometricIcon" 
+                 class="w-6 h-6" 
+                 src="assets/biometric/biometric-default.svg" 
+                 alt="Biometric icon" />
             <span data-en="Sign in with Biometrics"
                   data-es="Iniciar sesión con biometría"
                   data-pt="Entrar com biometria">
               Sign in with Biometrics
             </span>
           </button>
-          <p id="bioStatus" class="biometric-note">Enable Face ID / Touch ID for faster and secure login.</p>
+          <p id="bioStatus" class="text-sm text-gray-300 text-center">
+            <span class="text-gray-200" 
+                  data-en="Don't have an account?" 
+                  data-es="¿No tienes una cuenta?" 
+                  data-pt="Não tem uma conta?">
+              Don't have an account?
+            </span>
+            <a href="employeeSignup-dev.html" 
+               class="link-cls ml-1"
+               data-en="Sign Up" 
+               data-es="Regístrate" 
+               data-pt="Cadastre-se">
+              Sign Up
+            </a>
+          </p>
         </div>
         
-        <p id="status" class="message" role="status" aria-live="polite"></p>
+        <p id="status" class="text-center text-sm text-white font-medium" role="status" aria-live="polite"></p>
       </form>
 
-      <div class="link">
-        <span data-en="Don't have an account?" data-es="¿No tienes una cuenta?" data-pt="Não tem uma conta?">Don't have
-          an account?</span>
-        <a href="employeeSignup-dev.html" data-en="Sign Up" data-es="Regístrate" data-pt="Cadastre-se">Sign Up</a>
-      </div>
-      
-      <div class="link" style="margin-top: 20px; border-top: 1px solid #333; padding-top: 20px;">
-        <a href="employeelogin.html" style="color: #ff9800; font-weight: bold;">
-          ← Back to Production Version
-        </a>
+      <div class="card-cls mt-6">
+        <div class="text-center">
+          <a href="employeelogin.html" 
+             class="link-cls inline-flex items-center gap-2">
+            ← Back to Production Version
+          </a>
+        </div>
       </div>
     </div>
   </main>

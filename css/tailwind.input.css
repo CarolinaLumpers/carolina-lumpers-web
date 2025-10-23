@@ -2,32 +2,36 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Import existing CSS variables for compatibility */
-@import './css/variables.css';
-
 /* Custom utility classes that extend Tailwind */
 @layer components {
+  /* Primary CLS Button */
   .btn-cls {
-    @apply px-6 py-3 rounded-lg font-bold transition-all duration-300;
-    @apply bg-cls-amber text-black hover:shadow-glow-amber;
+    @apply w-full bg-cls-amber hover:bg-cls-amber-hover text-black font-bold py-3 px-4 rounded-lg;
+    @apply transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl;
   }
   
+  /* Outline Button */
   .btn-cls-outline {
-    @apply px-6 py-3 rounded-lg font-bold transition-all duration-300;
-    @apply border-2 border-cls-amber text-cls-amber hover:bg-cls-amber hover:text-black;
+    @apply w-full bg-cls-charcoal border-2 border-cls-charcoal-lighter hover:border-cls-amber;
+    @apply text-white py-3 px-4 rounded-lg transition-all duration-300;
+    @apply hover:bg-cls-charcoal-lighter;
   }
   
-  .card-cls {
-    @apply bg-cls-charcoal border border-cls-gray rounded-lg p-6 shadow-lg;
-  }
-  
+  /* Form Input */
   .input-cls {
-    @apply w-full px-4 py-3 bg-black border border-cls-gray rounded-lg;
-    @apply text-white focus:border-cls-amber focus:outline-none focus:ring-2 focus:ring-cls-amber/20;
+    @apply w-full bg-cls-charcoal border-2 border-cls-charcoal-lighter text-white;
+    @apply placeholder:text-gray-400 px-4 py-3 rounded-lg;
+    @apply focus:outline-none focus:border-cls-amber focus:ring-2 focus:ring-cls-amber/30;
+    @apply transition-all duration-300;
   }
   
-  .loading-spinner {
-    @apply inline-block w-8 h-8 border-4 border-cls-gray rounded-full;
-    @apply border-t-cls-amber animate-spin;
+  /* Card Container */
+  .card-cls {
+    @apply bg-cls-charcoal-light rounded-xl p-8 shadow-xl;
+  }
+  
+  /* Link Style */
+  .link-cls {
+    @apply text-cls-amber hover:text-cls-amber-hover font-semibold transition-colors duration-300;
   }
 }
