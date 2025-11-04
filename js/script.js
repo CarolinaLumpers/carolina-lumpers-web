@@ -1121,18 +1121,29 @@ function initSignupForm() {
       const res = await fetch(`${API_BASE}?action=signup&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`);
       const text = await res.text();
       
+      // Try to parse JSON response
+      let responseData;
+      try {
+        responseData = JSON.parse(text);
+      } catch {
+        // Not JSON, treat as plain text
+        responseData = { message: text };
+      }
+      
+      const message = responseData.message || responseData || text;
+      
       if (statusEl) {
-        statusEl.textContent = text.includes("✅") 
+        statusEl.textContent = message.includes("✅") || message.includes("successfully")
           ? MESSAGES[currentLang].success
-          : text || MESSAGES[currentLang].serverError;
+          : message || MESSAGES[currentLang].serverError;
       }
       
       // Reset form on success
-      if (text.includes("✅")) {
+      if (message.includes("✅") || message.includes("successfully")) {
         form.reset();
       }
     } catch (err) {
-      console.error(err);
+      console.error('Signup error:', err);
       if (statusEl) statusEl.textContent = MESSAGES[currentLang].serverError;
     }
   });
