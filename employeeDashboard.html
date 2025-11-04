@@ -1288,7 +1288,17 @@
           year: "numeric"
         });
         const today = formatter.format(now); // e.g., "01/17/2025"
+        
+        // 🐛 DEBUG: Log what we're comparing
+        console.log('📅 DEBUG - Today formatted:', today);
+        console.log('📊 DEBUG - API returned records:', data.records?.length || 0);
+        if (data.records && data.records.length > 0) {
+          console.log('📊 DEBUG - First record date:', data.records[0].date);
+          console.log('📊 DEBUG - All record dates:', data.records.map(r => r.date));
+        }
+        
         const todayRecords = (data.records || []).filter(r => r.date === today);
+        console.log('✅ DEBUG - Filtered today records:', todayRecords.length);
 
         if (todayRecords.length > 0) {
           todayRecords.sort((a, b) => {

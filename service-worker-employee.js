@@ -1,4 +1,4 @@
-const CACHE_NAME = "cls-employee-v11";
+const CACHE_NAME = "cls-employee-v12"; // 🔧 Updated for dashboard date/lang fixes
 const ASSETS = [
   "./employeelogin.html",
   "./employeeDashboard.html",

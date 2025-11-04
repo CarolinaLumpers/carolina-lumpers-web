@@ -97,6 +97,9 @@ const today = formatter.format(now); // Returns: "01/17/2025"
   - Line 1410: Single `const lang` declaration in `downloadPayrollPdf()`
   - Lines 32-33: Cache-busting updated to `v=2025-01-17`
   - Lines 1701-1702: Cache-busting updated to `v=2025-01-17-dashboard-fix`
+- `carolina-lumpers-web/service-worker-employee.js`
+  - Line 1: Cache version bumped: `cls-employee-v11` → `cls-employee-v12`
+  - **Critical**: This forces all users to download fresh HTML/CSS/JS on next visit
 
 ### Backend Date Format (Reference)
 From `AppsScript/CLS_EmployeeLogin_ClockIn.js` line 115:
@@ -115,10 +118,11 @@ const dateStr = Utilities.formatDate(now, tz, 'MM/dd/yyyy');
 
 ## Deployment Steps
 1. ✅ Fixes committed to `employeeDashboard.html`
-2. ⏳ **Next**: Push to GCP bucket or hosting server
-3. ⏳ **Next**: Verify cache-busting forces browser refresh
-4. ⏳ **Next**: Test with Spanish-speaking user account
-5. ⏳ **Next**: Monitor Activity_Logs for any new errors
+2. ✅ Service worker cache version bumped: `v11` → `v12`
+3. ⏳ **Next**: Push to GCP bucket or hosting server
+4. ⏳ **Next**: Users will auto-update on next visit (service worker handles this)
+5. ⏳ **Next**: Test with Spanish-speaking user account
+6. ⏳ **Next**: Monitor Activity_Logs for any new errors
 
 ---
 
@@ -145,5 +149,49 @@ For date comparisons across frontend/backend:
 
 ---
 
-**Status**: ✅ All fixes implemented and ready for deployment
+---
+
+## Troubleshooting: "Still Seeing Old Version"
+
+### Symptom
+User sees "No clock-ins today." even after clocking in (cached version issue)
+
+### Root Cause
+**Service Worker was caching the old HTML file** with the buggy JavaScript. Even with cache-busting parameters updated, users were served the cached version.
+
+### Solution Applied
+✅ Bumped service worker cache version: `cls-employee-v11` → `cls-employee-v12`
+
+### How Service Worker Cache Works
+1. First visit: Service worker downloads and caches all assets
+2. Subsequent visits: Service worker serves cached version (fast, offline-capable)
+3. Cache version bump: Service worker detects new version, downloads fresh assets, updates cache
+4. User automatically gets new version on next page load
+
+### For Users Still Having Issues
+If a user still sees the old version after deployment:
+1. **Hard Refresh**: Ctrl+Shift+R (Windows) / Cmd+Shift+R (Mac)
+2. **Clear Site Data**: Browser Settings → Site Settings → Clear Data for carolinalumpers.com
+3. **Wait 5 minutes**: Service worker updates in background, then refresh page
+
+### Verification Commands (Browser Console)
+```javascript
+// Check service worker cache version
+caches.keys().then(keys => console.log('Cache versions:', keys));
+// Should show: ["cls-employee-v12"]
+
+// Check if today's date formatting is correct
+const formatter = new Intl.DateTimeFormat("en-US", { 
+  timeZone: "America/New_York",
+  month: "2-digit",
+  day: "2-digit",
+  year: "numeric"
+});
+console.log('Today (formatted):', formatter.format(new Date()));
+// Should show: "01/17/2025" (with leading zeros)
+```
+
+---
+
+**Status**: ✅ All fixes implemented and ready for deployment (including service worker cache bump)
 **Next Action**: Deploy to production and monitor Activity_Logs for 24 hours
