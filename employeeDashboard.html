@@ -1288,17 +1288,7 @@
           year: "numeric"
         });
         const today = formatter.format(now); // e.g., "01/17/2025"
-        
-        // 🐛 DEBUG: Log what we're comparing
-        console.log('📅 DEBUG - Today formatted:', today);
-        console.log('📊 DEBUG - API returned records:', data.records?.length || 0);
-        if (data.records && data.records.length > 0) {
-          console.log('📊 DEBUG - First record date:', data.records[0].date);
-          console.log('📊 DEBUG - All record dates:', data.records.map(r => r.date));
-        }
-        
         const todayRecords = (data.records || []).filter(r => r.date === today);
-        console.log('✅ DEBUG - Filtered today records:', todayRecords.length);
 
         if (todayRecords.length > 0) {
           todayRecords.sort((a, b) => {
@@ -1699,17 +1689,41 @@
   </script>
 
   <script>
-    // Service Worker Registration for Dashboard
+    // Service Worker Registration with Force Update for Dashboard
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('service-worker-employee.js')
-        .then(() => console.log('✅ Employee service worker registered'))
+        .then(registration => {
+          console.log('✅ Employee service worker registered');
+          
+          // 🔧 Force immediate update check on page load
+          registration.update().then(() => {
+            console.log('🔄 Service worker update check completed');
+          });
+
+          // Auto-reload when new service worker takes control
+          registration.addEventListener('updatefound', () => {
+            const newWorker = registration.installing;
+            newWorker.addEventListener('statechange', () => {
+              if (newWorker.state === 'activated' && navigator.serviceWorker.controller) {
+                console.log('🎉 New service worker activated - reloading page');
+                window.location.reload();
+              }
+            });
+          });
+        })
         .catch(err => console.error('❌ SW registration failed:', err));
+
+      // Listen for controller change (new SW took over)
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        console.log('🔄 Service worker controller changed - reloading');
+        window.location.reload();
+      });
     }
   </script>
 
   <!-- Cache Busting Utility -->
-  <script src="js/cache-buster.js?v=2025-01-17" defer></script>
-  <script src="js/script.js?v=2025-01-17-dashboard-fix" defer></script>
+  <script src="js/cache-buster.js?v=2025-01-17-v2" defer></script>
+  <script src="js/script.js?v=2025-01-17-dashboard-fix-v2" defer></script>
 </body>
 
 </html>
