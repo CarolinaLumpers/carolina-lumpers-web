@@ -1600,10 +1600,14 @@ function initLoginForm() {
     });
   }
 
-  console.log('✅ Adding submit event listener to login form');
+  console.log('✅ Adding submit event listener to login form (once: true)');
   form.addEventListener("submit", async (e) => {
     console.log('🔥 Login form submitted!');
     e.preventDefault();
+
+    // Disable submit button to prevent duplicate submissions
+    const submitBtn = document.getElementById('loginBtn');
+    if (submitBtn) submitBtn.disabled = true;
 
     const currentLang = localStorage.getItem("CLS_Lang") || "en";
     const email = document.getElementById("email")?.value.trim();
@@ -1726,10 +1730,15 @@ function initLoginForm() {
       } else {
         // Hide loading overlay on error
         const loadingOverlay = document.getElementById('loadingOverlay');
-        if (loadingOverlay) {
-          loadingOverlay.classList.remove('active');
-        }
-        statusEl.textContent = data.message || getText('login.invalid', currentLang);
+      if (loadingOverlay) {
+        loadingOverlay.classList.remove('active');
+      }
+      
+      // Re-enable submit button on error
+      const submitBtn = document.getElementById('loginBtn');
+      if (submitBtn) submitBtn.disabled = false;
+      
+      statusEl.textContent = data.message || getText('login.invalid', currentLang);
       }
     } catch (err) {
       console.error(err);
@@ -1738,11 +1747,14 @@ function initLoginForm() {
       if (loadingOverlay) {
         loadingOverlay.classList.remove('active');
       }
+      
+      // Re-enable submit button on error
+      const submitBtn = document.getElementById('loginBtn');
+      if (submitBtn) submitBtn.disabled = false;
+      
       if (statusEl) statusEl.textContent = getText('login.error', currentLang);
     }
-  });
-
-  // Apply current language placeholders on form init
+  }, { once: true });  // Apply current language placeholders on form init
   const currentLang = localStorage.getItem("CLS_Lang") || "en";
   loginPlaceholders(currentLang);
   

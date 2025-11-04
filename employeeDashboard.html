@@ -29,8 +29,8 @@
   <link rel="apple-touch-icon" href="assets/CLS-favicon.png">
 
   <!-- Global CSS System -->
-  <link rel="stylesheet" href="css/style.css?v=2025-11-04">
-  <link rel="stylesheet" href="css/dashboard.css?v=2025-11-04">
+  <link rel="stylesheet" href="css/style.css?v=2025-01-17">
+  <link rel="stylesheet" href="css/dashboard.css?v=2025-01-17">
   <style>
     /* Time Edit Modal Styles */
     .modal {
@@ -1279,7 +1279,15 @@
         }
 
         body.innerHTML = "";
-        const today = new Date().toLocaleDateString("en-US", { timeZone: "America/New_York" });
+        // 🔧 Fixed: Format with leading zeros to match backend MM/dd/yyyy format
+        const now = new Date();
+        const formatter = new Intl.DateTimeFormat("en-US", { 
+          timeZone: "America/New_York",
+          month: "2-digit",
+          day: "2-digit",
+          year: "numeric"
+        });
+        const today = formatter.format(now); // e.g., "01/17/2025"
         const todayRecords = (data.records || []).filter(r => r.date === today);
 
         if (todayRecords.length > 0) {
@@ -1407,9 +1415,9 @@
     // =================== Email Payroll PDF (No Download, Multilingual) ===================
     async function downloadPayrollPdf() {
       const btn = document.getElementById("btnPayrollPdf");
+      const lang = localStorage.getItem("CLS_Lang") || "en"; // 🔧 Fixed: Declare once at function scope
 
       if (!currentWeekPeriod) {
-        const lang = localStorage.getItem("CLS_Lang") || "en";
         alert(
           lang === 'es'
             ? 'Primero cargue la semana actual o anterior'
@@ -1421,7 +1429,6 @@
       }
 
       // 🌟 Visual feedback (flash gold + disable)
-      const lang = localStorage.getItem("CLS_Lang") || "en";
       btn.classList.add("btn-flash");
       btn.disabled = true;
       btn.textContent =
@@ -1440,7 +1447,6 @@
 
         const res = await jsonp(url);
 
-        const lang = localStorage.getItem("CLS_Lang") || "en";
         if (res && res.success !== false) {
           alert(
             lang === 'es'
@@ -1459,7 +1465,6 @@
           );
         }
       } catch (err) {
-        const lang = localStorage.getItem("CLS_Lang") || "en";
         alert(
           (lang === 'es'
             ? 'Error al enviar informe: '
@@ -1468,7 +1473,6 @@
               : 'Error sending report: ') + (err.message || err)
         );
       } finally {
-        const lang = localStorage.getItem("CLS_Lang") || "en";
         btn.disabled = false;
         btn.textContent =
           lang === 'es'
@@ -1694,8 +1698,8 @@
   </script>
 
   <!-- Cache Busting Utility -->
-  <script src="js/cache-buster.js?v=2025-11-04" defer></script>
-  <script src="js/script.js?v=2025-11-04-dashboard" defer></script>
+  <script src="js/cache-buster.js?v=2025-01-17" defer></script>
+  <script src="js/script.js?v=2025-01-17-dashboard-fix" defer></script>
 </body>
 
 </html>
