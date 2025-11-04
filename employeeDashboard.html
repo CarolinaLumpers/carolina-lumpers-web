@@ -1689,8 +1689,29 @@
   </script>
 
   <script>
-    // Service Worker Registration with Force Update for Dashboard
+    // Service Worker Registration with Aggressive Cache Clearing for Dashboard
     if ('serviceWorker' in navigator) {
+      // 🔥 Clear old caches immediately on page load
+      const REQUIRED_VERSION = 'cls-employee-v13';
+      caches.keys().then(cacheNames => {
+        const oldCaches = cacheNames.filter(name => 
+          name.startsWith('cls-employee-') && name !== REQUIRED_VERSION
+        );
+        
+        if (oldCaches.length > 0) {
+          console.log('🧹 Clearing old caches:', oldCaches);
+          Promise.all(oldCaches.map(name => caches.delete(name)))
+            .then(() => {
+              console.log('✅ Old caches cleared - reloading page');
+              // Set flag to prevent reload loop
+              if (!sessionStorage.getItem('cache_cleared_v13')) {
+                sessionStorage.setItem('cache_cleared_v13', 'true');
+                window.location.reload();
+              }
+            });
+        }
+      });
+
       navigator.serviceWorker.register('service-worker-employee.js')
         .then(registration => {
           console.log('✅ Employee service worker registered');
@@ -1722,8 +1743,8 @@
   </script>
 
   <!-- Cache Busting Utility -->
-  <script src="js/cache-buster.js?v=2025-01-17-v2" defer></script>
-  <script src="js/script.js?v=2025-01-17-dashboard-fix-v2" defer></script>
+  <script src="js/cache-buster.js?v=2025-01-17-v3" defer></script>
+  <script src="js/script.js?v=2025-01-17-dashboard-fix-v3" defer></script>
 </body>
 
 </html>
