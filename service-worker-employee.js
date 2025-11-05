@@ -1,4 +1,4 @@
-const CACHE_NAME = "cls-employee-v13"; // 🔧 Updated for signup form fixes
+const CACHE_NAME = "cls-employee-v14"; // 🔧 Biometric authentication removed, loading overlay added
 const ASSETS = [
   "./employeelogin.html",
   "./employeeDashboard.html",

@@ -29,67 +29,12 @@
   <link rel="apple-touch-icon" href="assets/CLS-icon-192.png">
   
   <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=2025-11-04-no-bio">
-  <link rel="stylesheet" href="css/forms.css?v=2025-11-04-no-bio">
-  
-  <style>
-    /* Full-Screen Loading Overlay */
-    .loading-overlay {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.95);
-      backdrop-filter: blur(10px);
-      z-index: 9999;
-      justify-content: center;
-      align-items: center;
-    }
-    
-    .loading-overlay.active {
-      display: flex;
-    }
-    
-    .loading-content {
-      text-align: center;
-      color: #FFC107;
-    }
-    
-    .loading-spinner {
-      width: 60px;
-      height: 60px;
-      border: 4px solid rgba(255, 193, 7, 0.2);
-      border-top-color: #FFC107;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      margin: 0 auto 20px;
-    }
-    
-    .loading-text {
-      font-size: 18px;
-      font-weight: 500;
-      margin: 0;
-      color: #FFC107;
-    }
-    
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-  </style>
+  <link rel="stylesheet" href="css/style.css?v=2025-11-04">
+  <link rel="stylesheet" href="css/forms.css?v=2025-11-04">
 
 </head>
 
 <body data-page="login">
-  <!-- Full-Screen Loading Overlay -->
-  <div id="loadingOverlay" class="loading-overlay">
-    <div class="loading-content">
-      <div class="loading-spinner"></div>
-      <p id="loadingText" class="loading-text">Loading...</p>
-    </div>
-  </div>
-
   <!-- NAVBAR -->
   <div id="navbar-container"></div>
 
@@ -123,6 +68,19 @@
                data-en="Password" data-es="Contraseña" data-pt="Senha" required>
 
         <button type="submit" id="loginBtn" data-en="Login" data-es="Iniciar Sesión" data-pt="Entrar">Login</button>
+        
+        <!-- Biometric Login Section -->
+        <div id="biometricSection" class="biometric-section">
+          <button type="button" id="biometricLoginBtn" class="biometric-button" style="display:none;">
+            <img id="biometricIcon" class="biometric-icon" src="assets/biometric/biometric-default.svg" alt="Biometric icon" />
+            <span data-en="Sign in with Biometrics"
+                  data-es="Iniciar sesión con biometría"
+                  data-pt="Entrar com biometria">
+              Sign in with Biometrics
+            </span>
+          </button>
+          <p id="bioStatus" class="biometric-note">Enable Face ID / Touch ID for faster and secure login.</p>
+        </div>
         
         <p id="status" class="message" role="status" aria-live="polite"></p>
       </form>
@@ -198,6 +156,21 @@
       
       checkOfflineAccess();
       
+      // Initialize biometric button visibility after DOM is ready
+      // This happens after the login form and biometric section are fully loaded
+      if (window.evaluateBiometricVisibility) {
+        window.evaluateBiometricVisibility();
+        console.log('✅ Biometric visibility evaluated on page load');
+      } else {
+        // Script.js not loaded yet, try again soon
+        setTimeout(() => {
+          if (window.evaluateBiometricVisibility) {
+            window.evaluateBiometricVisibility();
+            console.log('✅ Biometric visibility evaluated (delayed)');
+          }
+        }, 300);
+      }
+      
       // Listen for online/offline events
       window.addEventListener('offline', () => {
         console.log('📱 Device went offline');
@@ -227,7 +200,7 @@
     setTimeout(() => {
       console.log('🛡️ Running comprehensive failsafe checks...');
       
-      // Ensure login form is initialized
+      // 1. Ensure login form is initialized
       if (window.initLoginForm && document.getElementById('loginForm')) {
         const form = document.getElementById('loginForm');
         if (!form.hasAttribute('data-initialized')) {
@@ -237,12 +210,43 @@
           console.log('✅ Failsafe check: Login form already properly initialized');
         }
       }
+      
+      // 2. Ensure biometric button visibility is properly evaluated
+      if (window.evaluateBiometricVisibility) {
+        console.log('🔍 Failsafe: Re-evaluating biometric button visibility');
+        window.evaluateBiometricVisibility();
+      }
+      
+      // 3. Final check for biometric button state
+      const biometricBtn = document.getElementById('biometricLoginBtn');
+      if (biometricBtn) {
+        const isWebAuthnSupported = window.PublicKeyCredential && 
+                                   navigator.credentials && 
+                                   navigator.credentials.create;
+        const isRegistered = localStorage.getItem('CLS_BioRegistered') === 'true';
+        const registeredFor = localStorage.getItem('CLS_BioRegisteredFor');
+        const credentialId = localStorage.getItem('CLS_BioCredentialId');
+        
+        console.log('🔍 Failsafe final check:', {
+          webAuthnSupported: isWebAuthnSupported,
+          buttonVisible: biometricBtn.style.display !== 'none',
+          shouldBeVisible: isWebAuthnSupported && isRegistered && registeredFor && credentialId
+        });
+        
+        if (isWebAuthnSupported && isRegistered && registeredFor && credentialId && biometricBtn.style.display === 'none') {
+          console.log('🚨 Failsafe: Biometric button should be visible but is hidden, forcing show');
+          biometricBtn.style.display = 'block';
+          if (window.updateBiometricButtonText) {
+            window.updateBiometricButtonText();
+          }
+        }
+      }
     }, 1500);
   </script>
 
   <!-- Cache Busting Utility -->
-  <script src="js/cache-buster.js?v=2025-11-04-no-bio" defer></script>
-  <script src="js/script.js?v=2025-11-04-no-bio" defer></script>
+  <script src="js/cache-buster.js?v=2025-11-04" defer></script>
+  <script src="js/script.js?v=2025-11-04-login" defer></script>
 </body>
 
 </html>
