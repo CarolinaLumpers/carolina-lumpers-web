@@ -710,11 +710,28 @@
         const cb = "cb_" + Math.random().toString(36).slice(2);
         const s = document.createElement("script");
         const sep = url.includes("?") ? "&" : "?";
-        s.src = `${url}${sep}callback=${cb}`;
+        const fullUrl = `${url}${sep}callback=${cb}`;
+        s.src = fullUrl;
         s.async = true;
-        const timeout = setTimeout(() => { delete window[cb]; s.remove(); reject(new Error("Request timed out")); }, 30000);
-        window[cb] = (data) => { clearTimeout(timeout); delete window[cb]; s.remove(); resolve(data); };
-        s.onerror = () => { clearTimeout(timeout); delete window[cb]; s.remove(); reject(new Error("Network error")); };
+        const timeout = setTimeout(() => { 
+          delete window[cb]; 
+          s.remove(); 
+          reject(new Error("Request timed out after 30s")); 
+        }, 30000);
+        window[cb] = (data) => { 
+          clearTimeout(timeout); 
+          delete window[cb]; 
+          s.remove(); 
+          resolve(data); 
+        };
+        s.onerror = (e) => { 
+          clearTimeout(timeout); 
+          delete window[cb]; 
+          s.remove(); 
+          console.error('JSONP script load error:', e, 'URL:', fullUrl);
+          reject(new Error("Script load failed - check if Cloudflare Worker is responding")); 
+        };
+        console.log('📡 Loading JSONP script:', fullUrl);
         document.body.appendChild(s);
       });
     }
@@ -1184,10 +1201,13 @@
         // Try sending immediately (works both online and with cached service worker)
         status.innerHTML = '<span class="btn-spinner"></span> ' + getMSG('recordingClockIn');
         
+        const clockInUrl = `${API_URL}?action=clockin&workerId=${encodeURIComponent(workerId)}&lat=${latitude}&lng=${longitude}&lang=${lang}&email=${encodeURIComponent(email)}&device=${encodeURIComponent(deviceInfo.displayString)}`;
+        console.log('🔵 Clock-in URL:', clockInUrl);
+        
         try {
-          const res = await jsonp(
-            `${API_URL}?action=clockin&workerId=${encodeURIComponent(workerId)}&lat=${latitude}&lng=${longitude}&lang=${lang}&email=${encodeURIComponent(email)}&device=${encodeURIComponent(deviceInfo.displayString)}`
-          );
+          console.log('⏱️ Sending clock-in request...');
+          const res = await jsonp(clockInUrl);
+          console.log('✅ Clock-in response:', res);
 
           if (res && res.success) {
             // If backend provided a localized message (e.g. late message), show it directly
@@ -1208,6 +1228,7 @@
           btn.style.display = 'inline-block';
         } catch (networkErr) {
           // Network request failed - save offline
+          console.error('❌ Clock-in request failed:', networkErr);
           const clockData = {
             workerId: workerId,
             lat: latitude,
