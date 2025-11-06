@@ -1,4 +1,4 @@
-const CACHE_NAME = "cls-employee-v14"; // 🔧 Biometric authentication removed, loading overlay added
+const CACHE_NAME = "cls-employee-v17"; // 🔧 Added admin module files to cache
 const ASSETS = [
   "./employeelogin.html",
   "./employeeDashboard.html",
@@ -11,6 +11,13 @@ const ASSETS = [
   "./css/dashboard.css",
   "./css/forms.css",
   "./js/script.js",
+  "./js/cache-buster.js",
+  "./js/admin/admin-tools.js",
+  "./js/admin/clockin-manager.js",
+  "./js/admin/time-edit-requests.js",
+  "./js/admin/run-payroll.js",
+  "./js/admin/quickbooks-sync.js",
+  "./js/admin/view-as.js",
   "./components/navbar.html",
   "./components/footer.html",
   "./manifest-employee.json",

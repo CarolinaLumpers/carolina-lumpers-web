@@ -174,29 +174,53 @@
       
       updateOfflineStatus();
       
-      // Offline Login Experience
-      function checkOfflineAccess() {
-        if (!navigator.onLine) {
-          const workerId = localStorage.getItem('CLS_WorkerID');
-          const sessionExpiry = localStorage.getItem('CLS_SessionExpiry');
+      // ✅ Check for valid session and auto-redirect (both online and offline)
+      function checkActiveSessionAndRedirect() {
+        const workerId = localStorage.getItem('CLS_WorkerID');
+        const rememberUser = localStorage.getItem('CLS_RememberUser');
+        const sessionExpiry = localStorage.getItem('CLS_SessionExpiry');
+        
+        // Check if user has valid session
+        if (workerId && rememberUser === 'true') {
+          // If sessionExpiry exists, validate it; otherwise, session is infinite
+          const isSessionValid = !sessionExpiry || new Date(sessionExpiry) > new Date();
           
-          if (workerId && sessionExpiry && new Date(sessionExpiry) > new Date()) {
-            console.log('📱 Offline mode: Redirecting to cached dashboard');
-            setTimeout(() => {
-              window.location.href = 'employeeDashboard.html';
-            }, 500);
-            return;
-          } else {
+          if (isSessionValid) {
+            const displayName = localStorage.getItem('CLS_WorkerName') || workerId;
+            console.log(`✅ Valid session found for ${displayName}, auto-redirecting to dashboard`);
+            
+            // Show friendly message
             const statusEl = document.getElementById('status');
             if (statusEl) {
-              statusEl.textContent = '📱 Offline: Please reconnect to log in or try again when online.';
-              statusEl.style.color = '#FFC107';
+              statusEl.textContent = `✅ Welcome back, ${displayName}! Redirecting...`;
+              statusEl.style.color = '#4CAF50';
             }
+            
+            // Redirect to dashboard
+            setTimeout(() => {
+              window.location.href = 'employeeDashboard.html';
+            }, 800);
+            return true; // Session valid, redirecting
+          } else {
+            // Session expired, clear it
+            console.log('⚠️ Session expired, clearing localStorage');
+            localStorage.removeItem('CLS_SessionExpiry');
           }
         }
+        
+        // No valid session, check if offline and show appropriate message
+        if (!navigator.onLine) {
+          const statusEl = document.getElementById('status');
+          if (statusEl) {
+            statusEl.textContent = '📱 Offline: Please reconnect to log in or try again when online.';
+            statusEl.style.color = '#FFC107';
+          }
+        }
+        
+        return false; // No redirect
       }
       
-      checkOfflineAccess();
+      checkActiveSessionAndRedirect();
       
       // Listen for online/offline events
       window.addEventListener('offline', () => {

@@ -20,9 +20,16 @@
 .form-container {
   display: block;
   width: 100%;
-  max-width: 800px; /* Apply form is wider */
+  max-width: 1000px; /* Apply form is wider */
   margin: 0 auto;
   padding: var(--space-xl);
+}
+
+/* Apply page specific: widen the section container */
+body[data-page="apply"] #apply.section-container,
+body[data-page="apply"] .section-container {
+  max-width: 1400px;
+  width: 95%;
 }
 
 
@@ -92,10 +99,10 @@ form textarea:focus {
 /* [COMPONENT: Form Grid Layout] */
 .form-grid {
   width: 100%;
-  max-width: 800px;
+  max-width: 100%;
   display: grid;
   grid-template-columns: 220px 1fr;
-  gap: var(--space-md) var(--space-md);
+  gap: var(--space-md) var(--space-lg);
   text-align: left;
   align-items: center;
 }
@@ -192,6 +199,9 @@ form textarea:focus {
   padding: var(--space-xl);
   margin-top: var(--space-lg);
   box-shadow: var(--shadow-accent);
+  width: 50%;
+  max-width: 40%;
+  box-sizing: border-box;
 }
 
 .form-step.active {
@@ -220,7 +230,7 @@ form textarea:focus {
   height: auto !important;
   overflow: visible !important;
   border: 1px solid #333 !important;
-  max-width: 500px !important;
+  max-width: 100% !important;
   width: 100% !important;
   box-shadow: var(--shadow-accent) !important;
 }
@@ -700,22 +710,56 @@ form textarea:focus {
 
 /* [RESPONSIVE: Mobile Form Adjustments] */
 @media (max-width: 768px) {
+  /* Apply page: use full width on mobile with minimal margins */
+  body[data-page="apply"] #apply.section-container,
+  body[data-page="apply"] .section-container {
+    max-width: 95%;
+    width: 95%;
+    padding: var(--space-md);
+    margin: var(--space-md) auto;
+  }
+
+  body[data-page="apply"] main.container {
+    padding: var(--space-sm);
+    margin: 0 auto;
+  }
+
   /* Form container mobile */
   .form-container,
   .login-container,
   .signup-container {
-    max-width: 90%;
-    padding: var(--space-lg);
+    max-width: 100%;
+    width: 100%;
+    padding: var(--space-md);
+    margin: 0;
   }
 
   /* Form grid mobile */
   .form-grid {
     grid-template-columns: 1fr;
     gap: var(--space-sm);
+    padding: 0;
   }
 
   .form-grid label {
     margin-bottom: var(--space-xs);
+  }
+
+  /* Form steps use full width on mobile */
+  .form-step {
+    padding: 16px 20px;
+    width: 100%;
+    max-width: 100%;
+    margin: var(--space-md) 0;
+    border-radius: var(--radius-md);
+  }
+
+  /* Remove margins from form itself on mobile */
+  body[data-page="apply"] form {
+    margin: 0;
+    padding: var(--space-md);
+    max-width: 100%;
+    width: 100%;
   }
 
   /* Form navigation mobile */

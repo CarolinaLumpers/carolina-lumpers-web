@@ -28,6 +28,9 @@
   <meta name="apple-mobile-web-app-title" content="CLS Employee">
   <link rel="apple-touch-icon" href="assets/CLS-favicon.png">
 
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
   <!-- Global CSS System -->
   <link rel="stylesheet" href="css/style.css?v=2025-11-04-no-bio">
   <link rel="stylesheet" href="css/dashboard.css?v=2025-11-04-no-bio">
@@ -152,29 +155,35 @@
       border-color: rgba(244, 67, 54, 0.4);
     }
     .action-btn {
-      padding: 5px 10px;
-      font-size: 11px;
-      border-radius: 4px;
+      padding: 8px 12px;
+      font-size: 14px;
+      border-radius: 6px;
       cursor: pointer;
       text-decoration: none;
       transition: all 0.3s;
       background: transparent;
-      border: 1px solid;
+      border: 1px solid transparent;
+      line-height: 1;
     }
     .edit-btn {
-      background: rgba(33, 150, 243, 0.1);
-      color: #2196F3;
-      border-color: #2196F3;
+      background: rgba(255, 193, 7, 0.1);
+      color: #FFC107;
+      border-color: rgba(255, 193, 7, 0.3);
     }
     .edit-btn:hover:not(:disabled) {
-      background: rgba(33, 150, 243, 0.3);
+      background: rgba(255, 193, 7, 0.3);
+      transform: scale(1.1);
+      color: #FFD54F;
     }
     .edit-btn:disabled {
-      opacity: 0.4;
+      opacity: 0.3;
       cursor: not-allowed;
       color: #666;
-      border-color: #666;
       background: transparent;
+      border-color: transparent;
+    }
+    .edit-btn i {
+      pointer-events: none;
     }
     /* Admin Subsection Styles */
     .admin-subsection {
@@ -258,17 +267,6 @@
   <!-- DASHBOARD -->
   <div class="dashboard">
 
-    <!-- PWA Status Indicator - Sticky when active -->
-    <div id="pwaStatus"
-      style="display: none; background: rgba(255, 193, 7, 0.1); border: 1px solid #FFC107; color: #FFC107; padding: 8px 16px; border-radius: 8px; font-size: 0.9em; text-align: center; margin: 8px 16px 16px 16px; position: sticky; top: 0; z-index: 100;">
-      <span id="pwaStatusText" 
-            data-en="📱 App Mode Active" 
-            data-es="📱 Modo App Activo" 
-            data-pt="📱 Modo App Ativo">
-        📱 App Mode Active
-      </span>
-    </div>
-
     <h1 id="welcomeMessage" data-en="Employee Dashboard" data-es="Panel del Empleado" data-pt="Painel do Funcionário">
       Employee Dashboard</h1>
     <h2 id="welcomeName"></h2>
@@ -303,13 +301,12 @@
           <tr>
             <th data-en="Date" data-es="Fecha" data-pt="Data">Date</th>
             <th data-en="Time" data-es="Hora" data-pt="Hora">Time</th>
-            <th data-en="Status" data-es="Estado" data-pt="Status">Status</th>
-            <th data-en="Actions" data-es="Acciones" data-pt="Ações">Actions</th>
+            <th style="width: 60px; text-align: center;"></th>
           </tr>
         </thead>
         <tbody id="reportBody">
           <tr>
-            <td colspan="2" class="muted">Loading...</td>
+            <td colspan="3" class="muted">Loading...</td>
           </tr>
         </tbody>
       </table>
@@ -579,38 +576,6 @@
     // ======================== CONFIG ========================
   const API_URL = "https://cls-proxy.s-garay.workers.dev";
     
-    // ======================== JSONP HELPER ========================
-    function jsonp(url) {
-      return new Promise((resolve, reject) => {
-        const cb = "cb_" + Math.random().toString(36).slice(2);
-        const s = document.createElement("script");
-        
-        window[cb] = (data) => {
-          resolve(data);
-          document.head.removeChild(s);
-          delete window[cb];
-        };
-        
-        s.onerror = () => {
-          reject(new Error('Network Error: Failed to load script'));
-          document.head.removeChild(s);
-          delete window[cb];
-        };
-        
-        s.src = url + (url.includes('?') ? '&' : '?') + `callback=${cb}`;
-        document.head.appendChild(s);
-        
-        // Timeout after 30 seconds
-        setTimeout(() => {
-          if (window[cb]) {
-            reject(new Error('Request timeout'));
-            document.head.removeChild(s);
-            delete window[cb];
-          }
-        }, 30000);
-      });
-    }
-    
     // Local getText function for dashboard (fallback until script.js loads)
     function getText(path, lang) {
       const dashboardTexts = {
@@ -630,19 +595,19 @@
           pt: "ID do Funcionário"
         },
         'pwaStatus.offlineMode': {
-          en: "📱 Offline Mode Active",
-          es: "📱 Modo Sin Conexión Activo",
-          pt: "📱 Modo Offline Ativo"
+          en: 'Offline Mode Active',
+          es: 'Modo Sin Conexión Activo',
+          pt: 'Modo Offline Ativo'
         },
         'pwaStatus.installedPwa': {
-          en: "📱 App Mode: Installed PWA",
-          es: "📱 Modo App: PWA Instalada",
-          pt: "📱 Modo App: PWA Instalado"
+          en: 'App Mode: Installed PWA',
+          es: 'Modo App: PWA Instalada',
+          pt: 'Modo App: PWA Instalado'
         },
         'pwaStatus.serviceWorkerActive': {
-          en: "🔄 App Mode: Online",
-          es: "🔄 Modo App: En Línea",
-          pt: "🔄 Modo App: Online"
+          en: 'App Mode: Online',
+          es: 'Modo App: En Línea',
+          pt: 'Modo App: Online'
         }
       };
       
@@ -652,22 +617,22 @@
 
     // ================= Multilingual Messages =================
     const MSG = {
-      gettingLocation: { en: "📍 Getting your location...", es: "📍 Obteniendo tu ubicación...", pt: "📍 Obtendo sua localização..." },
+      gettingLocation: { en: "Getting your location...", es: "Obteniendo tu ubicación...", pt: "Obtendo sua localização..." },
       recordingClockIn: { en: "Recording clock-in...", es: "Registrando entrada...", pt: "Registrando entrada..." },
-      clockInSuccess: { en: "✅ Clock-in successful at", es: "✅ ¡Registro exitoso en", pt: "✅ Registro bem-sucedido em" },
-      clockInFailed: { en: "⚠️ Clock-in failed.", es: "⚠️ Error al registrar entrada.", pt: "⚠️ Falha ao registrar entrada." },
-      locationDenied: { en: "⚠️ Location access denied. Please enable GPS.", es: "⚠️ Acceso a la ubicación denegado. Activa el GPS.", pt: "⚠️ Acesso à localização negado. Ative o GPS." },
-      locationUnavailable: { en: "⚠️ Location unavailable. Try again.", es: "⚠️ Ubicación no disponible. Inténtalo de nuevo.", pt: "⚠️ Localização indisponível. Tente novamente." },
-      locationTimeout: { en: "⚠️ Location request timed out.", es: "⚠️ Solicitud de ubicación agotó el tiempo.", pt: "⚠️ Solicitação de localização expirou." },
-      errorPrefix: { en: "⚠️ Error:", es: "⚠️ Error:", pt: "⚠️ Erro:" },
+      clockInSuccess: { en: "Clock-in successful at", es: "¡Registro exitoso en", pt: "Registro bem-sucedido em" },
+      clockInFailed: { en: "Clock-in failed.", es: "Error al registrar entrada.", pt: "Falha ao registrar entrada." },
+      locationDenied: { en: "Location access denied. Please enable GPS.", es: "Acceso a la ubicación denegado. Activa el GPS.", pt: "Acesso à localização negado. Ative o GPS." },
+      locationUnavailable: { en: "Location unavailable. Try again.", es: "Ubicación no disponible. Inténtalo de nuevo.", pt: "Localização indisponível. Tente novamente." },
+      locationTimeout: { en: "Location request timed out.", es: "Solicitud de ubicación agotó el tiempo.", pt: "Solicitação de localização expirou." },
+      errorPrefix: { en: "Error:", es: "Error:", pt: "Erro:" },
       loadingReport: { en: "Loading...", es: "Cargando...", pt: "Carregando..." },
       noClockIns: { en: "No clock-ins this week.", es: "No hay registros esta semana.", pt: "Sem registros esta semana." },
-      reportError: { en: "⚠️ Error loading report:", es: "⚠️ Error al cargar el informe:", pt: "⚠️ Erro ao carregar o relatório:" },
+      reportError: { en: "Error loading report:", es: "Error al cargar el informe:", pt: "Erro ao carregar o relatório:" },
       // Offline sync messages
-      offlineSaved: { en: "📱 Clock-in saved offline — will sync when online", es: "📱 Registro guardado sin conexión — se sincronizará cuando esté en línea", pt: "📱 Registro salvo offline — será sincronizado quando online" },
-      syncInProgress: { en: "🔄 Connection restored — syncing clock data...", es: "🔄 Conexión restaurada — sincronizando datos...", pt: "🔄 Conexão restaurada — sincronizando dados..." },
-      syncComplete: { en: "✅ All clock-ins synced successfully", es: "✅ Todos los registros sincronizados", pt: "✅ Todos os registros sincronizados" },
-      pendingSync: { en: "🟡 pending sync", es: "🟡 sincronización pendiente", pt: "🟡 sincronização pendente" },
+      offlineSaved: { en: "Clock-in saved offline — will sync when online", es: "Registro guardado sin conexión — se sincronizará cuando esté en línea", pt: "Registro salvo offline — será sincronizado quando online" },
+      syncInProgress: { en: "Connection restored — syncing clock data...", es: "Conexión restaurada — sincronizando datos...", pt: "Conexão restaurada — sincronizando dados..." },
+      syncComplete: { en: "All clock-ins synced successfully", es: "Todos los registros sincronizados", pt: "Todos os registros sincronizados" },
+      pendingSync: { en: "pending sync", es: "sincronización pendiente", pt: "sincronização pendente" },
       // Time edit messages
       timeEditRequest: { en: "Time adjustment request submitted", es: "Solicitud de ajuste de tiempo enviada", pt: "Solicitação de ajuste de tempo enviada" },
       timeEditError: { en: "Failed to submit time adjustment request", es: "Error al enviar solicitud de ajuste", pt: "Falha ao enviar solicitação de ajuste" },
@@ -682,10 +647,32 @@
       reviewed: { en: "Reviewed", es: "Revisado", pt: "Revisado" }
     };
 
-    // Helper function to get MSG translations
+    // Helper function to create icon element
+    function createIcon(iconClasses) {
+      const icon = document.createElement('i');
+      icon.className = iconClasses;
+      return icon;
+    }
+
+    // Helper function to get MSG translations (returns plain text without HTML)
     function getMSG(key, lang = null) {
       const currentLang = lang || localStorage.getItem("CLS_Lang") || "en";
-      return MSG[key] && MSG[key][currentLang] ? MSG[key][currentLang] : MSG[key]["en"] || "";
+      let message = MSG[key] && MSG[key][currentLang] ? MSG[key][currentLang] : MSG[key]["en"] || "";
+      // Strip HTML tags for text-only use
+      return message.replace(/<[^>]*>/g, '');
+    }
+    
+    // Helper to set status with icon
+    function setStatusWithIcon(element, iconClasses, message) {
+      if (!element) return;
+      element.innerHTML = '';
+      if (iconClasses) {
+        const icon = createIcon(iconClasses);
+        element.appendChild(icon);
+        element.appendChild(document.createTextNode(' ' + message));
+      } else {
+        element.textContent = message;
+      }
     }
 
     // =================== JSONP Helper ===================
@@ -696,7 +683,7 @@
         const sep = url.includes("?") ? "&" : "?";
         s.src = `${url}${sep}callback=${cb}`;
         s.async = true;
-        const timeout = setTimeout(() => { delete window[cb]; s.remove(); reject(new Error("Request timed out")); }, 15000);
+        const timeout = setTimeout(() => { delete window[cb]; s.remove(); reject(new Error("Request timed out")); }, 30000);
         window[cb] = (data) => { clearTimeout(timeout); delete window[cb]; s.remove(); resolve(data); };
         s.onerror = () => { clearTimeout(timeout); delete window[cb]; s.remove(); reject(new Error("Network error")); };
         document.body.appendChild(s);
@@ -757,7 +744,12 @@
       const pendingCount = await getPendingSyncCount();
       const syncStatus = document.getElementById('syncStatus');
       if (syncStatus && pendingCount > 0) {
-        syncStatus.textContent = `${pendingCount} ${getMSG('pendingSync')}`;
+        syncStatus.innerHTML = '';
+        const icon = createIcon('fas fa-circle');
+        icon.style.color = '#ffc107';
+        syncStatus.appendChild(document.createTextNode(`${pendingCount} `));
+        syncStatus.appendChild(icon);
+        syncStatus.appendChild(document.createTextNode(' ' + getMSG('pendingSync')));
         syncStatus.style.display = 'block';
       } else if (syncStatus) {
         syncStatus.style.display = 'none';
@@ -771,7 +763,7 @@
 
         switch (type) {
           case 'CLOCK_SYNC_SUCCESS':
-            console.log('✅ Clock-in synced:', data);
+            console.log('[SUCCESS] Clock-in synced:', data);
             updateSyncStatus();
             loadReport(); // Refresh the report
             break;
@@ -783,13 +775,13 @@
     window.addEventListener('online', () => {
       const status = document.getElementById('clockInStatus');
       if (status) {
-        status.textContent = getMSG('syncInProgress');
+        setStatusWithIcon(status, 'fas fa-sync-alt fa-spin', getMSG('syncInProgress'));
       }
       triggerSync();
     });
 
     window.addEventListener('offline', () => {
-      console.log('📱 Device offline');
+      console.log('[OFFLINE] Device offline');
     });
 
     // =================== Session ===================
@@ -818,42 +810,43 @@
 
     // =================== INIT (All Event Bindings + Defaults) ===================
     
-    // PWA Status Detection and Display (Global scope for switchLanguage access)
+    // PWA Status Detection and Display (Updates navbar icon)
     window.updatePWAStatus = function() {
-      const pwaStatus = document.getElementById('pwaStatus');
-      const pwaStatusText = document.getElementById('pwaStatusText');
+      const pwaIcon = document.getElementById('pwaStatusIcon');
+      if (!pwaIcon) return; // Icon not loaded yet
+      
       const currentLang = localStorage.getItem("CLS_Lang") || "en";
 
-      // Only show when offline or in PWA mode
+      // Detect PWA/offline state and update icon
       if (!navigator.onLine) {
-        // Offline mode - show sticky banner
-        pwaStatus.style.display = 'block';
-        pwaStatus.style.background = 'rgba(255, 152, 0, 0.1)';
-        pwaStatus.style.borderColor = '#ff9800';
-        pwaStatus.style.color = '#ff9800';
-        pwaStatusText.textContent = getText('pwaStatus.offlineMode', currentLang);
+        // Offline mode - red wifi-slash icon
+        pwaIcon.innerHTML = '';
+        pwaIcon.appendChild(createIcon('fas fa-wifi-slash'));
+        pwaIcon.style.color = '#ff5252'; // Red
+        pwaIcon.style.display = 'flex';
+        pwaIcon.title = getText('pwaStatus.offlineMode', currentLang);
       } else if (window.matchMedia('(display-mode: standalone)').matches) {
-        // Running as installed PWA - show sticky banner
-        pwaStatus.style.display = 'block';
-        pwaStatus.style.background = 'rgba(255, 193, 7, 0.1)';
-        pwaStatus.style.borderColor = '#FFC107';
-        pwaStatus.style.color = '#FFC107';
-        pwaStatusText.textContent = getText('pwaStatus.installedPwa', currentLang);
+        // Running as installed PWA - green mobile icon
+        pwaIcon.innerHTML = '';
+        pwaIcon.appendChild(createIcon('fas fa-mobile-alt'));
+        pwaIcon.style.color = '#4CAF50'; // Green
+        pwaIcon.style.display = 'flex';
+        pwaIcon.title = getText('pwaStatus.installedPwa', currentLang);
       } else if (navigator.serviceWorker && navigator.serviceWorker.controller) {
-        // Service worker active but not installed - show sticky banner
-        pwaStatus.style.display = 'block';
-        pwaStatus.style.background = 'rgba(255, 193, 7, 0.1)';
-        pwaStatus.style.borderColor = '#FFC107';
-        pwaStatus.style.color = '#FFC107';
-        pwaStatusText.textContent = getText('pwaStatus.serviceWorkerActive', currentLang);
+        // Service worker active - green sync icon
+        pwaIcon.innerHTML = '';
+        pwaIcon.appendChild(createIcon('fas fa-sync-alt'));
+        pwaIcon.style.color = '#4CAF50'; // Green
+        pwaIcon.style.display = 'flex';
+        pwaIcon.title = getText('pwaStatus.serviceWorkerActive', currentLang);
       } else {
-        // Regular web browser - hide banner
-        pwaStatus.style.display = 'none';
+        // Regular web browser - hide icon
+        pwaIcon.style.display = 'none';
       }
     };
 
-    // API call with retry logic and exponential backoff
-    window.apiCallWithRetry = async function(url, maxRetries = 3) {
+    // API call with retry logic (reduced to 1 retry to prevent excessive 60-90s timeouts)
+    window.apiCallWithRetry = async function(url, maxRetries = 1) {
       for (let i = 0; i < maxRetries; i++) {
         try {
           return await jsonp(url);
@@ -863,8 +856,8 @@
             console.error('All retry attempts failed');
             throw e;
           }
-          // Exponential backoff: 1s, 2s, 4s
-          await new Promise(resolve => setTimeout(resolve, 1000 * Math.pow(2, i)));
+          // Wait 2 seconds before retry
+          await new Promise(resolve => setTimeout(resolve, 2000));
         }
       }
     };
@@ -969,14 +962,8 @@
         btnSyncVendorsLive.addEventListener('click', () => triggerVendorSync(false));
       }
 
-      // Run Payroll button (Admin only)
-      const btnRunPayroll = document.getElementById('btnRunPayroll');
-      if (btnRunPayroll) {
-        btnRunPayroll.addEventListener('click', () => triggerRunPayroll());
-      }
-
-      // Populate Run Payroll week selector
-      populateRunPayrollWeeks();
+      // Note: Run Payroll is handled by admin-tools.js ES6 module (run-payroll.js)
+      // The module automatically wires up the button and populates the dropdown
 
       // Language init
       initLanguage();
@@ -1090,8 +1077,13 @@
     async function handleClockIn() {
       const btn = document.getElementById("clockInBtn");
       const status = document.getElementById("clockInStatus");
-      btn.disabled = true;
-      status.textContent = getMSG('gettingLocation');
+      
+      // Hide button and show spinner
+      btn.style.display = 'none';
+      status.innerHTML = '<span class="btn-spinner"></span> ';
+      const icon = createIcon('fas fa-map-marker-alt');
+      status.appendChild(icon);
+      status.appendChild(document.createTextNode(' ' + getMSG('gettingLocation')));
 
       try {
         const pos = await new Promise((resolve, reject) =>
@@ -1123,10 +1115,10 @@
           const saved = await saveClockInOffline(clockData);
 
           if (saved) {
-            status.textContent = getMSG('offlineSaved');
+            setStatusWithIcon(status, 'fas fa-mobile-alt', getMSG('offlineSaved'));
             updateSyncStatus();
           } else {
-            status.textContent = getMSG('clockInFailed') + " (Offline save failed)";
+            setStatusWithIcon(status, 'fas fa-exclamation-triangle', getMSG('clockInFailed') + " (Offline save failed)");
           }
           return;
         }
@@ -1144,23 +1136,23 @@
           } else {
             const site = res.site || "Job Site";
             const dist = res.distance ? ` (${res.distance} mi)` : "";
-            status.textContent = `${getMSG('clockInSuccess')} ${site}${dist}`;
+            setStatusWithIcon(status, 'fas fa-check-circle', `${getMSG('clockInSuccess')} ${site}${dist}`);
           }
           await loadReport();
         } else if (res && res.message) {
           const site = res.site ? ` (${res.site} - ${res.distance} mi)` : "";
-          status.textContent = `${getMSG('clockInFailed')} ${site}. ${res.message}`;
+          setStatusWithIcon(status, 'fas fa-exclamation-triangle', `${getMSG('clockInFailed')} ${site}. ${res.message}`);
         } else {
-          status.textContent = getMSG('clockInFailed');
+          setStatusWithIcon(status, 'fas fa-exclamation-triangle', getMSG('clockInFailed'));
         }
       } catch (err) {
         // Handle geolocation errors
         if (err && err.code === 1)
-          status.textContent = getMSG('locationDenied');
+          setStatusWithIcon(status, 'fas fa-exclamation-triangle', getMSG('locationDenied'));
         else if (err && err.code === 2)
-          status.textContent = getMSG('locationUnavailable');
+          setStatusWithIcon(status, 'fas fa-exclamation-triangle', getMSG('locationUnavailable'));
         else if (err && err.code === 3)
-          status.textContent = getMSG('locationTimeout');
+          setStatusWithIcon(status, 'fas fa-exclamation-triangle', getMSG('locationTimeout'));
         else {
           // Network error - try to save offline
           if (err.message && err.message.includes("Network")) {
@@ -1183,20 +1175,21 @@
 
               const saved = await saveClockInOffline(clockData);
               if (saved) {
-                status.textContent = getMSG('offlineSaved');
+                setStatusWithIcon(status, 'fas fa-mobile-alt', getMSG('offlineSaved'));
                 updateSyncStatus();
               } else {
-                status.textContent = `${getMSG('errorPrefix')} ${err.message || err}`;
+                setStatusWithIcon(status, 'fas fa-exclamation-triangle', `${getMSG('errorPrefix')} ${err.message || err}`);
               }
             } catch (geoErr) {
-              status.textContent = `${getMSG('errorPrefix')} ${err.message || err}`;
+              setStatusWithIcon(status, 'fas fa-exclamation-triangle', `${getMSG('errorPrefix')} ${err.message || err}`);
             }
           } else {
-            status.textContent = `${getMSG('errorPrefix')} ${err.message || err}`;
+            setStatusWithIcon(status, 'fas fa-exclamation-triangle', `${getMSG('errorPrefix')} ${err.message || err}`);
           }
         }
       } finally {
-        btn.disabled = false;
+        // Show button again
+        btn.style.display = '';
       }
     }
 
@@ -1309,7 +1302,7 @@
     // =================== Clock-In Report (Today Only, Latest First) ===================
     async function loadReport() {
       const body = document.getElementById("reportBody");
-      body.innerHTML = `<tr><td colspan='4' class="muted">${getMSG('loadingReport')}</td></tr>`;
+      body.innerHTML = `<tr><td colspan='3' class="muted">${getMSG('loadingReport')}</td></tr>`;
 
       try {
         let data;
@@ -1338,6 +1331,7 @@
             const t2 = b.time ? new Date(`1970-01-01T${b.time}`) : 0;
             return t2 - t1;
           });
+          
           todayRecords.forEach((r, index) => {
             const tr = document.createElement("tr");
             
@@ -1346,41 +1340,23 @@
             const canEdit = (status === 'confirmed');
             const entryId = r.id || `entry_${index}`;
             
-            let statusBadge = '';
-            let statusText = '';
+            const editIcon = canEdit 
+              ? `<button class=\"action-btn edit-btn\" onclick=\"openTimeEditModal('${entryId}', '${r.time}', true)\" title=\"${getMSG('editButton')}\"><i class=\"fas fa-edit\"></i></button>`
+              : `<button class=\"action-btn edit-btn\" disabled title=\"${status === 'editing' ? 'Edit request pending' : 'Cannot edit this entry'}\"><i class=\"fas fa-edit\"></i></button>`;
             
-            switch (status) {
-              case 'editing':
-                statusBadge = 'status-editing';
-                statusText = getMSG('statusEditing');
-                break;
-              case 'denied':
-                statusBadge = 'status-denied';
-                statusText = getMSG('statusDenied');
-                break;
-              case 'confirmed':
-              default:
-                statusBadge = 'status-confirmed';
-                statusText = getMSG('statusConfirmed');
-            }
-            
-            const editButton = canEdit 
-              ? `<button class=\"action-btn edit-btn\" onclick=\"openTimeEditModal('${entryId}', '${r.time}', true)\">${getMSG('editButton')}</button>`
-              : `<button class=\"action-btn edit-btn\" disabled title=\"${status === 'editing' ? 'Edit request pending' : 'Cannot edit this entry'}\">${getMSG('editButton')}</button>`;
-            
-            tr.innerHTML = `<td>${r.date}</td><td>${r.time}</td><td><span class=\"status-badge ${statusBadge}\">${statusText}</span></td><td>${editButton}</td>`;
+            tr.innerHTML = `<td>${r.date}</td><td>${r.time}</td><td style="text-align: center;">${editIcon}</td>`;
             body.appendChild(tr);
           });
         } else {
           const lang = localStorage.getItem("CLS_Lang") || "en";
-          body.innerHTML = `<tr><td colspan="4" class="muted">${lang === 'es' ? 'Sin registros de hoy.' :
+          body.innerHTML = `<tr><td colspan="3" class="muted">${lang === 'es' ? 'Sin registros de hoy.' :
             lang === 'pt' ? 'Sem registros de hoje.' :
               'No clock-ins today.'
             }</td></tr>`;
         }
       } catch (err) {
         console.error('Report loading error:', err);
-        body.innerHTML = `<tr><td colspan="4">${getMSG('reportError')}: ${err.message || err}</td></tr>`;
+        body.innerHTML = `<tr><td colspan="3">${getMSG('reportError')}: ${err.message || err}</td></tr>`;
       }
     }
     // Label helper for the payroll total line
@@ -1734,7 +1710,7 @@
     // Service Worker Registration with Aggressive Cache Clearing for Dashboard
     if ('serviceWorker' in navigator) {
       // 🔥 Clear old caches immediately on page load
-      const REQUIRED_VERSION = 'cls-employee-v13';
+      const REQUIRED_VERSION = 'cls-employee-v17';
       caches.keys().then(cacheNames => {
         const oldCaches = cacheNames.filter(name => 
           name.startsWith('cls-employee-') && name !== REQUIRED_VERSION
@@ -1746,8 +1722,8 @@
             .then(() => {
               console.log('✅ Old caches cleared - reloading page');
               // Set flag to prevent reload loop
-              if (!sessionStorage.getItem('cache_cleared_v13')) {
-                sessionStorage.setItem('cache_cleared_v13', 'true');
+              if (!sessionStorage.getItem('cache_cleared_v17')) {
+                sessionStorage.setItem('cache_cleared_v17', 'true');
                 window.location.reload();
               }
             });

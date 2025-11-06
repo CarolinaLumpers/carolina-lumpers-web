@@ -169,9 +169,36 @@ main .section-container,
   font-weight: bold;
 }
 
+/* [LAYOUT: PWA Status Icon] */
+.pwa-status-icon {
+  font-size: 20px;
+  padding: 8px 12px;
+  margin-right: 8px; /* Space between icon and hamburger */
+  cursor: help;
+  transition: var(--transition-base);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+}
+
+.pwa-status-icon:hover {
+  transform: scale(1.1);
+  background: rgba(255, 193, 7, 0.1);
+}
+
+/* Hide PWA icon on desktop when not in PWA mode */
+@media (min-width: 941px) {
+  .pwa-status-icon {
+    margin-right: 16px;
+  }
+}
+
 /* [LAYOUT: Hamburger Menu] */
 .hamburger {
-  display: none;
+  display: none; /* Hidden by default on desktop */
   flex-direction: column;
   justify-content: space-around;
   width: 30px;
@@ -181,6 +208,13 @@ main .section-container,
   cursor: pointer;
   padding: 0;
   z-index: calc(var(--z-sticky) + 1);
+}
+
+/* Only show hamburger on mobile/tablet (below 941px) */
+@media (max-width: 940px) {
+  .hamburger {
+    display: flex;
+  }
 }
 
 .hamburger-line {
@@ -528,6 +562,13 @@ footer .language-toggle button.active,
     padding: 0 var(--space-md);
   }
 
+  /* Apply page specific: remove all container padding on mobile */
+  body[data-page="apply"] .container {
+    padding: 0;
+    margin: 0;
+    max-width: 100%;
+  }
+
   /* Section adjustments */
   .section {
     background-color: var(--bg-secondary);
@@ -561,11 +602,8 @@ footer .language-toggle button.active,
     padding: var(--space-sm) var(--space-lg);
   }
 
-  /* Show hamburger menu on mobile */
-  .hamburger {
-    display: flex !important;
-  }
-
+  /* Show hamburger menu on mobile (already defined above, no need for !important) */
+  
   /* Logo container mobile styles */
   .logo-container {
     display: flex;

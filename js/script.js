@@ -481,6 +481,11 @@ async function loadNavbar() {
         window.switchLanguage = switchLanguage;
         const storedLang = localStorage.getItem("CLS_Lang") || "en";
         switchLanguage(storedLang);
+        
+        // Update PWA status icon after navbar is loaded
+        if (typeof updatePWAStatus === 'function') {
+          setTimeout(() => updatePWAStatus(), 100);
+        }
       } else {
         // Initialize navbar functionality for other pages
         initializeNavbar();
@@ -1067,19 +1072,39 @@ function initLoginForm() {
   console.log('✅ Login form found, setting up event handlers');
 
   const statusEl = document.getElementById("status");
+  
+  // 🔒 DEBOUNCE FLAG: Prevent double-submission race condition
+  let isSubmitting = false;
 
   console.log('✅ Adding submit event listener to login form');
   form.addEventListener("submit", async (e) => {
     console.log('🔥 Login form submitted!');
     e.preventDefault();
 
+    // 🚨 CRITICAL: Check if already submitting (prevents double-tap)
+    if (isSubmitting) {
+      console.warn('⚠️ Login already in progress, ignoring duplicate submission');
+      return;
+    }
+    
+    isSubmitting = true; // Set flag immediately
+
     const currentLang = localStorage.getItem("CLS_Lang") || "en";
     const email = document.getElementById("email")?.value.trim();
     const password = document.getElementById("password")?.value.trim();
+    const loginBtn = document.getElementById('loginBtn');
 
     if (!email || !password) {
       if (statusEl) statusEl.textContent = getText('login.missing', currentLang);
+      isSubmitting = false; // Reset flag on validation failure
       return;
+    }
+
+    // 🔒 PREVENT DUPLICATE SUBMISSIONS: Disable button immediately
+    if (loginBtn) {
+      loginBtn.disabled = true;
+      loginBtn.dataset.originalText = loginBtn.textContent;
+      loginBtn.textContent = '⏳ Logging in...';
     }
 
     // Show full-screen loading overlay
@@ -1148,6 +1173,13 @@ function initLoginForm() {
           loadingOverlay.classList.remove('active');
         }
         statusEl.textContent = data.message || getText('login.invalid', currentLang);
+        
+        // 🔓 Reset debounce flag and re-enable button on error
+        isSubmitting = false;
+        if (loginBtn) {
+          loginBtn.disabled = false;
+          loginBtn.textContent = loginBtn.dataset.originalText || 'Login';
+        }
       }
     } catch (err) {
       console.error(err);
@@ -1157,6 +1189,13 @@ function initLoginForm() {
         loadingOverlay.classList.remove('active');
       }
       if (statusEl) statusEl.textContent = getText('login.error', currentLang);
+      
+      // 🔓 Reset debounce flag and re-enable button on error
+      isSubmitting = false;
+      if (loginBtn) {
+        loginBtn.disabled = false;
+        loginBtn.textContent = loginBtn.dataset.originalText || 'Login';
+      }
     }
   });
 

@@ -12,9 +12,11 @@
 }
 
 /* [DASHBOARD: Navigation Overrides] */
-/* Show hamburger menu on dashboard for logout access */
-.dashboard-page .hamburger {
-  display: flex !important;
+/* Show hamburger menu ONLY on mobile/tablet */
+@media (max-width: 940px) {
+  .dashboard-page .hamburger {
+    display: flex;
+  }
 }
 
 /* [DASHBOARD: Typography] */
@@ -86,6 +88,10 @@
 }
 
 /* [DASHBOARD: Clock-in Button] */
+#clockin-section {
+  text-align: center;
+}
+
 #clockInBtn {
   background: var(--color-primary);
   color: var(--bg-secondary);
@@ -341,4 +347,20 @@
     min-width: 70px;
     flex: 1;
   }
+}
+
+/* [DASHBOARD: Loading Spinner] */
+.btn-spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  margin-right: 8px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
