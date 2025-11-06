@@ -486,6 +486,9 @@ async function loadNavbar() {
         if (typeof updatePWAStatus === 'function') {
           setTimeout(() => updatePWAStatus(), 100);
         }
+        
+        // Dispatch event to notify that navbar is ready
+        window.dispatchEvent(new CustomEvent('navbarLoaded'));
       } else {
         // Initialize navbar functionality for other pages
         initializeNavbar();

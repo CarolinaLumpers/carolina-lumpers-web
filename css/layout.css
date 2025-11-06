@@ -172,21 +172,19 @@ main .section-container,
 /* [LAYOUT: PWA Status Icon] */
 .pwa-status-icon {
   font-size: 20px;
-  padding: 8px 12px;
+  padding: 8px;
   margin-right: 8px; /* Space between icon and hamburger */
+  margin-left: auto; /* Push to right side, before hamburger */
   cursor: help;
   transition: var(--transition-base);
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
-  width: 36px;
-  height: 36px;
+  order: 2; /* Position after logo (1) and before hamburger (3) */
 }
 
 .pwa-status-icon:hover {
   transform: scale(1.1);
-  background: rgba(255, 193, 7, 0.1);
 }
 
 /* Hide PWA icon on desktop when not in PWA mode */
@@ -208,6 +206,7 @@ main .section-container,
   cursor: pointer;
   padding: 0;
   z-index: calc(var(--z-sticky) + 1);
+  order: 3; /* Position after PWA icon */
 }
 
 /* Only show hamburger on mobile/tablet (below 941px) */

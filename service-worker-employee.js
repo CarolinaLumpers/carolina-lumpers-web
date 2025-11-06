@@ -1,4 +1,4 @@
-const CACHE_NAME = "cls-employee-v17"; // 🔧 Added admin module files to cache
+const CACHE_NAME = "cls-employee-v18"; // 🔧 Added Feather Icons for offline support
 const ASSETS = [
   "./employeelogin.html",
   "./employeeDashboard.html",
@@ -12,6 +12,7 @@ const ASSETS = [
   "./css/forms.css",
   "./js/script.js",
   "./js/cache-buster.js",
+  "./js/feather.min.js",
   "./js/admin/admin-tools.js",
   "./js/admin/clockin-manager.js",
   "./js/admin/time-edit-requests.js",
@@ -65,7 +66,6 @@ async function queueClockIn(data) {
     };
     
     await store.add(record);
-    console.log('✅ Clock-in queued offline:', record);
     return true;
   } catch (err) {
     console.error('❌ Failed to queue clock-in:', err);
@@ -86,7 +86,11 @@ async function syncClockData() {
       request.onerror = () => reject(request.error);
     });
 
-    console.log(`🔄 Syncing ${allData.length} queued clock-ins...`);
+    const pendingData = allData.filter(r => r.status === 'pending');
+
+    if (pendingData.length === 0) {
+      return;
+    }
 
     for (const record of allData) {
       if (record.status === 'synced') continue;
@@ -109,8 +113,6 @@ async function syncClockData() {
           record.syncedAt = new Date().toISOString();
           await updateStore.put(record);
           
-          console.log('✅ Synced clock event:', record);
-          
           // Send notification to main thread
           if (self.clients) {
             const clients = await self.clients.matchAll();
@@ -125,7 +127,7 @@ async function syncClockData() {
           throw new Error(`HTTP ${response.status}`);
         }
       } catch (err) {
-        console.warn('🔁 Failed to sync clock event, will retry:', err.message);
+        console.warn('Sync retry:', err.message);
         // Keep in queue for next sync attempt
       }
     }
@@ -134,7 +136,7 @@ async function syncClockData() {
     await cleanupOldRecords();
     
   } catch (err) {
-    console.error('❌ Sync failed:', err);
+    console.error('Sync failed:', err);
   }
 }
 
@@ -215,14 +217,12 @@ self.addEventListener("fetch", e => {
 // Background sync for clock data
 self.addEventListener('sync', (event) => {
   if (event.tag === 'sync-clock-data') {
-    console.log('🔄 Background sync triggered');
     event.waitUntil(syncClockData());
   }
 });
 
 // Manual sync when back online
 self.addEventListener('online', () => {
-  console.log('🌐 Device back online - triggering sync');
   syncClockData();
 });
 

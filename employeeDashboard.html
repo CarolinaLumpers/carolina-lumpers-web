@@ -28,13 +28,19 @@
   <meta name="apple-mobile-web-app-title" content="CLS Employee">
   <link rel="apple-touch-icon" href="assets/CLS-favicon.png">
 
-  <!-- Font Awesome Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <!-- Feather Icons (Local - works offline!) -->
+  <script src="js/feather.min.js"></script>
 
   <!-- Global CSS System -->
   <link rel="stylesheet" href="css/style.css?v=2025-11-04-no-bio">
   <link rel="stylesheet" href="css/dashboard.css?v=2025-11-04-no-bio">
   <style>
+    /* Feather Icons Spin Animation */
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    
     /* Time Edit Modal Styles */
     .modal {
       position: fixed;
@@ -647,10 +653,29 @@
       reviewed: { en: "Reviewed", es: "Revisado", pt: "Revisado" }
     };
 
-    // Helper function to create icon element
-    function createIcon(iconClasses) {
+    // Helper function to create Feather icon element
+    function createIcon(iconName) {
+      // Feather icon mapping from Font Awesome names
+      const iconMap = {
+        'fas fa-circle': 'circle',
+        'fas fa-sync-alt': 'refresh-cw',
+        'fas fa-sync-alt fa-spin': 'refresh-cw',
+        'fas fa-check-circle': 'check-circle',
+        'fas fa-exclamation-triangle': 'alert-triangle',
+        'fas fa-mobile-alt': 'smartphone',
+        'fas fa-edit': 'edit-2',
+        'fas fa-wifi-slash': 'wifi-off'
+      };
+      
+      const featherName = iconMap[iconName] || iconName;
       const icon = document.createElement('i');
-      icon.className = iconClasses;
+      icon.setAttribute('data-feather', featherName);
+      
+      // For spinning icons, add rotation class
+      if (iconName.includes('fa-spin')) {
+        icon.style.animation = 'spin 1s linear infinite';
+      }
+      
       return icon;
     }
 
@@ -670,6 +695,10 @@
         const icon = createIcon(iconClasses);
         element.appendChild(icon);
         element.appendChild(document.createTextNode(' ' + message));
+        // Replace Feather icon placeholders with actual SVG
+        if (typeof feather !== 'undefined') {
+          feather.replace();
+        }
       } else {
         element.textContent = message;
       }
@@ -745,12 +774,15 @@
       const syncStatus = document.getElementById('syncStatus');
       if (syncStatus && pendingCount > 0) {
         syncStatus.innerHTML = '';
-        const icon = createIcon('fas fa-circle');
+        const icon = createIcon('circle');
         icon.style.color = '#ffc107';
+        icon.style.width = '12px';
+        icon.style.height = '12px';
         syncStatus.appendChild(document.createTextNode(`${pendingCount} `));
         syncStatus.appendChild(icon);
         syncStatus.appendChild(document.createTextNode(' ' + getMSG('pendingSync')));
         syncStatus.style.display = 'block';
+        if (typeof feather !== 'undefined') feather.replace();
       } else if (syncStatus) {
         syncStatus.style.display = 'none';
       }
@@ -763,7 +795,6 @@
 
         switch (type) {
           case 'CLOCK_SYNC_SUCCESS':
-            console.log('[SUCCESS] Clock-in synced:', data);
             updateSyncStatus();
             loadReport(); // Refresh the report
             break;
@@ -771,17 +802,43 @@
       });
     }
 
-    // Handle online/offline events
-    window.addEventListener('online', () => {
+    // Handle online/offline events (at global scope for PWA icon updates)
+    window.addEventListener('online', async () => {
+      updatePWAStatus();
+      
       const status = document.getElementById('clockInStatus');
-      if (status) {
+      const pendingCount = await getPendingSyncCount();
+      
+      if (pendingCount > 0 && status) {
         setStatusWithIcon(status, 'fas fa-sync-alt fa-spin', getMSG('syncInProgress'));
+        
+        try {
+          await triggerSync();
+          
+          // Wait a moment for sync to complete
+          setTimeout(async () => {
+            const remainingCount = await getPendingSyncCount();
+            if (remainingCount === 0) {
+              setStatusWithIcon(status, 'fas fa-check-circle', 'All clock-ins synced successfully!');
+              loadReport(); // Refresh the report
+              
+              // Clear message after 3 seconds
+              setTimeout(() => {
+                if (status) status.innerHTML = '';
+              }, 3000);
+            } else {
+              setStatusWithIcon(status, 'fas fa-exclamation-triangle', `${remainingCount} clock-ins still pending`);
+            }
+          }, 2000);
+        } catch (err) {
+          console.error('Sync error:', err);
+          setStatusWithIcon(status, 'fas fa-exclamation-triangle', 'Sync failed: ' + err.message);
+        }
       }
-      triggerSync();
     });
 
     window.addEventListener('offline', () => {
-      console.log('[OFFLINE] Device offline');
+      updatePWAStatus();
     });
 
     // =================== Session ===================
@@ -811,36 +868,55 @@
     // =================== INIT (All Event Bindings + Defaults) ===================
     
     // PWA Status Detection and Display (Updates navbar icon)
+    let pwaStatusUpdateTimer = null;
     window.updatePWAStatus = function() {
+      // Debounce to prevent redundant updates
+      if (pwaStatusUpdateTimer) return;
+      pwaStatusUpdateTimer = setTimeout(() => { pwaStatusUpdateTimer = null; }, 100);
+      
       const pwaIcon = document.getElementById('pwaStatusIcon');
-      if (!pwaIcon) return; // Icon not loaded yet
+      if (!pwaIcon) {
+        return; // Icon not loaded yet
+      }
       
       const currentLang = localStorage.getItem("CLS_Lang") || "en";
 
-      // Detect PWA/offline state and update icon
+      // Detect PWA/offline state and update icon (using Feather Icons - works offline!)
       if (!navigator.onLine) {
-        // Offline mode - red wifi-slash icon
+        // Offline mode - wifi-off icon
         pwaIcon.innerHTML = '';
-        pwaIcon.appendChild(createIcon('fas fa-wifi-slash'));
-        pwaIcon.style.color = '#ff5252'; // Red
+        const icon = createIcon('wifi-off');
+        icon.style.color = '#f44336'; // Red
+        icon.style.width = '20px';
+        icon.style.height = '20px';
+        pwaIcon.appendChild(icon);
         pwaIcon.style.display = 'flex';
         pwaIcon.title = getText('pwaStatus.offlineMode', currentLang);
+        if (typeof feather !== 'undefined') feather.replace();
       } else if (window.matchMedia('(display-mode: standalone)').matches) {
-        // Running as installed PWA - green mobile icon
+        // Running as installed PWA - check-circle icon
         pwaIcon.innerHTML = '';
-        pwaIcon.appendChild(createIcon('fas fa-mobile-alt'));
-        pwaIcon.style.color = '#4CAF50'; // Green
+        const icon = createIcon('check-circle');
+        icon.style.color = '#4CAF50'; // Green
+        icon.style.width = '20px';
+        icon.style.height = '20px';
+        pwaIcon.appendChild(icon);
         pwaIcon.style.display = 'flex';
         pwaIcon.title = getText('pwaStatus.installedPwa', currentLang);
-      } else if (navigator.serviceWorker && navigator.serviceWorker.controller) {
-        // Service worker active - green sync icon
+        if (typeof feather !== 'undefined') feather.replace();
+      } else if ('serviceWorker' in navigator) {
+        // Service worker available - sync icon
         pwaIcon.innerHTML = '';
-        pwaIcon.appendChild(createIcon('fas fa-sync-alt'));
-        pwaIcon.style.color = '#4CAF50'; // Green
+        const icon = createIcon('refresh-cw');
+        icon.style.color = '#4CAF50'; // Green
+        icon.style.width = '20px';
+        icon.style.height = '20px';
+        pwaIcon.appendChild(icon);
         pwaIcon.style.display = 'flex';
         pwaIcon.title = getText('pwaStatus.serviceWorkerActive', currentLang);
+        if (typeof feather !== 'undefined') feather.replace();
       } else {
-        // Regular web browser - hide icon
+        // Regular web browser without service worker support - hide icon
         pwaIcon.style.display = 'none';
       }
     };
@@ -863,16 +939,31 @@
     };
     
     window.addEventListener("DOMContentLoaded", () => {
+      // Initialize Feather Icons
+      if (typeof feather !== 'undefined') {
+        feather.replace();
+      }
+      
       const currentLang = localStorage.getItem("CLS_Lang") || "en";
       const greeting = getText('dashboard.greeting', currentLang);
       document.getElementById("welcomeName").textContent = `${greeting}, ${displayName || "Employee"}!`;
       document.getElementById("userInfo").textContent = `${getText('dashboard.workerIdLabel', currentLang)}: ${workerId} | ${email}`;
 
-      updatePWAStatus();
-
-      // Listen for online/offline events to update status
-      window.addEventListener('online', updatePWAStatus);
-      window.addEventListener('offline', updatePWAStatus);
+      // Listen for navbar loaded event from script.js
+      window.addEventListener('navbarLoaded', () => {
+        updatePWAStatus();
+      });
+      
+      // Also check if navbar is already loaded (in case event fired before listener added)
+      setTimeout(() => {
+        const pwaIcon = document.getElementById('pwaStatusIcon');
+        if (pwaIcon) {
+          updatePWAStatus();
+        }
+      }, 200);
+      
+      // Expose function for manual testing
+      window.testPWAStatus = updatePWAStatus;
       
       // Listen for language changes to update dashboard content
       window.addEventListener('languageChanged', (event) => {
@@ -976,21 +1067,16 @@
 
       try {
         const targetWorkerId = VIEW_AS_ACTIVE ? VIEW_AS_WORKER : workerId;
-        console.log('🔄 Loading payroll week periods for workerId:', targetWorkerId);
         const url = `${API_URL}?action=payrollWeekPeriods&workerId=${encodeURIComponent(targetWorkerId)}`;
-        console.log('📡 API URL:', url);
         
         const data = await apiCallWithRetry(url);
-        console.log('📥 API Response:', data);
 
         if (!data || !data.success) {
-          console.warn('⚠️ API returned unsuccessful response:', data);
           dropdown.innerHTML = '<option value="">No data available</option>';
           return;
         }
 
         const periods = data.periods || [];
-        console.log(`📊 Found ${periods.length} periods:`, periods);
         
         if (periods.length === 0) {
           dropdown.innerHTML = '<option value="">No payroll periods found</option>';
@@ -1078,12 +1164,9 @@
       const btn = document.getElementById("clockInBtn");
       const status = document.getElementById("clockInStatus");
       
-      // Hide button and show spinner
+      // Hide button and show spinner in status
       btn.style.display = 'none';
-      status.innerHTML = '<span class="btn-spinner"></span> ';
-      const icon = createIcon('fas fa-map-marker-alt');
-      status.appendChild(icon);
-      status.appendChild(document.createTextNode(' ' + getMSG('gettingLocation')));
+      status.innerHTML = '<span class="btn-spinner"></span> ' + getMSG('gettingLocation');
 
       try {
         const pos = await new Promise((resolve, reject) =>
@@ -1111,7 +1194,7 @@
         // Check if online
         if (!navigator.onLine) {
           // Save offline
-          status.textContent = getMSG('recordingClockIn');
+          status.innerHTML = '<span class="btn-spinner"></span> ' + getMSG('recordingClockIn');
           const saved = await saveClockInOffline(clockData);
 
           if (saved) {
@@ -1124,7 +1207,7 @@
         }
 
         // Online: send immediately
-        status.textContent = getMSG('recordingClockIn');
+        status.innerHTML = '<span class="btn-spinner"></span> ' + getMSG('recordingClockIn');
         const res = await jsonp(
           `${API_URL}?action=clockin&workerId=${encodeURIComponent(workerId)}&lat=${latitude}&lng=${longitude}&lang=${lang}&email=${encodeURIComponent(email)}&device=${encodeURIComponent(deviceInfo.displayString)}`
         );
@@ -1188,7 +1271,7 @@
           }
         }
       } finally {
-        // Show button again
+        // Restore button visibility
         btn.style.display = '';
       }
     }
@@ -1341,12 +1424,14 @@
             const entryId = r.id || `entry_${index}`;
             
             const editIcon = canEdit 
-              ? `<button class=\"action-btn edit-btn\" onclick=\"openTimeEditModal('${entryId}', '${r.time}', true)\" title=\"${getMSG('editButton')}\"><i class=\"fas fa-edit\"></i></button>`
-              : `<button class=\"action-btn edit-btn\" disabled title=\"${status === 'editing' ? 'Edit request pending' : 'Cannot edit this entry'}\"><i class=\"fas fa-edit\"></i></button>`;
+              ? `<button class=\"action-btn edit-btn\" onclick=\"openTimeEditModal('${entryId}', '${r.time}', true)\" title=\"${getMSG('editButton')}\"><i data-feather=\"edit-2\"></i></button>`
+              : `<button class=\"action-btn edit-btn\" disabled title=\"${status === 'editing' ? 'Edit request pending' : 'Cannot edit this entry'}\"><i data-feather=\"edit-2\"></i></button>`;
             
             tr.innerHTML = `<td>${r.date}</td><td>${r.time}</td><td style="text-align: center;">${editIcon}</td>`;
             body.appendChild(tr);
           });
+          // Replace Feather icon placeholders with actual SVG
+          if (typeof feather !== 'undefined') feather.replace();
         } else {
           const lang = localStorage.getItem("CLS_Lang") || "en";
           body.innerHTML = `<tr><td colspan="3" class="muted">${lang === 'es' ? 'Sin registros de hoy.' :
@@ -1555,27 +1640,19 @@
         }
         // Normalize role (handle case variations)
         USER_ROLE = storedRole ? storedRole.charAt(0).toUpperCase() + storedRole.slice(1).toLowerCase() : null;
-        console.log('👤 User Role:', USER_ROLE, '(from:', storedRole, ')');
 
         // Show Admin tab button for Admin/Lead users (section stays hidden until tab clicked)
         if (USER_ROLE === 'Admin' || USER_ROLE === 'Lead') {
-          console.log('✅ Showing Admin tab for role:', USER_ROLE);
           const adminTab = document.getElementById('tabAdmin');
           
           if (adminTab) {
             adminTab.classList.remove('hidden');
-            console.log('✅ Admin tab button revealed');
-          } else {
-            console.warn('⚠️ Admin tab button element not found');
           }
           // Note: admin-section stays hidden until user clicks Admin Tools tab
-        } else {
-          console.log('ℹ️ Admin tab not shown - role is:', USER_ROLE);
         }
 
         // Admin-only features (View As, Time Edit Requests)
         if (USER_ROLE === 'Admin') {
-          console.log('✅ Loading admin-only features');
           // Show View As section for admins
           const viewAsWrap = document.getElementById('viewAsWrap');
           if (viewAsWrap) viewAsWrap.classList.remove('hidden');
@@ -1701,8 +1778,6 @@
       
       // Expose to window for debugging
       window.adminTools = adminTools;
-      
-      console.log('✅ Admin tools modules loaded');
     });
   </script>
 
@@ -1710,20 +1785,18 @@
     // Service Worker Registration with Aggressive Cache Clearing for Dashboard
     if ('serviceWorker' in navigator) {
       // 🔥 Clear old caches immediately on page load
-      const REQUIRED_VERSION = 'cls-employee-v17';
+      const REQUIRED_VERSION = 'cls-employee-v18';
       caches.keys().then(cacheNames => {
         const oldCaches = cacheNames.filter(name => 
           name.startsWith('cls-employee-') && name !== REQUIRED_VERSION
         );
         
         if (oldCaches.length > 0) {
-          console.log('🧹 Clearing old caches:', oldCaches);
           Promise.all(oldCaches.map(name => caches.delete(name)))
             .then(() => {
-              console.log('✅ Old caches cleared - reloading page');
               // Set flag to prevent reload loop
-              if (!sessionStorage.getItem('cache_cleared_v17')) {
-                sessionStorage.setItem('cache_cleared_v17', 'true');
+              if (!sessionStorage.getItem('cache_cleared_v18')) {
+                sessionStorage.setItem('cache_cleared_v18', 'true');
                 window.location.reload();
               }
             });
@@ -1732,29 +1805,23 @@
 
       navigator.serviceWorker.register('service-worker-employee.js')
         .then(registration => {
-          console.log('✅ Employee service worker registered');
-          
           // 🔧 Force immediate update check on page load
-          registration.update().then(() => {
-            console.log('🔄 Service worker update check completed');
-          });
+          registration.update();
 
           // Auto-reload when new service worker takes control
           registration.addEventListener('updatefound', () => {
             const newWorker = registration.installing;
             newWorker.addEventListener('statechange', () => {
               if (newWorker.state === 'activated' && navigator.serviceWorker.controller) {
-                console.log('🎉 New service worker activated - reloading page');
                 window.location.reload();
               }
             });
           });
         })
-        .catch(err => console.error('❌ SW registration failed:', err));
+        .catch(err => console.error('SW registration failed:', err));
 
       // Listen for controller change (new SW took over)
       navigator.serviceWorker.addEventListener('controllerchange', () => {
-        console.log('🔄 Service worker controller changed - reloading');
         window.location.reload();
       });
     }
