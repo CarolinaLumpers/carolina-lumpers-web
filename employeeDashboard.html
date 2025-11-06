@@ -819,7 +819,7 @@
           setTimeout(async () => {
             const remainingCount = await getPendingSyncCount();
             if (remainingCount === 0) {
-              setStatusWithIcon(status, 'fas fa-check-circle', 'All clock-ins synced successfully!');
+              setStatusWithIcon(status, 'check-circle', 'All clock-ins synced successfully!');
               loadReport(); // Refresh the report
               
               // Clear message after 3 seconds
@@ -827,12 +827,12 @@
                 if (status) status.innerHTML = '';
               }, 3000);
             } else {
-              setStatusWithIcon(status, 'fas fa-exclamation-triangle', `${remainingCount} clock-ins still pending`);
+              setStatusWithIcon(status, 'alert-triangle', `${remainingCount} clock-ins still pending`);
             }
           }, 2000);
         } catch (err) {
           console.error('Sync error:', err);
-          setStatusWithIcon(status, 'fas fa-exclamation-triangle', 'Sync failed: ' + err.message);
+          setStatusWithIcon(status, 'alert-triangle', 'Sync failed: ' + err.message);
         }
       }
     });
@@ -1181,61 +1181,60 @@
         const lang = localStorage.getItem("CLS_Lang") || "en";
         const deviceInfo = window.getDeviceInfo ? window.getDeviceInfo() : { displayString: 'Unknown Device' };
         
-        const clockData = {
-          workerId: workerId,
-          lat: latitude,
-          lng: longitude,
-          lang: lang,
-          email: email || '',
-          device: deviceInfo.displayString,
-          timestamp: new Date().toISOString()
-        };
+        // Try sending immediately (works both online and with cached service worker)
+        status.innerHTML = '<span class="btn-spinner"></span> ' + getMSG('recordingClockIn');
+        
+        try {
+          const res = await jsonp(
+            `${API_URL}?action=clockin&workerId=${encodeURIComponent(workerId)}&lat=${latitude}&lng=${longitude}&lang=${lang}&email=${encodeURIComponent(email)}&device=${encodeURIComponent(deviceInfo.displayString)}`
+          );
 
-        // Check if online
-        if (!navigator.onLine) {
-          // Save offline
-          status.innerHTML = '<span class="btn-spinner"></span> ' + getMSG('recordingClockIn');
+          if (res && res.success) {
+            // If backend provided a localized message (e.g. late message), show it directly
+            if (res.message) {
+              status.textContent = res.message;
+            } else {
+              const site = res.site || "Job Site";
+              const dist = res.distance ? ` (${res.distance} mi)` : "";
+              setStatusWithIcon(status, 'check-circle', `${getMSG('clockInSuccess')} ${site}${dist}`);
+            }
+            await loadReport();
+          } else if (res && res.message) {
+            const site = res.site ? ` (${res.site} - ${res.distance} mi)` : "";
+            setStatusWithIcon(status, 'alert-triangle', `${getMSG('clockInFailed')} ${site}. ${res.message}`);
+          } else {
+            setStatusWithIcon(status, 'alert-triangle', getMSG('clockInFailed'));
+          }
+          btn.style.display = 'inline-block';
+        } catch (networkErr) {
+          // Network request failed - save offline
+          const clockData = {
+            workerId: workerId,
+            lat: latitude,
+            lng: longitude,
+            lang: lang,
+            email: email || '',
+            device: deviceInfo.displayString,
+            timestamp: new Date().toISOString()
+          };
+          
           const saved = await saveClockInOffline(clockData);
-
           if (saved) {
-            setStatusWithIcon(status, 'fas fa-mobile-alt', getMSG('offlineSaved'));
+            setStatusWithIcon(status, 'smartphone', getMSG('offlineSaved'));
             updateSyncStatus();
           } else {
-            setStatusWithIcon(status, 'fas fa-exclamation-triangle', getMSG('clockInFailed') + " (Offline save failed)");
+            setStatusWithIcon(status, 'alert-triangle', getMSG('clockInFailed') + " (Offline save failed)");
           }
-          return;
-        }
-
-        // Online: send immediately
-        status.innerHTML = '<span class="btn-spinner"></span> ' + getMSG('recordingClockIn');
-        const res = await jsonp(
-          `${API_URL}?action=clockin&workerId=${encodeURIComponent(workerId)}&lat=${latitude}&lng=${longitude}&lang=${lang}&email=${encodeURIComponent(email)}&device=${encodeURIComponent(deviceInfo.displayString)}`
-        );
-
-        if (res && res.success) {
-          // If backend provided a localized message (e.g. late message), show it directly
-          if (res.message) {
-            status.textContent = res.message;
-          } else {
-            const site = res.site || "Job Site";
-            const dist = res.distance ? ` (${res.distance} mi)` : "";
-            setStatusWithIcon(status, 'fas fa-check-circle', `${getMSG('clockInSuccess')} ${site}${dist}`);
-          }
-          await loadReport();
-        } else if (res && res.message) {
-          const site = res.site ? ` (${res.site} - ${res.distance} mi)` : "";
-          setStatusWithIcon(status, 'fas fa-exclamation-triangle', `${getMSG('clockInFailed')} ${site}. ${res.message}`);
-        } else {
-          setStatusWithIcon(status, 'fas fa-exclamation-triangle', getMSG('clockInFailed'));
+          btn.style.display = 'inline-block';
         }
       } catch (err) {
         // Handle geolocation errors
         if (err && err.code === 1)
-          setStatusWithIcon(status, 'fas fa-exclamation-triangle', getMSG('locationDenied'));
+          setStatusWithIcon(status, 'alert-triangle', getMSG('locationDenied'));
         else if (err && err.code === 2)
-          setStatusWithIcon(status, 'fas fa-exclamation-triangle', getMSG('locationUnavailable'));
+          setStatusWithIcon(status, 'alert-triangle', getMSG('locationUnavailable'));
         else if (err && err.code === 3)
-          setStatusWithIcon(status, 'fas fa-exclamation-triangle', getMSG('locationTimeout'));
+          setStatusWithIcon(status, 'alert-triangle', getMSG('locationTimeout'));
         else {
           // Network error - try to save offline
           if (err.message && err.message.includes("Network")) {
@@ -1258,18 +1257,19 @@
 
               const saved = await saveClockInOffline(clockData);
               if (saved) {
-                setStatusWithIcon(status, 'fas fa-mobile-alt', getMSG('offlineSaved'));
+                setStatusWithIcon(status, 'smartphone', getMSG('offlineSaved'));
                 updateSyncStatus();
               } else {
-                setStatusWithIcon(status, 'fas fa-exclamation-triangle', `${getMSG('errorPrefix')} ${err.message || err}`);
+                setStatusWithIcon(status, 'alert-triangle', `${getMSG('errorPrefix')} ${err.message || err}`);
               }
             } catch (geoErr) {
-              setStatusWithIcon(status, 'fas fa-exclamation-triangle', `${getMSG('errorPrefix')} ${err.message || err}`);
+              setStatusWithIcon(status, 'alert-triangle', `${getMSG('errorPrefix')} ${err.message || err}`);
             }
           } else {
-            setStatusWithIcon(status, 'fas fa-exclamation-triangle', `${getMSG('errorPrefix')} ${err.message || err}`);
+            setStatusWithIcon(status, 'alert-triangle', `${getMSG('errorPrefix')} ${err.message || err}`);
           }
         }
+        btn.style.display = 'inline-block';
       } finally {
         // Restore button visibility
         btn.style.display = '';
