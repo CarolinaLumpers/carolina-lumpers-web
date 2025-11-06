@@ -332,12 +332,13 @@
   }
 
   .dashboard .language-toggle {
-    flex-direction: column;
+    flex-direction: row;
+    flex-wrap: wrap;
     gap: var(--space-xs);
   }
 
   .dashboard .language-toggle button {
-    min-width: auto;
-    width: 100%;
+    min-width: 70px;
+    flex: 1;
   }
 }
