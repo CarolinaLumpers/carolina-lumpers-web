@@ -503,7 +503,7 @@
       return ok;
     }
 
-    // Submission via fetch (so we can show on-page success)
+    // Submission handler with activity logging
     form.addEventListener('submit', async (e)=>{
       e.preventDefault();
       
@@ -512,47 +512,54 @@
       for (let i = 0; i < total; i++) {
         if (!validateStep(i)) {
           allValid = false;
-          // Go to first invalid step
           go(i, true);
           break;
         }
       }
       if (!allValid) return;
 
+      // Disable submit button to prevent double submission
+      submitBtn.disabled = true;
+      
+      // Update UI to show processing state
+      successMsg.style.display = 'block';
+      successMsg.innerHTML = '⏳ Submitting application...';
+
       // Set startedAt if empty
       if (!form.startedAt.value) form.startedAt.value = Date.now();
 
       const endpoint = form.getAttribute('action');
       const fd = new FormData(form);
-      
-      // Add console logging for debugging
-      console.log('Submitting to:', endpoint);
-      console.log('Form data:', Object.fromEntries(fd));
-      console.log('Form elements check:');
-      console.log('first_name:', form.first_name?.value);
-      console.log('last_name:', form.last_name?.value);
-      console.log('email:', form.email?.value);
-      console.log('consent:', form.consent?.checked);
 
-      try{
-        const res = await fetch(endpoint, { method:'POST', body: fd });
-        console.log('Response status:', res.status);
-        
-        if (!res.ok) {
-          const errorText = await res.text();
-          console.error('Submit failed:', errorText);
-          throw new Error(`Submit failed: ${res.status}`);
-        }
+      // Add minimal metadata for backend activity logging
+      fd.append('submissionMeta', JSON.stringify({
+        clientTime: new Date().toISOString(),
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        device: navigator.userAgent.includes('Mobile') ? 'mobile' : 'desktop',
+        language: localStorage.getItem("CLS_Lang") || "en"
+      }));
+
+
+      try {
+        const res = await fetch(endpoint, { 
+          method: 'POST', 
+          body: fd
+        });
         
         const result = await res.json();
-        console.log('Success response:', result);
         
-        successMsg.style.display = 'block';
-        nextBtn.disabled = true; backBtn.disabled = true; submitBtn.disabled = true;
-      }catch(err){
-        console.error('Submission error:', err);
-        successMsg.textContent = '⚠️ Error submitting application. Please try again.';
-        successMsg.style.display = 'block';
+        if (!res.ok || !result.success) {
+          throw new Error(result.message || 'Submission failed');
+        }
+        
+        // Show success message
+        successMsg.innerHTML = '✅ <span data-en="Thanks! Your application has been submitted." data-es="¡Gracias! Su solicitud ha sido enviada." data-pt="Obrigado! Sua candidatura foi enviada.">Thanks! Your application has been submitted.</span>';
+        nextBtn.disabled = true;
+        backBtn.disabled = true;
+
+      } catch (err) {
+        successMsg.innerHTML = '⚠️ <span data-en="Error submitting application. Please try again." data-es="Error al enviar la solicitud. Inténtelo de nuevo." data-pt="Erro ao enviar candidatura. Tente novamente.">Error submitting application. Please try again.</span>';
+        submitBtn.disabled = false;
       }
     });
 
