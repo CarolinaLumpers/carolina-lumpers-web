@@ -6,59 +6,117 @@
 // ======================================================
 
 // ======================================================
-//  CLOCK-IN HANDLER (Multi-site Geofence, Miles) - STABLE VERSION
+//  CLOCK-IN HANDLER (Multi-site Geofence, Miles)
 // ======================================================
 function handleClockIn(workerId, lat, lng, device) {
-  const ss = SpreadsheetApp.openById(SHEET_ID);
-  const clientsSheet = ss.getSheetByName('Clients');
-  const clockSheet = ss.getSheetByName('ClockIn');
-
-  // ---- Get worker metadata ONCE at start ----
-  const workerMeta = lookupWorkerMeta_(workerId);
+  try {
+    const ss = SpreadsheetApp.openById(SHEET_ID);
+    const clientsSheet = ss.getSheetByName('Clients');
+    const clockSheet = ss.getSheetByName('ClockIn');
 
   // ---- Clients lookup ----
   const clientRows = clientsSheet.getDataRange().getValues();
-    const cHeaders = clientRows[0].map(String);
-    const idxName = cHeaders.indexOf('Client Name');
-    const idxAddr = cHeaders.indexOf('JobAddress');
-    const idxLat = cHeaders.indexOf('Latitude');
-    const idxLng = cHeaders.indexOf('Longitude');
+  const cHeaders = clientRows[0].map(String);
+  const idxName = cHeaders.indexOf('Client Name');
+  const idxAddr = cHeaders.indexOf('JobAddress');
+  const idxLat = cHeaders.indexOf('Latitude');
+  const idxLng = cHeaders.indexOf('Longitude');
 
-    if (idxName < 0 || idxAddr < 0 || idxLat < 0 || idxLng < 0) {
-      return { success: false, message: '❌ Clients sheet missing required columns.' };
-    }
+  if (idxName < 0 || idxAddr < 0 || idxLat < 0 || idxLng < 0) {
+    return { success: false, message: '❌ Clients sheet missing required columns.' };
+  }
 
-    const workerLat = parseFloat(lat);
-    const workerLng = parseFloat(lng);
+  const workerLat = parseFloat(lat);
+  const workerLng = parseFloat(lng);
 
-    let nearestClient = null;
-    let nearestAddr = null;
-    let nearestDist = Infinity;
+  // Validate GPS coordinates
+  if (!isFinite(workerLat) || !isFinite(workerLng)) {
+    return { 
+      success: false, 
+      message: '❌ Invalid GPS coordinates. Please enable location services and try again.' 
+    };
+  }
 
-    // --- Find nearest client (FAST - skip geocoding during clock-in) ---
-    for (let i = 1; i < clientRows.length; i++) {
-      const row = clientRows[i];
-      const name = String(row[idxName] || '').trim();
-      const addr = String(row[idxAddr] || '').trim();
-      const cLat = parseFloat(row[idxLat]);
-      const cLng = parseFloat(row[idxLng]);
+  let nearestClient = null;
+  let nearestAddr = null;
+  let nearestDist = Infinity;
 
-      // ⚡ SKIP geocoding during clock-in (too slow - causes timeouts)
-      // Only use clients that already have coordinates
-      // Run geocodeAllClients_() separately to populate missing coordinates
-      
-      // Calculate distance only if coordinates exist
-      if (isFinite(cLat) && isFinite(cLng)) {
-        const dist = getDistanceMi(workerLat, workerLng, cLat, cLng);
-        if (dist < nearestDist) {
-          nearestDist = dist;
-          nearestClient = name;
-          nearestAddr = addr;
+  // --- Find nearest client ---
+  for (let i = 1; i < clientRows.length; i++) {
+    const row = clientRows[i];
+    const name = String(row[idxName] || '').trim();
+    const addr = String(row[idxAddr] || '').trim();
+    let cLat = parseFloat(row[idxLat]);
+    let cLng = parseFloat(row[idxLng]);
+
+    // Auto-geocode missing coordinates
+    if ((!isFinite(cLat) || !isFinite(cLng)) && addr) {
+      try {
+        const geo = Maps.newGeocoder().geocode(addr);
+        if (geo.status === 'OK' && geo.results.length > 0) {
+          cLat = geo.results[0].geometry.location.lat;
+          cLng = geo.results[0].geometry.location.lng;
+          clientsSheet.getRange(i + 1, idxLat + 1).setValue(cLat);
+          clientsSheet.getRange(i + 1, idxLng + 1).setValue(cLng);
         }
+      } catch (err) {
+        Logger.log('Geocode error for ' + addr + ': ' + err);
       }
     }
 
-    // --- Record the clock-in (no approval status) ---
+    // Calculate distance to this client
+    if (isFinite(cLat) && isFinite(cLng)) {
+      const dist = getDistanceMi(workerLat, workerLng, cLat, cLng);
+      if (dist < nearestDist) {
+        nearestDist = dist;
+        nearestClient = name;
+        nearestAddr = addr;
+      }
+    }
+  }
+
+  // --- 🚨 Geofence validation ---
+  // Only allow clock-ins near a valid client site
+  if (!nearestClient || !isFinite(nearestDist) || nearestDist > GEOFENCE_RADIUS_MI) {
+    const subject = `🚨 Out-of-Geofence Clock-In Attempt`;
+    const mapsLink = `https://www.google.com/maps?q=${workerLat},${workerLng}`;
+    const distanceText = isFinite(nearestDist) ? nearestDist.toFixed(2) : 'N/A';
+    const body =
+      `Worker ${workerId} attempted to clock in outside authorized area.\n\n` +
+      `📍 Location: ${workerLat}, ${workerLng}\n` +
+      `🌐 Map: ${mapsLink}\n\n` +
+      `Nearest Client: ${nearestClient || 'none'}\n` +
+      `Distance: ${distanceText} miles (limit ${GEOFENCE_RADIUS_MI} mi)\n` +
+      (nearestAddr ? `Address: ${nearestAddr}\n` : '') +
+      `🕒 Time: ${Utilities.formatDate(new Date(), TIMEZONE, 'yyyy-MM-dd HH:mm:ss')}`;
+
+    GmailApp.sendEmail(INFO_EMAIL, subject, body, { cc: CC_EMAIL });
+    
+    // --- Log the geofence violation ---
+    const workerMeta = lookupWorkerMeta_(workerId);
+    TT_LOGGER.logGeofenceViolation(
+      {
+        workerId: workerId,
+        displayName: workerMeta.displayName || workerId,
+        device: workerMeta.device || 'Unknown Device'
+      },
+      {
+        latitude: workerLat,
+        longitude: workerLng,
+        nearestClient: nearestClient || 'none',
+        distance: isFinite(nearestDist) ? nearestDist : 0
+      }
+    );
+
+    return {
+      success: false,
+      site: nearestClient || 'Unknown site',
+      distance: isFinite(nearestDist) ? nearestDist.toFixed(2) : '',
+      message: '❌ Outside authorized area — contact supervisor.'
+    };
+  }
+
+  // --- Record the clock-in ---
   const clockHeaders = clockSheet.getRange(1, 1, 1, clockSheet.getLastColumn()).getValues()[0];
   const newRow = [];
   const clockinID = 'CLK-' + Utilities.getUuid().slice(0, 8).toUpperCase();
@@ -83,9 +141,10 @@ function handleClockIn(workerId, lat, lng, device) {
     }
   });
 
-    clockSheet.appendRow(newRow);
+  clockSheet.appendRow(newRow);
 
-    // --- Log the clock-in event (use cached workerMeta) ---
+  // --- Log the clock-in event ---
+  const workerMeta = lookupWorkerMeta_(workerId);
   TT_LOGGER.logClockIn(
     {
       workerId: workerId,
@@ -103,39 +162,45 @@ function handleClockIn(workerId, lat, lng, device) {
     }
   );
 
-    // --- Return success for frontend (multilingual handled separately) ---
+  // --- Return success for frontend (multilingual handled separately) ---
+  const distanceText = isFinite(nearestDist) ? nearestDist.toFixed(2) : '0.00';
+  return {
+    success: true,
+    site: nearestClient,
+    distance: distanceText,
+    ClockinID: clockinID,
+    message: `✅ Clock-in successful at ${nearestClient} (${distanceText} mi away)`
+  };
+  
+  } catch (error) {
+    Logger.log('❌ Clock-in error: ' + error.toString());
+    Logger.log('Stack trace: ' + error.stack);
+    Logger.log('Input: workerId=' + workerId + ', lat=' + lat + ', lng=' + lng + ', device=' + device);
+    
     return {
-      success: true,
-      site: nearestClient,
-      distance: isFinite(nearestDist) ? nearestDist.toFixed(2) : '',
-      ClockinID: clockinID,
-      message: `✅ Clock-in successful at ${nearestClient} (${nearestDist.toFixed(2)} mi away)`
+      success: false,
+      message: '❌ Clock-in failed. Please try again or contact support if the issue persists.',
+      error: error.toString()
     };
+  }
 }
 
 // ======================================================
-//  RATE LIMITING (OPTIMIZED - Only check recent entries)
+//  RATE LIMITING
 // ======================================================
 function ensureMinIntervalMinutes_(workerId, minutes) {
   const ss = SpreadsheetApp.openById(SHEET_ID);
   const sh = ss.getSheetByName('ClockIn');
   if (!sh) return null;
-  
-  const lastRow = sh.getLastRow();
-  if (lastRow < 2) return null;
-  
-  // ⚡ OPTIMIZATION: Only read last 50 rows instead of entire sheet
-  const startRow = Math.max(2, lastRow - 49); // Start from row 2 or last-49
-  const numRows = lastRow - startRow + 1;
-  const data = sh.getRange(startRow, 1, numRows, sh.getLastColumn()).getValues();
-  const headers = sh.getRange(1, 1, 1, sh.getLastColumn()).getValues()[0].map(String);
+  const data = sh.getDataRange().getValues();
+  if (data.length < 2) return null;
 
+  const headers = data[0].map(String);
   const iWorker = headers.indexOf('WorkerID');
   const iDate = headers.indexOf('Date');
   const iTime = headers.indexOf('Time');
 
-  // Scan backwards from most recent
-  for (let i = data.length - 1; i >= 0; i--) {
+  for (let i = data.length - 1; i >= 1; i--) {
     const row = data[i];
     if (String(row[iWorker]) !== String(workerId)) continue;
 
@@ -151,12 +216,12 @@ function ensureMinIntervalMinutes_(workerId, minutes) {
     const diff = (now - combined) / 60000;
 
     if (diff < minutes) {
-      // Don't lookup worker meta here - causes another slow query
+      const workerMeta = lookupWorkerMeta_(workerId);
       TT_LOGGER.logRateLimit(
         {
           workerId: workerId,
-          displayName: workerId, // Use ID instead of looking up name (faster)
-          device: 'Unknown Device'
+          displayName: workerMeta.displayName || workerId,
+          device: workerMeta.device || 'Unknown Device'
         },
         {
           minutesSinceLastClockIn: diff,
@@ -168,7 +233,7 @@ function ensureMinIntervalMinutes_(workerId, minutes) {
         message: `⏱️ You recently clocked in. Please wait ${Math.ceil(minutes - diff)} minutes before clocking again.`
       };
     }
-    break; // Found this worker's most recent entry, stop searching
+    break;
   }
   return null;
 }

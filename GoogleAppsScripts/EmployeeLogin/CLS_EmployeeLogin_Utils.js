@@ -150,10 +150,6 @@ function translateMsg_(type, lang, now) {
 // ======================================================
 //  GEOCODING UTILITIES
 // ======================================================
-// ⚠️ NOTE: Clock-in function NO LONGER geocodes during clock-in (too slow)
-// Run initGeocode() manually from Apps Script editor to populate missing coordinates
-// Or set up a daily trigger to run this function automatically
-
 function initGeocode() {
   const ss = SpreadsheetApp.openById(SHEET_ID);
   const sheet = ss.getSheetByName('Clients');
@@ -167,25 +163,22 @@ function initGeocode() {
     return '❌ Clients sheet missing JobAddress/Latitude/Longitude columns.';
   }
 
-  let geocoded = 0;
   for (let i = 1; i < rows.length; i++) {
     const addr = rows[i][idxAddr];
     const lat = rows[i][idxLat];
     const lng = rows[i][idxLng];
-    if (addr && (!lat || !lng || lat === '' || lng === '')) {
+    if (addr && (!lat || !lng)) {
       try {
         const geo = Maps.newGeocoder().geocode(addr);
         if (geo.status === 'OK' && geo.results.length > 0) {
           const loc = geo.results[0].geometry.location;
           sheet.getRange(i + 1, idxLat + 1).setValue(loc.lat);
           sheet.getRange(i + 1, idxLng + 1).setValue(loc.lng);
-          geocoded++;
-          Logger.log(`✅ Geocoded: ${addr} → ${loc.lat}, ${loc.lng}`);
         }
       } catch (err) {
         Logger.log('Geocode failed for ' + addr + ': ' + err);
       }
     }
   }
-  return `✅ Geocoding completed. ${geocoded} locations updated.`;
+  return '✅ Geocoding completed.';
 }

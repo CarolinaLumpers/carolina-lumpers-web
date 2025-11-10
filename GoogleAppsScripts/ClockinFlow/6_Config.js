@@ -4,6 +4,10 @@
  * ======================
  * Configuration settings for sheet names, column indices, and time settings.
  */
+
+// Load credentials from Script Properties (secure storage)
+const PROPS = PropertiesService.getScriptProperties();
+
 const CONFIG = {
   SHEET_NAMES: {
     CLOCK_IN: "ClockIn",
@@ -51,8 +55,8 @@ const CONFIG = {
     DUPLICATE_SCAN_RESTRICTION_MINUTES: 20,
   },
   APPSHEET: {
-    API_KEY: 'V2-ZHKXU-KgQG7-2R2G9-sqDXc-lylt9-QGkjy-hQnBI-NHY4x',
-    APP_ID: '4a5b8255-5ee1-4473-bc44-090ac907035b',
+    API_KEY: PROPS.getProperty('APPSHEET_API_KEY'),
+    APP_ID: PROPS.getProperty('APPSHEET_APP_ID'),
     TABLE_NAME: 'Tasks'
   },
   DEBUG: true,

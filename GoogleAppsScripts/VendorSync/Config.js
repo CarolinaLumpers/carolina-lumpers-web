@@ -1,22 +1,25 @@
 
 
+// Load credentials from Script Properties (secure storage)
+const PROPS = PropertiesService.getScriptProperties();
+
 const CONFIG = {
   /**
    * AppSheet Configuration
    */
   APP_ID: "4a5b8255-5ee1-4473-bc44-090ac907035b",
-  APP_API_KEY: PropertiesService.getScriptProperties().getProperty("APPSHEET_API_KEY"),
+  APP_API_KEY: PROPS.getProperty("APPSHEET_API_KEY"),
   APPSHEET_BASE_URL: "https://api.appsheet.com/api/v2/apps/",
   
   /**
    * QuickBooks Online (QBO) Configuration
    */
-  QBO_CLIENT_ID: PropertiesService.getScriptProperties().getProperty("QBO_CLIENT_ID"),
-  QBO_CLIENT_SECRET: PropertiesService.getScriptProperties().getProperty("QBO_CLIENT_SECRET"),
-  QBO_REALM_ID: PropertiesService.getScriptProperties().getProperty("QBO_REALM_ID"),
-  QBO_ACCESS_TOKEN: PropertiesService.getScriptProperties().getProperty("QBO_ACCESS_TOKEN"),
+  QBO_CLIENT_ID: PROPS.getProperty("QBO_CLIENT_ID"),
+  QBO_CLIENT_SECRET: PROPS.getProperty("QBO_CLIENT_SECRET"),
+  QBO_REALM_ID: PROPS.getProperty("QBO_REALM_ID"),
+  QBO_ACCESS_TOKEN: PROPS.getProperty("QBO_ACCESS_TOKEN"),
   QBO_BASE_URL: "https://quickbooks.api.intuit.com/v3/company/",
-  QBO_REFRESH_TOKEN: PropertiesService.getScriptProperties().getProperty("QBO_REFRESH_TOKEN"),
+  QBO_REFRESH_TOKEN: PROPS.getProperty("QBO_REFRESH_TOKEN"),
 
   /**
    * OAuth Configuration
@@ -29,7 +32,7 @@ const CONFIG = {
   /**
    * Google Sheets Configuration
    */
-  SPREADSHEET_ID: '1U8hSNREN5fEhskp0UM-Z80iiW39beaOj3oIsaLZyFzk',
+  SPREADSHEET_ID: PROPS.getProperty('SPREADSHEET_ID'),
   SHEETS: {
     INVOICES: "Invoices",
     LINE_ITEMS: "Invoice LineItems",
