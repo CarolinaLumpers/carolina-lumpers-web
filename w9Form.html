@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-JPETF03TJ0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-JPETF03TJ0');
+  </script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-en="W-9 Form | Carolina Lumper Service" 
+         data-es="Formulario W-9 | Carolina Lumper Service"
+         data-pt="Formulário W-9 | Carolina Lumper Service">
+    W-9 Form | Carolina Lumper Service
+  </title>
+
+  <link rel="icon" type="image/png" href="assets/CLS-favicon.png">
+  <link rel="manifest" href="manifest-employee.json">
+  <meta name="theme-color" content="#ffcc00">
+  
+  <!-- iOS PWA Support -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="CLS Employee">
+  <link rel="apple-touch-icon" href="assets/CLS-icon-192.png">
+  
+  <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css?v=2025-11-10-w9">
+  <link rel="stylesheet" href="css/forms.css?v=2025-11-10-w9">
+  
+  <style>
+    /* Full-Screen Loading Overlay */
+    .loading-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.95);
+      backdrop-filter: blur(10px);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .loading-overlay.active {
+      display: flex;
+    }
+    
+    .loading-content {
+      text-align: center;
+      color: #FFC107;
+    }
+    
+    .loading-spinner {
+      width: 60px;
+      height: 60px;
+      border: 4px solid rgba(255, 193, 7, 0.2);
+      border-top-color: #FFC107;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+    
+    .loading-text {
+      font-size: 18px;
+      font-weight: 500;
+      margin: 0;
+      color: #FFC107;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* W-9 Form Specific Styles */
+    .w9-container {
+      background-color: var(--bg-secondary);
+      color: var(--text-primary);
+      border-radius: var(--radius-lg);
+      padding: var(--space-2xl) var(--space-xl);
+      max-width: 700px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .w9-container h1 {
+      color: var(--color-primary);
+      font-family: var(--font-heading);
+      font-size: var(--font-size-3xl);
+      margin-top: 0;
+      margin-bottom: var(--space-md);
+      text-align: center;
+    }
+
+    .w9-container .info-box {
+      background-color: var(--color-dark);
+      border-left: 4px solid var(--color-primary);
+      padding: var(--space-md);
+      margin-bottom: var(--space-lg);
+      border-radius: var(--radius-md);
+    }
+
+    .w9-container .info-box p {
+      margin: 0;
+      font-size: var(--font-size-sm);
+      color: var(--text-secondary);
+    }
+
+    .w9-form {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-lg);
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-xs);
+    }
+
+    .form-group label {
+      color: var(--text-primary);
+      font-weight: 500;
+      font-size: var(--font-size-sm);
+    }
+
+    .form-group label .required {
+      color: var(--color-error);
+      margin-left: 4px;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      background-color: var(--color-dark);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+      padding: var(--space-md);
+      border-radius: var(--radius-md);
+      font-size: var(--font-size-base);
+      transition: border-color 0.2s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--color-primary);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-md);
+    }
+
+    .form-row.three-col {
+      grid-template-columns: 2fr 1fr 1fr;
+    }
+
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      padding: var(--space-md);
+      background-color: var(--color-dark);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-color);
+    }
+
+    .checkbox-group input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+    }
+
+    .checkbox-group label {
+      margin: 0;
+      cursor: pointer;
+      font-size: var(--font-size-sm);
+    }
+
+    .ssn-info {
+      font-size: var(--font-size-xs);
+      color: var(--text-secondary);
+      font-style: italic;
+      margin-top: 4px;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: var(--space-md);
+      margin-top: var(--space-lg);
+    }
+
+    .btn-submit {
+      flex: 1;
+      background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+      color: var(--color-dark);
+      padding: var(--space-md) var(--space-xl);
+      border: none;
+      border-radius: var(--radius-md);
+      font-size: var(--font-size-base);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255, 193, 7, 0.4);
+    }
+
+    .btn-submit:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-cancel {
+      padding: var(--space-md) var(--space-xl);
+      background-color: transparent;
+      color: var(--text-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      font-size: var(--font-size-base);
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-cancel:hover {
+      background-color: var(--color-dark);
+      color: var(--text-primary);
+    }
+
+    #statusMessage {
+      padding: var(--space-md);
+      border-radius: var(--radius-md);
+      margin-top: var(--space-lg);
+      text-align: center;
+      display: none;
+    }
+
+    #statusMessage.success {
+      display: block;
+      background-color: rgba(34, 197, 94, 0.1);
+      color: #22c55e;
+      border: 1px solid rgba(34, 197, 94, 0.3);
+    }
+
+    #statusMessage.error {
+      display: block;
+      background-color: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    @media (max-width: 768px) {
+      .w9-container {
+        padding: var(--space-lg);
+      }
+
+      .form-row,
+      .form-row.three-col {
+        grid-template-columns: 1fr;
+      }
+
+      .form-actions {
+        flex-direction: column;
+      }
+    }
+  </style>
+
+</head>
+
+<body data-page="w9form">
+  <!-- Full-Screen Loading Overlay -->
+  <div id="loadingOverlay" class="loading-overlay">
+    <div class="loading-content">
+      <div class="loading-spinner"></div>
+      <p id="loadingText" class="loading-text" 
+         data-en="Submitting W-9..."
+         data-es="Enviando W-9..."
+         data-pt="Enviando W-9...">Submitting W-9...</p>
+    </div>
+  </div>
+
+  <!-- NAVBAR -->
+  <div id="navbar-container"></div>
+
+  <!-- W-9 FORM -->
+  <main>
+    <div class="w9-container">
+      <h1 data-en="W-9 Tax Information Form" 
+          data-es="Formulario de Información Fiscal W-9" 
+          data-pt="Formulário de Informações Fiscais W-9">
+        W-9 Tax Information Form
+      </h1>
+
+      <div class="info-box">
+        <p data-en="🔒 Your information is encrypted and securely stored. This form is required for all 1099 contractors before accessing the employee dashboard."
+           data-es="🔒 Su información está cifrada y almacenada de forma segura. Este formulario es obligatorio para todos los contratistas 1099 antes de acceder al panel de empleados."
+           data-pt="🔒 Suas informações são criptografadas e armazenadas com segurança. Este formulário é obrigatório para todos os contratados 1099 antes de acessar o painel de funcionários.">
+          🔒 Your information is encrypted and securely stored. This form is required for all 1099 contractors before accessing the employee dashboard.
+        </p>
+      </div>
+
+      <form id="w9Form" class="w9-form">
+        <!-- Legal Name -->
+        <div class="form-group">
+          <label for="legalName">
+            <span data-en="Legal Name (as shown on tax return)" 
+                  data-es="Nombre Legal (como aparece en la declaración de impuestos)" 
+                  data-pt="Nome Legal (como mostrado na declaração de impostos)">
+              Legal Name (as shown on tax return)
+            </span>
+            <span class="required">*</span>
+          </label>
+          <input type="text" id="legalName" name="legalName" required 
+                 placeholder="John Doe"
+                 data-en="John Doe"
+                 data-es="Juan Pérez"
+                 data-pt="João Silva">
+        </div>
+
+        <!-- Business Name (optional) -->
+        <div class="form-group">
+          <label for="businessName">
+            <span data-en="Business Name (if different from above)" 
+                  data-es="Nombre de la Empresa (si es diferente)" 
+                  data-pt="Nome da Empresa (se diferente)">
+              Business Name (if different from above)
+            </span>
+          </label>
+          <input type="text" id="businessName" name="businessName" 
+                 placeholder="Optional"
+                 data-en="Optional"
+                 data-es="Opcional"
+                 data-pt="Opcional">
+        </div>
+
+        <!-- Tax Classification -->
+        <div class="form-group">
+          <label for="taxClassification">
+            <span data-en="Federal Tax Classification" 
+                  data-es="Clasificación Fiscal Federal" 
+                  data-pt="Classificação Fiscal Federal">
+              Federal Tax Classification
+            </span>
+            <span class="required">*</span>
+          </label>
+          <select id="taxClassification" name="taxClassification" required>
+            <option value="" data-en="Select..." data-es="Seleccionar..." data-pt="Selecionar...">Select...</option>
+            <option value="Individual" data-en="Individual/Sole Proprietor" data-es="Individual/Propietario Único" data-pt="Individual/Proprietário Único">Individual/Sole Proprietor</option>
+            <option value="C-Corporation" data-en="C Corporation" data-es="Corporación C" data-pt="Corporação C">C Corporation</option>
+            <option value="S-Corporation" data-en="S Corporation" data-es="Corporación S" data-pt="Corporação S">S Corporation</option>
+            <option value="Partnership" data-en="Partnership" data-es="Sociedad" data-pt="Sociedade">Partnership</option>
+            <option value="Trust/Estate" data-en="Trust/Estate" data-es="Fideicomiso/Patrimonio" data-pt="Trust/Patrimônio">Trust/Estate</option>
+            <option value="LLC" data-en="Limited Liability Company" data-es="Compañía de Responsabilidad Limitada" data-pt="Sociedade de Responsabilidade Limitada">Limited Liability Company</option>
+            <option value="Other" data-en="Other" data-es="Otro" data-pt="Outro">Other</option>
+          </select>
+        </div>
+
+        <!-- Address -->
+        <div class="form-group">
+          <label for="address">
+            <span data-en="Street Address" 
+                  data-es="Dirección" 
+                  data-pt="Endereço">
+              Street Address
+            </span>
+            <span class="required">*</span>
+          </label>
+          <input type="text" id="address" name="address" required 
+                 placeholder="123 Main Street"
+                 data-en="123 Main Street"
+                 data-es="Calle Principal 123"
+                 data-pt="Rua Principal 123">
+        </div>
+
+        <!-- City, State, ZIP -->
+        <div class="form-row three-col">
+          <div class="form-group">
+            <label for="city">
+              <span data-en="City" data-es="Ciudad" data-pt="Cidade">City</span>
+              <span class="required">*</span>
+            </label>
+            <input type="text" id="city" name="city" required 
+                   placeholder="Raleigh"
+                   data-en="Raleigh"
+                   data-es="Raleigh"
+                   data-pt="Raleigh">
+          </div>
+
+          <div class="form-group">
+            <label for="state">
+              <span data-en="State" data-es="Estado" data-pt="Estado">State</span>
+              <span class="required">*</span>
+            </label>
+            <select id="state" name="state" required>
+              <option value="">--</option>
+              <option value="AL">AL</option>
+              <option value="AK">AK</option>
+              <option value="AZ">AZ</option>
+              <option value="AR">AR</option>
+              <option value="CA">CA</option>
+              <option value="CO">CO</option>
+              <option value="CT">CT</option>
+              <option value="DE">DE</option>
+              <option value="FL">FL</option>
+              <option value="GA">GA</option>
+              <option value="HI">HI</option>
+              <option value="ID">ID</option>
+              <option value="IL">IL</option>
+              <option value="IN">IN</option>
+              <option value="IA">IA</option>
+              <option value="KS">KS</option>
+              <option value="KY">KY</option>
+              <option value="LA">LA</option>
+              <option value="ME">ME</option>
+              <option value="MD">MD</option>
+              <option value="MA">MA</option>
+              <option value="MI">MI</option>
+              <option value="MN">MN</option>
+              <option value="MS">MS</option>
+              <option value="MO">MO</option>
+              <option value="MT">MT</option>
+              <option value="NE">NE</option>
+              <option value="NV">NV</option>
+              <option value="NH">NH</option>
+              <option value="NJ">NJ</option>
+              <option value="NM">NM</option>
+              <option value="NY">NY</option>
+              <option value="NC">NC</option>
+              <option value="ND">ND</option>
+              <option value="OH">OH</option>
+              <option value="OK">OK</option>
+              <option value="OR">OR</option>
+              <option value="PA">PA</option>
+              <option value="RI">RI</option>
+              <option value="SC">SC</option>
+              <option value="SD">SD</option>
+              <option value="TN">TN</option>
+              <option value="TX">TX</option>
+              <option value="UT">UT</option>
+              <option value="VT">VT</option>
+              <option value="VA">VA</option>
+              <option value="WA">WA</option>
+              <option value="WV">WV</option>
+              <option value="WI">WI</option>
+              <option value="WY">WY</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="zip">
+              <span data-en="ZIP Code" data-es="Código Postal" data-pt="CEP">ZIP Code</span>
+              <span class="required">*</span>
+            </label>
+            <input type="text" id="zip" name="zip" required 
+                   pattern="[0-9]{5}"
+                   maxlength="5"
+                   placeholder="27601"
+                   data-en="27601"
+                   data-es="27601"
+                   data-pt="27601">
+          </div>
+        </div>
+
+        <!-- SSN -->
+        <div class="form-group">
+          <label for="ssn">
+            <span data-en="Social Security Number (SSN)" 
+                  data-es="Número de Seguro Social (SSN)" 
+                  data-pt="Número de Segurança Social (SSN)">
+              Social Security Number (SSN)
+            </span>
+            <span class="required">*</span>
+          </label>
+          <input type="password" id="ssn" name="ssn" required 
+                 pattern="[0-9]{3}-?[0-9]{2}-?[0-9]{4}"
+                 maxlength="11"
+                 placeholder="XXX-XX-XXXX"
+                 autocomplete="off">
+          <p class="ssn-info" 
+             data-en="🔒 Your SSN is encrypted. Only the last 4 digits will be visible after submission."
+             data-es="🔒 Su SSN está cifrado. Solo los últimos 4 dígitos serán visibles después del envío."
+             data-pt="🔒 Seu SSN é criptografado. Apenas os últimos 4 dígitos estarão visíveis após o envio.">
+            🔒 Your SSN is encrypted. Only the last 4 digits will be visible after submission.
+          </p>
+        </div>
+
+        <!-- Confirm SSN -->
+        <div class="form-group">
+          <label for="confirmSsn">
+            <span data-en="Confirm Social Security Number" 
+                  data-es="Confirmar Número de Seguro Social" 
+                  data-pt="Confirmar Número de Segurança Social">
+              Confirm Social Security Number
+            </span>
+            <span class="required">*</span>
+          </label>
+          <input type="password" id="confirmSsn" name="confirmSsn" required 
+                 pattern="[0-9]{3}-?[0-9]{2}-?[0-9]{4}"
+                 maxlength="11"
+                 placeholder="XXX-XX-XXXX"
+                 autocomplete="off">
+        </div>
+
+        <!-- Backup Withholding -->
+        <div class="checkbox-group">
+          <input type="checkbox" id="backupWithholding" name="backupWithholding">
+          <label for="backupWithholding">
+            <span data-en="I am subject to backup withholding (rare - check only if IRS has notified you)"
+                  data-es="Estoy sujeto a retención de respaldo (raro: marque solo si el IRS le ha notificado)"
+                  data-pt="Estou sujeito a retenção de backup (raro - marque apenas se o IRS o notificou)">
+              I am subject to backup withholding (rare - check only if IRS has notified you)
+            </span>
+          </label>
+        </div>
+
+        <!-- Certification Statement -->
+        <div class="info-box">
+          <p style="font-size: 11px; line-height: 1.5;">
+            <strong data-en="Certification:" data-es="Certificación:" data-pt="Certificação:">Certification:</strong>
+            <span data-en="Under penalties of perjury, I certify that: (1) The number shown on this form is my correct taxpayer identification number, (2) I am not subject to backup withholding (unless box above is checked), (3) I am a U.S. citizen or other U.S. person, and (4) The FATCA code(s) entered on this form (if any) indicating that I am exempt from FATCA reporting is correct."
+                  data-es="Bajo pena de perjurio, certifico que: (1) El número que aparece en este formulario es mi número de identificación fiscal correcto, (2) No estoy sujeto a retención de respaldo (a menos que la casilla anterior esté marcada), (3) Soy ciudadano estadounidense u otra persona estadounidense, y (4) El código FATCA ingresado en este formulario (si corresponde) que indica que estoy exento de informes FATCA es correcto."
+                  data-pt="Sob pena de perjúrio, certifico que: (1) O número mostrado neste formulário é meu número de identificação fiscal correto, (2) Não estou sujeito a retenção de backup (a menos que a caixa acima esteja marcada), (3) Sou cidadão dos EUA ou outra pessoa dos EUA, e (4) O código FATCA inserido neste formulário (se houver) indicando que estou isento de relatórios FATCA está correto.">
+              Under penalties of perjury, I certify that: (1) The number shown on this form is my correct taxpayer identification number, (2) I am not subject to backup withholding (unless box above is checked), (3) I am a U.S. citizen or other U.S. person, and (4) The FATCA code(s) entered on this form (if any) indicating that I am exempt from FATCA reporting is correct.
+            </span>
+          </p>
+        </div>
+
+        <!-- Electronic Signature -->
+        <div class="form-group">
+          <label for="signature">
+            <span data-en="Electronic Signature (type your full legal name)" 
+                  data-es="Firma Electrónica (escriba su nombre legal completo)" 
+                  data-pt="Assinatura Eletrônica (digite seu nome legal completo)">
+              Electronic Signature (type your full legal name)
+            </span>
+            <span class="required">*</span>
+          </label>
+          <input type="text" id="signature" name="signature" required 
+                 placeholder="John Doe"
+                 data-en="John Doe"
+                 data-es="Juan Pérez"
+                 data-pt="João Silva">
+        </div>
+
+        <!-- Status Message -->
+        <div id="statusMessage" role="alert" aria-live="assertive"></div>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+          <button type="button" class="btn-cancel" onclick="window.location.href='employeelogin.html'"
+                  data-en="Cancel"
+                  data-es="Cancelar"
+                  data-pt="Cancelar">Cancel</button>
+          <button type="submit" class="btn-submit" id="submitBtn"
+                  data-en="Submit W-9 Form"
+                  data-es="Enviar Formulario W-9"
+                  data-pt="Enviar Formulário W-9">Submit W-9 Form</button>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <div id="footer-container"></div>
+
+  <!-- Cache Busting Utility -->
+  <script src="js/cache-buster.js?v=2025-11-10-w9" defer></script>
+  <script src="js/script.js?v=2025-11-10-w9" defer></script>
+  
+  <script>
+    // W-9 Form Submission Logic
+    const API_URL = 'https://cls-proxy.s-garay.workers.dev';
+    
+    document.getElementById('w9Form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      // Get form data
+      const formData = {
+        legalName: document.getElementById('legalName').value.trim(),
+        businessName: document.getElementById('businessName').value.trim(),
+        taxClassification: document.getElementById('taxClassification').value,
+        address: document.getElementById('address').value.trim(),
+        city: document.getElementById('city').value.trim(),
+        state: document.getElementById('state').value,
+        zip: document.getElementById('zip').value.trim(),
+        ssn: document.getElementById('ssn').value.replace(/\D/g, ''), // Remove non-digits
+        confirmSsn: document.getElementById('confirmSsn').value.replace(/\D/g, ''),
+        backupWithholding: document.getElementById('backupWithholding').checked,
+        signature: document.getElementById('signature').value.trim()
+      };
+      
+      // Client-side validation
+      if (!formData.legalName || !formData.taxClassification || !formData.address || 
+          !formData.city || !formData.state || !formData.zip || 
+          !formData.ssn || !formData.signature) {
+        showStatus('error', 'Please fill out all required fields.', 
+                   'Por favor complete todos los campos requeridos.',
+                   'Por favor, preencha todos os campos obrigatórios.');
+        return;
+      }
+      
+      // Validate SSN format (9 digits)
+      if (formData.ssn.length !== 9) {
+        showStatus('error', 'SSN must be 9 digits.', 
+                   'El SSN debe tener 9 dígitos.',
+                   'O SSN deve ter 9 dígitos.');
+        return;
+      }
+      
+      // Validate SSN match
+      if (formData.ssn !== formData.confirmSsn) {
+        showStatus('error', 'SSN numbers do not match.', 
+                   'Los números de SSN no coinciden.',
+                   'Os números de SSN não correspondem.');
+        return;
+      }
+      
+      // Validate signature matches legal name
+      if (formData.signature.toLowerCase() !== formData.legalName.toLowerCase()) {
+        showStatus('error', 'Electronic signature must match your legal name.', 
+                   'La firma electrónica debe coincidir con su nombre legal.',
+                   'A assinatura eletrônica deve corresponder ao seu nome legal.');
+        return;
+      }
+      
+      // Get worker ID from session
+      const workerId = localStorage.getItem('CLS_WorkerID');
+      if (!workerId) {
+        showStatus('error', 'Session expired. Please log in again.', 
+                   'Sesión expirada. Por favor inicie sesión nuevamente.',
+                   'Sessão expirada. Por favor, faça login novamente.');
+        setTimeout(() => {
+          window.location.href = 'employeelogin.html';
+        }, 2000);
+        return;
+      }
+      
+      // Get device info
+      const deviceInfo = typeof getDeviceInfo === 'function' ? getDeviceInfo() : { displayString: 'Unknown' };
+      
+      // Show loading overlay
+      showLoading(true);
+      
+      try {
+        // Format SSN with dashes for backend
+        const ssnFormatted = formData.ssn.slice(0,3) + '-' + formData.ssn.slice(3,5) + '-' + formData.ssn.slice(5);
+        
+        // Build query string
+        const params = new URLSearchParams({
+          action: 'submitW9',
+          workerId: workerId,
+          legalName: formData.legalName,
+          businessName: formData.businessName,
+          taxClassification: formData.taxClassification,
+          address: formData.address,
+          city: formData.city,
+          state: formData.state,
+          zip: formData.zip,
+          ssn: ssnFormatted,
+          backupWithholding: formData.backupWithholding,
+          signature: formData.signature,
+          device: deviceInfo.displayString
+        });
+        
+        const response = await fetch(`${API_URL}?${params.toString()}`, {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json'
+          }
+        });
+        
+        const result = await response.json();
+        
+        showLoading(false);
+        
+        if (result.ok) {
+          showStatus('success', result.message || 'W-9 submitted successfully!', 
+                     result.message || '¡W-9 enviado exitosamente!',
+                     result.message || 'W-9 enviado com sucesso!');
+          
+          // Clear form
+          document.getElementById('w9Form').reset();
+          
+          // Redirect to status page after 2 seconds
+          setTimeout(() => {
+            window.location.href = 'w9Status.html';
+          }, 2000);
+        } else {
+          showStatus('error', result.message || 'Failed to submit W-9. Please try again.', 
+                     result.message || 'Error al enviar W-9. Por favor intente nuevamente.',
+                     result.message || 'Falha ao enviar W-9. Por favor, tente novamente.');
+        }
+        
+      } catch (error) {
+        console.error('W-9 submission error:', error);
+        showLoading(false);
+        showStatus('error', 'Network error. Please check your connection and try again.', 
+                   'Error de red. Por favor verifique su conexión e intente nuevamente.',
+                   'Erro de rede. Por favor, verifique sua conexão e tente novamente.');
+      }
+    });
+    
+    // Show/hide loading overlay
+    function showLoading(show) {
+      const overlay = document.getElementById('loadingOverlay');
+      if (show) {
+        overlay.classList.add('active');
+      } else {
+        overlay.classList.remove('active');
+      }
+    }
+    
+    // Show status message (multilingual)
+    function showStatus(type, messageEN, messageES, messagePT) {
+      const statusDiv = document.getElementById('statusMessage');
+      const currentLang = localStorage.getItem('CLS_Language') || 'en';
+      
+      let message = messageEN;
+      if (currentLang === 'es') message = messageES;
+      if (currentLang === 'pt') message = messagePT;
+      
+      statusDiv.textContent = message;
+      statusDiv.className = type;
+      
+      // Scroll to status message
+      statusDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+    
+    // Auto-format SSN input with dashes
+    document.getElementById('ssn').addEventListener('input', function(e) {
+      let value = e.target.value.replace(/\D/g, ''); // Remove non-digits
+      if (value.length > 9) value = value.slice(0, 9);
+      
+      // Format as XXX-XX-XXXX
+      if (value.length >= 6) {
+        e.target.value = value.slice(0,3) + '-' + value.slice(3,5) + '-' + value.slice(5);
+      } else if (value.length >= 4) {
+        e.target.value = value.slice(0,3) + '-' + value.slice(3);
+      } else {
+        e.target.value = value;
+      }
+    });
+    
+    document.getElementById('confirmSsn').addEventListener('input', function(e) {
+      let value = e.target.value.replace(/\D/g, '');
+      if (value.length > 9) value = value.slice(0, 9);
+      
+      if (value.length >= 6) {
+        e.target.value = value.slice(0,3) + '-' + value.slice(3,5) + '-' + value.slice(5);
+      } else if (value.length >= 4) {
+        e.target.value = value.slice(0,3) + '-' + value.slice(3);
+      } else {
+        e.target.value = value;
+      }
+    });
+    
+    // Check if user is logged in
+    window.addEventListener('DOMContentLoaded', function() {
+      const workerId = localStorage.getItem('CLS_WorkerID');
+      if (!workerId) {
+        window.location.href = 'employeelogin.html';
+      }
+    });
+  </script>
+</body>
+</html>

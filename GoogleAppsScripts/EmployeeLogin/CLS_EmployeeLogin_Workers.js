@@ -33,6 +33,13 @@ function loginUser(e) {
   for (let i = 0; i < nameIdxCandidates.length && nameIdx < 0; i++) {
     nameIdx = headers.indexOf(nameIdxCandidates[i]);
   }
+  
+  // W-9 related columns
+  const w9StatusIdx = headers.indexOf('W9Status');
+  const w9SubmittedDateIdx = headers.indexOf('W9SubmittedDate');
+  const w9ApprovedDateIdx = headers.indexOf('W9ApprovedDate');
+  const w9SsnLast4Idx = headers.indexOf('W9SSN_Last4');
+  const w9PdfUrlIdx = headers.indexOf('W9_PDF_URL');
 
   if (emailIdx < 0 || passIdx < 0 || idIdx < 0) {
     const errorMsg = '❌ Workers sheet is missing required columns.';
@@ -60,6 +67,13 @@ function loginUser(e) {
         // Successful login
         Logger.log(`✅ Login successful for ${email} (${workerId}) - ${displayName}`);
         
+        // Get W-9 status information
+        const w9Status = w9StatusIdx >= 0 ? (row[w9StatusIdx] || 'none') : 'none';
+        const w9SubmittedDate = w9SubmittedDateIdx >= 0 ? row[w9SubmittedDateIdx] : '';
+        const w9ApprovedDate = w9ApprovedDateIdx >= 0 ? row[w9ApprovedDateIdx] : '';
+        const w9SsnLast4 = w9SsnLast4Idx >= 0 ? row[w9SsnLast4Idx] : '';
+        const w9PdfUrl = w9PdfUrlIdx >= 0 ? row[w9PdfUrlIdx] : '';
+        
         // Log successful login
         TT_LOGGER.logLogin({
           workerId: workerId,
@@ -74,7 +88,12 @@ function loginUser(e) {
           success: true,
           workerId: workerId,
           displayName: displayName,
-          email: email
+          email: email,
+          w9Status: w9Status,
+          w9SubmittedDate: w9SubmittedDate,
+          w9ApprovedDate: w9ApprovedDate,
+          w9SsnLast4: w9SsnLast4,
+          w9PdfUrl: w9Status === 'approved' ? w9PdfUrl : '' // Only return PDF if approved
         };
       } else {
         // Password mismatch
@@ -117,6 +136,8 @@ function signUpUser(e) {
   const headers = data[0];
   const emailIdx = headers.indexOf('Email');
   const passIdx = headers.indexOf('PasswordHash');
+  const workerIdIdx = headers.indexOf('WorkerID');
+  const displayNameIdx = headers.indexOf('Display Name');
 
   if (emailIdx < 0 || passIdx < 0) {
     const errorMsg = '❌ Workers sheet is missing Email/PasswordHash columns.';
@@ -138,12 +159,17 @@ function signUpUser(e) {
       // Found user, set password
       sheet.getRange(i + 1, passIdx + 1).setValue(hash);
       
-      Logger.log(`✅ Password set successfully for: ${email}`);
+      // Get worker details for logging
+      const workerId = workerIdIdx >= 0 ? String(row[workerIdIdx] || '').trim() : 'PENDING';
+      const displayName = displayNameIdx >= 0 ? String(row[displayNameIdx] || '').trim() : email.split('@')[0];
       
-      // Log successful password setup
+      Logger.log(`✅ Password set successfully for: ${email} (${displayName})`);
+      
+      // Log successful password setup with actual worker name
       TT_LOGGER.logSignup({
+        workerId: workerId,
         email: email,
-        displayName: email.split('@')[0],
+        displayName: displayName,
         device: device
       });
       

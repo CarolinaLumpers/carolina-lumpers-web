@@ -420,6 +420,84 @@
         </div>
       </div>
 
+      <!-- W-9 MANAGEMENT Subsection -->
+      <div id="w9ManagementWrap" class="admin-subsection">
+        <h4 class="section-title" data-en="W-9 Form Management" data-es="Gestión de Formularios W-9"
+          data-pt="Gerenciamento de Formulários W-9"
+          style="padding:12px;background:rgba(255,193,7,0.1);border-radius:6px;margin-bottom:12px;">
+          <span>W-9 Form Management</span>
+        </h4>
+        <div id="w9ManagementContent" class="admin-section-content">
+        
+        <p class="muted" style="margin-bottom:12px;" 
+           data-en="Review and approve W-9 submissions from 1099 contractors" 
+           data-es="Revisar y aprobar envíos de W-9 de contratistas 1099"
+           data-pt="Revisar e aprovar envios de W-9 de contratados 1099">
+          Review and approve W-9 submissions from 1099 contractors
+        </p>
+        
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
+          <button id="btnLoadPendingW9s" class="btn btn-primary" 
+                  data-en="Load Pending W-9s" 
+                  data-es="Cargar W-9 Pendientes" 
+                  data-pt="Carregar W-9 Pendentes">
+            Load Pending W-9s
+          </button>
+          <button id="btnRefreshW9s" class="btn btn-ghost" 
+                  data-en="Refresh" 
+                  data-es="Actualizar" 
+                  data-pt="Atualizar">
+            Refresh
+          </button>
+        </div>
+        
+        <div id="w9Container" style="overflow:auto;margin-top:12px;">
+          <p class="muted" data-en="Click 'Load Pending W-9s' to view submissions awaiting approval" 
+             data-es="Haga clic en 'Cargar W-9 Pendientes' para ver envíos en espera de aprobación"
+             data-pt="Clique em 'Carregar W-9 Pendentes' para ver envios aguardando aprovação">
+            Click 'Load Pending W-9s' to view submissions awaiting approval
+          </p>
+        </div>
+        
+        <!-- W-9 Details Modal -->
+        <div id="w9DetailsModal" class="modal" style="display:none;">
+          <div class="modal-content" style="max-width:600px;">
+            <div class="modal-header">
+              <h3 data-en="W-9 Form Details" data-es="Detalles del Formulario W-9" data-pt="Detalhes do Formulário W-9">W-9 Form Details</h3>
+              <span class="close" onclick="closeW9Modal()">&times;</span>
+            </div>
+            <div class="modal-body">
+              <div id="w9DetailsContent"></div>
+              
+              <div class="form-group" style="margin-top:20px;">
+                <label for="w9RejectionReason">
+                  <span data-en="Rejection Reason (if rejecting):" 
+                        data-es="Razón del Rechazo (si rechaza):" 
+                        data-pt="Motivo da Rejeição (se rejeitando):">
+                    Rejection Reason (if rejecting):
+                  </span>
+                </label>
+                <textarea id="w9RejectionReason" class="form-input" rows="3" 
+                          placeholder="Enter reason for rejection..."
+                          data-en="Enter reason for rejection..."
+                          data-es="Ingrese la razón del rechazo..."
+                          data-pt="Digite o motivo da rejeição..."></textarea>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-ghost" onclick="closeW9Modal()"
+                      data-en="Cancel" data-es="Cancelar" data-pt="Cancelar">Cancel</button>
+              <button id="btnRejectW9" class="btn btn-danger" onclick="rejectW9()"
+                      data-en="Reject W-9" data-es="Rechazar W-9" data-pt="Rejeitar W-9">Reject W-9</button>
+              <button id="btnApproveW9" class="btn btn-success" onclick="approveW9()"
+                      data-en="Approve W-9" data-es="Aprobar W-9" data-pt="Aprovar W-9">Approve W-9</button>
+            </div>
+          </div>
+        </div>
+        
+        </div>
+      </div>
+
       <!-- RUN PAYROLL Subsection -->
       <div id="runPayrollWrap" class="admin-subsection">
         <h4 class="section-title" data-en="Run Payroll" data-es="Ejecutar Nómina"
@@ -1784,6 +1862,224 @@
       loadReport();
       loadPayrollWeekPeriods(); // Reload admin's own week periods
     }
+    
+    // ===== W-9 Management Functions =====
+    let currentW9RecordId = null;
+    let pendingW9List = [];
+    
+    // Load pending W-9 submissions
+    async function loadPendingW9s() {
+      const container = document.getElementById('w9Container');
+      container.innerHTML = '<p class="muted">Loading...</p>';
+      
+      const adminId = WORKER_ID;
+      
+      try {
+        const result = await jsonp(`${API_URL}?action=listPendingW9s&requesterId=${encodeURIComponent(adminId)}`);
+        
+        if (result.ok && result.pending && result.pending.length > 0) {
+          pendingW9List = result.pending;
+          
+          let html = '<table style="width:100%;border-collapse:collapse;"><thead><tr>';
+          html += '<th style="text-align:left;padding:12px;border-bottom:1px solid #333;" data-en="Worker" data-es="Empleado" data-pt="Funcionário">Worker</th>';
+          html += '<th style="text-align:left;padding:12px;border-bottom:1px solid #333;" data-en="Submitted" data-es="Enviado" data-pt="Enviado">Submitted</th>';
+          html += '<th style="text-align:center;padding:12px;border-bottom:1px solid #333;" data-en="Actions" data-es="Acciones" data-pt="Ações">Actions</th>';
+          html += '</tr></thead><tbody>';
+          
+          result.pending.forEach(w9 => {
+            html += `<tr style="border-bottom:1px solid #222;">`;
+            html += `<td style="padding:12px;">${w9.displayName || w9.workerId}<br><small style="color:#888;">${w9.workerId}</small></td>`;
+            html += `<td style="padding:12px;">${formatDate(w9.submittedDate)}</td>`;
+            html += `<td style="padding:12px;text-align:center;">`;
+            html += `<button class="btn btn-ghost" style="padding:6px 12px;font-size:12px;margin:0 4px;" onclick="viewW9Details('${w9.w9RecordId}')" data-en="Review" data-es="Revisar" data-pt="Revisar">Review</button>`;
+            if (w9.pdfUrl) {
+              html += `<button class="btn btn-ghost" style="padding:6px 12px;font-size:12px;margin:0 4px;" onclick="window.open('${w9.pdfUrl}', '_blank')" data-en="View PDF" data-es="Ver PDF" data-pt="Ver PDF">View PDF</button>`;
+            }
+            html += `</td></tr>`;
+          });
+          
+          html += '</tbody></table>';
+          container.innerHTML = html;
+          
+          // Apply translations
+          if (typeof applyTranslations === 'function') {
+            applyTranslations();
+          }
+        } else {
+          container.innerHTML = '<p class="muted" data-en="No pending W-9 submissions" data-es="No hay envíos de W-9 pendientes" data-pt="Nenhum envio de W-9 pendente">No pending W-9 submissions</p>';
+          if (typeof applyTranslations === 'function') {
+            applyTranslations();
+          }
+        }
+      } catch (error) {
+        console.error('Error loading pending W-9s:', error);
+        container.innerHTML = '<p style="color:#ef4444;">Error loading W-9 submissions. Please try again.</p>';
+      }
+    }
+    
+    // View W-9 details in modal
+    function viewW9Details(w9RecordId) {
+      currentW9RecordId = w9RecordId;
+      
+      // Find the W-9 in the pending list
+      const w9 = pendingW9List.find(w => w.w9RecordId === w9RecordId);
+      
+      if (!w9) {
+        alert('W-9 record not found');
+        return;
+      }
+      
+      // Build details HTML
+      let html = '<div style="display:flex;flex-direction:column;gap:12px;">';
+      html += `<div><strong data-en="W-9 Record ID:" data-es="ID de Registro W-9:" data-pt="ID de Registro W-9:">W-9 Record ID:</strong> ${w9.w9RecordId}</div>`;
+      html += `<div><strong data-en="Worker:" data-es="Empleado:" data-pt="Funcionário:">Worker:</strong> ${w9.displayName} (${w9.workerId})</div>`;
+      html += `<div><strong data-en="Submitted:" data-es="Enviado:" data-pt="Enviado:">Submitted:</strong> ${formatDate(w9.submittedDate)}</div>`;
+      
+      if (w9.pdfUrl) {
+        html += `<div><a href="${w9.pdfUrl}" target="_blank" class="btn btn-primary" style="display:inline-block;padding:8px 16px;text-decoration:none;" data-en="View W-9 PDF" data-es="Ver PDF W-9" data-pt="Ver PDF W-9">View W-9 PDF</a></div>`;
+      }
+      
+      html += '</div>';
+      
+      document.getElementById('w9DetailsContent').innerHTML = html;
+      document.getElementById('w9RejectionReason').value = '';
+      
+      // Show modal
+      document.getElementById('w9DetailsModal').style.display = 'block';
+      
+      // Apply translations
+      if (typeof applyTranslations === 'function') {
+        applyTranslations();
+      }
+    }
+    
+    // Close W-9 modal
+    function closeW9Modal() {
+      document.getElementById('w9DetailsModal').style.display = 'none';
+      currentW9RecordId = null;
+    }
+    
+    // Approve W-9
+    async function approveW9() {
+      if (!currentW9RecordId) return;
+      
+      if (!confirm('Are you sure you want to APPROVE this W-9? The worker will gain full dashboard access.')) {
+        return;
+      }
+      
+      const adminId = WORKER_ID;
+      const deviceInfo = typeof getDeviceInfo === 'function' ? getDeviceInfo() : { displayString: 'Unknown' };
+      
+      try {
+        document.getElementById('btnApproveW9').disabled = true;
+        document.getElementById('btnApproveW9').textContent = 'Approving...';
+        
+        const result = await jsonp(`${API_URL}?action=approveW9&w9RecordId=${encodeURIComponent(currentW9RecordId)}&adminId=${encodeURIComponent(adminId)}&device=${encodeURIComponent(deviceInfo.displayString)}`);
+        
+        if (result.ok) {
+          alert(result.message || 'W-9 approved successfully!');
+          closeW9Modal();
+          loadPendingW9s(); // Refresh list
+        } else {
+          alert(result.message || 'Failed to approve W-9');
+          document.getElementById('btnApproveW9').disabled = false;
+          document.getElementById('btnApproveW9').textContent = 'Approve W-9';
+        }
+      } catch (error) {
+        console.error('Error approving W-9:', error);
+        alert('Network error. Please try again.');
+        document.getElementById('btnApproveW9').disabled = false;
+        document.getElementById('btnApproveW9').textContent = 'Approve W-9';
+      }
+    }
+    
+    // Reject W-9
+    async function rejectW9() {
+      if (!currentW9RecordId) return;
+      
+      const reason = document.getElementById('w9RejectionReason').value.trim();
+      
+      if (!reason) {
+        alert('Please enter a reason for rejection.');
+        return;
+      }
+      
+      if (!confirm('Are you sure you want to REJECT this W-9? The worker will be notified.')) {
+        return;
+      }
+      
+      const adminId = WORKER_ID;
+      const deviceInfo = typeof getDeviceInfo === 'function' ? getDeviceInfo() : { displayString: 'Unknown' };
+      
+      try {
+        document.getElementById('btnRejectW9').disabled = true;
+        document.getElementById('btnRejectW9').textContent = 'Rejecting...';
+        
+        const result = await jsonp(`${API_URL}?action=rejectW9&w9RecordId=${encodeURIComponent(currentW9RecordId)}&adminId=${encodeURIComponent(adminId)}&reason=${encodeURIComponent(reason)}&device=${encodeURIComponent(deviceInfo.displayString)}`);
+        
+        if (result.ok) {
+          alert(result.message || 'W-9 rejected successfully!');
+          closeW9Modal();
+          loadPendingW9s(); // Refresh list
+        } else {
+          alert(result.message || 'Failed to reject W-9');
+          document.getElementById('btnRejectW9').disabled = false;
+          document.getElementById('btnRejectW9').textContent = 'Reject W-9';
+        }
+      } catch (error) {
+        console.error('Error rejecting W-9:', error);
+        alert('Network error. Please try again.');
+        document.getElementById('btnRejectW9').disabled = false;
+        document.getElementById('btnRejectW9').textContent = 'Reject W-9';
+      }
+    }
+    
+    // Format date helper
+    function formatDate(dateStr) {
+      if (!dateStr) return 'N/A';
+      try {
+        const date = new Date(dateStr);
+        return date.toLocaleDateString('en-US', { 
+          year: 'numeric', 
+          month: 'short', 
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+      } catch (e) {
+        return dateStr;
+      }
+    }
+    
+    // Wire up W-9 buttons
+    document.addEventListener('DOMContentLoaded', () => {
+      const btnLoadPendingW9s = document.getElementById('btnLoadPendingW9s');
+      const btnRefreshW9s = document.getElementById('btnRefreshW9s');
+      
+      if (btnLoadPendingW9s) {
+        btnLoadPendingW9s.addEventListener('click', loadPendingW9s);
+      }
+      
+      if (btnRefreshW9s) {
+        btnRefreshW9s.addEventListener('click', loadPendingW9s);
+      }
+      
+      // Close modal when clicking outside
+      const w9Modal = document.getElementById('w9DetailsModal');
+      if (w9Modal) {
+        w9Modal.addEventListener('click', (e) => {
+          if (e.target === w9Modal) {
+            closeW9Modal();
+          }
+        });
+      }
+    });
+    
+    // Make functions globally accessible
+    window.viewW9Details = viewW9Details;
+    window.closeW9Modal = closeW9Modal;
+    window.approveW9 = approveW9;
+    window.rejectW9 = rejectW9;
   </script>
 
   <!-- Admin Tools Module (ES6) -->

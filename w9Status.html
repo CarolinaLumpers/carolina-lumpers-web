@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-JPETF03TJ0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-JPETF03TJ0');
+  </script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-en="W-9 Status | Carolina Lumper Service" 
+         data-es="Estado W-9 | Carolina Lumper Service"
+         data-pt="Status W-9 | Carolina Lumper Service">
+    W-9 Status | Carolina Lumper Service
+  </title>
+
+  <link rel="icon" type="image/png" href="assets/CLS-favicon.png">
+  <link rel="manifest" href="manifest-employee.json">
+  <meta name="theme-color" content="#ffcc00">
+  
+  <!-- iOS PWA Support -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="CLS Employee">
+  <link rel="apple-touch-icon" href="assets/CLS-icon-192.png">
+  
+  <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css?v=2025-11-10-w9">
+  <link rel="stylesheet" href="css/forms.css?v=2025-11-10-w9">
+  
+  <style>
+    .status-container {
+      background-color: var(--bg-secondary);
+      color: var(--text-primary);
+      border-radius: var(--radius-lg);
+      padding: var(--space-2xl) var(--space-xl);
+      max-width: 600px;
+      width: 100%;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .status-container h1 {
+      color: var(--color-primary);
+      font-family: var(--font-heading);
+      font-size: var(--font-size-3xl);
+      margin-top: 0;
+      margin-bottom: var(--space-lg);
+    }
+
+    .status-icon {
+      font-size: 80px;
+      margin-bottom: var(--space-lg);
+    }
+
+    .status-card {
+      background-color: var(--color-dark);
+      border-radius: var(--radius-lg);
+      padding: var(--space-xl);
+      margin-bottom: var(--space-lg);
+      border: 2px solid transparent;
+    }
+
+    .status-card.pending {
+      border-color: rgba(255, 193, 7, 0.3);
+    }
+
+    .status-card.approved {
+      border-color: rgba(34, 197, 94, 0.3);
+    }
+
+    .status-card.rejected {
+      border-color: rgba(239, 68, 68, 0.3);
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: var(--space-xs) var(--space-md);
+      border-radius: var(--radius-full);
+      font-weight: 600;
+      font-size: var(--font-size-sm);
+      margin-bottom: var(--space-md);
+    }
+
+    .status-badge.pending {
+      background-color: rgba(255, 193, 7, 0.2);
+      color: var(--color-primary);
+    }
+
+    .status-badge.approved {
+      background-color: rgba(34, 197, 94, 0.2);
+      color: #22c55e;
+    }
+
+    .status-badge.rejected {
+      background-color: rgba(239, 68, 68, 0.2);
+      color: #ef4444;
+    }
+
+    .status-message {
+      font-size: var(--font-size-lg);
+      color: var(--text-primary);
+      margin-bottom: var(--space-md);
+      line-height: 1.6;
+    }
+
+    .status-details {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+      margin-top: var(--space-lg);
+      text-align: left;
+    }
+
+    .status-detail-item {
+      display: flex;
+      justify-content: space-between;
+      padding: var(--space-sm) 0;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .status-detail-label {
+      color: var(--text-secondary);
+      font-size: var(--font-size-sm);
+    }
+
+    .status-detail-value {
+      color: var(--text-primary);
+      font-weight: 500;
+      font-size: var(--font-size-sm);
+    }
+
+    .btn-primary {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+      color: var(--color-dark);
+      padding: var(--space-md) var(--space-xl);
+      border: none;
+      border-radius: var(--radius-md);
+      font-size: var(--font-size-base);
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.3s;
+      margin-top: var(--space-lg);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255, 193, 7, 0.4);
+    }
+
+    .btn-secondary {
+      display: inline-block;
+      background-color: transparent;
+      color: var(--text-secondary);
+      padding: var(--space-md) var(--space-xl);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      font-size: var(--font-size-base);
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.3s;
+      margin-top: var(--space-lg);
+      margin-left: var(--space-sm);
+    }
+
+    .btn-secondary:hover {
+      background-color: var(--color-dark);
+      color: var(--text-primary);
+    }
+
+    .loading-state {
+      padding: var(--space-2xl);
+    }
+
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid rgba(255, 193, 7, 0.2);
+      border-top-color: var(--color-primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto var(--space-lg);
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 768px) {
+      .status-container {
+        padding: var(--space-lg);
+      }
+
+      .status-icon {
+        font-size: 60px;
+      }
+    }
+  </style>
+
+</head>
+
+<body data-page="w9status">
+  <!-- NAVBAR -->
+  <div id="navbar-container"></div>
+
+  <!-- W-9 STATUS -->
+  <main>
+    <div class="status-container">
+      <h1 data-en="W-9 Form Status" 
+          data-es="Estado del Formulario W-9" 
+          data-pt="Status do Formulário W-9">
+        W-9 Form Status
+      </h1>
+
+      <!-- Loading State -->
+      <div id="loadingState" class="loading-state">
+        <div class="spinner"></div>
+        <p data-en="Loading status..." data-es="Cargando estado..." data-pt="Carregando status...">Loading status...</p>
+      </div>
+
+      <!-- Pending Status -->
+      <div id="pendingStatus" class="status-card pending" style="display: none;">
+        <div class="status-icon">⏳</div>
+        <div class="status-badge pending" 
+             data-en="Pending Review" 
+             data-es="Revisión Pendiente" 
+             data-pt="Revisão Pendente">Pending Review</div>
+        <p class="status-message" 
+           data-en="Your W-9 form has been submitted and is awaiting admin approval."
+           data-es="Su formulario W-9 ha sido enviado y está esperando la aprobación del administrador."
+           data-pt="Seu formulário W-9 foi enviado e está aguardando aprovação do administrador.">
+          Your W-9 form has been submitted and is awaiting admin approval.
+        </p>
+        <p data-en="You will receive an email notification once your W-9 has been reviewed. This typically takes 1-2 business days."
+           data-es="Recibirá una notificación por correo electrónico una vez que se haya revisado su W-9. Esto suele tardar de 1 a 2 días hábiles."
+           data-pt="Você receberá uma notificação por e-mail assim que seu W-9 for revisado. Isso normalmente leva de 1 a 2 dias úteis.">
+          You will receive an email notification once your W-9 has been reviewed. This typically takes 1-2 business days.
+        </p>
+        <div id="pendingDetails" class="status-details"></div>
+        <button class="btn-secondary" onclick="checkStatus()" 
+                data-en="Refresh Status" 
+                data-es="Actualizar Estado" 
+                data-pt="Atualizar Status">Refresh Status</button>
+      </div>
+
+      <!-- Approved Status -->
+      <div id="approvedStatus" class="status-card approved" style="display: none;">
+        <div class="status-icon">✅</div>
+        <div class="status-badge approved" 
+             data-en="Approved" 
+             data-es="Aprobado" 
+             data-pt="Aprovado">Approved</div>
+        <p class="status-message" 
+           data-en="Congratulations! Your W-9 has been approved."
+           data-es="¡Felicitaciones! Su W-9 ha sido aprobado."
+           data-pt="Parabéns! Seu W-9 foi aprovado.">
+          Congratulations! Your W-9 has been approved.
+        </p>
+        <p data-en="You now have full access to the employee dashboard and are eligible for payment."
+           data-es="Ahora tiene acceso completo al panel de empleados y es elegible para el pago."
+           data-pt="Agora você tem acesso total ao painel de funcionários e está qualificado para pagamento.">
+          You now have full access to the employee dashboard and are eligible for payment.
+        </p>
+        <div id="approvedDetails" class="status-details"></div>
+        <a href="employeeDashboard.html" class="btn-primary" 
+           data-en="Go to Dashboard" 
+           data-es="Ir al Panel" 
+           data-pt="Ir para o Painel">Go to Dashboard</a>
+        <button class="btn-secondary" onclick="viewPDF()" id="viewPdfBtn" style="display: none;"
+                data-en="View W-9 PDF" 
+                data-es="Ver PDF W-9" 
+                data-pt="Ver PDF W-9">View W-9 PDF</button>
+      </div>
+
+      <!-- Rejected Status -->
+      <div id="rejectedStatus" class="status-card rejected" style="display: none;">
+        <div class="status-icon">❌</div>
+        <div class="status-badge rejected" 
+             data-en="Requires Correction" 
+             data-es="Requiere Corrección" 
+             data-pt="Requer Correção">Requires Correction</div>
+        <p class="status-message" 
+           data-en="Your W-9 submission requires correction."
+           data-es="Su envío de W-9 requiere corrección."
+           data-pt="Seu envio de W-9 requer correção.">
+          Your W-9 submission requires correction.
+        </p>
+        <div id="rejectionReason" style="background-color: rgba(239, 68, 68, 0.1); padding: var(--space-md); border-radius: var(--radius-md); margin: var(--space-lg) 0;">
+          <strong data-en="Reason:" data-es="Razón:" data-pt="Motivo:">Reason:</strong>
+          <p id="rejectionReasonText" style="margin: var(--space-sm) 0 0 0;"></p>
+        </div>
+        <p data-en="Please correct the information and resubmit your W-9 form."
+           data-es="Por favor corrija la información y vuelva a enviar su formulario W-9."
+           data-pt="Por favor, corrija as informações e reenvie seu formulário W-9.">
+          Please correct the information and resubmit your W-9 form.
+        </p>
+        <a href="w9Form.html" class="btn-primary" 
+           data-en="Resubmit W-9" 
+           data-es="Reenviar W-9" 
+           data-pt="Reenviar W-9">Resubmit W-9</a>
+      </div>
+
+      <!-- None Status (shouldn't happen, but handle it) -->
+      <div id="noneStatus" class="status-card" style="display: none;">
+        <div class="status-icon">📝</div>
+        <p class="status-message" 
+           data-en="No W-9 form on file."
+           data-es="No hay formulario W-9 archivado."
+           data-pt="Nenhum formulário W-9 no arquivo.">
+          No W-9 form on file.
+        </p>
+        <p data-en="You need to submit a W-9 form to access the employee dashboard."
+           data-es="Debe enviar un formulario W-9 para acceder al panel de empleados."
+           data-pt="Você precisa enviar um formulário W-9 para acessar o painel de funcionários.">
+          You need to submit a W-9 form to access the employee dashboard.
+        </p>
+        <a href="w9Form.html" class="btn-primary" 
+           data-en="Submit W-9" 
+           data-es="Enviar W-9" 
+           data-pt="Enviar W-9">Submit W-9</a>
+      </div>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <div id="footer-container"></div>
+
+  <!-- Cache Busting Utility -->
+  <script src="js/cache-buster.js?v=2025-11-10-w9" defer></script>
+  <script src="js/script.js?v=2025-11-10-w9" defer></script>
+  
+  <script>
+    // W-9 Status Check Logic
+    const API_URL = 'https://cls-proxy.s-garay.workers.dev';
+    let currentPdfUrl = '';
+    
+    // Check status on page load
+    window.addEventListener('DOMContentLoaded', function() {
+      const workerId = localStorage.getItem('CLS_WorkerID');
+      if (!workerId) {
+        window.location.href = 'employeelogin.html';
+        return;
+      }
+      
+      checkStatus();
+      
+      // Auto-refresh every 30 seconds if pending
+      setInterval(function() {
+        const pendingDiv = document.getElementById('pendingStatus');
+        if (pendingDiv && pendingDiv.style.display !== 'none') {
+          checkStatus();
+        }
+      }, 30000);
+    });
+    
+    async function checkStatus() {
+      const workerId = localStorage.getItem('CLS_WorkerID');
+      
+      try {
+        const response = await fetch(`${API_URL}?action=getW9Status&workerId=${workerId}`, {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json'
+          }
+        });
+        
+        const result = await response.json();
+        
+        if (result.ok) {
+          displayStatus(result);
+        } else {
+          console.error('Error checking W-9 status:', result.message);
+          showNoneStatus();
+        }
+        
+      } catch (error) {
+        console.error('Network error checking W-9 status:', error);
+        document.getElementById('loadingState').innerHTML = 
+          '<p style="color: var(--color-error);">Error loading status. Please refresh the page.</p>';
+      }
+    }
+    
+    function displayStatus(data) {
+      // Hide loading state
+      document.getElementById('loadingState').style.display = 'none';
+      
+      // Hide all status cards
+      document.getElementById('pendingStatus').style.display = 'none';
+      document.getElementById('approvedStatus').style.display = 'none';
+      document.getElementById('rejectedStatus').style.display = 'none';
+      document.getElementById('noneStatus').style.display = 'none';
+      
+      const status = data.status || 'none';
+      
+      if (status === 'pending_admin_review') {
+        showPendingStatus(data);
+      } else if (status === 'approved') {
+        showApprovedStatus(data);
+      } else if (status === 'rejected') {
+        showRejectedStatus(data);
+      } else {
+        showNoneStatus();
+      }
+    }
+    
+    function showPendingStatus(data) {
+      document.getElementById('pendingStatus').style.display = 'block';
+      
+      // Build details
+      const detailsHTML = `
+        <div class="status-detail-item">
+          <span class="status-detail-label" data-en="Submitted:" data-es="Enviado:" data-pt="Enviado:">Submitted:</span>
+          <span class="status-detail-value">${formatDate(data.submittedDate)}</span>
+        </div>
+        <div class="status-detail-item">
+          <span class="status-detail-label" data-en="SSN (Last 4):" data-es="SSN (Últimos 4):" data-pt="SSN (Últimos 4):">SSN (Last 4):</span>
+          <span class="status-detail-value">***-**-${data.last4 || 'XXXX'}</span>
+        </div>
+      `;
+      document.getElementById('pendingDetails').innerHTML = detailsHTML;
+      
+      // Apply translations
+      if (typeof applyTranslations === 'function') {
+        applyTranslations();
+      }
+    }
+    
+    function showApprovedStatus(data) {
+      document.getElementById('approvedStatus').style.display = 'block';
+      
+      // Build details
+      const detailsHTML = `
+        <div class="status-detail-item">
+          <span class="status-detail-label" data-en="Submitted:" data-es="Enviado:" data-pt="Enviado:">Submitted:</span>
+          <span class="status-detail-value">${formatDate(data.submittedDate)}</span>
+        </div>
+        <div class="status-detail-item">
+          <span class="status-detail-label" data-en="Approved:" data-es="Aprobado:" data-pt="Aprovado:">Approved:</span>
+          <span class="status-detail-value">${formatDate(data.approvedDate)}</span>
+        </div>
+        <div class="status-detail-item">
+          <span class="status-detail-label" data-en="SSN (Last 4):" data-es="SSN (Últimos 4):" data-pt="SSN (Últimos 4):">SSN (Last 4):</span>
+          <span class="status-detail-value">***-**-${data.last4 || 'XXXX'}</span>
+        </div>
+      `;
+      document.getElementById('approvedDetails').innerHTML = detailsHTML;
+      
+      // Show PDF button if available
+      if (data.pdfUrl) {
+        currentPdfUrl = data.pdfUrl;
+        document.getElementById('viewPdfBtn').style.display = 'inline-block';
+      }
+      
+      // Apply translations
+      if (typeof applyTranslations === 'function') {
+        applyTranslations();
+      }
+    }
+    
+    function showRejectedStatus(data) {
+      document.getElementById('rejectedStatus').style.display = 'block';
+      
+      // Show rejection reason (if available from W9_Records, needs backend support)
+      const reasonText = 'Information incomplete or incorrect. Please review and resubmit.';
+      document.getElementById('rejectionReasonText').textContent = reasonText;
+      
+      // Apply translations
+      if (typeof applyTranslations === 'function') {
+        applyTranslations();
+      }
+    }
+    
+    function showNoneStatus() {
+      document.getElementById('loadingState').style.display = 'none';
+      document.getElementById('noneStatus').style.display = 'block';
+      
+      // Apply translations
+      if (typeof applyTranslations === 'function') {
+        applyTranslations();
+      }
+    }
+    
+    function viewPDF() {
+      if (currentPdfUrl) {
+        window.open(currentPdfUrl, '_blank');
+      }
+    }
+    
+    function formatDate(dateStr) {
+      if (!dateStr) return 'N/A';
+      try {
+        const date = new Date(dateStr);
+        return date.toLocaleDateString('en-US', { 
+          year: 'numeric', 
+          month: 'short', 
+          day: 'numeric' 
+        });
+      } catch (e) {
+        return dateStr;
+      }
+    }
+  </script>
+</body>
+</html>

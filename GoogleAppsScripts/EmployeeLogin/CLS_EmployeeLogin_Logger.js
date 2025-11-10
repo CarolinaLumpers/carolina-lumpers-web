@@ -437,54 +437,126 @@ const TT_LOGGER = {
       }
     );
   },
-
+  
   /**
-   * Log a clock-in approval or denial event
+   * Log a W-9 form submission
    * @param {Object} workerData - Worker information
    * @param {string} workerData.workerId - Worker ID
-   * @param {string} workerData.displayName - Worker's full name
-   * @param {string} workerData.device - Device/browser used
-   * @param {Object} approvalData - Approval information
-   * @param {string} approvalData.clockinID - Clock-in record ID
-   * @param {string} approvalData.approvedBy - Name of approver
-   * @param {string} approvalData.action - 'APPROVED' or 'DENIED'
-   * @param {string} approvalData.reason - Reason (for denials)
-   * @param {string} approvalData.site - Site name
-   * @param {string} approvalData.date - Clock-in date
-   * @param {string} approvalData.time - Clock-in time
+   * @param {string} workerData.displayName - Worker name
+   * @param {string} workerData.device - Device used
+   * @param {string} workerData.email - Worker email
+   * @param {string} w9RecordId - W-9 record ID (e.g., "W9-001")
    * @returns {Object} Logging result
    */
-  logClockInApproval: function(workerData, approvalData) {
-    try {
-      const eventType = approvalData.action === 'APPROVED' ? 'CLOCK_IN_APPROVED' : 'CLOCK_IN_DENIED';
-      const status = approvalData.action === 'APPROVED' ? 'SUCCESS' : 'DENIED';
-      
-      return CLLogger.logEvent(
-        eventType,
-        workerData.workerId,
-        workerData.displayName,
-        approvalData.clockinID + ' - ' + approvalData.action + ' by ' + approvalData.approvedBy,
-        {
-          sheetId: SHEET_ID,
-          project: 'TIME_TRACKING',
-          status: status,
-          device: workerData.device || 'Unknown Device',
-          site: approvalData.site || '',
-          details: {
-            clockinID: approvalData.clockinID,
-            approvedBy: approvalData.approvedBy,
-            action: approvalData.action,
-            reason: approvalData.reason || '',
-            clockinDate: approvalData.date || '',
-            clockinTime: approvalData.time || '',
-            timestamp: new Date().toISOString()
-          }
+  logW9Submission: function(workerData, w9RecordId) {
+    return CLLogger.logEvent(
+      'W9_SUBMISSION',
+      workerData.workerId,
+      workerData.displayName,
+      `${workerData.displayName} submitted W-9 form (${w9RecordId})`,
+      {
+        device: workerData.device || 'Unknown Device',
+        sheetId: SHEET_ID,
+        project: 'TIME_TRACKING',
+        status: 'PENDING',
+        details: {
+          w9RecordId: w9RecordId,
+          email: workerData.email,
+          submissionDate: new Date().toISOString(),
+          workflowStatus: 'pending_admin_review'
         }
-      );
-    } catch (error) {
-      console.error('Failed to log clock-in approval:', error);
-      return { success: false, error: error.toString() };
-    }
+      }
+    );
+  },
+  
+  /**
+   * Log a W-9 approval by admin
+   * @param {Object} workerData - Worker information (whose W-9 was approved)
+   * @param {Object} adminData - Admin information (who approved)
+   * @param {string} w9RecordId - W-9 record ID
+   * @returns {Object} Logging result
+   */
+  logW9Approval: function(workerData, adminData, w9RecordId) {
+    return CLLogger.logEvent(
+      'W9_APPROVAL',
+      workerData.workerId,
+      workerData.displayName,
+      `W-9 approved for ${workerData.displayName} by ${adminData.displayName} (${w9RecordId})`,
+      {
+        device: adminData.device || 'Unknown Device',
+        sheetId: SHEET_ID,
+        project: 'TIME_TRACKING',
+        status: 'SUCCESS',
+        details: {
+          w9RecordId: w9RecordId,
+          approvedBy: adminData.workerId,
+          approverName: adminData.displayName,
+          approvalDate: new Date().toISOString(),
+          workerEmail: workerData.email,
+          workflowStatus: 'approved'
+        }
+      }
+    );
+  },
+  
+  /**
+   * Log a W-9 rejection by admin
+   * @param {Object} workerData - Worker information (whose W-9 was rejected)
+   * @param {Object} adminData - Admin information (who rejected)
+   * @param {string} w9RecordId - W-9 record ID
+   * @param {string} reason - Rejection reason
+   * @returns {Object} Logging result
+   */
+  logW9Rejection: function(workerData, adminData, w9RecordId, reason) {
+    return CLLogger.logEvent(
+      'W9_REJECTION',
+      workerData.workerId,
+      workerData.displayName,
+      `W-9 rejected for ${workerData.displayName} by ${adminData.displayName} (${w9RecordId})`,
+      {
+        device: adminData.device || 'Unknown Device',
+        sheetId: SHEET_ID,
+        project: 'TIME_TRACKING',
+        status: 'REJECTED',
+        details: {
+          w9RecordId: w9RecordId,
+          rejectedBy: adminData.workerId,
+          rejecterName: adminData.displayName,
+          rejectionDate: new Date().toISOString(),
+          rejectionReason: reason,
+          workerEmail: workerData.email,
+          workflowStatus: 'rejected'
+        }
+      }
+    );
+  },
+  
+  /**
+   * Log a W-9 PDF view event
+   * @param {Object} viewerData - Viewer information
+   * @param {string} viewerData.workerId - Viewer's worker ID
+   * @param {string} viewerData.displayName - Viewer's name
+   * @param {string} viewerData.device - Device used
+   * @param {string} w9RecordId - W-9 record ID
+   * @returns {Object} Logging result
+   */
+  logW9View: function(viewerData, w9RecordId) {
+    return CLLogger.logEvent(
+      'W9_VIEW',
+      viewerData.workerId,
+      viewerData.displayName,
+      `${viewerData.displayName} viewed W-9 PDF (${w9RecordId})`,
+      {
+        device: viewerData.device || 'Unknown Device',
+        sheetId: SHEET_ID,
+        project: 'TIME_TRACKING',
+        status: 'SUCCESS',
+        details: {
+          w9RecordId: w9RecordId,
+          viewDate: new Date().toISOString()
+        }
+      }
+    );
   }
 };
 

@@ -17,16 +17,17 @@ function doPost(e) {
 }
 
 function handleRequest(e) {
+  let params = {};
+  let callback = null;
+  
   try {
-    let params = {};
-    
-    // Handle GET parameters
+    // Handle GET and POST form parameters (URL-encoded)
     if (e.parameter) {
       params = { ...e.parameter };
     }
     
-    // Handle POST data (for offline sync)
-    if (e.postData && e.postData.contents) {
+    // Handle POST JSON data (for offline sync)
+    if (e.postData && e.postData.contents && !params.action) {
       try {
         const postData = JSON.parse(e.postData.contents);
         if (postData.workerId && postData.lat && postData.lng) {
@@ -39,12 +40,13 @@ function handleRequest(e) {
           params.email = postData.email || '';
         }
       } catch (parseErr) {
-        console.log('POST data parse error:', parseErr);
+        // Not JSON - probably form data already in e.parameter
+        console.log('POST data not JSON (form data):', parseErr);
       }
     }
     
     const action = params.action;
-    const callback = params.callback;
+    callback = params.callback; // Assign to outer scope variable
     let result;
 
     switch (action) {
@@ -64,21 +66,7 @@ function handleRequest(e) {
           break;
         }
 
-        // Log device type to the "Log" sheet
-        try {
-          const ss = SpreadsheetApp.openById(SHEET_ID);
-          const logSh = ss.getSheetByName('Log') || ss.insertSheet('Log');
-          logSh.appendRow([
-            new Date(),
-            'Login',
-            email,
-            `Device: ${device}`
-          ]);
-        } catch (logErr) {
-          // Don't fail login if logging fails
-          console.log('Logging failed:', logErr);
-        }
-
+        // Login logging handled by TT_LOGGER.logLogin() in loginUser() function
         result = {
           success: true,
           workerId: auth.workerId,
@@ -97,41 +85,43 @@ function handleRequest(e) {
       // CLOCK-IN ACTION
       // --------------------------
       case 'clockin': {
-        const requestStart = new Date().getTime();
-        Logger.log(`🚀 Clock-in API request received at ${new Date().toISOString()}`);
-        
         const workerId = params.workerId;
         const lat = parseFloat(params.lat);
         const lng = parseFloat(params.lng);
         const device = params.device || 'Unknown Device';
-        
-        Logger.log(`📋 Request params: workerId=${workerId}, lat=${lat}, lng=${lng}, device=${device}`);
-        
         if (!workerId || isNaN(lat) || isNaN(lng)) {
-          Logger.log(`❌ Invalid parameters - returning error`);
           result = { success: false, message: '⚠️ Missing workerId or GPS coordinates.' };
         } else {
-          Logger.log(`⏱️ [${new Date().getTime() - requestStart}ms] Checking rate limit...`);
           const rateCheck = ensureMinIntervalMinutes_(workerId, RATE_LIMIT_MINUTES);
-          Logger.log(`⏱️ [${new Date().getTime() - requestStart}ms] Rate limit check complete`);
-          
           if (rateCheck && rateCheck.success === false) {
-            Logger.log(`⏱️ Rate limit triggered - returning early`);
             result = rateCheck;
             break;
           }
 
           // ✅ Perform Clock-In
-          Logger.log(`⏱️ [${new Date().getTime() - requestStart}ms] Starting handleClockIn()...`);
           result = handleClockIn(workerId, lat, lng, device);
-          Logger.log(`⏱️ [${new Date().getTime() - requestStart}ms] handleClockIn() returned`);
           // Note: Clock-in logging handled by TT_LOGGER.logClockIn() inside handleClockIn()
 
-          // ⚡ REMOVED: Late clock-in notification (too slow - caused timeouts)
-          // Late notifications should be handled by a separate time-based trigger
-          // that runs every hour to check for late clock-ins
-          
-          Logger.log(`✅ Clock-in complete - Total API time: ${new Date().getTime() - requestStart}ms`);
+          // ✅ Optional: Send late clock-in notification (multilingual + first of day)
+          try {
+            // Get worker info for the notification
+            const workerMeta = lookupWorkerMeta_(workerId);
+            const workerName = workerMeta?.displayName || workerId;
+            const lang = workerMeta?.primaryLang || params.lang || 'en';
+            
+            maybeNotifyLateClockIn_(
+              workerId,
+              workerName,
+              result.site,
+              result.distance,
+              result.ClockinID,
+              lat,
+              lng,
+              lang
+            );
+          } catch (err) {
+            Logger.log('Late clock-in email skipped: ' + err);
+          }
         }
         break;
       }
@@ -270,48 +260,6 @@ function handleRequest(e) {
       }
 
       // --------------------------
-      // CLOCK-IN APPROVAL
-      // --------------------------
-      case 'getPendingClockIns': {
-        const requesterId = params.requesterId;
-        if (!requesterId) {
-          result = { success: false, message: 'Missing requesterId' };
-        } else if (!isAdmin_(requesterId) && !isLead_(requesterId)) {
-          result = { success: false, message: 'Unauthorized - admin or lead access required' };
-        } else {
-          result = getPendingClockIns_();
-        }
-        break;
-      }
-
-      case 'approveClockIn': {
-        const requesterId = params.requesterId;
-        const clockinId = params.clockinId;
-        if (!requesterId || !clockinId) {
-          result = { success: false, message: 'Missing requesterId or clockinId' };
-        } else if (!isAdmin_(requesterId) && !isLead_(requesterId)) {
-          result = { success: false, message: 'Unauthorized - admin or lead access required' };
-        } else {
-          result = handleApproveClockIn_(clockinId, requesterId);
-        }
-        break;
-      }
-
-      case 'denyClockIn': {
-        const requesterId = params.requesterId;
-        const clockinId = params.clockinId;
-        const reason = params.reason || '';
-        if (!requesterId || !clockinId) {
-          result = { success: false, message: 'Missing requesterId or clockinId' };
-        } else if (!isAdmin_(requesterId) && !isLead_(requesterId)) {
-          result = { success: false, message: 'Unauthorized - admin or lead access required' };
-        } else {
-          result = handleDenyClockIn_(clockinId, requesterId, reason);
-        }
-        break;
-      }
-
-      // --------------------------
       // TIME EDIT REQUEST
       // --------------------------
       case 'timeEdit':
@@ -321,6 +269,101 @@ function handleRequest(e) {
         } catch (err) {
           Logger.log('❌ Error in handleTimeEditRequest_: ' + err);
           result = { success: false, message: 'Server error while submitting edit request.' };
+        }
+        break;
+      }
+
+      // --------------------------
+      // W-9 ENDPOINTS
+      // --------------------------
+      case 'submitW9': {
+        const workerId = params.workerId;
+        const device = params.device || 'Unknown';
+        
+        if (!workerId) {
+          result = { ok: false, message: 'Missing workerId' };
+          break;
+        }
+        
+        // Parse W-9 data from params
+        const w9Data = {
+          legalName: params.legalName || '',
+          businessName: params.businessName || '',
+          taxClassification: params.taxClassification || '',
+          address: params.address || '',
+          city: params.city || '',
+          state: params.state || '',
+          zip: params.zip || '',
+          ssn: params.ssn || '',
+          backupWithholding: params.backupWithholding === 'true' || params.backupWithholding === true,
+          signature: params.signature || params.legalName || ''
+        };
+        
+        result = submitW9Form(workerId, w9Data, device);
+        break;
+      }
+
+      case 'getW9Status': {
+        const workerId = params.workerId;
+        if (!workerId) {
+          result = { ok: false, message: 'Missing workerId' };
+        } else {
+          result = getW9Status(workerId);
+        }
+        break;
+      }
+
+      case 'listPendingW9s': {
+        const requesterId = params.requesterId;
+        if (!requesterId) {
+          result = { ok: false, message: 'Missing requesterId' };
+        } else if (!isAdmin_(requesterId)) {
+          result = { ok: false, message: 'Unauthorized - admin access required' };
+        } else {
+          result = listPendingW9s();
+        }
+        break;
+      }
+
+      case 'approveW9': {
+        const w9RecordId = params.w9RecordId;
+        const adminId = params.adminId;
+        const device = params.device || 'Unknown';
+        
+        if (!w9RecordId || !adminId) {
+          result = { ok: false, message: 'Missing w9RecordId or adminId' };
+        } else if (!isAdmin_(adminId)) {
+          result = { ok: false, message: 'Unauthorized - admin access required' };
+        } else {
+          result = approveW9(w9RecordId, adminId, device);
+        }
+        break;
+      }
+
+      case 'rejectW9': {
+        const w9RecordId = params.w9RecordId;
+        const adminId = params.adminId;
+        const reason = params.reason || 'Information incomplete or incorrect';
+        const device = params.device || 'Unknown';
+        
+        if (!w9RecordId || !adminId) {
+          result = { ok: false, message: 'Missing w9RecordId or adminId' };
+        } else if (!isAdmin_(adminId)) {
+          result = { ok: false, message: 'Unauthorized - admin access required' };
+        } else {
+          result = rejectW9(w9RecordId, adminId, reason, device);
+        }
+        break;
+      }
+
+      case 'getW9Pdf': {
+        const workerId = params.workerId;
+        const requestorId = params.requestorId;
+        
+        if (!workerId || !requestorId) {
+          result = { ok: false, message: 'Missing workerId or requestorId' };
+        } else {
+          result = getW9PdfUrl(workerId, requestorId);
         }
         break;
       }
@@ -369,7 +412,11 @@ function handleRequest(e) {
       // FALLBACK
       // --------------------------
       default:
-        result = { success: false, message: '❌ Unknown or missing action parameter.' };
+        console.log('❌ Unknown action:', action, 'Params:', JSON.stringify(params));
+        result = { 
+          success: false, 
+          message: `❌ Unknown or missing action parameter. Received: ${action || 'none'}` 
+        };
     }
 
     // ==========================
@@ -386,8 +433,8 @@ function handleRequest(e) {
       .setMimeType(ContentService.MimeType.JSON);
 
   } catch (err) {
+    console.error('❌ handleRequest error:', err);
     const errorObj = { success: false, error: `❌ Server error: ${err.message}` };
-    const callback = params?.callback;
     const json = JSON.stringify(errorObj);
     if (callback) {
       return ContentService
