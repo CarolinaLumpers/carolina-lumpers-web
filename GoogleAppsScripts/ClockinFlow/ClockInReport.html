@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Clock-In Report</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <style>
+      :root {
+        --space-1: 10px;
+        --space-2: 14px;
+        --space-3: 20px;
+        --space-4: 28px;
+        --radius: 14px;
+      }
+      * { box-sizing: border-box; }
+      html, body { height: 100%; }
+      body {
+        font-family: Arial, Helvetica, sans-serif;
+        color: #f2f2f2;
+        background-color: #000;
+        margin: 0;
+        -webkit-text-size-adjust: 100%;
+      }
+
+      /* Layout */
+      .container { max-width: 820px; margin: 0 auto; padding: var(--space-4) var(--space-3); }
+      .card {
+        background: #0e0e0e;
+        border: 1px solid #1e1e1e;
+        border-radius: var(--radius);
+        box-shadow: 0 6px 18px rgba(0,0,0,.35);
+        padding: var(--space-3);
+      }
+
+      /* Header */
+      .header { text-align: center; color: #ffcc00; margin-bottom: var(--space-3); }
+      .title  { font-size: clamp(2.4rem, 8vw, 3.2rem); line-height: 1.2; margin: 0 0 var(--space-2) 0; }
+      .logo   { width: clamp(160px, 50vw, 240px); height: auto; display: inline-block; }
+
+      /* Summary */
+      .message {
+        font-size: clamp(1.9rem, 7.5vw, 2.6rem);
+        margin: 0 0 var(--space-2) 0;
+        color: #ffffff;
+        text-align: center;
+      }
+      .worker {
+        font-size: clamp(2rem, 8vw, 2.8rem);
+        margin: 0 0 var(--space-2) 0;
+        color: #ffffff;
+        text-align: center;
+        font-weight: 700;
+      }
+
+      /* Groups */
+      .group-container { display: grid; gap: var(--space-3); }
+      .day-group { border: 1px solid #262626; border-radius: var(--radius); overflow: hidden; }
+      .day-title { 
+        background:#121212; 
+        color:#ffcc00; 
+        padding: var(--space-2) var(--space-3); 
+        font-weight: 700; 
+        font-size: clamp(1.9rem, 7.5vw, 2.6rem); 
+        text-align: center;
+      }
+      .times { padding: var(--space-1) var(--space-3) var(--space-2); }
+      .time-item { 
+        font-size: clamp(2.2rem, 8vw, 3.2rem); /* bigger than before */
+        padding: var(--space-1) 0; 
+        border-bottom: 1px solid #1b1b1b; 
+        line-height: 2.0; 
+        text-align: left; /* keep times aligned left */
+      }
+      .time-item:last-child { border-bottom: 0; }
+
+      /* Slight upscaling on small tablets */
+      @media (min-width: 480px) {
+        .card { padding: var(--space-4); }
+      }
+
+      /* Larger screens */
+      @media (min-width: 820px) {
+        .container { padding: var(--space-4) var(--space-4); }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="card">
+        <div class="header">
+          <h1 class="title">Clock-In Report</h1>
+          <img class="logo" src="https://carolinalumpers.com/assets/CLS-003%20(1)%20dark.webp" alt="Logo">
+        </div>
+
+        <p class="message"><?= message ?></p>
+        <h2 class="worker"><?= workerName ?></h2>
+
+        <div class="group-container">
+          <? for (var i = 0; i < groupedByDate.length; i++) { var day = groupedByDate[i]; ?>
+            <section class="day-group">
+              <div class="day-title"><?= day.date ?></div>
+              <div class="times">
+                <? for (var j = 0; j < day.entries.length; j++) { var entry = day.entries[j]; ?>
+                  <div class="time-item"><?= entry.time ?></div>
+                <? } ?>
+              </div>
+            </section>
+          <? } ?>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
