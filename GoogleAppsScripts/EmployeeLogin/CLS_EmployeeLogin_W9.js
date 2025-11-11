@@ -775,22 +775,38 @@ function sendW9SubmissionNotification_(workerId, displayName, w9RecordId, pdfUrl
   try {
     const adminEmail = PROPS.getProperty('CC_EMAIL') || 's.garay@carolinalumpers.com';
     
-    const subject = `New W-9 Submission - ${displayName} (${workerId})`;
+    const subject = `🆕 New W-9 Submission - ${displayName} (${workerId})`;
     const body = `
+Hi Admin,
+
 A new W-9 form has been submitted and is pending your review.
 
-Worker: ${displayName} (${workerId})
-W-9 Record ID: ${w9RecordId}
-Submitted: ${new Date().toLocaleString()}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📋 SUBMISSION DETAILS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-View W-9 PDF: ${pdfUrl}
+Worker:         ${displayName}
+Worker ID:      ${workerId}
+Record ID:      ${w9RecordId}
+Submitted:      ${new Date().toLocaleString('en-US', { timeZone: 'America/New_York' })}
 
-Please log in to the admin dashboard to approve or reject this W-9.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+⚡ QUICK ACTIONS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Dashboard: https://carolinalumpers.com/employeeDashboard.html
+📄 View W-9 PDF:
+${pdfUrl}
+
+✅ Approve/Reject:
+https://carolinalumpers.com/employeeDashboard.html
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+⏰ Action Required: Please review within 24 hours
 
 Thank you,
-Carolina Lumpers Service System
+Carolina Lumpers Service
+Automated Notification System
     `.trim();
     
     GmailApp.sendEmail(adminEmail, subject, body);
@@ -806,24 +822,45 @@ Carolina Lumpers Service System
  */
 function sendW9ApprovalNotification_(workerEmail, displayName, w9RecordId) {
   try {
-    const subject = `W-9 Approved - Welcome to Carolina Lumpers Service`;
+    const subject = `✅ W-9 Approved - Welcome to Carolina Lumpers Service!`;
     const body = `
 Hi ${displayName},
 
-Great news! Your W-9 form has been approved.
+Great news! Your W-9 form has been approved and you're all set.
 
-W-9 Record ID: ${w9RecordId}
-Approved: ${new Date().toLocaleString()}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✅ APPROVAL CONFIRMED
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-You now have full access to the employee dashboard and are eligible for payment.
+Record ID:      ${w9RecordId}
+Approved:       ${new Date().toLocaleString('en-US', { timeZone: 'America/New_York' })}
+Status:         Active - Ready for Payment
 
-Access Dashboard: https://carolinalumpers.com/employeeDashboard.html
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🎉 WHAT'S NEXT?
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-If you have any questions, please contact us at info@carolinalumpers.com.
+✓ You now have full access to your employee dashboard
+✓ You're eligible to receive payments (1099)
+✓ You can start tracking your hours and payroll
 
-Welcome to the team!
+🔗 Access Your Dashboard:
+https://carolinalumpers.com/employeeDashboard.html
 
-Carolina Lumpers Service
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📞 NEED HELP?
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Questions? Contact us:
+📧 info@carolinalumpers.com
+📱 Call/Text for assistance
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Welcome to the team! We're excited to work with you.
+
+Best regards,
+Carolina Lumpers Service Team
     `.trim();
     
     GmailApp.sendEmail(workerEmail, subject, body);
@@ -839,22 +876,53 @@ Carolina Lumpers Service
  */
 function sendW9RejectionNotification_(workerEmail, displayName, reason) {
   try {
-    const subject = `W-9 Requires Correction - Carolina Lumpers Service`;
+    const subject = `⚠️ W-9 Requires Correction - Action Needed`;
     const body = `
 Hi ${displayName},
 
 Your W-9 form submission requires correction before it can be approved.
 
-Reason: ${reason || 'Information incomplete or incorrect'}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+❌ CORRECTION REQUIRED
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Please log in and resubmit your W-9 with the correct information.
+Reason:
+${reason || 'Information incomplete or incorrect'}
 
-Login: https://carolinalumpers.com/employeelogin.html
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📋 NEXT STEPS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-If you have questions, please contact us at info@carolinalumpers.com.
+1. Review the reason above carefully
+2. Log in to correct and resubmit your W-9
+3. Ensure all information matches your tax records
+
+🔗 Resubmit W-9:
+https://carolinalumpers.com/employeelogin.html
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+💡 COMMON ISSUES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+• Name must match exactly as filed with IRS
+• SSN/EIN must be accurate (no typos)
+• Address must be current
+• Tax classification must be correct
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📞 NEED HELP?
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Questions about your W-9?
+📧 info@carolinalumpers.com
+📱 Call/Text for assistance
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+⏰ Please resubmit as soon as possible to avoid payment delays.
 
 Thank you,
-Carolina Lumpers Service
+Carolina Lumpers Service Team
     `.trim();
     
     GmailApp.sendEmail(workerEmail, subject, body);
