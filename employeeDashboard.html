@@ -1220,6 +1220,19 @@
         text.setAttribute('data-en', 'W-9 Rejected - Please review the reason and resubmit.');
         text.setAttribute('data-es', 'W-9 Rechazado - Por favor revise el motivo y reenvíe.');
         text.setAttribute('data-pt', 'W-9 Rejeitado - Por favor, revise o motivo e reenvie.');
+        
+        // Add resubmit button for rejected status
+        const resubmitBtn = document.createElement('a');
+        resubmitBtn.href = 'w9Form.html';
+        resubmitBtn.style.cssText = 'margin-left: var(--space-md); padding: 8px 16px; background-color: #ef4444; color: white; text-decoration: none; border-radius: var(--radius-sm); font-weight: 600; display: inline-block;';
+        resubmitBtn.innerHTML = '<span data-en="Resubmit W-9" data-es="Reenviar W-9" data-pt="Reenviar W-9">Resubmit W-9</span>';
+        
+        // Clear any existing buttons and add new one
+        const existingResubmit = banner.querySelector('a[href="w9Form.html"]');
+        if (existingResubmit) {
+          existingResubmit.remove();
+        }
+        banner.appendChild(resubmitBtn);
       } else {
         // Hide banner for 'none' or 'approved'
         banner.style.display = 'none';
