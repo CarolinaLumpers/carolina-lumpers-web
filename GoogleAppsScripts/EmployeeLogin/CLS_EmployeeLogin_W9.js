@@ -1147,6 +1147,100 @@ function generateW9PDF(workerId, w9Data) {
 // ======================================================
 
 /**
+ * TEST FUNCTION - Send test W-9 notification email
+ * Run this from Apps Script editor to test email rendering
+ */
+function testW9EmailWithEmojis() {
+  const testEmail = Session.getActiveUser().getEmail(); // Sends to you
+  
+  Logger.log(`📧 Sending test W-9 email to ${testEmail}...`);
+  
+  const subject = `🆕 TEST: New W-9 Submission - John Doe (CLS001)`;
+  
+  const htmlBody = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+      <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; border-radius: 8px 8px 0 0; color: white; text-align: center;">
+        <h2 style="margin: 0; font-size: 24px;">🆕 TEST W-9 Submission</h2>
+      </div>
+      
+      <div style="background-color: #f9f9f9; padding: 30px; border-radius: 0 0 8px 8px;">
+        <p style="font-size: 16px; color: #333;">Hi Admin,</p>
+        <p style="font-size: 14px; color: #666;">This is a TEST email to verify emoji rendering.</p>
+        
+        <div style="border: 2px solid #FFC107; border-radius: 8px; padding: 20px; margin: 20px 0; background-color: #FFFBF0;">
+          <h3 style="margin-top: 0; color: #F57C00; font-size: 18px;">📋 TEST DETAILS</h3>
+          <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+            <tr><td style="padding: 5px 0;"><strong>Worker:</strong></td><td>John Doe (Test)</td></tr>
+            <tr><td style="padding: 5px 0;"><strong>Worker ID:</strong></td><td>CLS001</td></tr>
+            <tr><td style="padding: 5px 0;"><strong>Record ID:</strong></td><td>W9-TEST-001</td></tr>
+            <tr><td style="padding: 5px 0;"><strong>Submitted:</strong></td><td>${new Date().toLocaleString('en-US', { timeZone: 'America/New_York' })}</td></tr>
+          </table>
+        </div>
+        
+        <div style="border: 2px solid #4CAF50; border-radius: 8px; padding: 20px; margin: 20px 0; background-color: #F1F8F4;">
+          <h3 style="margin-top: 0; color: #2E7D32; font-size: 18px;">⚡ EMOJI TEST</h3>
+          <p style="font-size: 14px;">These emojis should render correctly:</p>
+          <p style="font-size: 16px;">🆕 📋 ⚡ 📄 ✅ ⏰ 🎉 🔗 📞 📧 📱 ❌ 💡 ⚠️</p>
+        </div>
+        
+        <div style="background-color: #E3F2FD; border-radius: 8px; padding: 15px; margin: 20px 0;">
+          <p style="margin: 0; font-size: 14px;"><strong>✅ If you see emojis correctly:</strong> Gmail API is working!</p>
+          <p style="margin: 5px 0 0 0; font-size: 14px;"><strong>❌ If you see �� characters:</strong> Gmail API needs to be enabled.</p>
+        </div>
+        
+        <p style="margin-top: 30px; color: #666; font-size: 13px; border-top: 1px solid #ddd; padding-top: 20px;">
+          This is an automated test email.<br>
+          <strong style="color: #333;">Carolina Lumpers Service</strong><br>
+          <em>W-9 Email Testing System</em>
+        </p>
+      </div>
+    </div>
+  `;
+  
+  const plainBody = `
+TEST: New W-9 Submission - John Doe (CLS001)
+
+Hi Admin,
+
+This is a TEST email to verify emoji rendering with Gmail API.
+
+TEST DETAILS
+============
+Worker: John Doe (Test)
+Worker ID: CLS001
+Record ID: W9-TEST-001
+Submitted: ${new Date().toLocaleString('en-US', { timeZone: 'America/New_York' })}
+
+EMOJI TEST
+==========
+Subject line should show: 🆕
+Body should show: 📋 ⚡ 📄 ✅ ⏰ 🎉 🔗 📞 📧 📱 ❌ 💡 ⚠️
+
+If you see emojis correctly: Gmail API is working!
+If you see �� characters: Gmail API needs to be enabled.
+
+This is an automated test email.
+Carolina Lumpers Service
+W-9 Email Testing System
+  `.trim();
+  
+  try {
+    // Use Gmail API helper
+    sendEmailWithGmailAPI_(testEmail, subject, plainBody, htmlBody);
+    Logger.log(`✅ Test email sent successfully to ${testEmail}`);
+    Logger.log(`📬 Check your inbox and verify:`);
+    Logger.log(`   1. Subject line shows: 🆕 TEST: New W-9...`);
+    Logger.log(`   2. Email body shows all emojis correctly`);
+    Logger.log(`   3. No �� replacement characters`);
+    return { ok: true, message: `Test email sent to ${testEmail}` };
+  } catch (error) {
+    Logger.log(`❌ Test email failed: ${error.message}`);
+    Logger.log(`💡 Make sure Gmail API is enabled in Project Settings > Services`);
+    return { ok: false, message: error.message };
+  }
+}
+
+/**
  * Send email using Gmail API with proper MIME encoding for emojis
  * @param {string} recipient - Email address
  * @param {string} subject - Email subject (can include emojis)
@@ -1182,12 +1276,16 @@ function sendEmailWithGmailAPI_(recipient, subject, plainBody, htmlBody) {
     
   } catch (error) {
     Logger.log(`❌ Error sending email via Gmail API: ${error.message}`);
-    Logger.log(`Falling back to GmailApp...`);
+    Logger.log(`⚠️ Falling back to GmailApp (emojis will be stripped from subject)...`);
     
     // Fallback to GmailApp (without emojis in subject)
-    GmailApp.sendEmail(recipient, subject.replace(/[\u{1F300}-\u{1F9FF}]/gu, ''), plainBody, {
+    const subjectNoEmoji = subject.replace(/[\u{1F300}-\u{1F9FF}]/gu, '').replace(/[\u2600-\u27BF]/gu, '');
+    GmailApp.sendEmail(recipient, subjectNoEmoji, plainBody, {
       htmlBody: htmlBody,
       name: 'Carolina Lumpers Service'
     });
+    
+    Logger.log(`⚠️ Email sent via GmailApp fallback (subject emojis removed)`);
+    Logger.log(`💡 To enable emojis in subjects, enable Gmail API in Project Settings > Services > Add Gmail API v1`);
   }
 }
