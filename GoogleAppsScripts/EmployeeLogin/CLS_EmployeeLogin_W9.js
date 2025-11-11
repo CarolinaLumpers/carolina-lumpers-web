@@ -775,7 +775,7 @@ function sendW9SubmissionNotification_(workerId, displayName, w9RecordId, pdfUrl
   try {
     const adminEmail = PROPS.getProperty('CC_EMAIL') || 'info@carolinalumpers.com';
     
-    const subject = `[NEW W-9] ${displayName} (${workerId})`;
+    const subject = `🆕 New W-9 Submission - ${displayName} (${workerId})`;
     
     const htmlBody = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -844,10 +844,8 @@ Carolina Lumpers Service
 Automated Notification System
     `.trim();
     
-    GmailApp.sendEmail(adminEmail, subject, plainBody, {
-      htmlBody: htmlBody,
-      name: 'Carolina Lumpers Service'
-    });
+    // Use Gmail API for proper UTF-8 emoji encoding
+    sendEmailWithGmailAPI_(adminEmail, subject, plainBody, htmlBody);
     Logger.log(`📧 W-9 submission notification sent to ${adminEmail}`);
     
   } catch (e) {
@@ -860,7 +858,7 @@ Automated Notification System
  */
 function sendW9ApprovalNotification_(workerEmail, displayName, w9RecordId) {
   try {
-    const subject = `[APPROVED] W-9 Approved - Welcome to Carolina Lumpers Service!`;
+    const subject = `✅ W-9 Approved - Welcome to Carolina Lumpers Service!`;
     
     const htmlBody = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -884,9 +882,9 @@ function sendW9ApprovalNotification_(workerEmail, displayName, w9RecordId) {
           <div style="background-color: #E8F5E9; border-radius: 8px; padding: 20px; margin: 20px 0;">
             <h3 style="margin-top: 0; color: #2E7D32; font-size: 18px;">🎉 WHAT'S NEXT?</h3>
             <ul style="line-height: 1.8; font-size: 14px; color: #333;">
-              <li>✓ You now have full access to your employee dashboard</li>
-              <li>✓ You're eligible to receive payments (1099)</li>
-              <li>✓ You can start tracking your hours and payroll</li>
+              <li>✅ You now have full access to your employee dashboard</li>
+              <li>✅ You're eligible to receive payments (1099)</li>
+              <li>✅ You can start tracking your hours and payroll</li>
             </ul>
             <p style="text-align: center; margin-top: 20px;">
               <a href="https://carolinalumpers.com/employeeDashboard.html" style="display: inline-block; padding: 12px 30px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 14px;">🔗 Access Your Dashboard</a>
@@ -941,10 +939,8 @@ Best regards,
 Carolina Lumpers Service Team
     `.trim();
     
-    GmailApp.sendEmail(workerEmail, subject, plainBody, {
-      htmlBody: htmlBody,
-      name: 'Carolina Lumpers Service'
-    });
+    // Use Gmail API for proper UTF-8 emoji encoding
+    sendEmailWithGmailAPI_(workerEmail, subject, plainBody, htmlBody);
     Logger.log(`📧 W-9 approval notification sent to ${workerEmail}`);
     
   } catch (e) {
@@ -957,7 +953,7 @@ Carolina Lumpers Service Team
  */
 function sendW9RejectionNotification_(workerEmail, displayName, reason) {
   try {
-    const subject = `[ACTION NEEDED] W-9 Requires Correction`;
+    const subject = `⚠️ W-9 Requires Correction - Action Needed`;
     
     const htmlBody = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -1055,10 +1051,8 @@ Thank you,
 Carolina Lumpers Service Team
     `.trim();
     
-    GmailApp.sendEmail(workerEmail, subject, plainBody, {
-      htmlBody: htmlBody,
-      name: 'Carolina Lumpers Service'
-    });
+    // Use Gmail API for proper UTF-8 emoji encoding
+    sendEmailWithGmailAPI_(workerEmail, subject, plainBody, htmlBody);
     Logger.log(`📧 W-9 rejection notification sent to ${workerEmail}`);
     
   } catch (e) {
@@ -1145,5 +1139,55 @@ function generateW9PDF(workerId, w9Data) {
       ok: false,
       message: 'Failed to generate PDF: ' + error.message
     };
+  }
+}
+
+// ======================================================
+//  GMAIL API HELPER (for proper UTF-8 emoji encoding)
+// ======================================================
+
+/**
+ * Send email using Gmail API with proper MIME encoding for emojis
+ * @param {string} recipient - Email address
+ * @param {string} subject - Email subject (can include emojis)
+ * @param {string} plainBody - Plain text body
+ * @param {string} htmlBody - HTML body (can include emojis)
+ */
+function sendEmailWithGmailAPI_(recipient, subject, plainBody, htmlBody) {
+  try {
+    // Build MIME message with proper UTF-8 encoding
+    const boundary = '----=_Part_' + Utilities.getUuid();
+    
+    const mimeMessage = 
+      `To: ${recipient}\r\n` +
+      `From: Carolina Lumpers Service <noreply@carolinalumpers.com>\r\n` +
+      `Subject: =?utf-8?B?${Utilities.base64Encode(subject, Utilities.Charset.UTF_8)}?=\r\n` +
+      `MIME-Version: 1.0\r\n` +
+      `Content-Type: multipart/alternative; boundary="${boundary}"\r\n\r\n` +
+      `--${boundary}\r\n` +
+      `Content-Type: text/plain; charset=UTF-8\r\n` +
+      `Content-Transfer-Encoding: base64\r\n\r\n` +
+      `${Utilities.base64Encode(plainBody, Utilities.Charset.UTF_8)}\r\n\r\n` +
+      `--${boundary}\r\n` +
+      `Content-Type: text/html; charset=UTF-8\r\n` +
+      `Content-Transfer-Encoding: base64\r\n\r\n` +
+      `${Utilities.base64Encode(htmlBody, Utilities.Charset.UTF_8)}\r\n\r\n` +
+      `--${boundary}--`;
+    
+    // Base64 encode the entire MIME message for Gmail API
+    const rawMessage = Utilities.base64EncodeWebSafe(mimeMessage);
+    
+    // Send via Gmail API
+    Gmail.Users.Messages.send({ raw: rawMessage }, 'me');
+    
+  } catch (error) {
+    Logger.log(`❌ Error sending email via Gmail API: ${error.message}`);
+    Logger.log(`Falling back to GmailApp...`);
+    
+    // Fallback to GmailApp (without emojis in subject)
+    GmailApp.sendEmail(recipient, subject.replace(/[\u{1F300}-\u{1F9FF}]/gu, ''), plainBody, {
+      htmlBody: htmlBody,
+      name: 'Carolina Lumpers Service'
+    });
   }
 }
