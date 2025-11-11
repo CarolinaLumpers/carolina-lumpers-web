@@ -2,6 +2,11 @@
 <html lang="en">
 
 <head>
+  <!-- Cache Version Control - Update this timestamp when deploying -->
+  <script>
+    const CACHE_VERSION = '20251111-0100'; // Format: YYYYMMDD-HHMM
+  </script>
+  
   <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-JPETF03TJ0"></script>
   <script>
@@ -32,8 +37,11 @@
   <script src="js/feather.min.js"></script>
 
   <!-- Global CSS System -->
-  <link rel="stylesheet" href="css/style.css?v=2025-11-04-no-bio">
-  <link rel="stylesheet" href="css/dashboard.css?v=2025-11-10-w9-permissive">
+  <script>
+    // Apply cache version to stylesheets dynamically
+    document.write('<link rel="stylesheet" href="css/style.css?v=' + CACHE_VERSION + '">');
+    document.write('<link rel="stylesheet" href="css/dashboard.css?v=' + CACHE_VERSION + '">');
+  </script>
   <style>
     /* Feather Icons Spin Animation */
     @keyframes spin {
@@ -2173,7 +2181,9 @@
 
   <!-- Admin Tools Module (ES6) -->
   <script type="module">
-    import { AdminTools } from './js/admin/admin-tools.js';
+    // Import with cache version
+    const adminToolsUrl = `./js/admin/admin-tools.js?v=${CACHE_VERSION}`;
+    const { AdminTools } = await import(adminToolsUrl);
     
     // Initialize admin tools after DOM is ready
     document.addEventListener('DOMContentLoaded', () => {
@@ -2209,8 +2219,11 @@
         }
       });
 
-      navigator.serviceWorker.register('service-worker-employee.js')
+      navigator.serviceWorker.register('service-worker-employee.js?v=' + CACHE_VERSION)
         .then(registration => {
+          console.log('✅ SW registered on dashboard');
+          console.log('📦 Cache version:', CACHE_VERSION);
+          
           // 🔧 Force immediate update check on page load
           registration.update();
 
@@ -2234,8 +2247,11 @@
   </script>
 
   <!-- Cache Busting Utility -->
-  <script src="js/cache-buster.js?v=2025-11-10-w9-permissive" defer></script>
-  <script src="js/script.js?v=2025-11-10-w9-permissive" defer></script>
+  <script>
+    // Apply cache version to scripts dynamically
+    document.write('<script src="js/cache-buster.js?v=' + CACHE_VERSION + '" defer><\/script>');
+    document.write('<script src="js/script.js?v=' + CACHE_VERSION + '" defer><\/script>');
+  </script>
 </body>
 
 </html>

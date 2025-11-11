@@ -2,6 +2,11 @@
 <html lang="en">
 
 <head>
+  <!-- Cache Version Control - Update this timestamp when deploying -->
+  <script>
+    const CACHE_VERSION = '20251111-0100'; // Format: YYYYMMDD-HHMM
+  </script>
+  
   <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-JPETF03TJ0"></script>
   <script>
@@ -29,8 +34,11 @@
   <link rel="apple-touch-icon" href="assets/CLS-icon-192.png">
   
   <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=2025-11-04-no-bio">
-  <link rel="stylesheet" href="css/forms.css?v=2025-11-04-no-bio">
+  <script>
+    // Apply cache version to stylesheets dynamically
+    document.write('<link rel="stylesheet" href="css/style.css?v=' + CACHE_VERSION + '">');
+    document.write('<link rel="stylesheet" href="css/forms.css?v=' + CACHE_VERSION + '">');
+  </script>
   
   <style>
     /* Full-Screen Loading Overlay */
@@ -140,11 +148,12 @@
 
   <!-- PWA Service Worker Registration -->
   <script>
-    // Service Worker Registration
+    // Service Worker Registration with cache version
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('service-worker-employee.js', { scope: './' })
+      navigator.serviceWorker.register('service-worker-employee.js?v=' + CACHE_VERSION, { scope: './' })
         .then(registration => {
           console.log('✅ SW ready on login page:', registration.scope);
+          console.log('📦 Cache version:', CACHE_VERSION);
           
           // Listen for updates
           registration.addEventListener('updatefound', () => {
@@ -265,8 +274,11 @@
   </script>
 
   <!-- Cache Busting Utility -->
-  <script src="js/cache-buster.js?v=2025-11-04-no-bio" defer></script>
-  <script src="js/script.js?v=2025-11-10-w9-permissive" defer></script>
+  <script>
+    // Apply cache version to scripts dynamically
+    document.write('<script src="js/cache-buster.js?v=' + CACHE_VERSION + '" defer><\/script>');
+    document.write('<script src="js/script.js?v=' + CACHE_VERSION + '" defer><\/script>');
+  </script>
 </body>
 
 </html>

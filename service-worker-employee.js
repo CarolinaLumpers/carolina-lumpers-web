@@ -1,4 +1,6 @@
-const CACHE_NAME = "cls-employee-v18"; // 🔧 Added Feather Icons for offline support
+// 📦 Cache version matches deployment timestamp in HTML files (CACHE_VERSION)
+// Update this when deploying to force cache refresh
+const CACHE_NAME = "cls-employee-20251111-0100";
 const ASSETS = [
   "./employeelogin.html",
   "./employeeDashboard.html",
@@ -190,17 +192,26 @@ async function getPendingSyncCount() {
 
 // Install: cache assets
 self.addEventListener("install", e => {
+  console.log('[Service Worker] Installing with cache:', CACHE_NAME);
   e.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS))
+    caches.open(CACHE_NAME).then(cache => {
+      console.log('[Service Worker] Caching', ASSETS.length, 'assets');
+      return cache.addAll(ASSETS);
+    })
   );
 });
 
 // Activate: clean old caches
 self.addEventListener("activate", e => {
+  console.log('[Service Worker] Activating with cache:', CACHE_NAME);
   e.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
-    )
+    caches.keys().then(keys => {
+      const oldCaches = keys.filter(k => k !== CACHE_NAME);
+      if (oldCaches.length > 0) {
+        console.log('[Service Worker] Deleting old caches:', oldCaches);
+      }
+      return Promise.all(oldCaches.map(k => caches.delete(k)));
+    })
   );
 });
 
