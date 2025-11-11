@@ -601,7 +601,7 @@ function getWorkerByIdFromSheet_(workersSheet, workerId) {
   const workerIdIdx = headers.indexOf('WorkerID');
   const displayNameIdx = headers.indexOf('Display Name');
   const emailIdx = headers.indexOf('Email');
-  const roleIdx = headers.indexOf('Role');
+  const roleIdx = headers.indexOf('App Access');
   const w9StatusIdx = headers.indexOf('W9Status');
   const w9SubmittedDateIdx = headers.indexOf('W9SubmittedDate');
   const w9ApprovedDateIdx = headers.indexOf('W9ApprovedDate');
