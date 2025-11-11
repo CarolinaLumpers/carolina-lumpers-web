@@ -60,7 +60,7 @@
   font-size: 1.05em;
   cursor: pointer;
   transition: var(--transition-base);
-  font-family: "Anton", sans-serif;
+  font-family: "Roboto", Arial, sans-serif;
   min-width: auto;
   width: auto;
 }

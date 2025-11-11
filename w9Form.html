@@ -754,9 +754,20 @@
             window.location.href = 'employeeDashboard.html';
           }, 2000);
         } else {
-          showStatus('error', result.message || 'Failed to submit W-9. Please try again.', 
-                     result.message || 'Error al enviar W-9. Por favor intente nuevamente.',
-                     result.message || 'Falha ao enviar W-9. Por favor, tente novamente.');
+          // Check if error is due to already having an approved W-9
+          if (result.message && result.message.toLowerCase().includes('already have an approved')) {
+            // Update localStorage and redirect
+            localStorage.setItem('CLS_W9Status', 'approved');
+            showStatus('info', result.message, result.message, result.message);
+            
+            setTimeout(() => {
+              window.location.href = 'employeeDashboard.html';
+            }, 2000);
+          } else {
+            showStatus('error', result.message || 'Failed to submit W-9. Please try again.', 
+                       result.message || 'Error al enviar W-9. Por favor intente nuevamente.',
+                       result.message || 'Falha ao enviar W-9. Por favor, tente novamente.');
+          }
         }
         
       } catch (error) {
@@ -822,11 +833,42 @@
       }
     });
     
-    // Check if user is logged in
-    window.addEventListener('DOMContentLoaded', function() {
+    // Check if user is logged in and W-9 status
+    window.addEventListener('DOMContentLoaded', async function() {
       const workerId = localStorage.getItem('CLS_WorkerID');
       if (!workerId) {
         window.location.href = 'employeelogin.html';
+        return;
+      }
+      
+      // Check localStorage first (fast check)
+      const w9Status = localStorage.getItem('CLS_W9Status');
+      if (w9Status === 'approved') {
+        // User already has approved W-9, redirect to dashboard
+        alert('You already have an approved W-9 on file.');
+        window.location.href = 'employeeDashboard.html';
+        return;
+      }
+      
+      // Also verify with backend to ensure localStorage is accurate
+      try {
+        const response = await fetch(`${API_URL}?action=getW9Status&workerId=${encodeURIComponent(workerId)}`);
+        const result = await response.json();
+        
+        if (result.ok && result.status) {
+          // Update localStorage with current status
+          localStorage.setItem('CLS_W9Status', result.status);
+          
+          // If approved, redirect to dashboard
+          if (result.status === 'approved') {
+            alert('You already have an approved W-9 on file.');
+            window.location.href = 'employeeDashboard.html';
+            return;
+          }
+        }
+      } catch (error) {
+        console.error('Error checking W-9 status:', error);
+        // Continue to show form if backend check fails
       }
     });
   </script>
