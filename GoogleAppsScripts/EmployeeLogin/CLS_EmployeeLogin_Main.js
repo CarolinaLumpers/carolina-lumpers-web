@@ -72,6 +72,12 @@ function handleRequest(e) {
           workerId: auth.workerId,
           displayName: auth.displayName,
           email: auth.email,
+          w9Status: auth.w9Status || 'none',
+          w9SubmittedDate: auth.w9SubmittedDate || '',
+          w9ApprovedDate: auth.w9ApprovedDate || '',
+          w9SsnLast4: auth.w9SsnLast4 || '',
+          w9PdfUrl: auth.w9PdfUrl || '',
+          role: getRole_(auth.workerId),
           device
         };
         break;

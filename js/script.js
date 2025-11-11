@@ -1141,6 +1141,7 @@ function initLoginForm() {
         localStorage.setItem("CLS_WorkerName", data.displayName);
         localStorage.setItem("CLS_Email", data.email);
         localStorage.setItem("CLS_W9Status", data.w9Status || 'none'); // W-9 compliance status
+        localStorage.setItem("CLS_Role", data.role || 'Worker'); // User role (Admin/Lead/Worker)
         
         // Always stay logged in by default - no session expiry
         localStorage.setItem('CLS_RememberUser', 'true');
