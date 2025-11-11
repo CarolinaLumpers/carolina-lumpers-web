@@ -1252,8 +1252,187 @@
       }
     }
 
+    // =================== W-9 Status Auto-Refresh System ===================
+    const W9_CHECK_COOLDOWN = 30 * 1000; // 30 seconds
+    let lastW9Check = 0;
+    let w9CheckCount = 0;
+
+    async function checkW9Status(source = 'poll') {
+      try {
+        const workerId = localStorage.getItem('CLS_WorkerID');
+        const storedRole = localStorage.getItem('CLS_Role');
+        const currentStatus = localStorage.getItem('CLS_W9Status');
+        
+        // Only check for non-admin workers
+        if (!workerId || storedRole === 'Admin' || storedRole === 'Lead') {
+          return;
+        }
+        
+        // Skip polling if already approved (no need to check)
+        if (currentStatus === 'approved' && source === 'poll') {
+          console.log('✅ W-9 polling disabled - already approved');
+          return;
+        }
+        
+        // Cooldown check: Skip if checked within last 30 seconds
+        const now = Date.now();
+        if (now - lastW9Check < W9_CHECK_COOLDOWN) {
+          console.log(`⏭️ W-9 check skipped (${source}) - checked ${Math.round((now - lastW9Check) / 1000)}s ago`);
+          return;
+        }
+        
+        lastW9Check = now;
+        w9CheckCount++;
+        console.log(`🔄 W-9 status check #${w9CheckCount} (${source})`);
+        
+        const url = `${API_URL}?action=getW9Status&workerId=${encodeURIComponent(workerId)}`;
+        const response = await fetch(url);
+        const data = await response.json();
+        
+        if (data.success) {
+          const newStatus = data.status || 'none';
+          
+          // If status changed, update localStorage and refresh banner
+          if (currentStatus !== newStatus) {
+            console.log(`📄 W-9 status updated: ${currentStatus} → ${newStatus}`);
+            localStorage.setItem('CLS_W9Status', newStatus);
+            
+            // Refresh the banner immediately
+            initW9StatusBanner();
+            
+            // Show toast notification
+            showW9StatusChangeNotification(currentStatus, newStatus);
+          }
+        }
+      } catch (error) {
+        console.warn('⚠️ Failed to check W-9 status:', error);
+        // Fail silently - don't disrupt user experience
+      }
+    }
+
+    // Show toast notification when W-9 status changes
+    function showW9StatusChangeNotification(oldStatus, newStatus) {
+      const statusMessages = {
+        'approved': {
+          icon: '✅',
+          title: 'W-9 Approved',
+          message: 'Your W-9 form has been approved!',
+          color: '#10b981'
+        },
+        'rejected': {
+          icon: '❌',
+          title: 'W-9 Rejected',
+          message: 'Your W-9 form was rejected. Please review and resubmit.',
+          color: '#ef4444'
+        },
+        'pending_admin_review': {
+          icon: '⏳',
+          title: 'W-9 Under Review',
+          message: 'Your W-9 form is being reviewed.',
+          color: '#FFC107'
+        }
+      };
+      
+      const config = statusMessages[newStatus];
+      if (!config) return;
+      
+      // Create toast element
+      const toast = document.createElement('div');
+      toast.style.cssText = `
+        position: fixed;
+        top: 80px;
+        right: 20px;
+        background: var(--bg-secondary);
+        border-left: 4px solid ${config.color};
+        color: var(--text-primary);
+        padding: var(--space-md) var(--space-lg);
+        border-radius: var(--radius-md);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        z-index: 10000;
+        max-width: 350px;
+        animation: slideInRight 0.3s ease-out;
+      `;
+      
+      toast.innerHTML = `
+        <div style="display: flex; align-items: start; gap: var(--space-sm);">
+          <span style="font-size: 24px;">${config.icon}</span>
+          <div>
+            <div style="font-weight: 600; margin-bottom: 4px;">${config.title}</div>
+            <div style="font-size: 14px; opacity: 0.9;">${config.message}</div>
+          </div>
+        </div>
+      `;
+      
+      // Add animation keyframe if not exists
+      if (!document.getElementById('toastAnimationStyle')) {
+        const style = document.createElement('style');
+        style.id = 'toastAnimationStyle';
+        style.textContent = `
+          @keyframes slideInRight {
+            from { transform: translateX(400px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+          }
+          @keyframes slideOutRight {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(400px); opacity: 0; }
+          }
+        `;
+        document.head.appendChild(style);
+      }
+      
+      document.body.appendChild(toast);
+      
+      // Auto-remove after 5 seconds
+      setTimeout(() => {
+        toast.style.animation = 'slideOutRight 0.3s ease-in';
+        setTimeout(() => toast.remove(), 300);
+      }, 5000);
+    }
+
+    // Start adaptive polling schedule
+    function startW9StatusPolling() {
+      const currentStatus = localStorage.getItem('CLS_W9Status');
+      const storedRole = localStorage.getItem('CLS_Role');
+      
+      // Don't start polling for admins/leads
+      if (storedRole === 'Admin' || storedRole === 'Lead') {
+        return;
+      }
+      
+      // Don't start polling if already approved
+      if (currentStatus === 'approved') {
+        console.log('✅ W-9 already approved - polling not needed');
+        return;
+      }
+      
+      console.log('⏳ W-9 status monitoring started (pending/rejected/none)');
+      
+      // Adaptive schedule: 10s → 1m → 3m → every 5m
+      setTimeout(() => {
+        checkW9Status('poll');
+        setTimeout(() => {
+          checkW9Status('poll');
+          setTimeout(() => {
+            checkW9Status('poll');
+            setInterval(() => checkW9Status('poll'), 5 * 60 * 1000);
+          }, 2 * 60 * 1000); // 2 more minutes = 3 min total
+        }, 50 * 1000); // 50 more seconds = 1 min total
+      }, 10 * 1000); // 10 seconds
+    }
+
+    // Action-triggered check wrapper
+    async function checkW9BeforeAction(actionName) {
+      await checkW9Status(`action:${actionName}`);
+    }
+
+    // Start polling on page load
+    startW9StatusPolling();
+
     // =================== Load Payroll Week Periods ===================
     async function loadPayrollWeekPeriods() {
+      // Check W-9 status before loading payroll
+      await checkW9BeforeAction('payroll');
+      
       const dropdown = document.getElementById("weekPeriodSelect");
       dropdown.innerHTML = '<option value="">Loading...</option>';
 
@@ -1476,7 +1655,10 @@
     // =================== Time Entry Edit Functions ===================
     let currentEditEntry = null;
 
-    function openTimeEditModal(entryId, originalTime, canEdit = true) {
+    async function openTimeEditModal(entryId, originalTime, canEdit = true) {
+      // Check W-9 status before opening time edit modal
+      await checkW9BeforeAction('timeEdit');
+      
       if (!canEdit) {
         alert(getMSG('timeEditError')); // Use a better message for 'cannot edit'
         return;

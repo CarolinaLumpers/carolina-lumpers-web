@@ -1,5 +1,29 @@
 # Carolina Lumpers Service - AI Coding Agent Instructions
 
+## Development Workflow Rules
+
+### Before Making Changes (CRITICAL)
+**ALWAYS explain the implementation plan in detail and wait for user confirmation before proceeding with any code modifications.**
+
+This includes:
+- Describing what will be changed and why
+- Explaining technical approach (if requested as non-technical, simplify)
+- Listing files that will be modified
+- Outlining expected behavior and user experience
+- Waiting for explicit approval ("yes", "let's go", "proceed", etc.)
+
+**Example:**
+```
+User: "Add cache busting"
+Agent: [Explains 3 options, recommends one, waits]
+User: "Option B sounds good"
+Agent: [Details implementation plan, files, impact, waits]
+User: "Let's go!"
+Agent: [NOW proceeds with code changes]
+```
+
+---
+
 ## System Architecture
 
 ### Multi-Repository Structure
