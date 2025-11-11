@@ -773,7 +773,7 @@ function getWorkerDisplayName_(workerId) {
  */
 function sendW9SubmissionNotification_(workerId, displayName, w9RecordId, pdfUrl) {
   try {
-    const adminEmail = PROPS.getProperty('CC_EMAIL') || 's.garay@carolinalumpers.com';
+    const adminEmail = PROPS.getProperty('CC_EMAIL') || 'info@carolinalumpers.com';
     
     const subject = `🆕 New W-9 Submission - ${displayName} (${workerId})`;
     
