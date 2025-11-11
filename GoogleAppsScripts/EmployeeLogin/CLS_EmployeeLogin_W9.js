@@ -775,47 +775,78 @@ function sendW9SubmissionNotification_(workerId, displayName, w9RecordId, pdfUrl
   try {
     const adminEmail = PROPS.getProperty('CC_EMAIL') || 'info@carolinalumpers.com';
     
-    const subject = `🆕 New W-9 Submission - ${displayName} (${workerId})`;
+    const subject = `[NEW W-9] ${displayName} (${workerId})`;
     
     const htmlBody = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <p>Hi Admin,</p>
-        <p>A new W-9 form has been submitted and is pending your review.</p>
-        
-        <div style="border: 2px solid #FFC107; border-radius: 8px; padding: 20px; margin: 20px 0; background-color: #FFFBF0;">
-          <h3 style="margin-top: 0; color: #F57C00;">📋 SUBMISSION DETAILS</h3>
-          <table style="width: 100%; border-collapse: collapse;">
-            <tr><td style="padding: 5px 0;"><strong>Worker:</strong></td><td>${displayName}</td></tr>
-            <tr><td style="padding: 5px 0;"><strong>Worker ID:</strong></td><td>${workerId}</td></tr>
-            <tr><td style="padding: 5px 0;"><strong>Record ID:</strong></td><td>${w9RecordId}</td></tr>
-            <tr><td style="padding: 5px 0;"><strong>Submitted:</strong></td><td>${new Date().toLocaleString('en-US', { timeZone: 'America/New_York' })}</td></tr>
-          </table>
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; border-radius: 8px 8px 0 0; color: white; text-align: center;">
+          <h2 style="margin: 0; font-size: 24px;">🆕 New W-9 Submission</h2>
         </div>
         
-        <div style="border: 2px solid #4CAF50; border-radius: 8px; padding: 20px; margin: 20px 0; background-color: #F1F8F4;">
-          <h3 style="margin-top: 0; color: #2E7D32;">⚡ QUICK ACTIONS</h3>
-          <p style="margin: 10px 0;">
-            <a href="${pdfUrl}" style="display: inline-block; padding: 10px 20px; background-color: #2196F3; color: white; text-decoration: none; border-radius: 5px; margin: 5px 0;">📄 View W-9 PDF</a>
+        <div style="background-color: #f9f9f9; padding: 30px; border-radius: 0 0 8px 8px;">
+          <p style="font-size: 16px; color: #333;">Hi Admin,</p>
+          <p style="font-size: 14px; color: #666;">A new W-9 form has been submitted and is pending your review.</p>
+          
+          <div style="border: 2px solid #FFC107; border-radius: 8px; padding: 20px; margin: 20px 0; background-color: #FFFBF0;">
+            <h3 style="margin-top: 0; color: #F57C00; font-size: 18px;">📋 SUBMISSION DETAILS</h3>
+            <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+              <tr><td style="padding: 5px 0;"><strong>Worker:</strong></td><td>${displayName}</td></tr>
+              <tr><td style="padding: 5px 0;"><strong>Worker ID:</strong></td><td>${workerId}</td></tr>
+              <tr><td style="padding: 5px 0;"><strong>Record ID:</strong></td><td>${w9RecordId}</td></tr>
+              <tr><td style="padding: 5px 0;"><strong>Submitted:</strong></td><td>${new Date().toLocaleString('en-US', { timeZone: 'America/New_York' })}</td></tr>
+            </table>
+          </div>
+          
+          <div style="border: 2px solid #4CAF50; border-radius: 8px; padding: 20px; margin: 20px 0; background-color: #F1F8F4;">
+            <h3 style="margin-top: 0; color: #2E7D32; font-size: 18px;">⚡ QUICK ACTIONS</h3>
+            <p style="text-align: center; margin: 15px 0;">
+              <a href="${pdfUrl}" style="display: inline-block; padding: 12px 30px; background-color: #2196F3; color: white; text-decoration: none; border-radius: 5px; margin: 5px; font-weight: bold; font-size: 14px;">📄 View W-9 PDF</a>
+            </p>
+            <p style="text-align: center; margin: 15px 0;">
+              <a href="https://carolinalumpers.com/employeeDashboard.html" style="display: inline-block; padding: 12px 30px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 5px; margin: 5px; font-weight: bold; font-size: 14px;">✅ Approve/Reject</a>
+            </p>
+          </div>
+          
+          <div style="background-color: #FFF3E0; border-left: 4px solid #FF9800; padding: 15px; margin: 20px 0; border-radius: 4px;">
+            <p style="margin: 0; font-size: 14px;"><strong>⏰ Action Required:</strong> Please review within 24 hours</p>
+          </div>
+          
+          <p style="margin-top: 30px; color: #666; font-size: 13px; border-top: 1px solid #ddd; padding-top: 20px;">
+            Thank you,<br>
+            <strong style="color: #333;">Carolina Lumpers Service</strong><br>
+            <em>Automated Notification System</em>
           </p>
-          <p style="margin: 10px 0;">
-            <a href="https://carolinalumpers.com/employeeDashboard.html" style="display: inline-block; padding: 10px 20px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 5px; margin: 5px 0;">✅ Approve/Reject</a>
-          </p>
         </div>
-        
-        <div style="background-color: #FFF3E0; border-left: 4px solid #FF9800; padding: 15px; margin: 20px 0;">
-          <p style="margin: 0;"><strong>⏰ Action Required:</strong> Please review within 24 hours</p>
-        </div>
-        
-        <p style="margin-top: 30px; color: #666; font-size: 14px;">
-          Thank you,<br>
-          <strong>Carolina Lumpers Service</strong><br>
-          <em>Automated Notification System</em>
-        </p>
       </div>
     `;
     
-    GmailApp.sendEmail(adminEmail, subject, '', {
-      htmlBody: htmlBody
+    const plainBody = `
+Hi Admin,
+
+A new W-9 form has been submitted and is pending your review.
+
+SUBMISSION DETAILS
+==================
+Worker: ${displayName}
+Worker ID: ${workerId}
+Record ID: ${w9RecordId}
+Submitted: ${new Date().toLocaleString('en-US', { timeZone: 'America/New_York' })}
+
+QUICK ACTIONS
+=============
+View W-9 PDF: ${pdfUrl}
+Approve/Reject: https://carolinalumpers.com/employeeDashboard.html
+
+ACTION REQUIRED: Please review within 24 hours
+
+Thank you,
+Carolina Lumpers Service
+Automated Notification System
+    `.trim();
+    
+    GmailApp.sendEmail(adminEmail, subject, plainBody, {
+      htmlBody: htmlBody,
+      name: 'Carolina Lumpers Service'
     });
     Logger.log(`📧 W-9 submission notification sent to ${adminEmail}`);
     
@@ -829,51 +860,90 @@ function sendW9SubmissionNotification_(workerId, displayName, w9RecordId, pdfUrl
  */
 function sendW9ApprovalNotification_(workerEmail, displayName, w9RecordId) {
   try {
-    const subject = `✅ W-9 Approved - Welcome to Carolina Lumpers Service!`;
+    const subject = `[APPROVED] W-9 Approved - Welcome to Carolina Lumpers Service!`;
     
     const htmlBody = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <p>Hi ${displayName},</p>
-        <p>Great news! Your W-9 form has been approved and you're all set.</p>
-        
-        <div style="border: 2px solid #4CAF50; border-radius: 8px; padding: 20px; margin: 20px 0; background-color: #F1F8F4;">
-          <h3 style="margin-top: 0; color: #2E7D32;">✅ APPROVAL CONFIRMED</h3>
-          <table style="width: 100%; border-collapse: collapse;">
-            <tr><td style="padding: 5px 0;"><strong>Record ID:</strong></td><td>${w9RecordId}</td></tr>
-            <tr><td style="padding: 5px 0;"><strong>Approved:</strong></td><td>${new Date().toLocaleString('en-US', { timeZone: 'America/New_York' })}</td></tr>
-            <tr><td style="padding: 5px 0;"><strong>Status:</strong></td><td><span style="color: #4CAF50; font-weight: bold;">Active - Ready for Payment</span></td></tr>
-          </table>
+        <div style="background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%); padding: 20px; border-radius: 8px 8px 0 0; color: white; text-align: center;">
+          <h2 style="margin: 0; font-size: 24px;">✅ W-9 Approved!</h2>
         </div>
         
-        <div style="background-color: #E8F5E9; border-radius: 8px; padding: 20px; margin: 20px 0;">
-          <h3 style="margin-top: 0; color: #2E7D32;">🎉 WHAT'S NEXT?</h3>
-          <ul style="line-height: 1.8;">
-            <li>✓ You now have full access to your employee dashboard</li>
-            <li>✓ You're eligible to receive payments (1099)</li>
-            <li>✓ You can start tracking your hours and payroll</li>
-          </ul>
-          <p style="text-align: center; margin-top: 20px;">
-            <a href="https://carolinalumpers.com/employeeDashboard.html" style="display: inline-block; padding: 12px 30px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 5px; font-weight: bold;">🔗 Access Your Dashboard</a>
+        <div style="background-color: #f9f9f9; padding: 30px; border-radius: 0 0 8px 8px;">
+          <p style="font-size: 16px; color: #333;">Hi ${displayName},</p>
+          <p style="font-size: 14px; color: #666;">Great news! Your W-9 form has been approved and you're all set.</p>
+          
+          <div style="border: 2px solid #4CAF50; border-radius: 8px; padding: 20px; margin: 20px 0; background-color: #F1F8F4;">
+            <h3 style="margin-top: 0; color: #2E7D32; font-size: 18px;">✅ APPROVAL CONFIRMED</h3>
+            <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+              <tr><td style="padding: 5px 0;"><strong>Record ID:</strong></td><td>${w9RecordId}</td></tr>
+              <tr><td style="padding: 5px 0;"><strong>Approved:</strong></td><td>${new Date().toLocaleString('en-US', { timeZone: 'America/New_York' })}</td></tr>
+              <tr><td style="padding: 5px 0;"><strong>Status:</strong></td><td><span style="color: #4CAF50; font-weight: bold;">Active - Ready for Payment</span></td></tr>
+            </table>
+          </div>
+          
+          <div style="background-color: #E8F5E9; border-radius: 8px; padding: 20px; margin: 20px 0;">
+            <h3 style="margin-top: 0; color: #2E7D32; font-size: 18px;">🎉 WHAT'S NEXT?</h3>
+            <ul style="line-height: 1.8; font-size: 14px; color: #333;">
+              <li>✓ You now have full access to your employee dashboard</li>
+              <li>✓ You're eligible to receive payments (1099)</li>
+              <li>✓ You can start tracking your hours and payroll</li>
+            </ul>
+            <p style="text-align: center; margin-top: 20px;">
+              <a href="https://carolinalumpers.com/employeeDashboard.html" style="display: inline-block; padding: 12px 30px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 14px;">🔗 Access Your Dashboard</a>
+            </p>
+          </div>
+          
+          <div style="border: 1px solid #E0E0E0; border-radius: 8px; padding: 20px; margin: 20px 0; background-color: #F5F5F5;">
+            <h3 style="margin-top: 0; color: #555; font-size: 16px;">📞 NEED HELP?</h3>
+            <p style="margin: 5px 0; font-size: 14px;">Questions? Contact us:</p>
+            <p style="margin: 5px 0; font-size: 14px;">📧 <a href="mailto:info@carolinalumpers.com" style="color: #2196F3; text-decoration: none;">info@carolinalumpers.com</a></p>
+            <p style="margin: 5px 0; font-size: 14px;">📱 Call/Text for assistance</p>
+          </div>
+          
+          <p style="margin-top: 30px; color: #666; font-size: 13px; border-top: 1px solid #ddd; padding-top: 20px; text-align: center;">
+            Welcome to the team! We're excited to work with you.<br><br>
+            Best regards,<br>
+            <strong style="color: #333;">Carolina Lumpers Service Team</strong>
           </p>
         </div>
-        
-        <div style="border: 1px solid #E0E0E0; border-radius: 8px; padding: 20px; margin: 20px 0; background-color: #F5F5F5;">
-          <h3 style="margin-top: 0; color: #555;">📞 NEED HELP?</h3>
-          <p style="margin: 5px 0;">Questions? Contact us:</p>
-          <p style="margin: 5px 0;">📧 <a href="mailto:info@carolinalumpers.com" style="color: #2196F3; text-decoration: none;">info@carolinalumpers.com</a></p>
-          <p style="margin: 5px 0;">📱 Call/Text for assistance</p>
-        </div>
-        
-        <p style="margin-top: 30px; color: #666; font-size: 14px;">
-          Welcome to the team! We're excited to work with you.<br><br>
-          Best regards,<br>
-          <strong>Carolina Lumpers Service Team</strong>
-        </p>
       </div>
     `;
     
-    GmailApp.sendEmail(workerEmail, subject, '', {
-      htmlBody: htmlBody
+    const plainBody = `
+Hi ${displayName},
+
+Great news! Your W-9 form has been approved and you're all set.
+
+APPROVAL CONFIRMED
+==================
+Record ID: ${w9RecordId}
+Approved: ${new Date().toLocaleString('en-US', { timeZone: 'America/New_York' })}
+Status: Active - Ready for Payment
+
+WHAT'S NEXT?
+============
+✓ You now have full access to your employee dashboard
+✓ You're eligible to receive payments (1099)
+✓ You can start tracking your hours and payroll
+
+Access Your Dashboard:
+https://carolinalumpers.com/employeeDashboard.html
+
+NEED HELP?
+==========
+Questions? Contact us:
+Email: info@carolinalumpers.com
+Call/Text for assistance
+
+Welcome to the team! We're excited to work with you.
+
+Best regards,
+Carolina Lumpers Service Team
+    `.trim();
+    
+    GmailApp.sendEmail(workerEmail, subject, plainBody, {
+      htmlBody: htmlBody,
+      name: 'Carolina Lumpers Service'
     });
     Logger.log(`📧 W-9 approval notification sent to ${workerEmail}`);
     
@@ -887,63 +957,107 @@ function sendW9ApprovalNotification_(workerEmail, displayName, w9RecordId) {
  */
 function sendW9RejectionNotification_(workerEmail, displayName, reason) {
   try {
-    const subject = `⚠️ W-9 Requires Correction - Action Needed`;
+    const subject = `[ACTION NEEDED] W-9 Requires Correction`;
     
     const htmlBody = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <p>Hi ${displayName},</p>
-        <p>Your W-9 form submission requires correction before it can be approved.</p>
+        <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); padding: 20px; border-radius: 8px 8px 0 0; color: white; text-align: center;">
+          <h2 style="margin: 0; font-size: 24px;">⚠️ W-9 Correction Needed</h2>
+        </div>
         
-        <div style="border: 2px solid #FF9800; border-radius: 8px; padding: 20px; margin: 20px 0; background-color: #FFF3E0;">
-          <h3 style="margin-top: 0; color: #E65100;">❌ CORRECTION REQUIRED</h3>
-          <p style="background-color: white; padding: 15px; border-radius: 5px; border-left: 4px solid #FF9800;">
-            <strong>Reason:</strong><br>
-            ${reason || 'Information incomplete or incorrect'}
+        <div style="background-color: #f9f9f9; padding: 30px; border-radius: 0 0 8px 8px;">
+          <p style="font-size: 16px; color: #333;">Hi ${displayName},</p>
+          <p style="font-size: 14px; color: #666;">Your W-9 form submission requires correction before it can be approved.</p>
+          
+          <div style="border: 2px solid #FF9800; border-radius: 8px; padding: 20px; margin: 20px 0; background-color: #FFF3E0;">
+            <h3 style="margin-top: 0; color: #E65100; font-size: 18px;">❌ CORRECTION REQUIRED</h3>
+            <p style="background-color: white; padding: 15px; border-radius: 5px; border-left: 4px solid #FF9800; font-size: 14px;">
+              <strong>Reason:</strong><br>
+              ${reason || 'Information incomplete or incorrect'}
+            </p>
+          </div>
+          
+          <div style="background-color: #E3F2FD; border-radius: 8px; padding: 20px; margin: 20px 0;">
+            <h3 style="margin-top: 0; color: #1565C0; font-size: 18px;">📋 NEXT STEPS</h3>
+            <ol style="line-height: 1.8; font-size: 14px; color: #333;">
+              <li>Review the reason above carefully</li>
+              <li>Log in to correct and resubmit your W-9</li>
+              <li>Ensure all information matches your tax records</li>
+            </ol>
+            <p style="text-align: center; margin-top: 20px;">
+              <a href="https://carolinalumpers.com/employeelogin.html" style="display: inline-block; padding: 12px 30px; background-color: #2196F3; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 14px;">🔗 Resubmit W-9</a>
+            </p>
+          </div>
+          
+          <div style="border: 1px solid #FFE0B2; border-radius: 8px; padding: 20px; margin: 20px 0; background-color: #FFF8E1;">
+            <h3 style="margin-top: 0; color: #F57C00; font-size: 16px;">💡 COMMON ISSUES</h3>
+            <ul style="line-height: 1.8; font-size: 14px; color: #333;">
+              <li>Name must match <strong>exactly</strong> as filed with IRS</li>
+              <li>SSN/EIN must be accurate (no typos)</li>
+              <li>Address must be current</li>
+              <li>Tax classification must be correct</li>
+            </ul>
+          </div>
+          
+          <div style="border: 1px solid #E0E0E0; border-radius: 8px; padding: 20px; margin: 20px 0; background-color: #F5F5F5;">
+            <h3 style="margin-top: 0; color: #555; font-size: 16px;">📞 NEED HELP?</h3>
+            <p style="margin: 5px 0; font-size: 14px;">Questions about your W-9?</p>
+            <p style="margin: 5px 0; font-size: 14px;">📧 <a href="mailto:info@carolinalumpers.com" style="color: #2196F3; text-decoration: none;">info@carolinalumpers.com</a></p>
+            <p style="margin: 5px 0; font-size: 14px;">📱 Call/Text for assistance</p>
+          </div>
+          
+          <div style="background-color: #FFEBEE; border-left: 4px solid #F44336; padding: 15px; margin: 20px 0; border-radius: 4px;">
+            <p style="margin: 0; font-size: 14px;"><strong>⏰ Important:</strong> Please resubmit as soon as possible to avoid payment delays.</p>
+          </div>
+          
+          <p style="margin-top: 30px; color: #666; font-size: 13px; border-top: 1px solid #ddd; padding-top: 20px;">
+            Thank you,<br>
+            <strong style="color: #333;">Carolina Lumpers Service Team</strong>
           </p>
         </div>
-        
-        <div style="background-color: #E3F2FD; border-radius: 8px; padding: 20px; margin: 20px 0;">
-          <h3 style="margin-top: 0; color: #1565C0;">📋 NEXT STEPS</h3>
-          <ol style="line-height: 1.8;">
-            <li>Review the reason above carefully</li>
-            <li>Log in to correct and resubmit your W-9</li>
-            <li>Ensure all information matches your tax records</li>
-          </ol>
-          <p style="text-align: center; margin-top: 20px;">
-            <a href="https://carolinalumpers.com/employeelogin.html" style="display: inline-block; padding: 12px 30px; background-color: #2196F3; color: white; text-decoration: none; border-radius: 5px; font-weight: bold;">🔗 Resubmit W-9</a>
-          </p>
-        </div>
-        
-        <div style="border: 1px solid #FFE0B2; border-radius: 8px; padding: 20px; margin: 20px 0; background-color: #FFF8E1;">
-          <h3 style="margin-top: 0; color: #F57C00;">💡 COMMON ISSUES</h3>
-          <ul style="line-height: 1.8;">
-            <li>Name must match <strong>exactly</strong> as filed with IRS</li>
-            <li>SSN/EIN must be accurate (no typos)</li>
-            <li>Address must be current</li>
-            <li>Tax classification must be correct</li>
-          </ul>
-        </div>
-        
-        <div style="border: 1px solid #E0E0E0; border-radius: 8px; padding: 20px; margin: 20px 0; background-color: #F5F5F5;">
-          <h3 style="margin-top: 0; color: #555;">📞 NEED HELP?</h3>
-          <p style="margin: 5px 0;">Questions about your W-9?</p>
-          <p style="margin: 5px 0;">📧 <a href="mailto:info@carolinalumpers.com" style="color: #2196F3; text-decoration: none;">info@carolinalumpers.com</a></p>
-          <p style="margin: 5px 0;">📱 Call/Text for assistance</p>
-        </div>
-        
-        <div style="background-color: #FFEBEE; border-left: 4px solid #F44336; padding: 15px; margin: 20px 0;">
-          <p style="margin: 0;"><strong>⏰ Important:</strong> Please resubmit as soon as possible to avoid payment delays.</p>
-        </div>
-        
-        <p style="margin-top: 30px; color: #666; font-size: 14px;">
-          Thank you,<br>
-          <strong>Carolina Lumpers Service Team</strong>
-        </p>
       </div>
     `;
     
-    GmailApp.sendEmail(workerEmail, subject, '', {
-      htmlBody: htmlBody
+    const plainBody = `
+Hi ${displayName},
+
+Your W-9 form submission requires correction before it can be approved.
+
+CORRECTION REQUIRED
+===================
+Reason: ${reason || 'Information incomplete or incorrect'}
+
+NEXT STEPS
+==========
+1. Review the reason above carefully
+2. Log in to correct and resubmit your W-9
+3. Ensure all information matches your tax records
+
+Resubmit W-9:
+https://carolinalumpers.com/employeelogin.html
+
+COMMON ISSUES
+=============
+• Name must match EXACTLY as filed with IRS
+• SSN/EIN must be accurate (no typos)
+• Address must be current
+• Tax classification must be correct
+
+NEED HELP?
+==========
+Questions about your W-9?
+Email: info@carolinalumpers.com
+Call/Text for assistance
+
+IMPORTANT: Please resubmit as soon as possible to avoid payment delays.
+
+Thank you,
+Carolina Lumpers Service Team
+    `.trim();
+    
+    GmailApp.sendEmail(workerEmail, subject, plainBody, {
+      htmlBody: htmlBody,
+      name: 'Carolina Lumpers Service'
     });
     Logger.log(`📧 W-9 rejection notification sent to ${workerEmail}`);
     
