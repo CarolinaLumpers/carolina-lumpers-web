@@ -940,6 +940,7 @@
     const workerId = localStorage.getItem("CLS_WorkerID");
     const displayName = localStorage.getItem("CLS_WorkerName");
     const email = localStorage.getItem("CLS_Email");
+    const w9Status = localStorage.getItem("CLS_W9Status"); // W-9 compliance status
 
     if (!workerId) {
       const currentLang = localStorage.getItem("CLS_Lang") || "en";
@@ -953,7 +954,28 @@
         email: email || `${workerId}@placeholder.com`
       };
 
+      // W-9 COMPLIANCE CHECK: Redirect non-admins if W-9 not approved
+      // Check if user is admin first (admins exempt from W-9 requirement)
+      const storedRole = localStorage.getItem("CLS_Role");
+      if (storedRole !== 'Admin' && storedRole !== 'Lead') {
+        // Worker must have approved W-9 to access dashboard
+        if (!w9Status || w9Status === 'none') {
+          // No W-9 submitted - redirect to form
+          window.location.href = 'w9Form.html';
+        } else if (w9Status === 'pending_admin_review') {
+          // W-9 pending - redirect to status page
+          window.location.href = 'w9Status.html';
+        } else if (w9Status === 'rejected') {
+          // W-9 rejected - redirect to status page (shows resubmit option)
+          window.location.href = 'w9Status.html';
+        }
+        // If w9Status === 'approved', continue to dashboard (no redirect)
+      }
+
     } // End of session validation
+
+    // Global constants for dashboard
+    const WORKER_ID = workerId; // Make available globally for all functions
 
     // View As functionality
     let VIEW_AS_WORKER = null;      // stores workerId being viewed

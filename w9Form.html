@@ -79,45 +79,6 @@
       to { transform: rotate(360deg); }
     }
 
-    /* Button Styles */
-    .btn-submit {
-      background-color: var(--color-primary);
-      color: var(--text-primary);
-      border: none;
-      padding: var(--space-md) var(--space-xl);
-      border-radius: var(--radius-md);
-      font-size: var(--font-size-base);
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-    
-    .btn-submit:hover {
-      background-color: var(--color-primary-dark, #e6b800);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
-    }
-    
-    .btn-submit:active {
-      transform: translateY(0);
-    }
-    
-    .btn-cancel {
-      background-color: var(--bg-tertiary, #444);
-      color: var(--text-secondary);
-      border: none;
-      padding: var(--space-md) var(--space-xl);
-      border-radius: var(--radius-md);
-      font-size: var(--font-size-base);
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-    
-    .btn-cancel:hover {
-      background-color: var(--bg-hover, #555);
-    }
-
     /* W-9 Form Specific Styles */
     .w9-container {
       background-color: var(--bg-secondary);
@@ -598,12 +559,12 @@
         <div id="statusMessage" role="alert" aria-live="assertive"></div>
 
         <!-- Form Actions -->
-        <div class="form-actions">
-          <button type="button" class="btn-cancel" onclick="window.location.href='employeelogin.html'"
+        <div class="actions">
+          <button type="button" class="btn btn-ghost" onclick="window.location.href='employeeDashboard.html'"
                   data-en="Cancel"
                   data-es="Cancelar"
                   data-pt="Cancelar">Cancel</button>
-          <button type="submit" class="btn-submit" id="submitBtn"
+          <button type="submit" class="btn btn-primary" id="submitBtn"
                   data-en="Submit W-9 Form"
                   data-es="Enviar Formulario W-9"
                   data-pt="Enviar Formulário W-9">Submit W-9 Form</button>
