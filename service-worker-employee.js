@@ -1,6 +1,6 @@
 // 📦 Cache version matches deployment timestamp in HTML files (CACHE_VERSION)
 // Update this when deploying to force cache refresh
-const CACHE_NAME = "cls-employee-20251111-0100";
+const CACHE_NAME = "cls-employee-20251111-1045";
 const ASSETS = [
   "./employeelogin.html",
   "./employeeDashboard.html",
