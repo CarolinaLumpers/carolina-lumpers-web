@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- Cache Version Control - Update this timestamp when deploying -->
+  <script>
+    const CACHE_VERSION = '20251111-0100'; // Format: YYYYMMDD-HHMM
+  </script>
+
   <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-JPETF03TJ0"></script>
   <script>
@@ -29,8 +34,12 @@
   <link rel="apple-touch-icon" href="assets/CLS-icon-192.png">
   
   <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=2025-11-04">
-  <link rel="stylesheet" href="css/forms.css?v=2025-11-04">
+  
+  <!-- Dynamic CSS Loading with Cache Version -->
+  <script>
+    document.write('<link rel="stylesheet" href="css/style.css?v=' + CACHE_VERSION + '">');
+    document.write('<link rel="stylesheet" href="css/forms.css?v=' + CACHE_VERSION + '">');
+  </script>
 </head>
 
 <body data-page="signup">
