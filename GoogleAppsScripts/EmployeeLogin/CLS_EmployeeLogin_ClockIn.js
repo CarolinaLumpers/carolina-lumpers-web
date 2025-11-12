@@ -14,8 +14,24 @@ function handleClockIn(workerId, lat, lng, device) {
     const clientsSheet = ss.getSheetByName('Clients');
     const clockSheet = ss.getSheetByName('ClockIn');
 
+    if (!clientsSheet) {
+      Logger.log('❌ Clock-in error: Clients sheet not found');
+      return { success: false, error: '❌ System error: Clients database not found. Please contact support.' };
+    }
+
+    if (!clockSheet) {
+      Logger.log('❌ Clock-in error: ClockIn sheet not found');
+      return { success: false, error: '❌ System error: ClockIn database not found. Please contact support.' };
+    }
+
   // ---- Clients lookup ----
   const clientRows = clientsSheet.getDataRange().getValues();
+  
+  if (clientRows.length < 2) {
+    Logger.log('❌ Clock-in error: No clients in database');
+    return { success: false, error: '❌ No client sites configured. Please contact your supervisor.' };
+  }
+  
   const cHeaders = clientRows[0].map(String);
   const idxName = cHeaders.indexOf('Client Name');
   const idxAddr = cHeaders.indexOf('JobAddress');
@@ -23,7 +39,8 @@ function handleClockIn(workerId, lat, lng, device) {
   const idxLng = cHeaders.indexOf('Longitude');
 
   if (idxName < 0 || idxAddr < 0 || idxLat < 0 || idxLng < 0) {
-    return { success: false, message: '❌ Clients sheet missing required columns.' };
+    Logger.log('❌ Clock-in error: Clients sheet missing required columns');
+    return { success: false, error: '❌ System error: Client database structure invalid. Please contact support.' };
   }
 
   const workerLat = parseFloat(lat);
@@ -31,9 +48,10 @@ function handleClockIn(workerId, lat, lng, device) {
 
   // Validate GPS coordinates
   if (!isFinite(workerLat) || !isFinite(workerLng)) {
+    Logger.log(`❌ Clock-in error: Invalid GPS coordinates - lat: ${lat}, lng: ${lng}`);
     return { 
       success: false, 
-      message: '❌ Invalid GPS coordinates. Please enable location services and try again.' 
+      error: '❌ Invalid GPS coordinates. Please enable location services and try again.' 
     };
   }
 
@@ -76,11 +94,20 @@ function handleClockIn(workerId, lat, lng, device) {
   }
 
   // --- 🚨 Geofence validation ---
+  // Ensure we found a valid nearest distance
+  if (!isFinite(nearestDist) || nearestDist === Infinity) {
+    Logger.log('❌ Clock-in error: No valid client coordinates found in database');
+    return { 
+      success: false, 
+      error: '❌ No valid client locations found. Please contact your supervisor.' 
+    };
+  }
+
   // Only allow clock-ins near a valid client site
-  if (!nearestClient || !isFinite(nearestDist) || nearestDist > GEOFENCE_RADIUS_MI) {
+  if (!nearestClient || nearestDist > GEOFENCE_RADIUS_MI) {
     const subject = `🚨 Out-of-Geofence Clock-In Attempt`;
     const mapsLink = `https://www.google.com/maps?q=${workerLat},${workerLng}`;
-    const distanceText = isFinite(nearestDist) ? nearestDist.toFixed(2) : 'N/A';
+    const distanceText = nearestDist.toFixed(2);
     const body =
       `Worker ${workerId} attempted to clock in outside authorized area.\n\n` +
       `📍 Location: ${workerLat}, ${workerLng}\n` +
@@ -177,10 +204,22 @@ function handleClockIn(workerId, lat, lng, device) {
     Logger.log('Stack trace: ' + error.stack);
     Logger.log('Input: workerId=' + workerId + ', lat=' + lat + ', lng=' + lng + ', device=' + device);
     
+    // Return user-friendly error message
+    let errorMsg = '❌ Clock-in failed. Please try again or contact support if the issue persists.';
+    
+    // Provide more specific error if possible
+    if (error.toString().includes('toFixed')) {
+      errorMsg = '❌ Location validation error. Please ensure you are near a registered job site.';
+    } else if (error.toString().includes('openById')) {
+      errorMsg = '❌ Database connection error. Please contact support.';
+    } else if (error.toString().includes('permission')) {
+      errorMsg = '❌ Permission error. Please contact your administrator.';
+    }
+    
     return {
       success: false,
-      message: '❌ Clock-in failed. Please try again or contact support if the issue persists.',
-      error: error.toString()
+      error: errorMsg,
+      technicalError: error.toString() // For debugging
     };
   }
 }
@@ -189,53 +228,82 @@ function handleClockIn(workerId, lat, lng, device) {
 //  RATE LIMITING
 // ======================================================
 function ensureMinIntervalMinutes_(workerId, minutes) {
-  const ss = SpreadsheetApp.openById(SHEET_ID);
-  const sh = ss.getSheetByName('ClockIn');
-  if (!sh) return null;
-  const data = sh.getDataRange().getValues();
-  if (data.length < 2) return null;
-
-  const headers = data[0].map(String);
-  const iWorker = headers.indexOf('WorkerID');
-  const iDate = headers.indexOf('Date');
-  const iTime = headers.indexOf('Time');
-
-  for (let i = data.length - 1; i >= 1; i--) {
-    const row = data[i];
-    if (String(row[iWorker]) !== String(workerId)) continue;
-
-    const dateObj = row[iDate];
-    const timeObj = row[iTime];
-    if (!(dateObj instanceof Date) || !(timeObj instanceof Date)) continue;
-
-    // Combine date + time correctly
-    const combined = new Date(dateObj);
-    combined.setHours(timeObj.getHours(), timeObj.getMinutes(), timeObj.getSeconds());
-
-    const now = new Date(Utilities.formatDate(new Date(), TIMEZONE, "yyyy-MM-dd'T'HH:mm:ss"));
-    const diff = (now - combined) / 60000;
-
-    if (diff < minutes) {
-      const workerMeta = lookupWorkerMeta_(workerId);
-      TT_LOGGER.logRateLimit(
-        {
-          workerId: workerId,
-          displayName: workerMeta.displayName || workerId,
-          device: workerMeta.device || 'Unknown Device'
-        },
-        {
-          minutesSinceLastClockIn: diff,
-          rateLimitMinutes: minutes
-        }
-      );
-      return {
-        success: false,
-        message: `⏱️ You recently clocked in. Please wait ${Math.ceil(minutes - diff)} minutes before clocking again.`
-      };
+  try {
+    const ss = SpreadsheetApp.openById(SHEET_ID);
+    const sh = ss.getSheetByName('ClockIn');
+    if (!sh) {
+      Logger.log('⚠️ Rate limit check: ClockIn sheet not found');
+      return null;
     }
-    break;
+    
+    const data = sh.getDataRange().getValues();
+    if (data.length < 2) {
+      return null; // No history, allow clock-in
+    }
+
+    const headers = data[0].map(String);
+    const iWorker = headers.indexOf('WorkerID');
+    const iDate = headers.indexOf('Date');
+    const iTime = headers.indexOf('Time');
+
+    if (iWorker < 0 || iDate < 0 || iTime < 0) {
+      Logger.log('⚠️ Rate limit check: Required columns not found (WorkerID, Date, Time)');
+      return null;
+    }
+
+    for (let i = data.length - 1; i >= 1; i--) {
+      const row = data[i];
+      if (String(row[iWorker]) !== String(workerId)) continue;
+
+      const dateObj = row[iDate];
+      const timeObj = row[iTime];
+      
+      // Skip entries with invalid date/time
+      if (!(dateObj instanceof Date) || !(timeObj instanceof Date)) {
+        continue;
+      }
+
+      // Combine date + time correctly
+      const combined = new Date(dateObj);
+      combined.setHours(timeObj.getHours(), timeObj.getMinutes(), timeObj.getSeconds());
+
+      const now = new Date(Utilities.formatDate(new Date(), TIMEZONE, "yyyy-MM-dd'T'HH:mm:ss"));
+      const diff = (now - combined) / 60000;
+
+      if (diff < minutes) {
+        // Log rate limit event (wrapped in try-catch to not block the rate limit)
+        try {
+          const workerMeta = lookupWorkerMeta_(workerId);
+          TT_LOGGER.logRateLimit(
+            {
+              workerId: workerId,
+              displayName: workerMeta.displayName || workerId,
+              device: workerMeta.device || 'Unknown Device'
+            },
+            {
+              minutesSinceLastClockIn: diff,
+              rateLimitMinutes: minutes
+            }
+          );
+        } catch (logError) {
+          Logger.log('⚠️ Rate limit logging failed: ' + logError.toString());
+          // Continue anyway - the rate limit should still block
+        }
+        
+        // Return rate limit block regardless of logging success
+        return {
+          success: false,
+          message: `⏱️ You recently clocked in. Please wait ${Math.ceil(minutes - diff)} minutes before clocking again.`
+        };
+      }
+      break;
+    }
+    return null; // No rate limit triggered, allow clock-in
+  } catch (error) {
+    Logger.log('❌ Rate limit check error: ' + error.toString());
+    // Return null to allow clock-in to proceed if rate limiter fails
+    return null;
   }
-  return null;
 }
 
 // ======================================================

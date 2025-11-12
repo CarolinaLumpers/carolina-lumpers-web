@@ -99,6 +99,8 @@ function handleRequest(e) {
           result = { success: false, message: '⚠️ Missing workerId or GPS coordinates.' };
         } else {
           const rateCheck = ensureMinIntervalMinutes_(workerId, RATE_LIMIT_MINUTES);
+          
+          // If rate limit blocked, return immediately
           if (rateCheck && rateCheck.success === false) {
             result = rateCheck;
             break;
@@ -106,6 +108,7 @@ function handleRequest(e) {
 
           // ✅ Perform Clock-In
           result = handleClockIn(workerId, lat, lng, device);
+          
           // Note: Clock-in logging handled by TT_LOGGER.logClockIn() inside handleClockIn()
 
           // ✅ Optional: Send late clock-in notification (multilingual + first of day)

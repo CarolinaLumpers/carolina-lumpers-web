@@ -1,8 +1,26 @@
 {
 	"folders": [
 		{
-			"path": ".."
+			"name": "Carolina Lumpers Web (Root)",
+			"path": "."
+		},
+		{
+			"name": "React Portal (New)",
+			"path": "react-portal"
+		},
+		{
+			"name": "Google Apps Scripts",
+			"path": "GoogleAppsScripts"
 		}
 	],
-	"settings": {}
+	"settings": {
+		"files.exclude": {
+			"**/node_modules": true,
+			"**/.git": true
+		},
+		"search.exclude": {
+			"**/node_modules": true,
+			"**/dist": true
+		}
+	}
 }
