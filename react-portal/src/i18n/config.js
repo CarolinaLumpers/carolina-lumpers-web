@@ -5,6 +5,23 @@ import en from './en.json';
 import es from './es.json';
 import pt from './pt.json';
 
+// Initialize language from storage or browser settings
+const getInitialLanguage = () => {
+  // First check localStorage
+  const stored = storage.getLanguage();
+  if (stored && ['en', 'es', 'pt'].includes(stored)) {
+    return stored;
+  }
+  
+  // Then check browser language
+  const browserLang = navigator.language?.split('-')[0] || 'en';
+  if (['es', 'pt'].includes(browserLang)) {
+    return browserLang;
+  }
+  
+  return 'en';
+};
+
 i18n
   .use(initReactI18next)
   .init({
@@ -13,11 +30,13 @@ i18n
       es: { translation: es },
       pt: { translation: pt },
     },
-    lng: storage.getLanguage(),
+    lng: getInitialLanguage(),
     fallbackLng: 'en',
     interpolation: {
       escapeValue: false, // React already escapes
     },
+    // Enable debug mode to see what's happening
+    debug: false,
   });
 
 export default i18n;

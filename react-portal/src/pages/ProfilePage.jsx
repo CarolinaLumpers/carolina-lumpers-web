@@ -13,10 +13,18 @@ function ProfilePage() {
   const { t, i18n } = useTranslation();
   const { user } = useAuth();
 
-  const handleLanguageChange = (e) => {
+  const handleLanguageChange = async (e) => {
     const newLang = e.target.value;
-    i18n.changeLanguage(newLang);
-    storage.setLanguage(newLang);
+    try {
+      // Change language in i18n
+      await i18n.changeLanguage(newLang);
+      // Save to localStorage
+      storage.setLanguage(newLang);
+      // Force page reload to apply changes everywhere
+      window.location.reload();
+    } catch (error) {
+      console.error('Failed to change language:', error);
+    }
   };
 
   return (
