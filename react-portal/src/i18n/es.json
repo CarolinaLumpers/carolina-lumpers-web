@@ -1,0 +1,165 @@
+{
+  "login": {
+    "title": "Inicio de Sesión de Empleado",
+    "email": "Correo Electrónico de Trabajo",
+    "password": "Contraseña",
+    "submit": "Iniciar Sesión",
+    "rememberMe": "Mantener sesión iniciada",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "noAccount": "¿No tienes una cuenta?",
+    "signupLink": "Regístrate aquí",
+    "loading": "Iniciando sesión...",
+    "success": "¡Inicio de sesión exitoso! Redirigiendo...",
+    "error": "Correo electrónico o contraseña inválidos"
+  },
+  "signup": {
+    "title": "Registro de Empleado",
+    "email": "Correo Electrónico de Trabajo",
+    "password": "Crear Contraseña",
+    "confirmPassword": "Confirmar Contraseña",
+    "submit": "Crear Cuenta",
+    "hasAccount": "¿Ya tienes una cuenta?",
+    "loginLink": "Inicia sesión aquí",
+    "loading": "Creando cuenta...",
+    "success": "¡Cuenta creada! Redirigiendo...",
+    "passwordMismatch": "Las contraseñas no coinciden",
+    "error": "Error al crear la cuenta"
+  },
+  "dashboard": {
+    "title": "Panel de Empleado",
+    "welcome": "Bienvenido, {{name}}",
+    "timeIn": "Entrada / Salida",
+    "timingIn": "Registrando tiempo...",
+    "todayEntries": "Entradas de Hoy",
+    "noEntriesToday": "Aún no hay entradas de tiempo hoy. ¡Registra tu entrada para comenzar!",
+    "logout": "Cerrar Sesión",
+    "adminTools": "Herramientas de Administrador",
+    "adminComingSoon": "Herramientas de administrador próximamente en Fase 2...",
+    "tabs": {
+      "timeEntries": "Entradas de Tiempo",
+      "payroll": "Nómina",
+      "admin": "Herramientas de Admin"
+    }
+  },
+  "payroll": {
+    "thisWeek": "Esta Semana",
+    "lastWeek": "Semana Pasada",
+    "thisMonth": "Este Mes",
+    "totalHours": "Horas Totales",
+    "totalEarnings": "Ingresos Totales",
+    "breakdown": "Desglose de Nómina",
+    "noData": "No hay datos de nómina para este período."
+  },
+  "w9": {
+    "pending": "Formulario W-9 Pendiente de Revisión",
+    "pendingMessage": "Su formulario W-9 está siendo revisado. Se le notificará una vez aprobado.",
+    "required": "Formulario W-9 Requerido",
+    "requiredMessage": "Por favor envíe su formulario W-9 para continuar trabajando. Esto es requerido para la nómina.",
+    "submit": "Enviar W-9"
+  },
+  "common": {
+    "loading": "Cargando...",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "submit": "Enviar",
+    "close": "Cerrar",
+    "confirm": "Confirmar",
+    "back": "Atrás",
+    "next": "Siguiente",
+    "finish": "Finalizar",
+    "search": "Buscar",
+    "filter": "Filtrar",
+    "export": "Exportar",
+    "refresh": "Actualizar",
+    "retry": "Reintentar",
+    "error": "Ocurrió un error",
+    "success": "Éxito",
+    "date": "Fecha",
+    "time": "Hora",
+    "site": "Sitio",
+    "status": "Estado",
+    "distance": "Distancia",
+    "hours": "Horas",
+    "rate": "Tarifa",
+    "earnings": "Ingresos",
+    "total": "Total",
+    "confirmed": "Confirmado",
+    "pending": "Pendiente",
+    "editing": "Editando",
+    "denied": "Denegado",
+    "processing": "Procesando..."
+  },
+  "admin": {
+    "tabs": {
+      "workers": "Todos los Trabajadores",
+      "timeEdits": "Solicitudes de Edición de Tiempo",
+      "w9": "Gestión de W-9"
+    },
+    "workers": {
+      "title": "Actividad de Trabajadores Hoy",
+      "total": "Total de Trabajadores",
+      "active": "Activo",
+      "inactive": "Sin Registro",
+      "clockIns": "Registros",
+      "lastClockIn": "Último",
+      "viewDetails": "Ver Detalles",
+      "noWorkers": "No se encontraron trabajadores"
+    },
+    "timeEdits": {
+      "title": "Solicitudes de Edición de Tiempo Pendientes",
+      "total": "Total Pendiente",
+      "originalTime": "Hora Original",
+      "requestedTime": "Hora Solicitada",
+      "reason": "Razón",
+      "submitted": "Enviado",
+      "approve": "Aprobar",
+      "deny": "Denegar",
+      "confirmApprove": "¿Aprobar esta solicitud de edición de tiempo?",
+      "denyReason": "Ingrese razón para denegar (opcional):",
+      "noRequests": "No hay solicitudes de edición de tiempo pendientes",
+      "status": {
+        "pending": "Pendiente"
+      }
+    },
+    "w9": {
+      "title": "Envíos de W-9 Pendientes",
+      "total": "Total Pendiente",
+      "legalName": "Nombre Legal",
+      "taxClass": "Clasificación Tributaria",
+      "address": "Dirección",
+      "ssnLast4": "SSN (Últimos 4)",
+      "submitted": "Enviado",
+      "viewPdf": "Ver PDF",
+      "approve": "Aprobar",
+      "reject": "Rechazar",
+      "confirmApprove": "¿Aprobar este envío de W-9?",
+      "rejectReason": "Ingrese razón para rechazar:",
+      "noSubmissions": "No hay envíos de W-9 pendientes",
+      "status": {
+        "pending": "Revisión Pendiente"
+      }
+    },
+    "loading": {
+      "workers": "Cargando trabajadores...",
+      "timeEdits": "Cargando solicitudes de edición de tiempo...",
+      "w9s": "Cargando envíos de W-9..."
+    },
+    "error": {
+      "loadWorkers": "Error al cargar trabajadores",
+      "loadTimeEdits": "Error al cargar solicitudes de edición de tiempo",
+      "loadW9s": "Error al cargar envíos de W-9"
+    }
+  },
+  "errors": {
+    "network": "Error de red. Por favor verifica tu conexión.",
+    "unauthorized": "No autorizado. Por favor inicia sesión nuevamente.",
+    "notFound": "Página no encontrada",
+    "serverError": "Error del servidor. Por favor intenta más tarde.",
+    "geolocationNotSupported": "La geolocalización no es compatible con tu navegador",
+    "geolocationDenied": "Acceso a ubicación denegado. Por favor habilita los servicios de ubicación.",
+    "timeInFailed": "Error al registrar entrada. Por favor intenta nuevamente.",
+    "loadFailed": "Error al cargar datos. Por favor intenta nuevamente."
+  }
+}

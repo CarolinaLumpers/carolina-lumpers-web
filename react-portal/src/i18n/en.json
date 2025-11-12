@@ -1,0 +1,168 @@
+{
+  "login": {
+    "title": "Employee Login",
+    "email": "Work Email",
+    "password": "Password",
+    "submit": "Login",
+    "rememberMe": "Stay logged in",
+    "forgotPassword": "Forgot password?",
+    "noAccount": "Don't have an account?",
+    "signupLink": "Sign up here",
+    "loading": "Logging in...",
+    "success": "Login successful! Redirecting...",
+    "error": "Invalid email or password"
+  },
+  "signup": {
+    "title": "Employee Sign Up",
+    "email": "Work Email",
+    "password": "Create Password",
+    "confirmPassword": "Confirm Password",
+    "submit": "Create Account",
+    "hasAccount": "Already have an account?",
+    "loginLink": "Login here",
+    "loading": "Creating account...",
+    "success": "Account created! Redirecting...",
+    "passwordMismatch": "Passwords do not match",
+    "error": "Failed to create account"
+  },
+  "dashboard": {
+    "title": "Employee Dashboard",
+    "welcome": "Welcome, {{name}}",
+    "timeIn": "Time In / Time Out",
+    "timingIn": "Recording time...",
+    "acquiringGPS": "Acquiring GPS...",
+    "recordingTime": "Recording time entry...",
+    "todayEntries": "Today's Entries",
+    "noEntriesToday": "No time entries yet today. Time in to get started!",
+    "noData": "No data available",
+    "logout": "Logout",
+    "adminTools": "Admin Tools",
+    "adminComingSoon": "Admin tools coming in Phase 2...",
+    "tabs": {
+      "timeEntries": "Time Entries",
+      "payroll": "Payroll",
+      "admin": "Admin Tools"
+    }
+  },
+  "payroll": {
+    "thisWeek": "This Week",
+    "lastWeek": "Last Week",
+    "thisMonth": "This Month",
+    "totalHours": "Total Hours",
+    "totalEarnings": "Total Earnings",
+    "breakdown": "Payroll Breakdown",
+    "noData": "No payroll data for this period."
+  },
+  "w9": {
+    "pending": "W-9 Form Pending Review",
+    "pendingMessage": "Your W-9 form is being reviewed. You will be notified once approved.",
+    "required": "W-9 Form Required",
+    "requiredMessage": "Please submit your W-9 form to continue working. This is required for payroll.",
+    "submit": "Submit W-9"
+  },
+  "common": {
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "submit": "Submit",
+    "close": "Close",
+    "confirm": "Confirm",
+    "back": "Back",
+    "next": "Next",
+    "finish": "Finish",
+    "search": "Search",
+    "filter": "Filter",
+    "export": "Export",
+    "refresh": "Refresh",
+    "retry": "Retry",
+    "error": "An error occurred",
+    "success": "Success",
+    "date": "Date",
+    "time": "Time",
+    "site": "Site",
+    "status": "Status",
+    "distance": "Distance",
+    "hours": "Hours",
+    "rate": "Rate",
+    "earnings": "Earnings",
+    "total": "Total",
+    "confirmed": "Confirmed",
+    "pending": "Pending",
+    "editing": "Editing",
+    "denied": "Denied",
+    "processing": "Processing..."
+  },
+  "admin": {
+    "tabs": {
+      "workers": "All Workers",
+      "timeEdits": "Time Edit Requests",
+      "w9": "W-9 Management"
+    },
+    "workers": {
+      "title": "Today's Worker Activity",
+      "total": "Total Workers",
+      "active": "Active",
+      "inactive": "No Clock-In",
+      "clockIns": "Clock-Ins",
+      "lastClockIn": "Last",
+      "viewDetails": "View Details",
+      "noWorkers": "No workers found"
+    },
+    "timeEdits": {
+      "title": "Pending Time Edit Requests",
+      "total": "Total Pending",
+      "originalTime": "Original Time",
+      "requestedTime": "Requested Time",
+      "reason": "Reason",
+      "submitted": "Submitted",
+      "approve": "Approve",
+      "deny": "Deny",
+      "confirmApprove": "Approve this time edit request?",
+      "denyReason": "Enter reason for denial (optional):",
+      "noRequests": "No pending time edit requests",
+      "status": {
+        "pending": "Pending"
+      }
+    },
+    "w9": {
+      "title": "Pending W-9 Submissions",
+      "total": "Total Pending",
+      "legalName": "Legal Name",
+      "taxClass": "Tax Classification",
+      "address": "Address",
+      "ssnLast4": "SSN (Last 4)",
+      "submitted": "Submitted",
+      "viewPdf": "View PDF",
+      "approve": "Approve",
+      "reject": "Reject",
+      "confirmApprove": "Approve this W-9 submission?",
+      "rejectReason": "Enter reason for rejection:",
+      "noSubmissions": "No pending W-9 submissions",
+      "status": {
+        "pending": "Pending Review"
+      }
+    },
+    "loading": {
+      "workers": "Loading workers...",
+      "timeEdits": "Loading time edit requests...",
+      "w9s": "Loading W-9 submissions..."
+    },
+    "error": {
+      "loadWorkers": "Failed to load workers",
+      "loadTimeEdits": "Failed to load time edit requests",
+      "loadW9s": "Failed to load W-9 submissions"
+    }
+  },
+  "errors": {
+    "network": "Network error. Please check your connection.",
+    "unauthorized": "Unauthorized. Please login again.",
+    "notFound": "Page not found",
+    "serverError": "Server error. Please try again later.",
+    "geolocationNotSupported": "Geolocation is not supported by your browser",
+    "geolocationDenied": "Location access denied. Please enable location services.",
+    "timeInFailed": "Time in failed. Please try again.",
+    "loadFailed": "Failed to load data. Please try again."
+  }
+}
