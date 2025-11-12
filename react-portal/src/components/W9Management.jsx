@@ -23,9 +23,9 @@ function W9Management({ user }) {
   });
 
   const approveMutation = useMutation({
-    mutationFn: (w9RecordId) => api.approveW9(w9RecordId, user.workerId),
+    mutationFn: (w9RecordId) => sheetsApi.updateW9Status(w9RecordId, 'Approved'),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['pendingW9s'] });
+      queryClient.invalidateQueries({ queryKey: ['pendingW9sDirect'] });
       setProcessingId(null);
     },
     onError: () => {
@@ -34,9 +34,9 @@ function W9Management({ user }) {
   });
 
   const rejectMutation = useMutation({
-    mutationFn: ({ w9RecordId, reason }) => api.rejectW9(w9RecordId, user.workerId, reason),
+    mutationFn: ({ w9RecordId, reason }) => sheetsApi.updateW9Status(w9RecordId, 'Rejected', reason),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['pendingW9s'] });
+      queryClient.invalidateQueries({ queryKey: ['pendingW9sDirect'] });
       setProcessingId(null);
     },
     onError: () => {

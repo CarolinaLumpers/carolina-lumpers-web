@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../features/auth/AuthContext';
+import { storage } from '../services/storage';
 import Card from '../components/Card';
 import Badge from '../components/Badge';
 
@@ -9,8 +10,14 @@ import Badge from '../components/Badge';
  * Placeholder for future profile features
  */
 function ProfilePage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { user } = useAuth();
+
+  const handleLanguageChange = (e) => {
+    const newLang = e.target.value;
+    i18n.changeLanguage(newLang);
+    storage.setLanguage(newLang);
+  };
 
   return (
     <div className="space-y-6">
@@ -88,15 +95,16 @@ function ProfilePage() {
               {t('profile.language', 'Language')}
             </label>
             <select
-              disabled
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-500 cursor-not-allowed"
+              value={i18n.language}
+              onChange={handleLanguageChange}
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-cls-charcoal text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-cls-amber focus:border-cls-amber transition-colors"
             >
-              <option>English</option>
-              <option>Español</option>
-              <option>Português</option>
+              <option value="en">English</option>
+              <option value="es">Español</option>
+              <option value="pt">Português</option>
             </select>
-            <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
-              {t('profile.languageComingSoon', 'Language preferences coming soon')}
+            <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+              {t('profile.languageDescription', 'Select your preferred language for the interface')}
             </p>
           </div>
 

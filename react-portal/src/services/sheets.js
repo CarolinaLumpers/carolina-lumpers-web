@@ -415,6 +415,253 @@ export const sheetsApi = {
   },
 
   /**
+   * Get worker role by ID (replaces api.whoami)
+   * Reads from Workers sheet
+   * 
+   * @param {string} workerId - Worker ID
+   * @returns {object} - { ok: true, role: 'Admin' | 'Lead' | 'Worker' }
+   */
+  getWorkerRole: async (workerId) => {
+    const range = 'Workers!A:G'; // WorkerID through Role
+    const url = `${PROXY_BASE_URL}/api/sheets/${SPREADSHEET_ID}/values/${encodeURIComponent(range)}`;
+    
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`Sheets proxy error: ${response.status}`);
+      }
+      
+      const result = await response.json();
+      if (!result.ok) {
+        throw new Error(result.error || 'Failed to fetch worker');
+      }
+      const rows = result.data.values || [];
+      
+      if (rows.length === 0) {
+        return { ok: false, error: 'Worker not found' };
+      }
+      
+      const headers = rows[0];
+      const workerIdIdx = headers.indexOf('WorkerID');
+      const roleIdx = headers.indexOf('Role');
+      
+      const workerRow = rows.slice(1).find(row => row[workerIdIdx] === workerId);
+      
+      if (!workerRow) {
+        return { ok: false, error: 'Worker not found' };
+      }
+      
+      return {
+        ok: true,
+        role: workerRow[roleIdx] || 'Worker',
+      };
+    } catch (error) {
+      console.error('Failed to fetch worker role:', error);
+      return { ok: false, error: error.message };
+    }
+  },
+
+  /**
+   * Get W-9 status by worker ID (replaces api.getW9Status)
+   * Reads from W9_Records sheet
+   * 
+   * @param {string} workerId - Worker ID
+   * @returns {object} - { ok: true, status: 'approved' | 'pending' | 'none' }
+   */
+  getW9Status: async (workerId) => {
+    const range = 'W9_Records!A:H'; // Through Status column
+    const url = `${PROXY_BASE_URL}/api/sheets/${SPREADSHEET_ID}/values/${encodeURIComponent(range)}`;
+    
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`Sheets proxy error: ${response.status}`);
+      }
+      
+      const result = await response.json();
+      if (!result.ok) {
+        throw new Error(result.error || 'Failed to fetch W-9 status');
+      }
+      const rows = result.data.values || [];
+      
+      if (rows.length === 0) {
+        return { ok: true, status: 'none' };
+      }
+      
+      const headers = rows[0];
+      const workerIdIdx = headers.indexOf('WorkerID');
+      const statusIdx = headers.indexOf('Status');
+      
+      // Find most recent W-9 record for this worker
+      const w9Records = rows.slice(1)
+        .filter(row => row[workerIdIdx] === workerId)
+        .map(row => ({
+          status: (row[statusIdx] || 'none').toLowerCase(),
+        }));
+      
+      if (w9Records.length === 0) {
+        return { ok: true, status: 'none' };
+      }
+      
+      // Return most recent record (last in array)
+      const latestRecord = w9Records[w9Records.length - 1];
+      return {
+        ok: true,
+        status: latestRecord.status,
+      };
+    } catch (error) {
+      console.error('Failed to fetch W-9 status:', error);
+      return { ok: false, error: error.message };
+    }
+  },
+
+  /**
+   * Update time edit request status (replaces approveTimeEdit/denyTimeEdit)
+   * Updates TimeEditRequests sheet status
+   * 
+   * @param {string} requestId - Request ID
+   * @param {string} status - 'Approved' | 'Denied'
+   * @param {string} reason - Optional denial reason
+   */
+  updateTimeEditStatus: async (requestId, status, reason = '') => {
+    // First, find the row number for this request
+    const range = 'TimeEditRequests!A:J';
+    const url = `${PROXY_BASE_URL}/api/sheets/${SPREADSHEET_ID}/values/${encodeURIComponent(range)}`;
+    
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`Sheets proxy error: ${response.status}`);
+      }
+      
+      const result = await response.json();
+      if (!result.ok) {
+        throw new Error(result.error || 'Failed to fetch requests');
+      }
+      const rows = result.data.values || [];
+      
+      if (rows.length === 0) {
+        throw new Error('No time edit requests found');
+      }
+      
+      const headers = rows[0];
+      const requestIdIdx = headers.indexOf('RequestID');
+      const statusIdx = headers.indexOf('Status');
+      const reviewedByIdx = headers.indexOf('ReviewedBy');
+      const reviewedAtIdx = headers.indexOf('ReviewedAt');
+      const denialReasonIdx = headers.indexOf('DenialReason');
+      
+      // Find the row index (add 2: 1 for header, 1 for 1-based indexing)
+      const dataRowIdx = rows.slice(1).findIndex(row => row[requestIdIdx] === requestId);
+      if (dataRowIdx === -1) {
+        throw new Error('Request not found');
+      }
+      const rowNumber = dataRowIdx + 2;
+      
+      // Update the row with new status and review info
+      const currentRow = rows[dataRowIdx + 1];
+      const updatedRow = [...currentRow];
+      updatedRow[statusIdx] = status;
+      updatedRow[reviewedAtIdx] = new Date().toISOString();
+      if (status === 'Denied' && reason) {
+        updatedRow[denialReasonIdx] = reason;
+      }
+      
+      const updateRange = `TimeEditRequests!A${rowNumber}:J${rowNumber}`;
+      const updateUrl = `${PROXY_BASE_URL}/api/sheets/${SPREADSHEET_ID}/values/${encodeURIComponent(updateRange)}`;
+      
+      const updateResponse = await fetch(updateUrl, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ values: [updatedRow] }),
+      });
+      
+      const updateResult = await updateResponse.json();
+      if (!updateResult.ok) {
+        throw new Error(updateResult.error || 'Failed to update request');
+      }
+      
+      return { ok: true };
+    } catch (error) {
+      console.error('Failed to update time edit status:', error);
+      return { ok: false, error: error.message };
+    }
+  },
+
+  /**
+   * Update W-9 record status (replaces approveW9/rejectW9)
+   * Updates W9_Records sheet status
+   * 
+   * @param {string} w9RecordId - W9 Record ID
+   * @param {string} status - 'Approved' | 'Rejected'
+   * @param {string} reason - Optional rejection reason
+   */
+  updateW9Status: async (w9RecordId, status, reason = '') => {
+    // First, find the row number for this record
+    const range = 'W9_Records!A:L';
+    const url = `${PROXY_BASE_URL}/api/sheets/${SPREADSHEET_ID}/values/${encodeURIComponent(range)}`;
+    
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`Sheets proxy error: ${response.status}`);
+      }
+      
+      const result = await response.json();
+      if (!result.ok) {
+        throw new Error(result.error || 'Failed to fetch W-9 records');
+      }
+      const rows = result.data.values || [];
+      
+      if (rows.length === 0) {
+        throw new Error('No W-9 records found');
+      }
+      
+      const headers = rows[0];
+      const recordIdIdx = headers.indexOf('W9RecordID');
+      const statusIdx = headers.indexOf('Status');
+      const reviewedByIdx = headers.indexOf('ReviewedBy');
+      const reviewedAtIdx = headers.indexOf('ReviewedAt');
+      const rejectionReasonIdx = headers.indexOf('RejectionReason');
+      
+      // Find the row index
+      const dataRowIdx = rows.slice(1).findIndex(row => row[recordIdIdx] === w9RecordId);
+      if (dataRowIdx === -1) {
+        throw new Error('W-9 record not found');
+      }
+      const rowNumber = dataRowIdx + 2;
+      
+      // Update the row with new status and review info
+      const currentRow = rows[dataRowIdx + 1];
+      const updatedRow = [...currentRow];
+      updatedRow[statusIdx] = status;
+      updatedRow[reviewedAtIdx] = new Date().toISOString();
+      if (status === 'Rejected' && reason) {
+        updatedRow[rejectionReasonIdx] = reason;
+      }
+      
+      const updateRange = `W9_Records!A${rowNumber}:L${rowNumber}`;
+      const updateUrl = `${PROXY_BASE_URL}/api/sheets/${SPREADSHEET_ID}/values/${encodeURIComponent(updateRange)}`;
+      
+      const updateResponse = await fetch(updateUrl, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ values: [updatedRow] }),
+      });
+      
+      const updateResult = await updateResponse.json();
+      if (!updateResult.ok) {
+        throw new Error(updateResult.error || 'Failed to update W-9');
+      }
+      
+      return { ok: true };
+    } catch (error) {
+      console.error('Failed to update W-9 status:', error);
+      return { ok: false, error: error.message };
+    }
+  },
+
+  /**
    * CRUD Operations for Workers and Clock-Ins
    */
 

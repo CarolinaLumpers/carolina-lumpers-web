@@ -23,9 +23,9 @@ function TimeEditRequests({ user }) {
   });
 
   const approveMutation = useMutation({
-    mutationFn: (requestId) => api.approveTimeEdit(user.workerId, requestId),
+    mutationFn: (requestId) => sheetsApi.updateTimeEditStatus(requestId, 'Approved'),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['timeEditRequests'] });
+      queryClient.invalidateQueries({ queryKey: ['timeEditRequestsDirect'] });
       setProcessingId(null);
     },
     onError: () => {
@@ -34,9 +34,9 @@ function TimeEditRequests({ user }) {
   });
 
   const denyMutation = useMutation({
-    mutationFn: ({ requestId, reason }) => api.denyTimeEdit(user.workerId, requestId, reason),
+    mutationFn: ({ requestId, reason }) => sheetsApi.updateTimeEditStatus(requestId, 'Denied', reason),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['timeEditRequests'] });
+      queryClient.invalidateQueries({ queryKey: ['timeEditRequestsDirect'] });
       setProcessingId(null);
     },
     onError: () => {

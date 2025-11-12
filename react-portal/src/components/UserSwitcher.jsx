@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../features/auth/AuthContext';
 import api from '../services/api';
+import { sheetsApi } from '../services/sheets';
 
 /**
  * UserSwitcher - Developer tool to quickly switch between users
@@ -61,8 +62,12 @@ function UserSwitcher() {
   const switchToUser = async (worker) => {
     setLoading(true);
     try {
-      // Fetch user role from backend
-      const roleData = await api.whoami(worker.id);
+      // Fetch user role from Direct Sheets API (replaces api.whoami)
+      const roleData = await sheetsApi.getWorkerRole(worker.id);
+      
+      if (!roleData.ok) {
+        throw new Error(roleData.error || 'Failed to fetch role');
+      }
       
       // Create user object with real data
       const newUser = {

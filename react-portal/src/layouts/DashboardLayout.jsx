@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useLocation, useNavigate, Outlet } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../features/auth/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
 
 /**
  * DashboardLayout - Persistent layout with sidebar navigation
@@ -10,6 +11,7 @@ import { useAuth } from '../features/auth/AuthContext';
 function DashboardLayout() {
   const { t } = useTranslation();
   const { user, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const location = useLocation();
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -169,12 +171,31 @@ function DashboardLayout() {
 
         {/* User Info */}
         <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-          <p className="text-sm font-medium text-gray-800 dark:text-gray-200">
-            {user?.displayName}
-          </p>
-          <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
-            {user?.role}
-          </p>
+          <div className="flex items-center justify-between">
+            <div className="flex-1">
+              <p className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                {user?.displayName}
+              </p>
+              <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                {user?.role}
+              </p>
+            </div>
+            <button
+              onClick={toggleTheme}
+              className="p-2 text-gray-600 dark:text-gray-400 hover:text-cls-amber dark:hover:text-cls-amber rounded-lg transition-colors"
+              aria-label="Toggle theme"
+            >
+              {theme === 'light' ? (
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                </svg>
+              ) : (
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+              )}
+            </button>
+          </div>
         </div>
 
         {/* Navigation */}
