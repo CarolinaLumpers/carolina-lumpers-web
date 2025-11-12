@@ -30,5 +30,11 @@ logs/
 .env.test.local
 .env.production.local
 
+# Google API Credentials (NEVER COMMIT)
+config/credentials.json
+config/token.json
+**/client_secret*.json
+**/service-account*.json
+
 # Testing
 coverage/
