@@ -441,12 +441,142 @@ export default {
 };
 ```
 
+## Google Cloud CLI Access
+
+**✅ IMPORTANT: Google Cloud CLI (`gcloud`) is installed and configured**
+
+- **CLI Version**: Google Cloud SDK 504.0.1
+- **Active Account**: `s.garay@carolinalumpers.com`
+- **Current Project**: `cls-operations-hub`
+- **Available Commands**: Use `gcloud` for all GCP operations
+
+**Common Operations:**
+```powershell
+# Check project
+gcloud config get core/project
+
+# List service accounts
+gcloud iam service-accounts list
+
+# Enable APIs
+gcloud services enable sheets.googleapis.com
+
+# Create API keys
+gcloud alpha services api-keys create --display-name="Name" --api-target=service=sheets.googleapis.com
+
+# Create service accounts
+gcloud iam service-accounts create account-name --display-name="Display Name"
+
+# Generate service account keys
+gcloud iam service-accounts keys create key.json --iam-account=account@project.iam.gserviceaccount.com
+```
+
+## React Portal Quick Reference
+
+### UserSwitcher Component (Dev Tool)
+**Location**: `react-portal/src/components/UserSwitcher.jsx`
+**Purpose**: Switch between users to test different roles without logging out
+
+```javascript
+// Already integrated in Dashboard.jsx
+import UserSwitcher from '../components/UserSwitcher';
+
+// Features:
+// - Fetches real workers from backend via api.getReportAll()
+// - Shows purple floating button in bottom-right
+// - Highlights current user with purple border
+// - Uses login() method from AuthContext (NOT setUser)
+// - Auto-hidden in production (checks import.meta.env.PROD)
+```
+
+**Usage Pattern:**
+```javascript
+const { user: currentUser, login } = useAuth(); // ✅ Correct
+// const { user, setUser } = useAuth(); // ❌ Wrong - setUser doesn't exist
+
+const switchToUser = async (worker) => {
+  const roleData = await api.whoami(worker.id);
+  const newUser = { workerId, displayName, email, role, w9Status };
+  login(newUser); // ✅ Use login() method
+  window.location.reload();
+};
+```
+
+### Direct Google Sheets API Access
+**Location**: `react-portal/src/services/sheets.js` + `react-portal/server/sheets-proxy.js`
+**Purpose**: Fast read-only access to spreadsheet, bypassing Apps Script
+
+**Architecture:**
+```
+React Frontend (localhost:5174)
+    ↓ fetch to proxy
+Proxy Server (localhost:3001)
+    ↓ OAuth Service Account
+Google Sheets API v4
+    ↓ reads from
+CLS_Hub_Backend (private spreadsheet)
+```
+
+**Service Account:**
+- Email: `react-portal-sheets@cls-operations-hub.iam.gserviceaccount.com`
+- Key File: `react-portal/server/service-account-key.json` (DO NOT COMMIT)
+- Permissions: Read-only (Viewer role on spreadsheet)
+
+**Running Both Servers:**
+```powershell
+# Terminal 1: Proxy server (port 3001)
+cd react-portal/server
+npm start
+
+# Terminal 2: React dev server (port 5174)
+cd react-portal
+npm run dev
+```
+
+**Usage in Components:**
+```javascript
+import { sheetsApi } from '../services/sheets';
+
+// Fetch workers directly from Workers sheet
+const workers = await sheetsApi.getWorkersDirect();
+// Returns: [{ id: 'SG-001', name: 'Steve Garay', role: 'Admin' }, ...]
+
+// Fetch payroll from Payroll LineItems sheet
+const payroll = await sheetsApi.getPayrollDirect('SG-001', '2025-01-15');
+// Returns: { success: true, rows: [...], totals: {...} }
+
+// Fetch clock-ins from ClockIn sheet
+const clockIns = await sheetsApi.getClockInsDirect('SG-001', '2025-01-15');
+// Returns: [{ date, time, site, distance, status, ... }]
+```
+
+**When to Use:**
+- ✅ Fast reads for reports/dashboards
+- ✅ Exporting large datasets
+- ✅ Data already formatted in sheets
+- ❌ Writing data (use Apps Script instead)
+- ❌ Backend validation needed (use Apps Script)
+- ❌ Complex calculations (use Apps Script)
+
+**Test Proxy Server:**
+```powershell
+# Health check
+Invoke-RestMethod -Uri "http://localhost:3001/health"
+
+# Fetch Workers data
+$result = Invoke-RestMethod -Uri "http://localhost:3001/api/sheets/1U8hSNREN5fEhskp0UM-Z80iiW39beaOj3oIsaLZyFzk/values/Workers!A1:E10"
+$result.data.values
+```
+
 ## Documentation Locations
 
 - **Frontend**: `carolina-lumpers-web/README.md`
+- **React Portal**: `react-portal/README.md`
 - **Backend EmployeeLogin**: `GoogleAppsScripts/EmployeeLogin/README.md`
 - **Database Schema**: `.github/DATABASE_SCHEMA.md` (22 sheets, complete structure)
 - **Centralized Logging**: `GoogleAppsScripts/LoggingLibrary/START_HERE.md`
 - **Migration Complete**: `GoogleAppsScripts/LoggingLibrary/EMPLOYEELOGIN_MIGRATION_COMPLETE.md`
 - **Device Detection**: `GoogleAppsScripts/LoggingLibrary/DEVICE_DETECTION_IMPLEMENTATION.md`
+- **Direct Sheets Access**: `react-portal/DIRECT_SHEETS_ACCESS.md` (proxy server, OAuth setup)
+- **UserSwitcher Component**: `react-portal/USER_SWITCHER.md` (dev tool for testing roles)
 - **This File**: `.github/copilot-instructions.md`

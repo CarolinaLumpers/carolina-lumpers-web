@@ -10,6 +10,7 @@ import ClockInHistory from '../components/ClockInHistory';
 import PayrollView from '../components/PayrollView';
 import W9StatusBanner from '../components/W9StatusBanner';
 import AdminPanel from '../components/AdminPanel';
+import UserSwitcher from '../components/UserSwitcher';
 
 function Dashboard() {
   const { t } = useTranslation();
@@ -149,6 +150,9 @@ function Dashboard() {
           )}
         </main>
       </div>
+      
+      {/* User Switcher - Dev Tool (only shows in development) */}
+      <UserSwitcher />
     </div>
   );
 }
