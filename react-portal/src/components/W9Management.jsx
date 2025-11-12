@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../services/api';
+import { sheetsApi } from '../services/sheets';
 import Card from './Card';
 import Badge from './Badge';
 import Button from './Button';
@@ -16,10 +17,9 @@ function W9Management({ user }) {
   const [processingId, setProcessingId] = useState(null);
 
   const { data, isLoading, error, refetch } = useQuery({
-    queryKey: ['pendingW9s', user.workerId],
-    queryFn: () => api.listPendingW9s(user.workerId),
-    staleTime: 30000,
-    refetchInterval: 60000,
+    queryKey: ['pendingW9sDirect'],
+    queryFn: () => sheetsApi.getPendingW9s(),
+    staleTime: 60000, // 1 minute
   });
 
   const approveMutation = useMutation({
@@ -89,7 +89,7 @@ function W9Management({ user }) {
     );
   }
 
-  const w9List = data?.w9List || [];
+  const w9List = data || [];
 
   return (
     <div className="space-y-4">

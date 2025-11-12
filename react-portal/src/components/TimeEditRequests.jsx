@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../services/api';
+import { sheetsApi } from '../services/sheets';
 import Card from './Card';
 import Badge from './Badge';
 import Button from './Button';
@@ -16,10 +17,9 @@ function TimeEditRequests({ user }) {
   const [processingId, setProcessingId] = useState(null);
 
   const { data, isLoading, error, refetch } = useQuery({
-    queryKey: ['timeEditRequests', user.workerId],
-    queryFn: () => api.getTimeEditRequests(user.workerId, 'pending'),
-    staleTime: 30000,
-    refetchInterval: 60000,
+    queryKey: ['timeEditRequestsDirect'],
+    queryFn: () => sheetsApi.getTimeEditRequests(),
+    staleTime: 60000, // 1 minute
   });
 
   const approveMutation = useMutation({
@@ -83,7 +83,7 @@ function TimeEditRequests({ user }) {
     );
   }
 
-  const requests = data?.requests || [];
+  const requests = data || [];
 
   return (
     <div className="space-y-4">

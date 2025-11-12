@@ -4,7 +4,7 @@ import api from '../services/api';
 
 /**
  * UserSwitcher - Developer tool to quickly switch between users
- * Only shows in development mode
+ * Only shows in development mode AND for Admin users
  * Fetches actual workers from backend
  */
 function UserSwitcher() {
@@ -16,6 +16,11 @@ function UserSwitcher() {
   
   // Only show in development
   if (import.meta.env.PROD) {
+    return null;
+  }
+  
+  // Only show for Admin users
+  if (currentUser?.role !== 'Admin') {
     return null;
   }
 

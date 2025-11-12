@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
-import { format, subDays, startOfWeek, endOfWeek } from 'date-fns';
-import { api } from '../services/api';
+import { format, subDays, startOfWeek, endOfWeek, startOfMonth, endOfMonth } from 'date-fns';
+import { sheetsApi } from '../services/sheets';
 import { useAuth } from '../features/auth/AuthContext';
 import Card from './Card';
 import Table from './Table';
@@ -11,44 +11,56 @@ import Loading from './Loading';
 const PayrollView = () => {
   const { t } = useTranslation();
   const { user } = useAuth();
-  const [dateRange, setDateRange] = useState('week'); // week, month, custom
+  const [dateRange, setDateRange] = useState('week'); // week, lastWeek, month
 
-  // Calculate date range
-  const getDateRange = () => {
+  // Calculate date range and filter options
+  const getFilterOptions = () => {
     const today = new Date();
-    let start, end;
 
     switch (dateRange) {
-      case 'week':
-        start = startOfWeek(today, { weekStartsOn: 1 }); // Monday
-        end = endOfWeek(today, { weekStartsOn: 1 }); // Sunday
-        break;
-      case 'month':
-        start = new Date(today.getFullYear(), today.getMonth(), 1);
-        end = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-        break;
-      case 'lastWeek':
-        const lastWeekStart = subDays(startOfWeek(today, { weekStartsOn: 1 }), 7);
-        start = lastWeekStart;
-        end = endOfWeek(lastWeekStart, { weekStartsOn: 1 });
-        break;
-      default:
-        start = startOfWeek(today, { weekStartsOn: 1 });
-        end = endOfWeek(today, { weekStartsOn: 1 });
+      case 'week': {
+        // This week: Use Week Period (Saturday of current week)
+        const saturday = endOfWeek(today, { weekStartsOn: 0 }); // Sunday start, Saturday end
+        return {
+          filterType: 'week',
+          weekPeriod: format(saturday, 'yyyy-MM-dd'),
+        };
+      }
+      case 'lastWeek': {
+        // Last week: Use Week Period (Saturday of last week)
+        const lastWeekSaturday = subDays(endOfWeek(today, { weekStartsOn: 0 }), 7);
+        return {
+          filterType: 'week',
+          weekPeriod: format(lastWeekSaturday, 'yyyy-MM-dd'),
+        };
+      }
+      case 'month': {
+        // This month: Use Date range
+        const start = startOfMonth(today);
+        const end = endOfMonth(today);
+        return {
+          filterType: 'dateRange',
+          startDate: format(start, 'yyyy-MM-dd'),
+          endDate: format(end, 'yyyy-MM-dd'),
+        };
+      }
+      default: {
+        // Default to this week
+        const saturday = endOfWeek(today, { weekStartsOn: 0 });
+        return {
+          filterType: 'week',
+          weekPeriod: format(saturday, 'yyyy-MM-dd'),
+        };
+      }
     }
-
-    return {
-      start: format(start, 'yyyy-MM-dd'),
-      end: format(end, 'yyyy-MM-dd'),
-    };
   };
 
-  const range = getDateRange();
+  const filterOptions = getFilterOptions();
 
-  // Fetch payroll data
+  // Fetch payroll data using direct Sheets API
   const { data, isLoading, error } = useQuery({
-    queryKey: ['payroll', user.workerId, range.start, range.end],
-    queryFn: () => api.getPayroll(user.workerId, `${range.start}_${range.end}`),
+    queryKey: ['payroll-direct', user.workerId, dateRange, filterOptions],
+    queryFn: () => sheetsApi.getPayrollDirect(user.workerId, filterOptions),
     staleTime: 60000, // 1 minute
   });
 
@@ -56,26 +68,26 @@ const PayrollView = () => {
     {
       header: t('common.date', 'Date'),
       accessor: 'date',
-      cell: (row) => format(new Date(row.date), 'MMM dd, yyyy'),
+      cell: (row) => {
+        try {
+          return format(new Date(row.date), 'MMM dd, yyyy');
+        } catch {
+          return row.date;
+        }
+      },
     },
     {
       header: t('common.site', 'Site'),
       accessor: 'site',
     },
     {
-      header: t('common.hours', 'Hours'),
-      accessor: 'hours',
-      cell: (row) => parseFloat(row.hours || 0).toFixed(2),
+      header: t('common.description', 'Description'),
+      accessor: 'description',
     },
     {
-      header: t('common.rate', 'Rate'),
-      accessor: 'rate',
-      cell: (row) => row.rate ? `$${parseFloat(row.rate).toFixed(2)}` : '-',
-    },
-    {
-      header: t('common.earnings', 'Earnings'),
-      accessor: 'earnings',
-      cell: (row) => `$${parseFloat(row.earnings || 0).toFixed(2)}`,
+      header: t('common.amount', 'Amount'),
+      accessor: 'amount',
+      cell: (row) => `$${parseFloat(row.amount || 0).toFixed(2)}`,
     },
   ];
 
@@ -93,8 +105,8 @@ const PayrollView = () => {
     );
   }
 
-  const totalHours = data?.entries?.reduce((sum, entry) => sum + parseFloat(entry.hours || 0), 0) || 0;
-  const totalEarnings = data?.entries?.reduce((sum, entry) => sum + parseFloat(entry.earnings || 0), 0) || 0;
+  const totalEntries = data?.totals?.count || 0;
+  const totalEarnings = data?.totals?.totalAmount || 0;
 
   return (
     <div className="space-y-6">
@@ -137,10 +149,10 @@ const PayrollView = () => {
         <Card variant="amber">
           <div className="text-center">
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
-              {t('payroll.totalHours', 'Total Hours')}
+              {t('payroll.totalEntries', 'Total Entries')}
             </p>
             <p className="text-3xl font-bold text-cls-charcoal dark:text-white">
-              {totalHours.toFixed(2)}
+              {totalEntries}
             </p>
           </div>
         </Card>

@@ -15,9 +15,16 @@ export const sheetsApi = {
   /**
    * Get payroll data for a worker
    * Reads from "Payroll LineItems" sheet
+   * 
+   * @param {string} workerId - Worker ID (e.g., "SG-001")
+   * @param {object} options - Filter options
+   * @param {string} options.filterType - 'week' | 'dateRange'
+   * @param {string} options.weekPeriod - Saturday date for week filtering (e.g., "2025-01-18")
+   * @param {string} options.startDate - Start date for range filtering (YYYY-MM-DD)
+   * @param {string} options.endDate - End date for range filtering (YYYY-MM-DD)
    */
-  getPayrollDirect: async (workerId, weekEnd) => {
-    const range = 'Payroll LineItems!A:N'; // Adjust range as needed
+  getPayrollDirect: async (workerId, options = {}) => {
+    const range = 'Payroll LineItems!A:O'; // Include all columns including "Run Payroll"
     const url = `${PROXY_BASE_URL}/api/sheets/${SPREADSHEET_ID}/values/${encodeURIComponent(range)}`;
     
     try {
@@ -34,41 +41,70 @@ export const sheetsApi = {
       const rows = result.data.values || [];
       
       if (rows.length === 0) {
-        return { success: true, rows: [], totals: { entries: 0, checkAmountSum: 0 } };
+        return { success: true, entries: [], totals: { count: 0, totalAmount: 0 } };
       }
       
       // Parse headers (first row)
       const headers = rows[0];
       const workerIdx = headers.indexOf('WorkerID');
-      const weekIdx = headers.indexOf('Week Period');
       const dateIdx = headers.indexOf('Date');
       const clientIdx = headers.indexOf('ClientID');
       const detailIdx = headers.indexOf('LineItemDetail');
       const amountIdx = headers.indexOf('Check Amount');
+      const weekPeriodIdx = headers.indexOf('Week Period');
+      const runPayrollIdx = headers.indexOf('Run Payroll');
+      
+      // Helper: Normalize date from M/D/YYYY to YYYY-MM-DD for comparison
+      const normalizeDate = (dateStr) => {
+        if (!dateStr) return '';
+        try {
+          const date = new Date(dateStr);
+          const year = date.getFullYear();
+          const month = String(date.getMonth() + 1).padStart(2, '0');
+          const day = String(date.getDate()).padStart(2, '0');
+          return `${year}-${month}-${day}`;
+        } catch {
+          return dateStr; // Return as-is if parsing fails
+        }
+      };
       
       // Filter and map rows
       const payrollRows = rows.slice(1)
         .filter(row => {
-          const matchesWorker = row[workerIdx] === workerId;
-          const matchesWeek = !weekEnd || row[weekIdx] === weekEnd;
-          return matchesWorker && matchesWeek;
+          // Must match worker
+          if (row[workerIdx] !== workerId) return false;
+          
+          // Apply date/week filtering
+          if (options.filterType === 'week' && options.weekPeriod) {
+            // Filter by Week Period (Saturday date)
+            const rowWeekPeriod = normalizeDate(row[weekPeriodIdx]);
+            return rowWeekPeriod === options.weekPeriod;
+          } else if (options.filterType === 'dateRange' && options.startDate && options.endDate) {
+            // Filter by Date range
+            const rowDate = normalizeDate(row[dateIdx]);
+            if (!rowDate) return false;
+            return rowDate >= options.startDate && rowDate <= options.endDate;
+          }
+          
+          // If no filter specified, include all
+          return true;
         })
         .map(row => ({
           date: row[dateIdx] || '',
-          client: row[clientIdx] || '',
-          hoursBreak: row[detailIdx] || '',
-          checkAmount: parseFloat(row[amountIdx]) || 0,
+          site: row[clientIdx] || '', // ClientID as site
+          description: row[detailIdx] || '', // LineItemDetail
+          amount: parseFloat(row[amountIdx]) || 0, // Check Amount
         }));
       
       // Calculate totals
-      const total = payrollRows.reduce((sum, r) => sum + r.checkAmount, 0);
+      const totalAmount = payrollRows.reduce((sum, r) => sum + r.amount, 0);
       
       return {
         success: true,
-        rows: payrollRows,
+        entries: payrollRows,
         totals: {
-          entries: payrollRows.length,
-          checkAmountSum: Math.round(total * 100) / 100,
+          count: payrollRows.length,
+          totalAmount: Math.round(totalAmount * 100) / 100,
         },
       };
     } catch (error) {
@@ -114,15 +150,23 @@ export const sheetsApi = {
   },
 
   /**
-   * Get clock-in records
+   * Get clock-in records for today
    * Reads from "ClockIn" sheet
+   * 
+   * @param {string} workerId - Worker ID
+   * @param {string} date - Date in M/D/YYYY format (e.g., "11/12/2025")
    */
   getClockInsDirect: async (workerId, date = null) => {
-    const range = 'ClockIn!A:M'; // Adjust range
+    const range = 'ClockIn!A:L'; // ClockinID through Distance (mi)
     const url = `${PROXY_BASE_URL}/api/sheets/${SPREADSHEET_ID}/values/${encodeURIComponent(range)}`;
     
     try {
       const response = await fetch(url);
+      
+      if (!response.ok) {
+        throw new Error(`Sheets proxy error: ${response.status}`);
+      }
+      
       const result = await response.json();
       if (!result.ok) {
         throw new Error(result.error || 'Failed to fetch clock-ins');
@@ -135,9 +179,8 @@ export const sheetsApi = {
       const workerIdx = headers.indexOf('WorkerID');
       const dateIdx = headers.indexOf('Date');
       const timeIdx = headers.indexOf('Time');
-      const siteIdx = headers.indexOf('Site');
-      const distanceIdx = headers.indexOf('Distance');
-      const statusIdx = headers.indexOf('EditStatus');
+      const clientIdx = headers.indexOf('Nearest Client');
+      const distanceIdx = headers.indexOf('Distance (mi)'); // Note: has space in header
       
       return rows.slice(1)
         .filter(row => {
@@ -148,12 +191,429 @@ export const sheetsApi = {
         .map(row => ({
           date: row[dateIdx] || '',
           time: row[timeIdx] || '',
-          site: row[siteIdx] || '',
+          site: row[clientIdx] || '',
           distance: row[distanceIdx] || '',
-          editStatus: row[statusIdx] || 'confirmed',
         }));
     } catch (error) {
       console.error('Failed to fetch clock-ins from Sheets:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Get all workers with today's clock-in status
+   * Reads from Workers and ClockIn sheets
+   */
+  getAllWorkersWithClockIns: async () => {
+    try {
+      // Get today's date in M/D/YYYY format
+      const now = new Date();
+      const formatter = new Intl.DateTimeFormat("en-US", { 
+        timeZone: "America/New_York",
+        month: "numeric",
+        day: "numeric",
+        year: "numeric"
+      });
+      const today = formatter.format(now);
+
+      // Fetch workers and clock-ins in parallel
+      const [workersResponse, clockInsResponse] = await Promise.all([
+        fetch(`${PROXY_BASE_URL}/api/sheets/${SPREADSHEET_ID}/values/${encodeURIComponent('Workers!A:S')}`), // Extended to S to include DisplayName (S) and Availability (K)
+        fetch(`${PROXY_BASE_URL}/api/sheets/${SPREADSHEET_ID}/values/${encodeURIComponent('ClockIn!A:L')}`)
+      ]);
+
+      if (!workersResponse.ok || !clockInsResponse.ok) {
+        throw new Error('Failed to fetch data');
+      }
+
+      const workersResult = await workersResponse.json();
+      const clockInsResult = await clockInsResponse.json();
+
+      const workerRows = workersResult.data?.values || [];
+      const clockInRows = clockInsResult.data?.values || [];
+
+      if (workerRows.length === 0) return { workers: [], records: {} };
+
+      // Parse workers
+      const workerHeaders = workerRows[0];
+      const workerIdIdx = workerHeaders.indexOf('WorkerID');
+      const displayNameIdx = workerHeaders.indexOf('Display Name'); // Note: Header has space
+      const roleIdx = workerHeaders.indexOf('Role');
+      const availabilityIdx = workerHeaders.indexOf('Availability');
+
+      // Get all relevant column indices
+      const employeeIdIdx = workerHeaders.indexOf('Employee ID');
+      const firstNameIdx = workerHeaders.indexOf('First Name');
+      const lastNameIdx = workerHeaders.indexOf('Last Name');
+      const emailIdx = workerHeaders.indexOf('Email');
+      const phoneIdx = workerHeaders.indexOf('Phone');
+      const serviceItemIdx = workerHeaders.indexOf('ServiceItem');
+      const hourlyRateIdx = workerHeaders.indexOf('Hourly Rate');
+      const flatRateBonusIdx = workerHeaders.indexOf('Flat Rate Bonus');
+      const appAccessIdx = workerHeaders.indexOf('App Access');
+      const primaryLanguageIdx = workerHeaders.indexOf('Primary Language');
+      const photoIdx = workerHeaders.indexOf('Photo');
+      const qboidIdx = workerHeaders.indexOf('QBOID');
+      const w9StatusIdx = workerHeaders.indexOf('W9Status');
+
+      const workers = workerRows.slice(1)
+        .filter(row => row[workerIdIdx])
+        .map(row => ({
+          id: row[workerIdIdx],
+          name: row[displayNameIdx] || row[workerIdIdx],
+          role: row[roleIdx] || 'Worker',
+          availability: row[availabilityIdx] || '', // Keep empty if not specified
+          // Additional details for modal
+          employeeId: row[employeeIdIdx] || '',
+          firstName: row[firstNameIdx] || '',
+          lastName: row[lastNameIdx] || '',
+          email: row[emailIdx] || '',
+          phone: row[phoneIdx] || '',
+          serviceItem: row[serviceItemIdx] || '',
+          hourlyRate: row[hourlyRateIdx] || '',
+          flatRateBonus: row[flatRateBonusIdx] || '',
+          appAccess: row[appAccessIdx] || '',
+          primaryLanguage: row[primaryLanguageIdx] || '',
+          photo: row[photoIdx] || '',
+          qboid: row[qboidIdx] || '',
+          w9Status: row[w9StatusIdx] || '',
+        }));
+
+      // Parse today's clock-ins
+      const clockInHeaders = clockInRows[0];
+      const ciWorkerIdx = clockInHeaders.indexOf('WorkerID');
+      const ciDateIdx = clockInHeaders.indexOf('Date');
+      const ciTimeIdx = clockInHeaders.indexOf('Time');
+      const ciClientIdx = clockInHeaders.indexOf('Nearest Client');
+      const ciDistanceIdx = clockInHeaders.indexOf('Distance (mi)');
+
+      const records = {};
+      clockInRows.slice(1)
+        .filter(row => row[ciDateIdx] === today)
+        .forEach(row => {
+          const workerId = row[ciWorkerIdx];
+          if (!workerId) return;
+
+          if (!records[workerId]) {
+            records[workerId] = [];
+          }
+          records[workerId].push({
+            date: row[ciDateIdx],
+            time: row[ciTimeIdx],
+            site: row[ciClientIdx],
+            distance: row[ciDistanceIdx] || '',
+          });
+        });
+
+      return { workers, records };
+    } catch (error) {
+      console.error('Failed to fetch workers with clock-ins:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Get pending W-9 submissions
+   * Reads from W9_Records sheet
+   */
+  getPendingW9s: async () => {
+    const range = 'W9_Records!A:L';
+    const url = `${PROXY_BASE_URL}/api/sheets/${SPREADSHEET_ID}/values/${encodeURIComponent(range)}`;
+
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`Sheets proxy error: ${response.status}`);
+      }
+
+      const result = await response.json();
+      if (!result.ok) {
+        throw new Error(result.error || 'Failed to fetch W-9s');
+      }
+      const rows = result.data.values || [];
+
+      if (rows.length === 0) return [];
+
+      const headers = rows[0];
+      const recordIdIdx = headers.indexOf('W9RecordID');
+      const workerIdIdx = headers.indexOf('WorkerID');
+      const displayNameIdx = headers.indexOf('DisplayName');
+      const legalNameIdx = headers.indexOf('LegalName');
+      const taxClassIdx = headers.indexOf('TaxClassification');
+      const addressIdx = headers.indexOf('Address');
+      const ssnLast4Idx = headers.indexOf('SSN_Last4');
+      const statusIdx = headers.indexOf('Status');
+      const submittedIdx = headers.indexOf('SubmittedAt');
+      const pdfUrlIdx = headers.indexOf('PDFUrl');
+
+      return rows.slice(1)
+        .filter(row => row[statusIdx] === 'Pending')
+        .map(row => ({
+          w9RecordId: row[recordIdIdx] || '',
+          workerId: row[workerIdIdx] || '',
+          displayName: row[displayNameIdx] || '',
+          legalName: row[legalNameIdx] || '',
+          taxClassification: row[taxClassIdx] || '',
+          address: row[addressIdx] || '',
+          ssnLast4: row[ssnLast4Idx] || '',
+          submittedDate: row[submittedIdx] || '',
+          pdfUrl: row[pdfUrlIdx] || '',
+        }));
+    } catch (error) {
+      console.error('Failed to fetch pending W-9s:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Get pending time edit requests
+   * Reads from TimeEditRequests sheet
+   */
+  getTimeEditRequests: async () => {
+    const range = 'TimeEditRequests!A:J';
+    const url = `${PROXY_BASE_URL}/api/sheets/${SPREADSHEET_ID}/values/${encodeURIComponent(range)}`;
+
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`Sheets proxy error: ${response.status}`);
+      }
+
+      const result = await response.json();
+      if (!result.ok) {
+        throw new Error(result.error || 'Failed to fetch time edit requests');
+      }
+      const rows = result.data.values || [];
+
+      if (rows.length === 0) return [];
+
+      const headers = rows[0];
+      const requestIdIdx = headers.indexOf('RequestID');
+      const employeeIdIdx = headers.indexOf('WorkerID');
+      const employeeNameIdx = headers.indexOf('EmployeeName');
+      const originalTimeIdx = headers.indexOf('OriginalTime');
+      const requestedTimeIdx = headers.indexOf('RequestedTime');
+      const reasonIdx = headers.indexOf('Reason');
+      const statusIdx = headers.indexOf('Status');
+      const submittedIdx = headers.indexOf('SubmittedAt');
+
+      return rows.slice(1)
+        .filter(row => row[statusIdx] === 'Pending')
+        .map(row => ({
+          requestId: row[requestIdIdx] || '',
+          employeeId: row[employeeIdIdx] || '',
+          employeeName: row[employeeNameIdx] || '',
+          originalTime: row[originalTimeIdx] || '',
+          requestedTime: row[requestedTimeIdx] || '',
+          reason: row[reasonIdx] || '',
+          submittedAt: row[submittedIdx] || '',
+        }));
+    } catch (error) {
+      console.error('Failed to fetch time edit requests:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * CRUD Operations for Workers and Clock-Ins
+   */
+
+  // Add new worker
+  addWorker: async (workerData) => {
+    const range = 'Workers!A:S'; // Append to Workers sheet
+    const url = `${PROXY_BASE_URL}/api/sheets/${SPREADSHEET_ID}/values/${encodeURIComponent(range)}/append`;
+    
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          values: [[
+            workerData.workerId,
+            workerData.employeeId,
+            workerData.firstName,
+            workerData.lastName,
+            workerData.email,
+            workerData.phone,
+            workerData.role,
+            workerData.serviceItem,
+            workerData.hourlyRate,
+            workerData.flatRateBonus,
+            workerData.availability,
+            workerData.appAccess,
+            workerData.applicationId,
+            workerData.primaryLanguage,
+            workerData.workHistory,
+            workerData.photo,
+            workerData.qboid,
+            workerData.w9Status,
+            workerData.displayName,
+          ]],
+        }),
+      });
+
+      const result = await response.json();
+      if (!result.ok) throw new Error(result.error);
+      return result;
+    } catch (error) {
+      console.error('Failed to add worker:', error);
+      throw error;
+    }
+  },
+
+  // Update worker by row number
+  updateWorker: async (rowNumber, workerData) => {
+    const range = `Workers!A${rowNumber}:S${rowNumber}`;
+    const url = `${PROXY_BASE_URL}/api/sheets/${SPREADSHEET_ID}/values/${encodeURIComponent(range)}`;
+    
+    try {
+      const response = await fetch(url, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          values: [[
+            workerData.workerId,
+            workerData.employeeId,
+            workerData.firstName,
+            workerData.lastName,
+            workerData.email,
+            workerData.phone,
+            workerData.role,
+            workerData.serviceItem,
+            workerData.hourlyRate,
+            workerData.flatRateBonus,
+            workerData.availability,
+            workerData.appAccess,
+            workerData.applicationId,
+            workerData.primaryLanguage,
+            workerData.workHistory,
+            workerData.photo,
+            workerData.qboid,
+            workerData.w9Status,
+            workerData.displayName,
+          ]],
+        }),
+      });
+
+      const result = await response.json();
+      if (!result.ok) throw new Error(result.error);
+      return result;
+    } catch (error) {
+      console.error('Failed to update worker:', error);
+      throw error;
+    }
+  },
+
+  // Deactivate worker (set Availability to Inactive)
+  deactivateWorker: async (rowNumber) => {
+    const range = `Workers!K${rowNumber}`; // Availability column
+    const url = `${PROXY_BASE_URL}/api/sheets/${SPREADSHEET_ID}/values/${encodeURIComponent(range)}`;
+    
+    try {
+      const response = await fetch(url, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          values: [['Inactive']],
+        }),
+      });
+
+      const result = await response.json();
+      if (!result.ok) throw new Error(result.error);
+      return result;
+    } catch (error) {
+      console.error('Failed to deactivate worker:', error);
+      throw error;
+    }
+  },
+
+  // Add clock-in entry
+  addClockIn: async (clockInData) => {
+    const range = 'ClockIn!A:L';
+    const url = `${PROXY_BASE_URL}/api/sheets/${SPREADSHEET_ID}/values/${encodeURIComponent(range)}/append`;
+    
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          values: [[
+            clockInData.clockinId,
+            clockInData.workerId,
+            clockInData.date,
+            clockInData.time,
+            clockInData.notes,
+            clockInData.taskId,
+            clockInData.approveToTasks,
+            clockInData.latitude,
+            clockInData.longitude,
+            clockInData.needsProcessing,
+            clockInData.nearestClient,
+            clockInData.distance,
+          ]],
+        }),
+      });
+
+      const result = await response.json();
+      if (!result.ok) throw new Error(result.error);
+      return result;
+    } catch (error) {
+      console.error('Failed to add clock-in:', error);
+      throw error;
+    }
+  },
+
+  // Update clock-in by row number
+  updateClockIn: async (rowNumber, clockInData) => {
+    const range = `ClockIn!A${rowNumber}:L${rowNumber}`;
+    const url = `${PROXY_BASE_URL}/api/sheets/${SPREADSHEET_ID}/values/${encodeURIComponent(range)}`;
+    
+    try {
+      const response = await fetch(url, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          values: [[
+            clockInData.clockinId,
+            clockInData.workerId,
+            clockInData.date,
+            clockInData.time,
+            clockInData.notes,
+            clockInData.taskId,
+            clockInData.approveToTasks,
+            clockInData.latitude,
+            clockInData.longitude,
+            clockInData.needsProcessing,
+            clockInData.nearestClient,
+            clockInData.distance,
+          ]],
+        }),
+      });
+
+      const result = await response.json();
+      if (!result.ok) throw new Error(result.error);
+      return result;
+    } catch (error) {
+      console.error('Failed to update clock-in:', error);
+      throw error;
+    }
+  },
+
+  // Delete clock-in by row number
+  deleteClockIn: async (rowNumber) => {
+    const range = `ClockIn!A${rowNumber}:L${rowNumber}`;
+    const url = `${PROXY_BASE_URL}/api/sheets/${SPREADSHEET_ID}/values/${encodeURIComponent(range)}`;
+    
+    try {
+      const response = await fetch(url, {
+        method: 'DELETE',
+      });
+
+      const result = await response.json();
+      if (!result.ok) throw new Error(result.error);
+      return result;
+    } catch (error) {
+      console.error('Failed to delete clock-in:', error);
       throw error;
     }
   },
