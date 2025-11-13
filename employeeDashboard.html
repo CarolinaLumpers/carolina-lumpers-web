@@ -675,8 +675,8 @@
 
   <script>
     // ======================== CONFIG ========================
-  const API_URL = "https://cls-proxy.s-garay.workers.dev"; // Write operations (clock-ins, approvals)
-  const SHEETS_API_URL = "https://sheets-direct-proxy.steve-3d1.workers.dev"; // Read operations (fast, direct to Sheets)
+  const API_URL = "https://cls-proxy.s-garay.workers.dev"; // Apps Script for most operations
+  const SHEETS_API_URL = "https://sheets-direct-proxy.steve-3d1.workers.dev"; // Direct Sheets API (generic proxy)
     
     // Local getText function for dashboard (fallback until script.js loads)
     function getText(path, lang) {
@@ -1767,13 +1767,75 @@
       body.innerHTML = `<tr><td colspan='3' class="muted">${getMSG('loadingReport')}</td></tr>`;
 
       try {
-        let data;
+        let records = [];
+        
         if (VIEW_AS_ACTIVE && USER_ROLE === 'Admin') {
-          // Admin viewing as someone else (today only)
-          data = await jsonp(`${API_URL}?action=reportAs&requesterId=${encodeURIComponent(workerId)}&targetId=${encodeURIComponent(VIEW_AS_WORKER)}`);
+          // Admin viewing as someone else - use Apps Script (has access control)
+          const data = await jsonp(`${API_URL}?action=reportAs&requesterId=${encodeURIComponent(workerId)}&targetId=${encodeURIComponent(VIEW_AS_WORKER)}`);
+          records = data.records || [];
         } else {
-          // Use direct Sheets API for faster loading
-          data = await jsonp(`${SHEETS_API_URL}?action=report&workerId=${encodeURIComponent(workerId)}`);
+          // 🚀 HYBRID: Use direct Sheets API for faster loading (proof of concept)
+          const targetWorker = workerId;
+          const SPREADSHEET_ID = '1U8hSNREN5fEhskp0UM-Z80iiW39beaOj3oIsaLZyFzk';
+          
+          // Fetch ClockIn sheet data directly (columns: A=ClockinID, B=WorkerID, C=Date, D=Time, E=Notes, F=TaskID, G=Approve, H=Lat, I=Lng, J=NeedsProcessing, K=NearestClient, L=Distance)
+          const response = await fetch(`${SHEETS_API_URL}/api/sheets/${SPREADSHEET_ID}/values/ClockIn!A2:L`);
+          const result = await response.json();
+          const rows = result.data?.values || [];
+          
+          // Calculate date range (last 7 days)
+          const now = new Date();
+          const weekAgo = new Date(now);
+          weekAgo.setDate(now.getDate() - 7);
+          weekAgo.setHours(0, 0, 0, 0);
+          
+          // Filter and format client-side
+          records = rows
+            .filter(row => {
+              if (row[1] !== targetWorker) return false; // B: WorkerID
+              const dateVal = row[2]; // C: Date
+              const d = dateVal instanceof Date ? dateVal : new Date(dateVal);
+              return !isNaN(d) && d >= weekAgo;
+            })
+            .map(row => {
+              const dateVal = row[2]; // C: Date
+              const timeVal = row[3]; // D: Time
+              const d = new Date(dateVal);
+              
+              // Format date as MM/dd/yyyy
+              const formattedDate = d.toLocaleDateString('en-US', { 
+                timeZone: 'America/New_York',
+                month: '2-digit',
+                day: '2-digit',
+                year: 'numeric'
+              });
+              
+              // Format time
+              let formattedTime = '';
+              if (timeVal) {
+                const t = new Date(timeVal);
+                if (!isNaN(t)) {
+                  formattedTime = t.toLocaleTimeString('en-US', { 
+                    timeZone: 'America/New_York',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: true
+                  });
+                } else {
+                  formattedTime = String(timeVal);
+                }
+              }
+              
+              return {
+                date: formattedDate,
+                time: formattedTime,
+                site: row[10] || '', // K: Nearest Client
+                distance: row[11] || '', // L: Distance
+                id: row[0] || '', // A: ClockinID
+                editStatus: row[6] || 'confirmed' // G: Approve (status column)
+              };
+            });
         }
 
         body.innerHTML = "";
@@ -1786,7 +1848,7 @@
           year: "numeric"
         });
         const today = formatter.format(now); // e.g., "01/17/2025"
-        const todayRecords = (data.records || []).filter(r => r.date === today);
+        const todayRecords = records.filter(r => r.date === today);
 
         if (todayRecords.length > 0) {
           todayRecords.sort((a, b) => {
@@ -1861,8 +1923,7 @@
         if (VIEW_AS_ACTIVE && USER_ROLE === 'Admin') {
           res = await jsonp(`${API_URL}?action=payrollAs&requesterId=${encodeURIComponent(workerId)}&targetId=${encodeURIComponent(VIEW_AS_WORKER)}&range=${range}`);
         } else {
-          // Use direct Sheets API for faster loading
-          res = await jsonp(`${SHEETS_API_URL}?action=payroll&workerId=${encodeURIComponent(workerId)}&range=${range}`);
+          res = await jsonp(`${API_URL}?action=payroll&workerId=${encodeURIComponent(workerId)}&range=${range}`);
         }
         if (!res || !res.success || !res.rows) {
           tbody.innerHTML = "";
@@ -2040,8 +2101,7 @@
           
           // Populate View As list and worker filter using workers from Workers sheet
           try {
-            // Use direct Sheets API for faster admin data loading
-            const data = await jsonp(`${SHEETS_API_URL}?action=reportAll&workerId=${encodeURIComponent(workerId)}`);
+            const data = await jsonp(`${API_URL}?action=reportAll&workerId=${encodeURIComponent(workerId)}`);
             
             const viewAsSelect = document.getElementById('viewAsSelect');
             const workerFilter = document.getElementById('workerFilter');

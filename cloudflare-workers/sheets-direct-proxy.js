@@ -1,9 +1,9 @@
 /**
- * Cloudflare Worker: Direct Google Sheets API Proxy
- *
- * Provides read-only access to Google Sheets via service account authentication.
- * Reduces load on Apps Script and speeds up data fetching.
- *
+ * Cloudflare Worker: Generic Google Sheets API Proxy
+ * 
+ * Simple pass-through proxy for Google Sheets API with service account authentication.
+ * Follows React Portal pattern - frontend does filtering/formatting.
+ * 
  * Service Account: react-portal-sheets@cls-operations-hub.iam.gserviceaccount.com
  * Spreadsheet: CLS_Hub_Backend (1U8hSNREN5fEhskp0UM-Z80iiW39beaOj3oIsaLZyFzk)
  */
@@ -25,33 +25,34 @@ export default {
     }
 
     const url = new URL(request.url);
-    const action = url.searchParams.get("action");
+    const pathname = url.pathname;
 
     try {
       // Get OAuth token from service account
       const token = await getServiceAccountToken(env);
 
-      // Route actions
-      switch (action) {
-        case "report":
-          return await handleReport(url, token);
-        case "reportAll":
-          return await handleReportAll(url, token);
-        case "payroll":
-          return await handlePayroll(url, token);
-        case "payrollWeekPeriods":
-          return await handlePayrollWeekPeriods(url, token);
-        default:
-          return jsonResponse({ ok: false, error: "Unknown action" }, 400);
+      // Generic Sheets API proxy (like React Portal pattern)
+      // Route: /api/sheets/{spreadsheetId}/values/{range}
+      const sheetsMatch = pathname.match(/^\/api\/sheets\/([^\/]+)\/values\/(.+)$/);
+      if (sheetsMatch) {
+        const spreadsheetId = sheetsMatch[1];
+        const range = decodeURIComponent(sheetsMatch[2]);
+        const data = await getSheetValues(range, token, spreadsheetId);
+        return jsonResponse({ ok: true, data });
       }
+
+      // Health check
+      if (pathname === "/health" || pathname === "/") {
+        return jsonResponse({ status: "ok", message: "Generic Sheets proxy running" });
+      }
+
+      return jsonResponse({ ok: false, error: "Not found. Use /api/sheets/{spreadsheetId}/values/{range}" }, 404);
     } catch (error) {
       console.error("Error:", error);
       return jsonResponse({ ok: false, error: error.message }, 500);
     }
   },
-};
-
-// =================== Google OAuth Token Generation ===================
+};// =================== Google OAuth Token Generation ===================
 async function getServiceAccountToken(env) {
   // Service account credentials stored as Cloudflare environment variables
   const serviceAccount = {
@@ -146,8 +147,8 @@ function base64UrlEncode(data) {
 }
 
 // =================== Google Sheets API Calls ===================
-async function getSheetValues(range, token) {
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${encodeURIComponent(
+async function getSheetValues(range, token, spreadsheetId = SPREADSHEET_ID) {
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(
     range
   )}`;
   const response = await fetch(url, {
@@ -163,134 +164,6 @@ async function getSheetValues(range, token) {
   return await response.json();
 }
 
-// =================== Action Handlers ===================
-
-// Load worker's clock-in report
-async function handleReport(url, token) {
-  const workerId = url.searchParams.get("workerId");
-  const callback = url.searchParams.get("callback");
-
-  if (!workerId) {
-    return jsonpResponse({ ok: false, error: "Missing workerId" }, callback);
-  }
-
-  // Fetch ClockIn sheet data
-  const data = await getSheetValues("ClockIn!A2:J", token);
-  const rows = data.values || [];
-
-  // Filter by workerId and format
-  const today = new Date().toISOString().split("T")[0];
-  const clockIns = rows
-    .filter((row) => row[0] === workerId && row[1] && row[1].startsWith(today))
-    .map((row) => ({
-      workerId: row[0],
-      date: row[1],
-      time: row[2],
-      site: row[3],
-      distance: row[4],
-      latitude: row[5],
-      longitude: row[6],
-      clockinID: row[7],
-      editStatus: row[8] || "confirmed",
-      minutesLate: row[9] || 0,
-    }));
-
-  return jsonpResponse({ ok: true, clockIns }, callback);
-}
-
-// Load all workers' clock-ins (admin only)
-async function handleReportAll(url, token) {
-  const callback = url.searchParams.get("callback");
-  const filterWorkerId = url.searchParams.get("workerId"); // Optional filter
-
-  // Fetch ClockIn sheet data
-  const data = await getSheetValues("ClockIn!A2:J", token);
-  const rows = data.values || [];
-
-  // Format all rows (filter serverside if workerId provided)
-  const clockIns = rows
-    .filter((row) => !filterWorkerId || row[0] === filterWorkerId)
-    .map((row) => ({
-      workerId: row[0],
-      date: row[1],
-      time: row[2],
-      site: row[3],
-      distance: row[4],
-      latitude: row[5],
-      longitude: row[6],
-      clockinID: row[7],
-      editStatus: row[8] || "confirmed",
-      minutesLate: row[9] || 0,
-    }));
-
-  return jsonpResponse({ ok: true, clockIns }, callback);
-}
-
-// Load payroll data for a worker
-async function handlePayroll(url, token) {
-  const workerId = url.searchParams.get("workerId");
-  const weekEnd = url.searchParams.get("weekEnd");
-  const callback = url.searchParams.get("callback");
-
-  if (!workerId || !weekEnd) {
-    return jsonpResponse(
-      { ok: false, error: "Missing workerId or weekEnd" },
-      callback
-    );
-  }
-
-  // Fetch Payroll LineItems sheet
-  const data = await getSheetValues("Payroll LineItems!A2:L", token);
-  const rows = data.values || [];
-
-  // Filter by workerId and weekEnd
-  const payrollRows = rows
-    .filter((row) => row[0] === workerId && row[1] === weekEnd)
-    .map((row) => ({
-      workerId: row[0],
-      weekEnd: row[1],
-      date: row[2],
-      time: row[3],
-      site: row[4],
-      hours: parseFloat(row[5]) || 0,
-      rate: parseFloat(row[6]) || 0,
-      regularPay: parseFloat(row[7]) || 0,
-      overtimePay: parseFloat(row[8]) || 0,
-      totalPay: parseFloat(row[9]) || 0,
-      status: row[10] || "confirmed",
-      notes: row[11] || "",
-    }));
-
-  // Calculate totals
-  const totals = payrollRows.reduce(
-    (acc, row) => ({
-      hours: acc.hours + row.hours,
-      regularPay: acc.regularPay + row.regularPay,
-      overtimePay: acc.overtimePay + row.overtimePay,
-      totalPay: acc.totalPay + row.totalPay,
-    }),
-    { hours: 0, regularPay: 0, overtimePay: 0, totalPay: 0 }
-  );
-
-  return jsonpResponse({ ok: true, rows: payrollRows, totals }, callback);
-}
-
-// Load available payroll week periods
-async function handlePayrollWeekPeriods(url, token) {
-  const callback = url.searchParams.get("callback");
-
-  // Fetch Payroll LineItems sheet to get unique week periods
-  const data = await getSheetValues("Payroll LineItems!B2:B", token);
-  const rows = data.values || [];
-
-  // Get unique week end dates, sorted descending
-  const weekPeriods = [
-    ...new Set(rows.map((row) => row[0]).filter(Boolean)),
-  ].sort((a, b) => new Date(b) - new Date(a));
-
-  return jsonpResponse({ ok: true, weekPeriods }, callback);
-}
-
 // =================== Response Helpers ===================
 function jsonResponse(data, status = 200) {
   return new Response(JSON.stringify(data), {
@@ -299,12 +172,15 @@ function jsonResponse(data, status = 200) {
   });
 }
 
-function jsonpResponse(data, callback) {
-  if (callback) {
-    const jsonpData = `${callback}(${JSON.stringify(data)})`;
-    return new Response(jsonpData, {
-      headers: { ...CORS_HEADERS, "Content-Type": "application/javascript" },
-    });
-  }
-  return jsonResponse(data);
-}
+/*
+ * OLD ACTION HANDLERS REMOVED
+ * 
+ * This worker now follows the React Portal pattern - it's a simple generic proxy.
+ * Frontend does all filtering/formatting of data.
+ * 
+ * Example usage from frontend:
+ * const response = await fetch(`${SHEETS_API_URL}/api/sheets/${SPREADSHEET_ID}/values/ClockIn!A2:L100`);
+ * const { data } = await response.json();
+ * // data.values = [[col1, col2, ...], ...]
+ * // Frontend filters/formats as needed
+ */
