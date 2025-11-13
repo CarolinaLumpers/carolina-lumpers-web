@@ -11,9 +11,10 @@ import PayrollView from '../components/PayrollView';
 import W9StatusBanner from '../components/W9StatusBanner';
 import AdminPanel from '../components/AdminPanel';
 import UserSwitcher from '../components/UserSwitcher';
+import { storage } from '../services/storage';
 
 function Dashboard() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('clockins');
@@ -27,6 +28,30 @@ function Dashboard() {
   const handleClockInSuccess = () => {
     // Trigger refresh of clock-in history
     setRefreshTrigger(prev => prev + 1);
+  };
+
+  // Get formatted date based on current language
+  const getFormattedDate = () => {
+    const now = new Date();
+    const lang = i18n.language || storage.getLanguage() || 'en';
+    
+    // Map language codes to proper locales
+    const localeMap = {
+      'en': 'en-US',
+      'es': 'es-ES',
+      'pt': 'pt-BR'
+    };
+    
+    const locale = localeMap[lang] || 'en-US';
+    
+    const dateOptions = { 
+      weekday: 'long', 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    };
+    
+    return new Intl.DateTimeFormat(locale, dateOptions).format(now);
   };
 
   // Tab configuration
@@ -74,15 +99,9 @@ function Dashboard() {
       <div className="md:ml-64">
         {/* Header - Hidden on mobile, visible on desktop */}
         <header className="hidden md:block bg-white dark:bg-cls-charcoal border-b border-gray-200 dark:border-gray-700">
-          <div className="mx-auto px-4 py-4 max-w-7xl flex items-center gap-6">
-            <div className="flex flex-col leading-tight">
-              <span className="text-2xl font-anton text-cls-amber">CAROLINA</span>
-              <span className="text-2xl font-anton text-cls-amber">LUMPER</span>
-              <span className="text-2xl font-anton text-cls-amber">SERVICE</span>
-            </div>
-            <div className="border-l border-gray-300 dark:border-gray-600 h-16"></div>
-            <h1 className="text-2xl font-semibold text-gray-800 dark:text-gray-200">
-              {t('dashboard.title', 'CLS Employee Portal')}
+          <div className="mx-auto px-4 py-4 max-w-7xl">
+            <h1 className="text-3xl font-anton text-cls-amber text-left">
+              CAROLINA LUMPER SERVICE
             </h1>
           </div>
         </header>
@@ -108,6 +127,9 @@ function Dashboard() {
             <h3 className="text-2xl font-semibold text-gray-800 dark:text-gray-200">
               {t('dashboard.welcome', { name: user?.displayName || 'User' })}
             </h3>
+            <p className="text-gray-600 dark:text-gray-400 mt-1">
+              {getFormattedDate()}
+            </p>
             <p className="text-gray-600 dark:text-gray-400 mt-1">
               {user?.role && (
                 <span className="inline-block px-2 py-1 bg-cls-amber text-cls-charcoal rounded text-sm font-medium">

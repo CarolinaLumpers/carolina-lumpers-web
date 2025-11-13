@@ -113,6 +113,7 @@
   "common": {
     "loading": "Cargando...",
     "save": "Guardar",
+    "saving": "Guardando...",
     "cancel": "Cancelar",
     "delete": "Eliminar",
     "edit": "Editar",
@@ -145,7 +146,9 @@
     "processing": "Procesando...",
     "active": "Activo",
     "inactive": "Inactivo",
-    "review": "Revisar"
+    "review": "Revisar",
+    "employeePortal": "Portal de Empleados",
+    "navigation": "Navegación"
   },
   "admin": {
     "tabs": {
@@ -161,7 +164,13 @@
       "clockIns": "Registros",
       "lastClockIn": "Último",
       "viewDetails": "Ver Detalles",
-      "noWorkers": "No se encontraron trabajadores"
+      "noWorkers": "No se encontraron trabajadores",
+      "addWorker": "Agregar Trabajador",
+      "addNewWorker": "Agregar Nuevo Trabajador",
+      "addWorkerError": "Error al agregar trabajador",
+      "notSubmitted": "No Enviado",
+      "systemInfo": "Información del Sistema",
+      "todayActivity": "Actividad de Hoy"
     },
     "timeEdits": {
       "title": "Solicitudes de Edición de Tiempo Pendientes",

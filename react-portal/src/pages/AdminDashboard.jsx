@@ -5,6 +5,7 @@ import { useAuth } from '../features/auth/AuthContext';
 import { useQuery } from '@tanstack/react-query';
 import { sheetsApi } from '../services/sheets';
 import { format } from 'date-fns';
+import { storage } from '../services/storage';
 import Card from '../components/Card';
 import Badge from '../components/Badge';
 import Loading from '../components/Loading';
@@ -15,8 +16,29 @@ import UserSwitcher from '../components/UserSwitcher';
  * Shows: System-wide metrics, pending items, recent activity
  */
 function AdminDashboard() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { user } = useAuth();
+
+  // Get formatted date based on current language
+  const getFormattedDate = () => {
+    const now = new Date();
+    const lang = i18n.language || storage.getLanguage() || 'en';
+    
+    const localeMap = {
+      'en': 'en-US',
+      'es': 'es-ES',
+      'pt': 'pt-BR'
+    };
+    
+    const locale = localeMap[lang] || 'en-US';
+    
+    return new Intl.DateTimeFormat(locale, { 
+      weekday: 'long', 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    }).format(now);
+  };
 
   // Fetch all workers with today's clock-ins (filter Active only)
   const { data: teamData, isLoading: teamLoading } = useQuery({
@@ -78,7 +100,7 @@ function AdminDashboard() {
           {t('dashboard.adminDashboard', 'Admin Dashboard')}
         </h1>
         <p className="text-gray-600 dark:text-gray-400 mt-1">
-          {format(new Date(), 'EEEE, MMMM d, yyyy')} • {t('dashboard.systemOverview', 'System Overview')}
+          {getFormattedDate()} • {t('dashboard.systemOverview', 'System Overview')}
         </p>
       </div>
 

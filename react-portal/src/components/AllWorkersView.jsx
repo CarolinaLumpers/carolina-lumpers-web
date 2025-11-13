@@ -324,7 +324,7 @@ function WorkerDetailsModal({ worker, records, onClose }) {
               <DetailItem label="QuickBooks ID" value={worker.qboid} />
               <DetailItem label="W-9 Status" value={worker.w9Status}>
                 <Badge variant={worker.w9Status === 'Approved' ? 'success' : 'warning'}>
-                  {worker.w9Status || 'Not Submitted'}
+                  {worker.w9Status || t('admin.workers.notSubmitted', 'Not Submitted')}
                 </Badge>
               </DetailItem>
             </div>
@@ -439,7 +439,7 @@ function AddWorkerModal({ onClose, onSuccess }) {
 
       onSuccess();
     } catch (err) {
-      setError(err.message || 'Failed to add worker');
+      setError(err.message || t('admin.workers.addWorkerError', 'Failed to add worker'));
       setSaving(false);
     }
   };

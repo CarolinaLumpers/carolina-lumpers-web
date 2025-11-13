@@ -38,18 +38,14 @@ const DrawerNavigation = ({ tabs, activeTab, onChange, onLogout }) => {
           </svg>
         </button>
 
-        {/* Stacked Company Name */}
-        <div className="flex flex-col leading-tight">
-          <span className="text-sm font-anton text-cls-amber">CAROLINA</span>
-          <span className="text-sm font-anton text-cls-amber">LUMPER</span>
-          <span className="text-sm font-anton text-cls-amber">SERVICE</span>
-        </div>
+        {/* CLS Logo Text */}
+        <span className="text-2xl font-anton text-cls-amber">CLS</span>
 
         {/* Divider */}
         <div className="border-l border-gray-300 dark:border-gray-600 h-10"></div>
 
         {/* Employee Portal */}
-        <span className="text-base font-semibold text-gray-700 dark:text-gray-300">Employee Portal</span>
+        <span className="text-base font-semibold text-gray-700 dark:text-gray-300">{t('common.employeePortal', 'Employee Portal')}</span>
       </div>
 
       {/* Backdrop Overlay - Only on mobile when open */}
@@ -71,16 +67,7 @@ const DrawerNavigation = ({ tabs, activeTab, onChange, onLogout }) => {
       >
         {/* Logo Section */}
         <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex items-center justify-center flex-shrink-0">
-          <img 
-            src="/assets/CLS_logo_white-BG.png" 
-            alt="Carolina Lumper Service Logo" 
-            className="w-32 h-auto dark:hidden"
-          />
-          <img 
-            src="/assets/CLS_logo_black-BG.png" 
-            alt="Carolina Lumper Service Logo" 
-            className="w-32 h-auto hidden dark:block"
-          />
+          <span className="text-5xl font-anton text-cls-amber leading-none">CLS</span>
         </div>
 
         {/* Drawer Header */}

@@ -127,13 +127,10 @@ function DashboardLayout() {
     <div className="min-h-screen bg-gray-50 dark:bg-cls-dark">
       {/* Mobile Header */}
       <header className="md:hidden bg-white dark:bg-cls-charcoal border-b border-gray-200 dark:border-gray-700 sticky top-0 z-40">
-        <div className="flex items-center justify-between px-4 py-3">
-          <div className="flex items-center gap-2">
-            <span className="text-lg font-anton text-cls-amber">CLS</span>
-          </div>
+        <div className="flex items-center gap-3 px-4 py-3">
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="p-2 text-gray-600 dark:text-gray-300 hover:text-cls-amber"
+            className="p-2 text-gray-600 dark:text-gray-300 hover:text-cls-amber flex-shrink-0"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               {isMobileMenuOpen ? (
@@ -143,6 +140,7 @@ function DashboardLayout() {
               )}
             </svg>
           </button>
+          <span className="text-lg font-anton text-cls-amber">CAROLINA LUMPER SERVICE</span>
         </div>
       </header>
 
@@ -162,10 +160,8 @@ function DashboardLayout() {
       >
         {/* Logo */}
         <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-          <div className="flex flex-col leading-tight">
-            <span className="text-xl font-anton text-cls-amber">CAROLINA</span>
-            <span className="text-xl font-anton text-cls-amber">LUMPER</span>
-            <span className="text-xl font-anton text-cls-amber">SERVICE</span>
+          <div className="flex items-center justify-center">
+            <span className="text-5xl font-anton text-cls-amber leading-none">CLS</span>
           </div>
         </div>
 

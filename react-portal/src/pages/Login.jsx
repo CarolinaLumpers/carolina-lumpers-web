@@ -34,6 +34,15 @@ function Login() {
     <div className="min-h-screen bg-gray-50 dark:bg-cls-dark flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="bg-white dark:bg-cls-charcoal rounded-lg shadow-lg p-8 border-t-4 border-cls-amber">
+          {/* Logo */}
+          <div className="flex justify-center mb-6">
+            <img 
+              src="/logo.svg" 
+              alt="CLS Logo" 
+              className="w-64 h-64"
+            />
+          </div>
+
           <h1 className="text-3xl font-anton text-cls-charcoal dark:text-cls-amber mb-6 text-center">
             {t('login.title')}
           </h1>

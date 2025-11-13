@@ -118,7 +118,7 @@ export const sheetsApi = {
    * Reads from "Workers" sheet
    */
   getWorkersDirect: async () => {
-    const range = 'Workers!A:E'; // Adjust columns as needed
+    const range = 'Workers!A:L'; // Extended to include App Access column
     const url = `${PROXY_BASE_URL}/api/sheets/${SPREADSHEET_ID}/values/${encodeURIComponent(range)}`;
     
     try {
@@ -133,15 +133,15 @@ export const sheetsApi = {
       
       const headers = rows[0];
       const idIdx = headers.indexOf('WorkerID');
-      const nameIdx = headers.indexOf('DisplayName');
-      const roleIdx = headers.indexOf('Role');
+      const nameIdx = headers.indexOf('Display Name');
+      const appAccessIdx = headers.indexOf('App Access'); // Use App Access instead of Role
       
       return rows.slice(1)
         .filter(row => row[idIdx]) // Has WorkerID
         .map(row => ({
           id: row[idIdx],
           name: row[nameIdx] || row[idIdx],
-          role: row[roleIdx] || 'Worker',
+          role: row[appAccessIdx] || 'Worker', // Get from App Access column
         }));
     } catch (error) {
       console.error('Failed to fetch workers from Sheets:', error);
@@ -238,7 +238,6 @@ export const sheetsApi = {
       const workerHeaders = workerRows[0];
       const workerIdIdx = workerHeaders.indexOf('WorkerID');
       const displayNameIdx = workerHeaders.indexOf('Display Name'); // Note: Header has space
-      const roleIdx = workerHeaders.indexOf('Role');
       const availabilityIdx = workerHeaders.indexOf('Availability');
 
       // Get all relevant column indices
@@ -250,7 +249,7 @@ export const sheetsApi = {
       const serviceItemIdx = workerHeaders.indexOf('ServiceItem');
       const hourlyRateIdx = workerHeaders.indexOf('Hourly Rate');
       const flatRateBonusIdx = workerHeaders.indexOf('Flat Rate Bonus');
-      const appAccessIdx = workerHeaders.indexOf('App Access');
+      const appAccessIdx = workerHeaders.indexOf('App Access'); // Use App Access for portal role
       const primaryLanguageIdx = workerHeaders.indexOf('Primary Language');
       const photoIdx = workerHeaders.indexOf('Photo');
       const qboidIdx = workerHeaders.indexOf('QBOID');
@@ -261,7 +260,7 @@ export const sheetsApi = {
         .map(row => ({
           id: row[workerIdIdx],
           name: row[displayNameIdx] || row[workerIdIdx],
-          role: row[roleIdx] || 'Worker',
+          role: row[appAccessIdx] || 'Worker', // Get role from App Access column, not Role column
           availability: row[availabilityIdx] || '', // Keep empty if not specified
           // Additional details for modal
           employeeId: row[employeeIdIdx] || '',
@@ -416,13 +415,13 @@ export const sheetsApi = {
 
   /**
    * Get worker role by ID (replaces api.whoami)
-   * Reads from Workers sheet
+   * Reads from Workers sheet - uses App Access column, not Role column
    * 
    * @param {string} workerId - Worker ID
    * @returns {object} - { ok: true, role: 'Admin' | 'Lead' | 'Worker' }
    */
   getWorkerRole: async (workerId) => {
-    const range = 'Workers!A:G'; // WorkerID through Role
+    const range = 'Workers!A:L'; // WorkerID through App Access
     const url = `${PROXY_BASE_URL}/api/sheets/${SPREADSHEET_ID}/values/${encodeURIComponent(range)}`;
     
     try {
@@ -443,7 +442,7 @@ export const sheetsApi = {
       
       const headers = rows[0];
       const workerIdIdx = headers.indexOf('WorkerID');
-      const roleIdx = headers.indexOf('Role');
+      const appAccessIdx = headers.indexOf('App Access'); // Use App Access column instead of Role
       
       const workerRow = rows.slice(1).find(row => row[workerIdIdx] === workerId);
       
@@ -453,7 +452,7 @@ export const sheetsApi = {
       
       return {
         ok: true,
-        role: workerRow[roleIdx] || 'Worker',
+        role: workerRow[appAccessIdx] || 'Worker', // Get role from App Access column
       };
     } catch (error) {
       console.error('Failed to fetch worker role:', error);

@@ -7,7 +7,7 @@ export function PrivateRoute() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="text-cls-amber text-xl">Loading...</div>
+        <div className="text-cls-amber text-xl">{/* Translation not needed - minimal loading state */}Loading...</div>
       </div>
     );
   }

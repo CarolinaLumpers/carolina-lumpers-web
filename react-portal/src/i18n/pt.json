@@ -113,6 +113,7 @@
   "common": {
     "loading": "Carregando...",
     "save": "Salvar",
+    "saving": "Salvando...",
     "cancel": "Cancelar",
     "delete": "Excluir",
     "edit": "Editar",
@@ -145,7 +146,9 @@
     "processing": "Processando...",
     "active": "Ativo",
     "inactive": "Inativo",
-    "review": "Revisar"
+    "review": "Revisar",
+    "employeePortal": "Portal do Funcionário",
+    "navigation": "Navegação"
   },
   "admin": {
     "tabs": {
@@ -154,14 +157,20 @@
       "w9": "Gestão de W-9"
     },
     "workers": {
-      "title": "Atividade dos Trabalhadores Hoje",
+      "title": "Atividade de Trabalhadores Hoje",
       "total": "Total de Trabalhadores",
       "active": "Ativo",
       "inactive": "Sem Registro",
       "clockIns": "Registros",
       "lastClockIn": "Último",
       "viewDetails": "Ver Detalhes",
-      "noWorkers": "Nenhum trabalhador encontrado"
+      "noWorkers": "Nenhum trabalhador encontrado",
+      "addWorker": "Adicionar Trabalhador",
+      "addNewWorker": "Adicionar Novo Trabalhador",
+      "addWorkerError": "Falha ao adicionar trabalhador",
+      "notSubmitted": "Não Enviado",
+      "systemInfo": "Informações do Sistema",
+      "todayActivity": "Atividade de Hoje"
     },
     "timeEdits": {
       "title": "Solicitações de Edição de Tempo Pendentes",
