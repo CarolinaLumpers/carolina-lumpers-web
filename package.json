@@ -15,15 +15,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/CarolinaLumpers/carolina-lumpers-web.git"
+    "url": "git+https://github.com/GarayInvestments/carolina-lumpers-web.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/CarolinaLumpers/carolina-lumpers-web/issues"
+    "url": "https://github.com/GarayInvestments/carolina-lumpers-web/issues"
   },
-  "homepage": "https://github.com/CarolinaLumpers/carolina-lumpers-web#readme",
+  "homepage": "https://github.com/GarayInvestments/carolina-lumpers-web#readme",
   "devDependencies": {
     "tailwindcss": "^3.4.18"
   }
