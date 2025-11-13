@@ -271,16 +271,17 @@ bradlc.vscode-tailwindcss
 ### **Starting Work (Either Device)**
 
 ```powershell
-# 1. Navigate to project
-cd ~/Desktop/carolina-lumpers-web  # Or wherever you keep it
-
-# 2. Get latest changes
-git pull
-
-# 3. Open workspace in VS Code
+# Option 1: Open workspace directly
+cd ~/Desktop/carolina-lumpers-web
 code Workspace_AppsScriptEmployeeLogin.code-workspace
 
-# 4. Start working!
+# Option 2: Use VS Code recent (faster)
+# Press Ctrl+R in VS Code → Select workspace
+
+# Option 3: From anywhere
+code "C:\Users\Steve Garay\Desktop\carolina-lumpers-web\Workspace_AppsScriptEmployeeLogin.code-workspace"
+
+# Git pull happens automatically if git.autofetch is enabled (already configured in workspace)
 ```
 
 ### **Switching Devices Mid-Work**
@@ -536,6 +537,66 @@ code .
 
 ---
 
+## 🖥️ VS Code Workspace Strategy
+
+### **One Workspace Per Project**
+
+Each project has its own `.code-workspace` file committed to Git:
+
+```
+Carolina Lumpers (GarayInvestments/carolina-lumpers-web)
+└── Workspace_AppsScriptEmployeeLogin.code-workspace
+    ├── 🏠 Carolina Lumpers Web (Root)
+    ├── ⚛️ React Portal
+    ├── 🔧 Google Apps Scripts
+    └── ☁️ AWS Infrastructure
+
+House Renovators (GarayInvestments/HouseRenoAI)
+└── HouseRenovators.code-workspace
+    ├── 🏠 House Renovators (Root)
+    └── ☁️ AWS Infrastructure
+
+Kredit-Ya Client (GarayInvestments/client-kredit-ya)
+└── KreditYa.code-workspace
+    ├── 🏠 Kredit-Ya (Root)
+    └── ☁️ AWS Infrastructure
+```
+
+### **Why Separate Workspaces?**
+
+✅ **Clear Context** - Always know which project you're working on  
+✅ **Separate Git** - No confusion about commits/pushes  
+✅ **Project Settings** - Different linting, formatters per project  
+✅ **Better Performance** - Smaller search scope, faster IntelliSense  
+✅ **Easy Switching** - `Ctrl+R` → Pick workspace  
+✅ **Multi-window** - Work on 2+ projects simultaneously (dual monitors)
+
+### **Opening Workspaces**
+
+```powershell
+# Direct open
+code path/to/project/WorkspaceName.code-workspace
+
+# Or in VS Code
+File → Open Recent → Select workspace
+# Or press Ctrl+R
+```
+
+### **Workspace Files Sync via Git**
+
+Your `.code-workspace` files are committed to each repo, so they sync automatically:
+- ✅ Folder structure
+- ✅ Settings (format on save, etc.)
+- ✅ Extension recommendations
+- ✅ Search exclusions
+
+What doesn't sync (and shouldn't):
+- ❌ Open files/tabs
+- ❌ Cursor positions
+- ❌ Terminal sessions
+
+---
+
 ## 📂 Recommended Folder Structure
 
 ### **On Both Devices:**
@@ -543,21 +604,25 @@ code .
 ```
 C:\Users\[Username]\
 ├── Desktop\
-│   ├── carolina-lumpers-web\         # Main CLS project
-│   └── HouseRenoAI\                  # House Renovators project
+│   ├── carolina-lumpers-web\                    # Main CLS project
+│   │   └── Workspace_AppsScriptEmployeeLogin.code-workspace
+│   │
+│   └── HouseRenoAI\                             # House Renovators project
+│       └── HouseRenovators.code-workspace
 │
 ├── Documents\
-│   └── GitHub\                       # Alternative location
+│   └── GitHub\                                  # Alternative location
 │       ├── client-kredit-ya\
+│       │   └── KreditYa.code-workspace
 │       └── client-[future]\
 │
-├── .aws\                             # AWS credentials (local only)
+├── .aws\                                        # AWS credentials (local only)
 │   ├── credentials
 │   └── config
 │
-└── AppData\Roaming\                  # Tool configs (local only)
+└── AppData\Roaming\                             # Tool configs (local only)
     ├── gcloud\
-    └── Code\                         # VS Code (synced if enabled)
+    └── Code\                                    # VS Code (synced if enabled)
 ```
 
 ---
