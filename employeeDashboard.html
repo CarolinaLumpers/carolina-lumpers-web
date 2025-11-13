@@ -675,7 +675,8 @@
 
   <script>
     // ======================== CONFIG ========================
-  const API_URL = "https://cls-proxy.s-garay.workers.dev";
+  const API_URL = "https://cls-proxy.s-garay.workers.dev"; // Write operations (clock-ins, approvals)
+  const SHEETS_API_URL = "https://sheets-direct-proxy.steve-3d1.workers.dev"; // Read operations (fast, direct to Sheets)
     
     // Local getText function for dashboard (fallback until script.js loads)
     function getText(path, lang) {
@@ -1771,7 +1772,8 @@
           // Admin viewing as someone else (today only)
           data = await jsonp(`${API_URL}?action=reportAs&requesterId=${encodeURIComponent(workerId)}&targetId=${encodeURIComponent(VIEW_AS_WORKER)}`);
         } else {
-          data = await jsonp(`${API_URL}?action=report&workerId=${encodeURIComponent(workerId)}`);
+          // Use direct Sheets API for faster loading
+          data = await jsonp(`${SHEETS_API_URL}?action=report&workerId=${encodeURIComponent(workerId)}`);
         }
 
         body.innerHTML = "";
@@ -1859,7 +1861,8 @@
         if (VIEW_AS_ACTIVE && USER_ROLE === 'Admin') {
           res = await jsonp(`${API_URL}?action=payrollAs&requesterId=${encodeURIComponent(workerId)}&targetId=${encodeURIComponent(VIEW_AS_WORKER)}&range=${range}`);
         } else {
-          res = await jsonp(`${API_URL}?action=payroll&workerId=${encodeURIComponent(workerId)}&range=${range}`);
+          // Use direct Sheets API for faster loading
+          res = await jsonp(`${SHEETS_API_URL}?action=payroll&workerId=${encodeURIComponent(workerId)}&range=${range}`);
         }
         if (!res || !res.success || !res.rows) {
           tbody.innerHTML = "";
@@ -2037,7 +2040,8 @@
           
           // Populate View As list and worker filter using workers from Workers sheet
           try {
-            const data = await jsonp(`${API_URL}?action=reportAll&workerId=${encodeURIComponent(workerId)}`);
+            // Use direct Sheets API for faster admin data loading
+            const data = await jsonp(`${SHEETS_API_URL}?action=reportAll&workerId=${encodeURIComponent(workerId)}`);
             
             const viewAsSelect = document.getElementById('viewAsSelect');
             const workerFilter = document.getElementById('workerFilter');

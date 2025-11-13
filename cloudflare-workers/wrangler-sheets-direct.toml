@@ -1,0 +1,16 @@
+name = "sheets-direct-proxy"
+main = "sheets-direct-proxy.js"
+compatibility_date = "2024-11-13"
+
+# Service account credentials (add via wrangler secret put)
+# Environment variables for Google Cloud service account
+# Run these commands after deploying:
+#   wrangler secret put GCP_PROJECT_ID
+#   wrangler secret put GCP_PRIVATE_KEY_ID
+#   wrangler secret put GCP_PRIVATE_KEY
+#   wrangler secret put GCP_CLIENT_EMAIL
+#   wrangler secret put GCP_CLIENT_ID
+
+[env.production]
+workers_dev = false
+route = "sheets-direct.s-garay.workers.dev/*"
