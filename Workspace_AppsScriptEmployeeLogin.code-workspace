@@ -1,87 +1,82 @@
 {
-	"folders": [
-		{
-			"name": "🏠 Carolina Lumpers Web (Root)",
-			"path": "."
-		},
-		{
-			"name": "⚛️ React Portal",
-			"path": "react-portal"
-		},
-		{
-			"name": "🔧 Google Apps Scripts",
-			"path": "GoogleAppsScripts"
-		},
-		{
-			"name": "☁️ AWS Infrastructure",
-			"path": "aws-infrastructure"
-		}
-	],
-	"settings": {
-		// File exclusions (keep explorer clean)
-		"files.exclude": {
-			"**/node_modules": true,
-			"**/.git": true,
-			"**/.DS_Store": true,
-			"**/Thumbs.db": true,
-			"**/__pycache__": true,
-			"**/*.pyc": true
-		},
-		
-		// Search exclusions (faster searches)
-		"search.exclude": {
-			"**/node_modules": true,
-			"**/dist": true,
-			"**/build": true,
-			"**/.git": true,
-			"**/package-lock.json": true,
-			"**/cdk.out": true
-		},
-		
-		// Editor settings
-		"editor.formatOnSave": true,
-		"editor.defaultFormatter": "esbenp.prettier-vscode",
-		"editor.codeActionsOnSave": {
-			"source.fixAll.eslint": "explicit"
-		},
-		
-		// Language-specific formatting
-		"[javascript]": {
-			"editor.defaultFormatter": "esbenp.prettier-vscode"
-		},
-		"[typescript]": {
-			"editor.defaultFormatter": "esbenp.prettier-vscode"
-		},
-		"[json]": {
-			"editor.defaultFormatter": "esbenp.prettier-vscode"
-		},
-		"[markdown]": {
-			"editor.wordWrap": "on"
-		},
-		
-		// Git settings
-		"git.autofetch": true,
-		"git.confirmSync": false,
-		
-		// TypeScript/JavaScript settings
-		"typescript.updateImportsOnFileMove.enabled": "always",
-		"javascript.updateImportsOnFileMove.enabled": "always",
-		
-		// Tailwind CSS IntelliSense
-		"tailwindCSS.experimental.classRegex": [
-			["clsx\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"]
-		]
-	},
-	"extensions": {
-		"recommendations": [
-			"esbenp.prettier-vscode",
-			"dbaeumer.vscode-eslint",
-			"bradlc.vscode-tailwindcss",
-			"github.copilot",
-			"github.copilot-chat",
-			"eamodio.gitlens",
-			"amazonwebservices.aws-toolkit-vscode",
-			"wakatime.vscode-wakatime"
-		]
-	}
+  "folders": [
+    {
+      "name": "🏠 Carolina Lumpers Web (Root)",
+      "path": "."
+    },
+    {
+      "name": "⚛️ React Portal",
+      "path": "react-portal"
+    },
+    {
+      "name": "🔧 Google Apps Scripts",
+      "path": "GoogleAppsScripts"
+    }
+  ],
+  "settings": {
+    // File exclusions (keep explorer clean)
+    "files.exclude": {
+      "**/node_modules": true,
+      "**/.git": true,
+      "**/.DS_Store": true,
+      "**/Thumbs.db": true,
+      "**/__pycache__": true,
+      "**/*.pyc": true
+    },
+
+    // Search exclusions (faster searches)
+    "search.exclude": {
+      "**/node_modules": true,
+      "**/dist": true,
+      "**/build": true,
+      "**/.git": true,
+      "**/package-lock.json": true,
+      "**/cdk.out": true
+    },
+
+    // Editor settings
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": "explicit"
+    },
+
+    // Language-specific formatting
+    "[javascript]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[typescript]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[json]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[markdown]": {
+      "editor.wordWrap": "on"
+    },
+
+    // Git settings
+    "git.autofetch": true,
+    "git.confirmSync": false,
+
+    // TypeScript/JavaScript settings
+    "typescript.updateImportsOnFileMove.enabled": "always",
+    "javascript.updateImportsOnFileMove.enabled": "always",
+
+    // Tailwind CSS IntelliSense
+    "tailwindCSS.experimental.classRegex": [
+      ["clsx\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"]
+    ]
+  },
+  "extensions": {
+    "recommendations": [
+      "esbenp.prettier-vscode",
+      "dbaeumer.vscode-eslint",
+      "bradlc.vscode-tailwindcss",
+      "github.copilot",
+      "github.copilot-chat",
+      "eamodio.gitlens",
+      "wakatime.vscode-wakatime"
+    ]
+  }
 }
