@@ -65,7 +65,7 @@ function TimeTrackingPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card>
           <div className="text-center">
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Total Clock-Ins Today</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">{t('timeTracking.totalClockInsToday', 'Total Clock-Ins Today')}</p>
             <p className="text-3xl font-bold text-gray-800 dark:text-white">
               {teamLoading ? '...' : totalClockIns}
             </p>
@@ -73,7 +73,7 @@ function TimeTrackingPage() {
         </Card>
         <Card>
           <div className="text-center">
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Workers Active</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">{t('timeTracking.workersActive', 'Workers Active')}</p>
             <p className="text-3xl font-bold text-gray-800 dark:text-white">
               {teamLoading ? '...' : uniqueWorkers}
             </p>
@@ -81,7 +81,7 @@ function TimeTrackingPage() {
         </Card>
         <Card>
           <div className="text-center">
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Filtered Results</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">{t('timeTracking.filteredResults', 'Filtered Results')}</p>
             <p className="text-3xl font-bold text-gray-800 dark:text-white">
               {filteredRecords.length}
             </p>
@@ -95,11 +95,11 @@ function TimeTrackingPage() {
           {/* Search */}
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Search
+              {t('common.search', 'Search')}
             </label>
             <input
               type="text"
-              placeholder="Search by worker name or site..."
+              placeholder={t('timeTracking.searchPlaceholder', 'Search by worker name or site...')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200"
@@ -109,14 +109,14 @@ function TimeTrackingPage() {
           {/* Worker Filter */}
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Filter by Worker
+              {t('timeTracking.filterByWorker', 'Filter by Worker')}
             </label>
             <select
               value={selectedWorker}
               onChange={(e) => setSelectedWorker(e.target.value)}
               className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200"
             >
-              <option value="all">All Workers ({uniqueWorkers})</option>
+              <option value="all">{t('timeTracking.allWorkers', 'All Workers')} ({uniqueWorkers})</option>
               {workers
                 .filter(w => records[w.id]?.length > 0)
                 .sort((a, b) => a.name.localeCompare(b.name))
@@ -131,15 +131,15 @@ function TimeTrackingPage() {
       </Card>
 
       {/* Records Table */}
-      <Card title={`Clock-In Records (${filteredRecords.length})`}>
+      <Card title={`${t('timeTracking.clockInRecords', 'Clock-In Records')} (${filteredRecords.length})`}>
         {teamLoading ? (
-          <Loading message="Loading records..." />
+          <Loading message={t('timeTracking.loadingRecords', 'Loading records...')} />
         ) : filteredRecords.length === 0 ? (
           <div className="text-center py-8">
             <p className="text-gray-600 dark:text-gray-400">
               {searchQuery || selectedWorker !== 'all' 
-                ? 'No records match your filters' 
-                : 'No clock-ins recorded today'}
+                ? t('timeTracking.noMatchingRecords', 'No records match your filters')
+                : t('timeTracking.noRecordsToday', 'No clock-ins recorded today')}
             </p>
           </div>
         ) : (
@@ -148,16 +148,16 @@ function TimeTrackingPage() {
               <thead>
                 <tr className="border-b border-gray-200 dark:border-gray-700">
                   <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">
-                    Worker
+                    {t('timeTracking.worker', 'Worker')}
                   </th>
                   <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">
-                    Site
+                    {t('common.site', 'Site')}
                   </th>
                   <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">
-                    Time
+                    {t('common.time', 'Time')}
                   </th>
                   <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">
-                    Distance
+                    {t('common.distance', 'Distance')}
                   </th>
                 </tr>
               </thead>
