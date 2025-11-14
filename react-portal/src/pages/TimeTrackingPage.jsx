@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
-import { sheetsApi } from '../services/sheets';
+// TODO: Migrate to Supabase - Clock-in records not yet implemented
+// import { sheetsApi } from '../services/sheets';
 import { format } from 'date-fns';
 import Card from '../components/Card';
 import Badge from '../components/Badge';
@@ -16,11 +17,15 @@ function TimeTrackingPage() {
   const [selectedWorker, setSelectedWorker] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Fetch all workers with today's clock-ins
+  // TODO: Migrate to Supabase - Clock-in records not yet implemented
   const { data: teamData, isLoading: teamLoading } = useQuery({
     queryKey: ['allWorkersDirect'],
-    queryFn: () => sheetsApi.getAllWorkersWithClockIns(),
+    queryFn: () => {
+      throw new Error('Clock-in records not yet migrated to Supabase. Please implement supabaseApi.getClockInsDirect()');
+      // return sheetsApi.getAllWorkersWithClockIns();
+    },
     staleTime: 60000,
+    enabled: false, // Disable until Supabase migration complete
   });
 
   const workers = teamData?.workers || [];
@@ -40,7 +45,7 @@ function TimeTrackingPage() {
   // Filter records
   const filteredRecords = allRecords.filter(record => {
     const matchesWorker = selectedWorker === 'all' || record.workerId === selectedWorker;
-    const matchesSearch = !searchQuery || 
+    const matchesSearch = !searchQuery ||
       record.worker?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       record.site?.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesWorker && matchesSearch;
@@ -137,7 +142,7 @@ function TimeTrackingPage() {
         ) : filteredRecords.length === 0 ? (
           <div className="text-center py-8">
             <p className="text-gray-600 dark:text-gray-400">
-              {searchQuery || selectedWorker !== 'all' 
+              {searchQuery || selectedWorker !== 'all'
                 ? t('timeTracking.noMatchingRecords', 'No records match your filters')
                 : t('timeTracking.noRecordsToday', 'No clock-ins recorded today')}
             </p>
@@ -163,7 +168,7 @@ function TimeTrackingPage() {
               </thead>
               <tbody>
                 {filteredRecords.map((record, index) => (
-                  <tr 
+                  <tr
                     key={index}
                     className="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50"
                   >
@@ -180,7 +185,7 @@ function TimeTrackingPage() {
                             }}
                           />
                         ) : null}
-                        <div 
+                        <div
                           className={`w-8 h-8 rounded-full bg-cls-amber flex items-center justify-center text-xs font-bold text-cls-charcoal ${record.worker?.photo ? 'hidden' : ''}`}
                         >
                           {record.worker?.name?.charAt(0) || '?'}

@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../services/api';
-import { sheetsApi } from '../services/sheets';
+// TODO: Migrate to Supabase - W9s management not yet implemented
+// import { sheetsApi } from '../services/sheets';
 import Card from './Card';
 import Badge from './Badge';
 import Button from './Button';
@@ -16,14 +17,23 @@ function W9Management({ user }) {
   const queryClient = useQueryClient();
   const [processingId, setProcessingId] = useState(null);
 
+  // TODO: Migrate to Supabase - W9s management not yet implemented
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ['pendingW9sDirect'],
-    queryFn: () => sheetsApi.getPendingW9s(),
-    staleTime: 60000, // 1 minute
+    queryFn: () => {
+      throw new Error('W9s management not yet migrated to Supabase. Please implement supabaseApi.getPendingW9s()');
+      // return sheetsApi.getPendingW9s();
+    },
+    staleTime: 60000,
+    enabled: false, // Disable until Supabase migration complete
   });
 
+  // TODO: Migrate to Supabase - Implement supabaseApi.updateW9Status()
   const approveMutation = useMutation({
-    mutationFn: (w9RecordId) => sheetsApi.updateW9Status(w9RecordId, 'Approved'),
+    mutationFn: (w9RecordId) => {
+      throw new Error('W9 approval not yet migrated to Supabase');
+      // return sheetsApi.updateW9Status(w9RecordId, 'Approved');
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['pendingW9sDirect'] });
       setProcessingId(null);
@@ -33,8 +43,12 @@ function W9Management({ user }) {
     },
   });
 
+  // TODO: Migrate to Supabase - Implement supabaseApi.updateW9Status() with rejection
   const rejectMutation = useMutation({
-    mutationFn: ({ w9RecordId, reason }) => sheetsApi.updateW9Status(w9RecordId, 'Rejected', reason),
+    mutationFn: ({ w9RecordId, reason }) => {
+      throw new Error('W9 rejection not yet migrated to Supabase');
+      // return sheetsApi.updateW9Status(w9RecordId, 'Rejected', reason);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['pendingW9sDirect'] });
       setProcessingId(null);

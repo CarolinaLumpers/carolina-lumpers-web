@@ -1,31 +1,36 @@
 /**
  * API Service Layer
- * Handles all communication with Google Apps Script backend
+ * Handles communication with both Supabase and Google Apps Script backend
  */
 
-const API_BASE = 'https://cls-proxy.s-garay.workers.dev';
+import simpleAuth from "./simpleAuth.js";
+
+const API_BASE = "https://cls-proxy.s-garay.workers.dev";
+
+// Check if we should use Supabase
+const USE_SUPABASE = import.meta.env.VITE_USE_SUPABASE === "true";
 
 /**
  * Helper to detect device information
  */
 function getDeviceInfo() {
   const ua = navigator.userAgent;
-  
-  let deviceType = 'Unknown';
-  if (/iPhone/.test(ua)) deviceType = 'iPhone';
-  else if (/iPad/.test(ua)) deviceType = 'iPad';
-  else if (/Android/.test(ua)) deviceType = 'Android';
-  else if (/Windows/.test(ua)) deviceType = 'Windows';
-  else if (/Macintosh|Mac OS X/.test(ua)) deviceType = 'macOS';
-  else if (/Linux/.test(ua)) deviceType = 'Linux';
-  
-  let browserType = 'Unknown Browser';
-  if (/Edg\//.test(ua)) browserType = 'Edge';
-  else if (/Chrome/.test(ua) && !/Edg/.test(ua)) browserType = 'Chrome';
-  else if (/Safari/.test(ua) && !/Chrome/.test(ua)) browserType = 'Safari';
-  else if (/Firefox/.test(ua)) browserType = 'Firefox';
-  else if (/Opera|OPR/.test(ua)) browserType = 'Opera';
-  
+
+  let deviceType = "Unknown";
+  if (/iPhone/.test(ua)) deviceType = "iPhone";
+  else if (/iPad/.test(ua)) deviceType = "iPad";
+  else if (/Android/.test(ua)) deviceType = "Android";
+  else if (/Windows/.test(ua)) deviceType = "Windows";
+  else if (/Macintosh|Mac OS X/.test(ua)) deviceType = "macOS";
+  else if (/Linux/.test(ua)) deviceType = "Linux";
+
+  let browserType = "Unknown Browser";
+  if (/Edg\//.test(ua)) browserType = "Edge";
+  else if (/Chrome/.test(ua) && !/Edg/.test(ua)) browserType = "Chrome";
+  else if (/Safari/.test(ua) && !/Chrome/.test(ua)) browserType = "Safari";
+  else if (/Firefox/.test(ua)) browserType = "Firefox";
+  else if (/Opera|OPR/.test(ua)) browserType = "Opera";
+
   return `${deviceType} - ${browserType}`;
 }
 
@@ -34,18 +39,18 @@ function getDeviceInfo() {
  */
 function jsonp(url) {
   return new Promise((resolve, reject) => {
-    const callbackName = 'jsonp_callback_' + Math.round(100000 * Math.random());
-    const script = document.createElement('script');
+    const callbackName = "jsonp_callback_" + Math.round(100000 * Math.random());
+    const script = document.createElement("script");
     const timeoutId = setTimeout(() => {
       cleanup();
-      reject(new Error('JSONP request timeout'));
+      reject(new Error("JSONP request timeout"));
     }, 30000); // 30 second timeout
-    
+
     window[callbackName] = (data) => {
       cleanup();
       resolve(data);
     };
-    
+
     function cleanup() {
       clearTimeout(timeoutId);
       delete window[callbackName];
@@ -53,13 +58,14 @@ function jsonp(url) {
         script.parentNode.removeChild(script);
       }
     }
-    
+
     script.onerror = () => {
       cleanup();
-      reject(new Error('JSONP request failed'));
+      reject(new Error("JSONP request failed"));
     };
-    
-    script.src = url + (url.indexOf('?') >= 0 ? '&' : '?') + 'callback=' + callbackName;
+
+    script.src =
+      url + (url.indexOf("?") >= 0 ? "&" : "?") + "callback=" + callbackName;
     document.head.appendChild(script);
   });
 }
@@ -72,16 +78,41 @@ export const api = {
    * Login user
    */
   login: async (email, password) => {
+    // Use Supabase authentication if enabled
+    if (USE_SUPABASE) {
+      console.log("🔄 Using Supabase authentication...");
+      // Import supabase here to avoid circular imports
+      const { supabaseApi } = await import("./supabase.js");
+      const result = await supabaseApi.signIn(email, password);
+
+      // Return in expected format
+      return {
+        success: true,
+        workerId: result.worker.id,
+        displayName: result.worker.display_name,
+        email: result.worker.email,
+        role: result.worker.role,
+        w9Status: result.worker.w9_status,
+        language: result.worker.language || "en",
+      };
+    }
+
+    // Fallback to legacy Google Apps Script
+    console.log("🔄 Using legacy Google Apps Script authentication...");
     const device = getDeviceInfo();
-    const url = `${API_BASE}?action=login&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}&device=${encodeURIComponent(device)}`;
-    
+    const url = `${API_BASE}?action=login&email=${encodeURIComponent(
+      email
+    )}&password=${encodeURIComponent(password)}&device=${encodeURIComponent(
+      device
+    )}`;
+
     const response = await fetch(url);
     const data = await response.json();
-    
+
     if (!data.success) {
-      throw new Error(data.message || 'Login failed');
+      throw new Error(data.message || "Login failed");
     }
-    
+
     return data;
   },
 
@@ -90,15 +121,19 @@ export const api = {
    */
   signup: async (email, password) => {
     const device = getDeviceInfo();
-    const url = `${API_BASE}?action=signup&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}&device=${encodeURIComponent(device)}`;
-    
+    const url = `${API_BASE}?action=signup&email=${encodeURIComponent(
+      email
+    )}&password=${encodeURIComponent(password)}&device=${encodeURIComponent(
+      device
+    )}`;
+
     const response = await fetch(url);
     const data = await response.json();
-    
+
     if (!data.success) {
-      throw new Error(data.message || 'Signup failed');
+      throw new Error(data.message || "Signup failed");
     }
-    
+
     return data;
   },
 
@@ -106,7 +141,9 @@ export const api = {
    * Get user role
    */
   whoami: async (workerId) => {
-    const url = `${API_BASE}?action=whoami&workerId=${encodeURIComponent(workerId)}`;
+    const url = `${API_BASE}?action=whoami&workerId=${encodeURIComponent(
+      workerId
+    )}`;
     const response = await fetch(url);
     return response.json();
   },
@@ -114,21 +151,25 @@ export const api = {
   /**
    * Clock in/out
    */
-  clockIn: async (workerId, lat, lng, lang = 'en', email = '') => {
+  clockIn: async (workerId, lat, lng, lang = "en", email = "") => {
     const device = getDeviceInfo();
-    const url = `${API_BASE}?action=clockin&workerId=${encodeURIComponent(workerId)}&lat=${lat}&lng=${lng}&lang=${lang}&email=${encodeURIComponent(email)}&device=${encodeURIComponent(device)}`;
-    
+    const url = `${API_BASE}?action=clockin&workerId=${encodeURIComponent(
+      workerId
+    )}&lat=${lat}&lng=${lng}&lang=${lang}&email=${encodeURIComponent(
+      email
+    )}&device=${encodeURIComponent(device)}`;
+
     try {
       // Use JSONP instead of fetch() - backend expects JSONP callbacks
       const data = await jsonp(url);
-      
+
       if (!data.success) {
-        throw new Error(data.error || data.message || 'Clock-in failed');
+        throw new Error(data.error || data.message || "Clock-in failed");
       }
-      
+
       return data;
     } catch (error) {
-      console.error('Clock-in error:', error);
+      console.error("Clock-in error:", error);
       throw error;
     }
   },
@@ -137,19 +178,21 @@ export const api = {
    * Get weekly report
    */
   getReport: async (workerId) => {
-    const url = `${API_BASE}?action=report&workerId=${encodeURIComponent(workerId)}`;
-    
+    const url = `${API_BASE}?action=report&workerId=${encodeURIComponent(
+      workerId
+    )}`;
+
     try {
       const response = await fetch(url);
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       const data = await response.json();
       return data;
     } catch (error) {
-      console.error('Report fetch error:', error);
+      console.error("Report fetch error:", error);
       throw error;
     }
   },
@@ -157,8 +200,10 @@ export const api = {
   /**
    * Get payroll data
    */
-  getPayroll: async (workerId, range = 'week') => {
-    const url = `${API_BASE}?action=payroll&workerId=${encodeURIComponent(workerId)}&range=${range}`;
+  getPayroll: async (workerId, range = "week") => {
+    const url = `${API_BASE}?action=payroll&workerId=${encodeURIComponent(
+      workerId
+    )}&range=${range}`;
     const response = await fetch(url);
     return response.json();
   },
@@ -167,7 +212,9 @@ export const api = {
    * Get W-9 status
    */
   getW9Status: async (workerId) => {
-    const url = `${API_BASE}?action=getW9Status&workerId=${encodeURIComponent(workerId)}`;
+    const url = `${API_BASE}?action=getW9Status&workerId=${encodeURIComponent(
+      workerId
+    )}`;
     const response = await fetch(url);
     return response.json();
   },
@@ -175,8 +222,10 @@ export const api = {
   /**
    * Admin: Get all reports
    */
-  getReportAll: async (workerId, workersCsv = '') => {
-    let url = `${API_BASE}?action=reportAll&workerId=${encodeURIComponent(workerId)}`;
+  getReportAll: async (workerId, workersCsv = "") => {
+    let url = `${API_BASE}?action=reportAll&workerId=${encodeURIComponent(
+      workerId
+    )}`;
     if (workersCsv) {
       url += `&workers=${encodeURIComponent(workersCsv)}`;
     }
@@ -187,8 +236,10 @@ export const api = {
   /**
    * Admin: Get time edit requests
    */
-  getTimeEditRequests: async (requesterId, status = 'pending') => {
-    const url = `${API_BASE}?action=getTimeEditRequests&requesterId=${encodeURIComponent(requesterId)}&status=${status}`;
+  getTimeEditRequests: async (requesterId, status = "pending") => {
+    const url = `${API_BASE}?action=getTimeEditRequests&requesterId=${encodeURIComponent(
+      requesterId
+    )}&status=${status}`;
     const response = await fetch(url);
     return response.json();
   },
@@ -198,7 +249,11 @@ export const api = {
    */
   approveTimeEdit: async (requesterId, requestId) => {
     const device = getDeviceInfo();
-    const url = `${API_BASE}?action=approveTimeEdit&requesterId=${encodeURIComponent(requesterId)}&requestId=${encodeURIComponent(requestId)}&device=${encodeURIComponent(device)}`;
+    const url = `${API_BASE}?action=approveTimeEdit&requesterId=${encodeURIComponent(
+      requesterId
+    )}&requestId=${encodeURIComponent(requestId)}&device=${encodeURIComponent(
+      device
+    )}`;
     const response = await fetch(url);
     return response.json();
   },
@@ -206,9 +261,13 @@ export const api = {
   /**
    * Admin: Deny time edit
    */
-  denyTimeEdit: async (requesterId, requestId, reason = '') => {
+  denyTimeEdit: async (requesterId, requestId, reason = "") => {
     const device = getDeviceInfo();
-    const url = `${API_BASE}?action=denyTimeEdit&requesterId=${encodeURIComponent(requesterId)}&requestId=${encodeURIComponent(requestId)}&reason=${encodeURIComponent(reason)}&device=${encodeURIComponent(device)}`;
+    const url = `${API_BASE}?action=denyTimeEdit&requesterId=${encodeURIComponent(
+      requesterId
+    )}&requestId=${encodeURIComponent(requestId)}&reason=${encodeURIComponent(
+      reason
+    )}&device=${encodeURIComponent(device)}`;
     const response = await fetch(url);
     return response.json();
   },
@@ -217,7 +276,9 @@ export const api = {
    * Admin: Get pending W-9s
    */
   listPendingW9s: async (requesterId) => {
-    const url = `${API_BASE}?action=listPendingW9s&requesterId=${encodeURIComponent(requesterId)}`;
+    const url = `${API_BASE}?action=listPendingW9s&requesterId=${encodeURIComponent(
+      requesterId
+    )}`;
     const response = await fetch(url);
     return response.json();
   },
@@ -227,7 +288,11 @@ export const api = {
    */
   approveW9: async (w9RecordId, adminId) => {
     const device = getDeviceInfo();
-    const url = `${API_BASE}?action=approveW9&w9RecordId=${encodeURIComponent(w9RecordId)}&adminId=${encodeURIComponent(adminId)}&device=${encodeURIComponent(device)}`;
+    const url = `${API_BASE}?action=approveW9&w9RecordId=${encodeURIComponent(
+      w9RecordId
+    )}&adminId=${encodeURIComponent(adminId)}&device=${encodeURIComponent(
+      device
+    )}`;
     const response = await fetch(url);
     return response.json();
   },
@@ -237,7 +302,11 @@ export const api = {
    */
   rejectW9: async (w9RecordId, adminId, reason) => {
     const device = getDeviceInfo();
-    const url = `${API_BASE}?action=rejectW9&w9RecordId=${encodeURIComponent(w9RecordId)}&adminId=${encodeURIComponent(adminId)}&reason=${encodeURIComponent(reason)}&device=${encodeURIComponent(device)}`;
+    const url = `${API_BASE}?action=rejectW9&w9RecordId=${encodeURIComponent(
+      w9RecordId
+    )}&adminId=${encodeURIComponent(adminId)}&reason=${encodeURIComponent(
+      reason
+    )}&device=${encodeURIComponent(device)}`;
     const response = await fetch(url);
     return response.json();
   },

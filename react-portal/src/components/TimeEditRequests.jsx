@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../services/api';
-import { sheetsApi } from '../services/sheets';
+// TODO: Migrate to Supabase - Time edit requests not yet implemented
+// import { sheetsApi } from '../services/sheets';
 import Card from './Card';
 import Badge from './Badge';
 import Button from './Button';
@@ -16,14 +17,23 @@ function TimeEditRequests({ user }) {
   const queryClient = useQueryClient();
   const [processingId, setProcessingId] = useState(null);
 
+  // TODO: Migrate to Supabase - Time edit requests not yet implemented
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ['timeEditRequestsDirect'],
-    queryFn: () => sheetsApi.getTimeEditRequests(),
-    staleTime: 60000, // 1 minute
+    queryFn: () => {
+      throw new Error('Time edit requests not yet migrated to Supabase. Please implement supabaseApi.getTimeEditRequests()');
+      // return sheetsApi.getTimeEditRequests();
+    },
+    staleTime: 60000,
+    enabled: false, // Disable until Supabase migration complete
   });
 
+  // TODO: Migrate to Supabase - Implement supabaseApi.updateTimeEditStatus()
   const approveMutation = useMutation({
-    mutationFn: (requestId) => sheetsApi.updateTimeEditStatus(requestId, 'Approved'),
+    mutationFn: (requestId) => {
+      throw new Error('Time edit approval not yet migrated to Supabase');
+      // return sheetsApi.updateTimeEditStatus(requestId, 'Approved');
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['timeEditRequestsDirect'] });
       setProcessingId(null);
@@ -33,8 +43,12 @@ function TimeEditRequests({ user }) {
     },
   });
 
+  // TODO: Migrate to Supabase - Implement supabaseApi.updateTimeEditStatus() with denial
   const denyMutation = useMutation({
-    mutationFn: ({ requestId, reason }) => sheetsApi.updateTimeEditStatus(requestId, 'Denied', reason),
+    mutationFn: ({ requestId, reason }) => {
+      throw new Error('Time edit denial not yet migrated to Supabase');
+      // return sheetsApi.updateTimeEditStatus(requestId, 'Denied', reason);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['timeEditRequestsDirect'] });
       setProcessingId(null);

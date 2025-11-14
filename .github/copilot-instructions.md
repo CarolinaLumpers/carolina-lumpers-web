@@ -12,6 +12,34 @@ This includes:
 - Outlining expected behavior and user experience
 - Waiting for explicit approval ("yes", "let's go", "proceed", etc.)
 
+### Migration Progress Documentation (CRITICAL)
+**ALWAYS update `react-portal/MIGRATION_PROGRESS.md` when making Supabase migration changes.**
+
+Update the document when:
+- Completing a migration phase (Phase 1-5)
+- Implementing new Supabase schemas or tables
+- Adding new API methods to `supabase.js`
+- Migrating React components from Google Sheets to Supabase
+- Discovering issues or limitations during migration
+- Making breaking changes to legacy code
+- Updating migration priorities or timelines
+
+Keep these sections current:
+- **Migration Progress** - Check off completed items, update status
+- **Database Schema** - Add new tables, indexes, RLS policies
+- **API Methods Implemented** - Document new Supabase methods
+- **Files Updated** - Track component migrations
+- **Current Status** - Update "What Works" and "What's Disabled" lists
+- **Statistics** - Update code changes, database progress, feature availability
+- **Known Issues** - Add newly discovered limitations
+- **Next Steps** - Revise based on current progress
+
+**Example workflow:**
+1. Complete W9 schema creation → Update Phase 2 status to "Complete"
+2. Implement `supabaseApi.getPendingW9s()` → Add to "API Methods Implemented"
+3. Enable W9Management.jsx queries → Update "Files Updated" and "Feature Availability"
+4. Test and find issue → Add to "Known Issues & Limitations"
+
 **Example:**
 ```
 User: "Add cache busting"
@@ -27,9 +55,10 @@ Agent: [NOW proceeds with code changes]
 ## System Architecture
 
 ### Multi-Repository Structure
-This workspace contains **two distinct systems** that communicate via API:
+This workspace contains **three distinct systems**:
 1. **carolina-lumpers-web/** - Static frontend (HTML/CSS/JS) hosted on GCP
-2. **GoogleAppsScripts/** - Backend services (Google Apps Script) with multiple projects
+2. **react-portal/** - React SPA migrating from Google Sheets to Supabase PostgreSQL
+3. **GoogleAppsScripts/** - Backend services (Google Apps Script) with multiple projects
    - **EmployeeLogin/** - Core time tracking system (deployed web app)
    - **LoggingLibrary/** - Centralized logging (v1.2.0, deployed as library)
    - **PayrollProject/** - Payroll generation
@@ -38,6 +67,26 @@ This workspace contains **two distinct systems** that communicate via API:
    - **VendorSync/** - Vendor data sync
    - **ClockinFlow/** - Batch clock-in operations
    - **JobApplication/** - Application processing (deployed web app, uses CLS_AppSheet_Application_Form)
+
+### React Portal Architecture (ACTIVE MIGRATION)
+```
+React Portal (localhost:5173)
+    ↓ Feature flag: VITE_USE_SUPABASE=true
+    ├── Supabase PostgreSQL (PRIMARY - Phase 1-5)
+    │   ├── workers table (✅ Complete - 17 active records)
+    │   ├── w9_submissions table (❌ TODO - Phase 2)
+    │   ├── time_edit_requests table (❌ TODO - Phase 3)
+    │   ├── clock_ins table (❌ TODO - Phase 4)
+    │   └── payroll_line_items table (❌ TODO - Phase 5)
+    │
+    └── Google Sheets via Proxy (LEGACY - Being Deprecated)
+        ↓ http://localhost:3001/api/sheets
+        └── CLS_Hub_Backend spreadsheet
+```
+
+**Migration Status**: Phase 1 Complete (Workers) - See `react-portal/MIGRATION_PROGRESS.md`
+**Active Development**: Migrating from Google Sheets backend to Supabase PostgreSQL
+**Documentation**: All migration changes MUST be documented in `react-portal/MIGRATION_PROGRESS.md`
 
 ### Critical API Flow
 ```
@@ -230,7 +279,7 @@ handleTimeEditRequest_() {
 ### Admin Tools (employeeDashboard.html)
 - **View As Mode**: Admin-only feature to view/manage other workers' data
 - **Bulk Reports**: Load all clock-ins with optional worker filter (serverside CSV filter)
-- **Role-based UI**: Show/hide panels based on `USER_ROLE` (Admin/Lead/Worker)
+- **Role-based UI**: Show/hide panels based on `USER_ROLE` (Admin/Supervisor/Worker)
 
 ### Job Application Form (apply.html)
 - **6-Step Wizard**: Multi-step form with progress bar and validation
@@ -375,7 +424,7 @@ testClockInLogging()            // Test centralized logging (4 tests)
 ### Find Worker Role
 ```javascript
 const role = await jsonp(`${API_URL}?action=whoami&workerId=${workerId}`);
-// Returns: { ok: true, role: 'Admin' | 'Lead' | 'Worker' }
+// Returns: { ok: true, role: 'Admin' | 'Supervisor' | 'Worker' }
 ```
 
 ### Get Edit Status for Clock-in Entry
@@ -572,6 +621,7 @@ $result.data.values
 
 - **Frontend**: `carolina-lumpers-web/README.md`
 - **React Portal**: `react-portal/README.md`
+- **React Portal Migration**: `react-portal/MIGRATION_PROGRESS.md` ⭐ **UPDATE FREQUENTLY**
 - **Backend EmployeeLogin**: `GoogleAppsScripts/EmployeeLogin/README.md`
 - **Database Schema**: `.github/DATABASE_SCHEMA.md` (22 sheets, complete structure)
 - **Centralized Logging**: `GoogleAppsScripts/LoggingLibrary/START_HERE.md`

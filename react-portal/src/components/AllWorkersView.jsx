@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
-import { sheetsApi } from '../services/sheets';
+// TODO: Remove sheets import after full Supabase migration
+// import { sheetsApi } from '../services/sheets';
+import { supabaseApi } from '../services/supabase';
 import Card from './Card';
 import Badge from './Badge';
 import Loading from './Loading';
@@ -15,9 +17,18 @@ function AllWorkersView({ user }) {
   const [showAddWorkerModal, setShowAddWorkerModal] = useState(false);
   const [editingWorker, setEditingWorker] = useState(null);
 
+  const useSupabase = import.meta.env.VITE_USE_SUPABASE === 'true';
+
   const { data, isLoading, error, refetch } = useQuery({
-    queryKey: ['allWorkersDirect'],
-    queryFn: () => sheetsApi.getAllWorkersWithClockIns(),
+    queryKey: useSupabase ? ['allWorkersSupabase'] : ['allWorkersDirect'],
+    queryFn: () => {
+      if (useSupabase) {
+        return supabaseApi.getAllWorkersWithClockIns();
+      }
+      // TODO: Migrate to Supabase - legacy Google Sheets fallback
+      throw new Error('Legacy Google Sheets API disabled. Please set VITE_USE_SUPABASE=true');
+      // return sheetsApi.getAllWorkersWithClockIns();
+    },
     staleTime: 60000, // 1 minute
   });
 
@@ -124,7 +135,7 @@ function AllWorkersView({ user }) {
                       />
                     ) : null}
                     {/* Initials fallback */}
-                    <div 
+                    <div
                       className={`w-12 h-12 rounded-full bg-cls-amber flex items-center justify-center text-lg font-bold text-cls-charcoal border-2 border-cls-amber ${worker.photo ? 'hidden' : ''}`}
                     >
                       {worker.name?.charAt(0) || 'U'}
@@ -139,7 +150,7 @@ function AllWorkersView({ user }) {
                     </div>
                   </div>
                   <Badge variant={hasClockedIn ? 'success' : 'default'}>
-                    {hasClockedIn 
+                    {hasClockedIn
                       ? t('admin.workers.active', 'Active')
                       : t('admin.workers.inactive', 'No Clock-In')
                     }
@@ -217,11 +228,11 @@ function WorkerDetailsModal({ worker, records, onClose }) {
   const { t } = useTranslation();
 
   return (
-    <div 
+    <div
       className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
       onClick={onClose}
     >
-      <div 
+      <div
         className="bg-white dark:bg-cls-charcoal rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
@@ -323,11 +334,28 @@ function WorkerDetailsModal({ worker, records, onClose }) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <DetailItem label="QuickBooks ID" value={worker.qboid} />
               <DetailItem label="W-9 Status" value={worker.w9Status}>
-                <Badge variant={worker.w9Status === 'Approved' ? 'success' : 'warning'}>
-                  {worker.w9Status || t('admin.workers.notSubmitted', 'Not Submitted')}
+                <Badge variant={worker.w9Status === 'approved' ? 'success' : worker.w9Status === 'submitted' ? 'warning' : 'default'}>
+                  {worker.w9Status === 'approved' ? 'Approved' :
+                    worker.w9Status === 'submitted' ? 'Submitted' :
+                      worker.w9Status === 'pending' ? 'Pending' :
+                        worker.w9Status === 'missing' ? 'Missing' :
+                          t('admin.workers.notSubmitted', 'Not Submitted')}
                 </Badge>
               </DetailItem>
             </div>
+
+            {/* Notes Section - Full Width */}
+            {worker.notes && (
+              <div className="mt-4">
+                <DetailItem label="Notes" value={worker.notes}>
+                  <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                    <p className="text-gray-800 dark:text-gray-200 whitespace-pre-wrap">
+                      {worker.notes}
+                    </p>
+                  </div>
+                </DetailItem>
+              </div>
+            )}
           </div>
 
           {/* Today's Activity */}
@@ -405,13 +433,14 @@ function AddWorkerModal({ onClose, onSuccess }) {
     email: '',
     phone: '',
     role: 'Worker',
-    serviceItem: '',
+    serviceItem: 'Lumper Service',
     hourlyRate: '',
     flatRateBonus: '',
     availability: 'Active',
-    appAccess: 'Enabled',
+    appAccess: 'Worker',
     primaryLanguage: 'English',
-    w9Status: 'Not Submitted',
+    w9Status: 'pending',
+    notes: '',
   });
 
   const handleChange = (e) => {
@@ -427,15 +456,42 @@ function AddWorkerModal({ onClose, onSuccess }) {
     try {
       // Generate display name
       const displayName = `${formData.firstName} ${formData.lastName}`.trim();
-      
-      await sheetsApi.addWorker({
-        ...formData,
-        displayName,
-        applicationId: '',
-        workHistory: '',
-        photo: '',
-        qboid: '',
-      });
+
+      const useSupabase = import.meta.env.VITE_USE_SUPABASE === 'true';
+
+      if (useSupabase) {
+        // Map language from full name to code
+        const languageMap = {
+          'English': 'en',
+          'Spanish': 'es',
+          'Portuguese': 'pt'
+        };
+
+        // Use Supabase API to add worker
+        await supabaseApi.addWorker({
+          id: formData.workerId,
+          display_name: displayName,
+          email: formData.email,
+          phone: formData.phone,
+          role: formData.role,
+          hourly_rate: parseFloat(formData.hourlyRate) || null,
+          w9_status: formData.w9Status,
+          language: languageMap[formData.primaryLanguage] || 'en',
+          is_active: formData.availability === 'Active',
+          notes: formData.notes || null,
+        });
+      } else {
+        // TODO: Migrate to Supabase - legacy Google Sheets fallback disabled
+        throw new Error('Legacy Google Sheets API disabled. Please set VITE_USE_SUPABASE=true');
+        // await sheetsApi.addWorker({
+        //   ...formData,
+        //   displayName,
+        //   applicationId: '',
+        //   workHistory: '',
+        //   photo: '',
+        //   qboid: '',
+        // });
+      }
 
       onSuccess();
     } catch (err) {
@@ -445,11 +501,11 @@ function AddWorkerModal({ onClose, onSuccess }) {
   };
 
   return (
-    <div 
+    <div
       className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
       onClick={onClose}
     >
-      <div 
+      <div
         className="bg-white dark:bg-cls-charcoal rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
@@ -585,7 +641,7 @@ function AddWorkerModal({ onClose, onSuccess }) {
                     className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200"
                   >
                     <option value="Worker">Worker</option>
-                    <option value="Lead">Lead</option>
+                    <option value="Supervisor">Supervisor</option>
                     <option value="Admin">Admin</option>
                   </select>
                 </div>
@@ -658,6 +714,44 @@ function AddWorkerModal({ onClose, onSuccess }) {
                     <option value="Spanish">Spanish</option>
                     <option value="Portuguese">Portuguese</option>
                   </select>
+                </div>
+              </div>
+            </div>
+
+            {/* System Information */}
+            <div>
+              <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-3">
+                System Information
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    W-9 Status
+                  </label>
+                  <select
+                    name="w9Status"
+                    value={formData.w9Status}
+                    onChange={handleChange}
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200"
+                  >
+                    <option value="pending">Pending</option>
+                    <option value="submitted">Submitted</option>
+                    <option value="approved">Approved</option>
+                    <option value="missing">Missing</option>
+                  </select>
+                </div>
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Notes
+                  </label>
+                  <textarea
+                    name="notes"
+                    value={formData.notes || ''}
+                    onChange={handleChange}
+                    rows={3}
+                    placeholder="Optional notes about this worker..."
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 resize-vertical"
+                  />
                 </div>
               </div>
             </div>

@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
 import { format, subDays, startOfWeek, endOfWeek, startOfMonth, endOfMonth } from 'date-fns';
-import { sheetsApi } from '../services/sheets';
+// TODO: Migrate to Supabase - Payroll not yet implemented
+// import { sheetsApi } from '../services/sheets';
 import { useAuth } from '../features/auth/AuthContext';
 import Card from './Card';
 import Table from './Table';
@@ -57,11 +58,15 @@ const PayrollView = () => {
 
     const filterOptions = getFilterOptions();
 
-    // Fetch payroll data using direct Sheets API
+    // TODO: Migrate to Supabase - Payroll data not yet implemented
     const { data, isLoading, error } = useQuery({
         queryKey: ['payroll-direct', user.workerId, dateRange, filterOptions],
-        queryFn: () => sheetsApi.getPayrollDirect(user.workerId, filterOptions),
-        staleTime: 60000, // 1 minute
+        queryFn: () => {
+            throw new Error('Payroll data not yet migrated to Supabase. Please implement supabaseApi.getPayrollDirect()');
+            // return sheetsApi.getPayrollDirect(user.workerId, filterOptions);
+        },
+        staleTime: 60000,
+        enabled: false, // Disable until Supabase migration complete
     });
 
     const columns = [
@@ -112,8 +117,8 @@ const PayrollView = () => {
                 <button
                     onClick={() => setDateRange('week')}
                     className={`px-4 py-2 rounded-lg font-medium transition-colors ${dateRange === 'week'
-                            ? 'bg-cls-amber text-cls-charcoal'
-                            : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                        ? 'bg-cls-amber text-cls-charcoal'
+                        : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
                         }`}
                 >
                     {t('payroll.thisWeek', 'This Week')}
@@ -121,8 +126,8 @@ const PayrollView = () => {
                 <button
                     onClick={() => setDateRange('lastWeek')}
                     className={`px-4 py-2 rounded-lg font-medium transition-colors ${dateRange === 'lastWeek'
-                            ? 'bg-cls-amber text-cls-charcoal'
-                            : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                        ? 'bg-cls-amber text-cls-charcoal'
+                        : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
                         }`}
                 >
                     {t('payroll.lastWeek', 'Last Week')}
@@ -130,8 +135,8 @@ const PayrollView = () => {
                 <button
                     onClick={() => setDateRange('month')}
                     className={`px-4 py-2 rounded-lg font-medium transition-colors ${dateRange === 'month'
-                            ? 'bg-cls-amber text-cls-charcoal'
-                            : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                        ? 'bg-cls-amber text-cls-charcoal'
+                        : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
                         }`}
                 >
                     {t('payroll.thisMonth', 'This Month')}
@@ -152,14 +157,14 @@ const PayrollView = () => {
                 </Card>
                 <Card variant="amber">
                     <div className="text-center">
-                            <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
-                                {t('payroll.totalEarnings', 'Total Earnings')}
-                            </p>
-                            <p className="text-3xl font-bold text-cls-charcoal dark:text-white">
-                                ${totalEarnings.toFixed(2)}
-                            </p>
-                        </div>
-                    </Card>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+                            {t('payroll.totalEarnings', 'Total Earnings')}
+                        </p>
+                        <p className="text-3xl font-bold text-cls-charcoal dark:text-white">
+                            ${totalEarnings.toFixed(2)}
+                        </p>
+                    </div>
+                </Card>
             </div>
 
             {/* Detailed Breakdown */}

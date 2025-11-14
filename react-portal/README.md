@@ -6,7 +6,7 @@ Modern, production-ready React-based employee portal for Carolina Lumpers Servic
 
 **Current State:** Google Apps Script backend (operational)  
 **Target State:** Supabase + Vercel (free tier)  
-**Progress:** React Portal 95% complete, ready for Supabase integration  
+**Progress:** React Portal 95% complete, ready for Supabase integration
 
 ## 📋 Table of Contents
 
@@ -23,18 +23,21 @@ Modern, production-ready React-based employee portal for Carolina Lumpers Servic
 ## 🚀 Migration Plan
 
 ### **Phase 1: Supabase Setup (Week 1)**
+
 1. Create Supabase project (free tier)
 2. Design database schema (replace Google Sheets)
 3. Set up Row Level Security (RLS) policies
 4. Create initial data migration scripts
 
-### **Phase 2: API Migration (Week 1-2)**  
+### **Phase 2: API Migration (Week 1-2)**
+
 1. Replace Google Apps Script API calls with Supabase queries
 2. Update authentication to Supabase Auth
 3. Implement real-time subscriptions
 4. Test parallel with existing system
 
 ### **Phase 3: Deployment (Week 2)**
+
 1. Deploy to Vercel free tier
 2. Configure custom domain
 3. Run parallel with Google system
@@ -48,7 +51,8 @@ Modern, production-ready React-based employee portal for Carolina Lumpers Servic
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Node.js 18+ and npm  
+
+- Node.js 18+ and npm
 - Supabase account (migration target)
 - Modern browser with geolocation support
 
@@ -72,17 +76,20 @@ npm start
 ### First Time Setup
 
 1. Copy environment template:
+
    ```bash
    cp .env.example .env.local
    ```
 
 2. Configure `.env.local`:
+
    ```env
    VITE_API_BASE_URL=https://cls-proxy.s-garay.workers.dev
    VITE_SIGNUP_URL=https://script.google.com/macros/s/.../exec
    ```
 
 3. Start development:
+
    ```bash
    npm run dev
    ```
@@ -94,22 +101,25 @@ npm start
 ## ✨ Features
 
 ### For Workers
+
 ✅ **GPS-based Clock-In** - High-accuracy geolocation with 0.3 mile geofence validation  
 ✅ **Real-time Clock-In History** - Today's entries with status badges (confirmed, pending, editing)  
 ✅ **Payroll View** - Weekly/monthly summaries with detailed breakdown (hours, rate, earnings)  
 ✅ **Time Edit Requests** - Submit corrections for admin approval  
 ✅ **W-9 Management** - Submit W-9 forms, track approval status with real-time banner  
 ✅ **Profile Management** - View and update personal information  
-✅ **Multilingual Support** - Full translation in English, Spanish, Portuguese  
+✅ **Multilingual Support** - Full translation in English, Spanish, Portuguese
 
 ### For Admins/Leads
+
 ✅ **All Workers Dashboard** - Real-time overview of today's activity with status badges  
 ✅ **Time Edit Approvals** - Review and approve/deny worker time correction requests  
 ✅ **W-9 Approvals** - Review submitted W-9s with PDF viewer integration  
 ✅ **Worker Management** - View detailed worker history (future: CRUD operations)  
-✅ **Role-based Access** - Admin tools only visible to authorized roles  
+✅ **Role-based Access** - Admin tools only visible to authorized roles
 
 ### Technical Features
+
 ✅ **Progressive Web App (PWA)** - Installable, works offline  
 ✅ **Direct Sheets Access** - Fast read-only API via OAuth service account (optional proxy server)  
 ✅ **Auto-refresh** - Real-time data updates every 30-60 seconds  
@@ -117,7 +127,7 @@ npm start
 ✅ **Dark Mode Ready** - Theme context implemented (toggle UI coming soon)  
 ✅ **Session Persistence** - Stay logged in across browser refreshes  
 ✅ **Error Boundaries** - Graceful error handling prevents crashes  
-✅ **Loading States** - Clear feedback during API calls  
+✅ **Loading States** - Clear feedback during API calls
 
 ---
 
@@ -203,38 +213,45 @@ react-portal/
 ## 🛠️ Technology Stack
 
 ### Core
+
 - **React 18.3** - UI library with concurrent features
 - **Vite 5.4** - Next-generation build tool (instant HMR)
 - **React Router 6.26** - Client-side routing with data loading
 
 ### State Management
+
 - **TanStack Query 5.56** - Server state management with caching
 - **Zustand 5.0** - Lightweight client state (future use)
 - **React Context** - Auth state, theme context
 
 ### Styling
+
 - **Tailwind CSS 3.4** - Utility-first CSS framework
 - **PostCSS** - CSS processing with autoprefixer
 - **Custom Design Tokens** - `cls-amber`, `cls-charcoal` colors
 
 ### Internationalization
+
 - **i18next 23.15** - Translation framework
 - **react-i18next 15.0** - React bindings for i18next
 - **3 Languages** - English, Spanish, Portuguese (100+ keys each)
 
 ### Development
+
 - **Vitest 2.1** - Unit testing (setup, not yet written)
 - **@testing-library/react 16.0** - React testing utilities
 - **ESLint** - Code linting
 
 ### PWA
+
 - **vite-plugin-pwa 0.20** - Progressive Web App support
 - **Service Workers** - Offline capabilities (future implementation)
 
 ### Backend Integration
-- **Current:** Google Apps Script + Cloudflare Workers proxy  
-- **Target:** Supabase (PostgreSQL + Auth + Storage + Real-time)  
-- **Migration:** Parallel implementation, switch when stable  
+
+- **Current:** Google Apps Script + Cloudflare Workers proxy
+- **Target:** Supabase (PostgreSQL + Auth + Storage + Real-time)
+- **Migration:** Parallel implementation, switch when stable
 
 ---
 
@@ -245,7 +262,7 @@ react-portal/
 **Endpoint:** `https://cls-proxy.s-garay.workers.dev`  
 **Proxy Target:** `https://script.google.com/macros/s/AKfycbwHBLEQ5QHuhD-O4uI4hRN_5_yS9YsFgtn_dMAdoAO2C7zHLoi3qfHO82vas3Uv0wXXpg/exec`  
 **Status:** ✅ Production system (15 employees, 150-250 API calls/day)  
-**Performance:** 2-5 second response times  
+**Performance:** 2-5 second response times
 
 ### Target: Supabase (Migration Goal)
 
@@ -253,38 +270,39 @@ react-portal/
 **Auth:** Supabase Auth (replaces custom Google Apps Script auth)  
 **API:** Auto-generated REST + GraphQL (replaces manual script functions)  
 **Real-time:** WebSocket subscriptions (replaces manual polling)  
-**Expected Performance:** 200ms response times (10x improvement)  
+**Expected Performance:** 200ms response times (10x improvement)
 
 **Available Actions** (30+ API functions):
+
 ```javascript
 // Authentication
-api.login(email, password, lang, device)
-api.signup(userData)
-api.whoami(workerId)
+api.login(email, password, lang, device);
+api.signup(userData);
+api.whoami(workerId);
 
 // Clock-In
-api.clockIn(workerId, lat, lng, lang, email)
-api.getReport(workerId)
-api.getTimeEntryStatus(workerId, recordId)
+api.clockIn(workerId, lat, lng, lang, email);
+api.getReport(workerId);
+api.getTimeEntryStatus(workerId, recordId);
 
 // Time Edits
-api.submitTimeEdit(employeeId, recordId, originalTime, requestedTime, reason)
-api.getTimeEditRequests(requesterId, status)
-api.approveTimeEdit(requesterId, requestId)
-api.denyTimeEdit(requesterId, requestId, reason)
+api.submitTimeEdit(employeeId, recordId, originalTime, requestedTime, reason);
+api.getTimeEditRequests(requesterId, status);
+api.approveTimeEdit(requesterId, requestId);
+api.denyTimeEdit(requesterId, requestId, reason);
 
 // Payroll
-api.getPayroll(workerId, dateRange)
-api.getPayrollPdf(workerId, dateRange)
+api.getPayroll(workerId, dateRange);
+api.getPayrollPdf(workerId, dateRange);
 
 // W-9
-api.getW9Status(workerId)
-api.listPendingW9s(requesterId)
-api.approveW9(w9RecordId, adminId)
-api.rejectW9(w9RecordId, adminId, reason)
+api.getW9Status(workerId);
+api.listPendingW9s(requesterId);
+api.approveW9(w9RecordId, adminId);
+api.rejectW9(w9RecordId, adminId, reason);
 
 // Admin
-api.getReportAll(workerId, workerFilter)
+api.getReportAll(workerId, workerFilter);
 ```
 
 ### Secondary API: Direct Sheets Access (Optional)
@@ -294,6 +312,7 @@ api.getReportAll(workerId, workerFilter)
 **Use Cases:** Loading large datasets, reports, exports
 
 **Setup:**
+
 ```bash
 cd server
 npm install
@@ -302,14 +321,16 @@ npm start
 ```
 
 **Available Functions:**
+
 ```javascript
 // From src/services/sheets.js
-sheetsApi.getWorkersDirect()                    // Workers sheet
-sheetsApi.getPayrollDirect(workerId, date)      // Payroll LineItems
-sheetsApi.getClockInsDirect(workerId, date)     // ClockIn sheet
+sheetsApi.getWorkersDirect(); // Workers sheet
+sheetsApi.getPayrollDirect(workerId, date); // Payroll LineItems
+sheetsApi.getClockInsDirect(workerId, date); // ClockIn sheet
 ```
 
 **When to Use:**
+
 - ✅ Fast reads for dashboards/reports
 - ✅ Exporting large datasets
 - ❌ Writing data (use Apps Script API)
@@ -358,6 +379,7 @@ python -m http.server 8010
 ### Environment Variables
 
 Create `.env.local`:
+
 ```env
 # API Endpoints
 VITE_API_BASE_URL=https://cls-proxy.s-garay.workers.dev
@@ -374,12 +396,14 @@ VITE_GOOGLE_ANALYTICS_ID=
 ### Dev Tools
 
 **UserSwitcher Component** (Dev only):
+
 - Purple floating button in bottom-right
 - Switch between users to test different roles
 - Auto-hidden in production
 - See `USER_SWITCHER.md` for details
 
 **React DevTools:**
+
 - Install browser extension
 - Inspect component tree
 - View props, state, context
@@ -398,6 +422,7 @@ npm run build
 ### Deployment Options
 
 #### **Option 1: Same GCP Bucket (Subdirectory)**
+
 ```bash
 # Build React app
 npm run build
@@ -409,6 +434,7 @@ gsutil -m rsync -r dist gs://carolina-lumpers-web/portal
 ```
 
 #### **Option 2: Separate Subdomain**
+
 ```bash
 # Build
 npm run build
@@ -420,6 +446,7 @@ gsutil -m rsync -r dist gs://portal-carolinalumpers-web
 ```
 
 #### **Option 3: AWS S3 + CloudFront** (Future with CDK)
+
 ```bash
 cd ../aws-infrastructure
 cdk deploy cls-frontend-stack
@@ -441,6 +468,7 @@ npm run build -- --mode production
 ## 📚 Documentation
 
 ### Main Documentation
+
 - **QUICKSTART.md** - Get started in 5 minutes
 - **SETUP.md** - Detailed setup guide
 - **PHASE_1_COMPLETE.md** - Dashboard core functionality
@@ -448,6 +476,7 @@ npm run build -- --mode production
 - **DASHBOARD_REFACTOR_COMPLETE.md** - Architecture decisions
 
 ### Feature Documentation
+
 - **USER_SWITCHER.md** - Dev tool for testing roles
 - **DIRECT_SHEETS_ACCESS.md** - Proxy server setup
 - **COLOR_DEMO_GUIDE.md** - Design system colors
@@ -455,6 +484,7 @@ npm run build -- --mode production
 - **TIME_DISPLAY_BUG_FIX.md** - Timezone handling
 
 ### Project-Wide Docs
+
 - **../.github/copilot-instructions.md** - Complete system architecture
 - **../.github/MULTI_DEVICE_SETUP.md** - Multi-device development
 - **../.github/DATABASE_SCHEMA.md** - Google Sheets structure
@@ -467,6 +497,7 @@ npm run build -- --mode production
 ### Manual Testing Checklist
 
 **Worker Features:**
+
 - [ ] Login with existing credentials
 - [ ] GPS clock-in with permission handling
 - [ ] View today's clock-in history
@@ -478,6 +509,7 @@ npm run build -- --mode production
 - [ ] Test on mobile device
 
 **Admin Features:**
+
 - [ ] Login as Admin/Lead user
 - [ ] View all workers dashboard
 - [ ] See real-time worker status
@@ -487,6 +519,7 @@ npm run build -- --mode production
 - [ ] Test auto-refresh (60s intervals)
 
 **Cross-browser:**
+
 - [ ] Chrome/Edge (Chromium)
 - [ ] Safari (iOS/macOS)
 - [ ] Firefox
@@ -506,6 +539,7 @@ npm run test:coverage
 ```
 
 **Test Structure:**
+
 ```
 src/
 ├── components/
@@ -531,6 +565,7 @@ src/
 ## 🔜 Roadmap
 
 ### Phase 3 (Planned)
+
 - [ ] Worker details modal (full history)
 - [ ] Bulk approval actions
 - [ ] Advanced filters and search
@@ -541,6 +576,7 @@ src/
 - [ ] Language switcher in settings
 
 ### Phase 4 (Future)
+
 - [ ] Unit test coverage (80%+)
 - [ ] E2E tests with Playwright
 - [ ] Performance optimization

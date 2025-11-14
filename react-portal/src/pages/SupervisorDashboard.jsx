@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../features/auth/AuthContext';
 import { useQuery } from '@tanstack/react-query';
 import { sheetsApi } from '../services/sheets';
+import { supabaseApi } from '../services/supabase';
 import { format } from 'date-fns';
 import Card from '../components/Card';
 import ClockInButton from '../components/ClockInButton';
@@ -23,7 +24,7 @@ function SupervisorDashboard() {
   // Get today's date
   const getTodayDate = () => {
     const now = new Date();
-    const formatter = new Intl.DateTimeFormat("en-US", { 
+    const formatter = new Intl.DateTimeFormat("en-US", {
       timeZone: "America/New_York",
       month: "numeric",
       day: "numeric",
@@ -41,10 +42,17 @@ function SupervisorDashboard() {
     staleTime: 60000,
   });
 
+  const useSupabase = import.meta.env.VITE_USE_SUPABASE === 'true';
+
   // Fetch team data
   const { data: teamData, isLoading: teamLoading } = useQuery({
-    queryKey: ['allWorkersDirect'],
-    queryFn: () => sheetsApi.getAllWorkersWithClockIns(),
+    queryKey: useSupabase ? ['allWorkersSupabase'] : ['allWorkersDirect'],
+    queryFn: () => {
+      if (useSupabase) {
+        return supabaseApi.getAllWorkersWithClockIns();
+      }
+      return sheetsApi.getAllWorkersWithClockIns();
+    },
     staleTime: 60000,
   });
 
@@ -55,7 +63,7 @@ function SupervisorDashboard() {
   const myEntriesCount = myEntries?.length || 0;
   const workers = teamData?.workers || [];
   const records = teamData?.records || {};
-  
+
   const workersWorkedToday = workers.filter(w => records[w.id]?.length > 0).length;
   const workersNotWorked = workers.length - workersWorkedToday;
 
