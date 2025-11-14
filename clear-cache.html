@@ -1,88 +1,105 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Clear Service Worker Cache</title>
-  <style>
-    body {
-      font-family: system-ui, -apple-system, sans-serif;
-      max-width: 600px;
-      margin: 50px auto;
-      padding: 20px;
-      background: #1a1a1a;
-      color: #fff;
-    }
-    h1 { color: #FFC107; }
-    button {
-      background: #FFC107;
-      color: #000;
-      border: none;
-      padding: 12px 24px;
-      font-size: 16px;
-      border-radius: 6px;
-      cursor: pointer;
-      margin: 10px 0;
-      display: block;
-      width: 100%;
-    }
-    button:hover { background: #FFD54F; }
-    .status {
-      margin: 20px 0;
-      padding: 15px;
-      background: #2d2d2d;
-      border-radius: 6px;
-      border-left: 4px solid #FFC107;
-    }
-    .success { color: #4CAF50; }
-    .error { color: #ef4444; }
-  </style>
-</head>
-<body>
-  <h1>🧹 Clear Service Worker Cache</h1>
-  <p>This will completely clear all Service Workers and caches, forcing a fresh reload.</p>
-  
-  <button onclick="clearEverything()">Clear Everything & Reload</button>
-  
-  <div id="status" class="status"></div>
-  
-  <script>
-    async function clearEverything() {
-      const status = document.getElementById('status');
-      status.innerHTML = '<p>🔄 Clearing...</p>';
-      
-      try {
-        // 1. Unregister ALL service workers
-        if ('serviceWorker' in navigator) {
-          const registrations = await navigator.serviceWorker.getRegistrations();
-          await Promise.all(registrations.map(reg => reg.unregister()));
-          status.innerHTML += '<p class="success">✅ Unregistered ' + registrations.length + ' service workers</p>';
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clear Service Worker Cache</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #fff;
         }
-        
-        // 2. Delete ALL caches
-        const cacheNames = await caches.keys();
-        await Promise.all(cacheNames.map(name => caches.delete(name)));
-        status.innerHTML += '<p class="success">✅ Deleted ' + cacheNames.length + ' caches</p>';
-        
-        // 3. Clear localStorage
-        localStorage.clear();
-        status.innerHTML += '<p class="success">✅ Cleared localStorage</p>';
-        
-        // 4. Clear sessionStorage
-        sessionStorage.clear();
-        status.innerHTML += '<p class="success">✅ Cleared sessionStorage</p>';
-        
-        status.innerHTML += '<p class="success"><strong>✅ All clear! Redirecting to dashboard...</strong></p>';
-        
-        // 5. Redirect to dashboard after 2 seconds
-        setTimeout(() => {
-          window.location.href = '/employeeDashboard.html';
-        }, 2000);
-        
-      } catch (err) {
-        status.innerHTML += '<p class="error">❌ Error: ' + err.message + '</p>';
-      }
-    }
-  </script>
+
+        h1 {
+            color: #FFC107;
+        }
+
+        button {
+            background: #FFC107;
+            color: #000;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 10px 0;
+            display: block;
+            width: 100%;
+        }
+
+        button:hover {
+            background: #FFD54F;
+        }
+
+        .status {
+            margin: 20px 0;
+            padding: 15px;
+            background: #2d2d2d;
+            border-radius: 6px;
+            border-left: 4px solid #FFC107;
+        }
+
+        .success {
+            color: #4CAF50;
+        }
+
+        .error {
+            color: #ef4444;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🧹 Clear Service Worker Cache</h1>
+    <p>This will completely clear all Service Workers and caches, forcing a fresh reload.</p>
+
+    <button onclick="clearEverything()">Clear Everything & Reload</button>
+
+    <div id="status" class="status"></div>
+
+    <script>
+        async function clearEverything() {
+            const status = document.getElementById('status');
+            status.innerHTML = '<p>🔄 Clearing...</p>';
+
+            try {
+                // 1. Unregister ALL service workers
+                if ('serviceWorker' in navigator) {
+                    const registrations = await navigator.serviceWorker.getRegistrations();
+                    await Promise.all(registrations.map(reg => reg.unregister()));
+                    status.innerHTML += '<p class="success">✅ Unregistered ' + registrations.length + ' service workers</p>';
+                }
+
+                // 2. Delete ALL caches
+                const cacheNames = await caches.keys();
+                await Promise.all(cacheNames.map(name => caches.delete(name)));
+                status.innerHTML += '<p class="success">✅ Deleted ' + cacheNames.length + ' caches</p>';
+
+                // 3. Clear localStorage
+                localStorage.clear();
+                status.innerHTML += '<p class="success">✅ Cleared localStorage</p>';
+
+                // 4. Clear sessionStorage
+                sessionStorage.clear();
+                status.innerHTML += '<p class="success">✅ Cleared sessionStorage</p>';
+
+                status.innerHTML += '<p class="success"><strong>✅ All clear! Redirecting to dashboard...</strong></p>';
+
+                // 5. Redirect to dashboard after 2 seconds
+                setTimeout(() => {
+                    window.location.href = '/employeeDashboard.html';
+                }, 2000);
+
+            } catch (err) {
+                status.innerHTML += '<p class="error">❌ Error: ' + err.message + '</p>';
+            }
+        }
+    </script>
 </body>
+
 </html>
