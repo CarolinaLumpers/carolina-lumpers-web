@@ -2426,8 +2426,8 @@
     const adminToolsUrl = `./js/admin/admin-tools.js?v=${window.CACHE_VERSION}`;
     const { AdminTools } = await import(adminToolsUrl);
 
-    // Initialize admin tools after DOM is ready
-    document.addEventListener('DOMContentLoaded', () => {
+    // Initialize admin tools - handle both DOM ready states
+    const initAdminTools = () => {
       const apiUrl = window.API_URL || 'https://cls-proxy.s-garay.workers.dev';
 
       const adminTools = new AdminTools(apiUrl);
@@ -2435,7 +2435,14 @@
 
       // Expose to window for debugging
       window.adminTools = adminTools;
-    });
+    };
+
+    // Run immediately if DOM is already loaded, otherwise wait for DOMContentLoaded
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initAdminTools);
+    } else {
+      initAdminTools();
+    }
   </script>
 
   <script>
