@@ -5,8 +5,17 @@ Active workers from CSV analysis
 """
 
 import psycopg2
+import os
+from dotenv import load_dotenv
 
-CONNECTION_STRING = "postgresql://postgres:Stv060485!!!@db.dxbybjxpglpslmoenqyg.supabase.co:5432/postgres"
+# Load environment variables
+load_dotenv()
+
+CONNECTION_STRING = os.getenv("DATABASE_URL") or os.getenv("SUPABASE_DB_URL")
+
+if not CONNECTION_STRING:
+    print("❌ Missing DATABASE_URL or SUPABASE_DB_URL in .env file")
+    exit(1)
 
 # Active workers extracted from CSV (Availability = Active)
 # Format: (id, display_name, email, phone, role, hourly_rate, w9_status, language)

@@ -26,6 +26,18 @@ yarn-error.log*
 .env.test.local
 .env.production.local
 
+# Database setup and test scripts (contain sensitive data)
+setup-*.js
+setup_*.py
+test-*.js
+import_*.py
+quick_*.py
+add_*.py
+create-*.js
+check-*.js
+*.csv
+*.xlsx
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

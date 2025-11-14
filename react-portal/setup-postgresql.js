@@ -5,11 +5,14 @@
 
 import pkg from "pg";
 import fs from "fs";
+import dotenv from "dotenv";
 const { Client } = pkg;
 
-// PostgreSQL connection
-const connectionString =
-  "postgresql://postgres:Stv060485!!!@db.dxbybjxpglpslmoenqyg.supabase.co:5432/postgres";
+// Load environment variables
+dotenv.config({ path: ".env.local" });
+
+// PostgreSQL connection from environment
+const connectionString = process.env.DATABASE_URL || process.env.SUPABASE_DB_URL;
 
 async function setupDatabase() {
   console.log("🚀 CLS PostgreSQL Database Setup\n");

@@ -9,7 +9,18 @@ from psycopg2.extras import RealDictCursor
 import sys
 
 # PostgreSQL connection string
-CONNECTION_STRING = "postgresql://postgres:Stv060485!!!@db.dxbybjxpglpslmoenqyg.supabase.co:5432/postgres"
+from dotenv import load_dotenv
+import os
+
+# Load environment variables
+load_dotenv()
+
+# PostgreSQL connection string from environment
+CONNECTION_STRING = os.getenv("DATABASE_URL") or os.getenv("SUPABASE_DB_URL")
+
+if not CONNECTION_STRING:
+    print("❌ Missing DATABASE_URL or SUPABASE_DB_URL in .env file")
+    exit(1)
 
 def setup_database():
     print("🚀 CLS PostgreSQL Database Setup\n")
