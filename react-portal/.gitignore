@@ -38,6 +38,9 @@ check-*.js
 *.csv
 *.xlsx
 
+# SQL schema files (may contain test data)
+supabase-*.sql
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

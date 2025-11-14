@@ -22,8 +22,14 @@ const supabaseAdmin = createClient(supabaseUrl, serviceKey, {
 async function createAdminAuth() {
   console.log("🔐 Setting up Supabase Authentication\n");
 
-  const adminEmail = "s.garay@carolinalumpers.com";
-  const adminPassword = "Carolina2025!"; // Secure password
+  const adminEmail = process.env.ADMIN_EMAIL || "s.garay@carolinalumpers.com";
+  const adminPassword = process.env.ADMIN_PASSWORD;
+
+  if (!adminPassword) {
+    console.log("❌ Missing ADMIN_PASSWORD in .env.local");
+    console.log("   Add: ADMIN_PASSWORD=your-secure-password");
+    return;
+  }
 
   try {
     console.log("👤 Creating admin user in Supabase Auth...");
