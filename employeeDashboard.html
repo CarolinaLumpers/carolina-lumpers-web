@@ -1003,7 +1003,7 @@
       // W-9 COMPLIANCE CHECK: Redirect non-admins if W-9 not submitted
       // Check if user is admin first (admins exempt from W-9 requirement)
       const storedRole = localStorage.getItem("CLS_Role");
-      if (storedRole !== 'Admin' && storedRole !== 'Lead') {
+      if (storedRole !== 'Admin' && storedRole !== 'Supervisor') {
         // Only block if no W-9 submitted - must submit first
         if (!w9Status || w9Status === 'none') {
           // No W-9 submitted - redirect to form (blocking)
@@ -1230,7 +1230,7 @@
       const storedRole = localStorage.getItem('CLS_Role');
 
       // Only show for non-admin workers with pending/rejected status
-      if (storedRole === 'Admin' || storedRole === 'Lead') {
+      if (storedRole === 'Admin' || storedRole === 'Supervisor') {
         banner.style.display = 'none';
         return;
       }
@@ -1293,7 +1293,7 @@
         const currentStatus = localStorage.getItem('CLS_W9Status');
 
         // Only check for non-admin workers
-        if (!workerId || storedRole === 'Admin' || storedRole === 'Lead') {
+        if (!workerId || storedRole === 'Admin' || storedRole === 'Supervisor') {
           return;
         }
 
@@ -1423,8 +1423,8 @@
       const currentStatus = localStorage.getItem('CLS_W9Status');
       const storedRole = localStorage.getItem('CLS_Role');
 
-      // Don't start polling for admins/leads
-      if (storedRole === 'Admin' || storedRole === 'Lead') {
+      // Don't start polling for admins/supervisors
+      if (storedRole === 'Admin' || storedRole === 'Supervisor') {
         return;
       }
 

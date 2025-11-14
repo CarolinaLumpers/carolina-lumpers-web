@@ -12,7 +12,8 @@ const { Client } = pkg;
 dotenv.config({ path: ".env.local" });
 
 // PostgreSQL connection from environment
-const connectionString = process.env.DATABASE_URL || process.env.SUPABASE_DB_URL;
+const connectionString =
+  process.env.DATABASE_URL || process.env.SUPABASE_DB_URL;
 
 async function setupDatabase() {
   console.log("🚀 CLS PostgreSQL Database Setup\n");
