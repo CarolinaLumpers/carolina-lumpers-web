@@ -7,7 +7,7 @@ const ASSETS = [
   "./employeeSignup.html",
   "./css/style.css",
   "./css/variables.css",
-  "./css/base.css", 
+  "./css/base.css",
   "./css/components.css",
   "./css/layout.css",
   "./css/dashboard.css",
@@ -27,15 +27,15 @@ const ASSETS = [
   "./assets/CLS-favicon.png",
   "./assets/CLS_Nav_Logo.png",
   "./assets/CLS-icon-192.png",
-  "./assets/CLS-icon-512.png"
+  "./assets/CLS-icon-512.png",
 ];
 
 // ===============================
 // CLS Offline Clock-In Sync System
 // ===============================
-const DB_NAME = 'CLSClockDB';
-const STORE_NAME = 'clockQueue';
-const API_URL = 'https://cls-proxy.s-garay.workers.dev';
+const DB_NAME = "CLSClockDB";
+const STORE_NAME = "clockQueue";
+const API_URL = "https://cls-proxy.s-garay.workers.dev";
 
 // Open IndexedDB (or create if not exists)
 function openDB() {
@@ -44,9 +44,12 @@ function openDB() {
     request.onupgradeneeded = () => {
       const db = request.result;
       if (!db.objectStoreNames.contains(STORE_NAME)) {
-        const store = db.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
-        store.createIndex('timestamp', 'timestamp', { unique: false });
-        store.createIndex('workerId', 'workerId', { unique: false });
+        const store = db.createObjectStore(STORE_NAME, {
+          keyPath: "id",
+          autoIncrement: true,
+        });
+        store.createIndex("timestamp", "timestamp", { unique: false });
+        store.createIndex("workerId", "workerId", { unique: false });
       }
     };
     request.onsuccess = () => resolve(request.result);
@@ -58,19 +61,19 @@ function openDB() {
 async function queueClockIn(data) {
   try {
     const db = await openDB();
-    const tx = db.transaction(STORE_NAME, 'readwrite');
+    const tx = db.transaction(STORE_NAME, "readwrite");
     const store = tx.objectStore(STORE_NAME);
-    
+
     const record = {
       ...data,
       timestamp: new Date().toISOString(),
-      status: 'pending'
+      status: "pending",
     };
-    
+
     await store.add(record);
     return true;
   } catch (err) {
-    console.error('❌ Failed to queue clock-in:', err);
+    console.error("❌ Failed to queue clock-in:", err);
     return false;
   }
 }
@@ -79,49 +82,53 @@ async function queueClockIn(data) {
 async function syncClockData() {
   try {
     const db = await openDB();
-    const tx = db.transaction(STORE_NAME, 'readonly');
+    const tx = db.transaction(STORE_NAME, "readonly");
     const store = tx.objectStore(STORE_NAME);
     const request = store.getAll();
-    
+
     const allData = await new Promise((resolve, reject) => {
       request.onsuccess = () => resolve(request.result);
       request.onerror = () => reject(request.error);
     });
 
-    const pendingData = allData.filter(r => r.status === 'pending');
+    const pendingData = allData.filter((r) => r.status === "pending");
 
     if (pendingData.length === 0) {
       return;
     }
 
     for (const record of allData) {
-      if (record.status === 'synced') continue;
-      
+      if (record.status === "synced") continue;
+
       try {
         // Reconstruct the URL with parameters
-        const url = `${API_URL}?action=clockin&workerId=${encodeURIComponent(record.workerId)}&lat=${record.lat}&lng=${record.lng}&lang=${record.lang || 'en'}&email=${encodeURIComponent(record.email || '')}`;
-        
+        const url = `${API_URL}?action=clockin&workerId=${encodeURIComponent(
+          record.workerId
+        )}&lat=${record.lat}&lng=${record.lng}&lang=${
+          record.lang || "en"
+        }&email=${encodeURIComponent(record.email || "")}`;
+
         const response = await fetch(url, {
-          method: 'GET',
-          mode: 'cors',
-          credentials: 'omit'
+          method: "GET",
+          mode: "cors",
+          credentials: "omit",
         });
-        
+
         if (response.ok) {
           // Mark as synced
-          const updateTx = db.transaction(STORE_NAME, 'readwrite');
+          const updateTx = db.transaction(STORE_NAME, "readwrite");
           const updateStore = updateTx.objectStore(STORE_NAME);
-          record.status = 'synced';
+          record.status = "synced";
           record.syncedAt = new Date().toISOString();
           await updateStore.put(record);
-          
+
           // Send notification to main thread
           if (self.clients) {
             const clients = await self.clients.matchAll();
-            clients.forEach(client => {
+            clients.forEach((client) => {
               client.postMessage({
-                type: 'CLOCK_SYNC_SUCCESS',
-                data: record
+                type: "CLOCK_SYNC_SUCCESS",
+                data: record,
               });
             });
           }
@@ -129,16 +136,15 @@ async function syncClockData() {
           throw new Error(`HTTP ${response.status}`);
         }
       } catch (err) {
-        console.warn('Sync retry:', err.message);
+        console.warn("Sync retry:", err.message);
         // Keep in queue for next sync attempt
       }
     }
-    
+
     // Clean up old synced records (older than 7 days)
     await cleanupOldRecords();
-    
   } catch (err) {
-    console.error('Sync failed:', err);
+    console.error("Sync failed:", err);
   }
 }
 
@@ -146,27 +152,27 @@ async function syncClockData() {
 async function cleanupOldRecords() {
   try {
     const db = await openDB();
-    const tx = db.transaction(STORE_NAME, 'readwrite');
+    const tx = db.transaction(STORE_NAME, "readwrite");
     const store = tx.objectStore(STORE_NAME);
-    const index = store.index('timestamp');
-    
+    const index = store.index("timestamp");
+
     const weekAgo = new Date();
     weekAgo.setDate(weekAgo.getDate() - 7);
-    
+
     const range = IDBKeyRange.upperBound(weekAgo.toISOString());
     const request = index.openCursor(range);
-    
+
     request.onsuccess = (event) => {
       const cursor = event.target.result;
       if (cursor) {
-        if (cursor.value.status === 'synced') {
+        if (cursor.value.status === "synced") {
           cursor.delete();
         }
         cursor.continue();
       }
     };
   } catch (err) {
-    console.warn('⚠️ Cleanup failed:', err);
+    console.warn("⚠️ Cleanup failed:", err);
   }
 }
 
@@ -174,85 +180,87 @@ async function cleanupOldRecords() {
 async function getPendingSyncCount() {
   try {
     const db = await openDB();
-    const tx = db.transaction(STORE_NAME, 'readonly');
+    const tx = db.transaction(STORE_NAME, "readonly");
     const store = tx.objectStore(STORE_NAME);
     const request = store.getAll();
-    
+
     const allData = await new Promise((resolve, reject) => {
       request.onsuccess = () => resolve(request.result);
       request.onerror = () => reject(request.error);
     });
-    
-    return allData.filter(record => record.status === 'pending').length;
+
+    return allData.filter((record) => record.status === "pending").length;
   } catch (err) {
-    console.error('❌ Failed to get pending count:', err);
+    console.error("❌ Failed to get pending count:", err);
     return 0;
   }
 }
 
 // Install: cache assets
-self.addEventListener("install", e => {
-  console.log('[Service Worker] Installing with cache:', CACHE_NAME);
+self.addEventListener("install", (e) => {
+  console.log("[Service Worker] Installing with cache:", CACHE_NAME);
   e.waitUntil(
-    caches.open(CACHE_NAME).then(cache => {
-      console.log('[Service Worker] Caching', ASSETS.length, 'assets');
+    caches.open(CACHE_NAME).then((cache) => {
+      console.log("[Service Worker] Caching", ASSETS.length, "assets");
       return cache.addAll(ASSETS);
     })
   );
 });
 
 // Activate: clean old caches
-self.addEventListener("activate", e => {
-  console.log('[Service Worker] Activating with cache:', CACHE_NAME);
+self.addEventListener("activate", (e) => {
+  console.log("[Service Worker] Activating with cache:", CACHE_NAME);
   e.waitUntil(
-    caches.keys().then(keys => {
-      const oldCaches = keys.filter(k => k !== CACHE_NAME);
+    caches.keys().then((keys) => {
+      const oldCaches = keys.filter((k) => k !== CACHE_NAME);
       if (oldCaches.length > 0) {
-        console.log('[Service Worker] Deleting old caches:', oldCaches);
+        console.log("[Service Worker] Deleting old caches:", oldCaches);
       }
-      return Promise.all(oldCaches.map(k => caches.delete(k)));
+      return Promise.all(oldCaches.map((k) => caches.delete(k)));
     })
   );
 });
 
 // Fetch: serve cached or fetch new
-self.addEventListener("fetch", e => {
+self.addEventListener("fetch", (e) => {
   // Skip non-GET requests to avoid breaking JSONP
-  if (e.request.method !== 'GET') return;
-  
+  if (e.request.method !== "GET") return;
+
   e.respondWith(
-    caches.match(e.request, { ignoreSearch: true }).then(res => res || fetch(e.request))
+    caches
+      .match(e.request, { ignoreSearch: true })
+      .then((res) => res || fetch(e.request))
   );
 });
 
 // Background sync for clock data
-self.addEventListener('sync', (event) => {
-  if (event.tag === 'sync-clock-data') {
+self.addEventListener("sync", (event) => {
+  if (event.tag === "sync-clock-data") {
     event.waitUntil(syncClockData());
   }
 });
 
 // Manual sync when back online
-self.addEventListener('online', () => {
+self.addEventListener("online", () => {
   syncClockData();
 });
 
 // Handle messages from main thread
-self.addEventListener('message', async (event) => {
+self.addEventListener("message", async (event) => {
   const { type, data } = event.data;
-  
+
   switch (type) {
-    case 'QUEUE_CLOCK_IN':
+    case "QUEUE_CLOCK_IN":
       const queued = await queueClockIn(data);
       event.ports[0].postMessage({ success: queued });
       break;
-      
-    case 'TRIGGER_SYNC':
+
+    case "TRIGGER_SYNC":
       await syncClockData();
       event.ports[0].postMessage({ success: true });
       break;
-      
-    case 'GET_PENDING_COUNT':
+
+    case "GET_PENDING_COUNT":
       const count = await getPendingSyncCount();
       event.ports[0].postMessage({ count });
       break;
