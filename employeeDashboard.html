@@ -1173,46 +1173,13 @@
 
       // Admin panel wiring
       ensureRoleAndRevealAdmin();
-      const btnLoadAll = document.getElementById('btnLoadAll');
-      const btnClear = document.getElementById('btnClearFilter');
-      const filterEl = document.getElementById('workerFilter');
 
-      if (btnLoadAll) {
-        btnLoadAll.addEventListener('click', () => {
-          const selectedWorker = filterEl.value; // Single select value
-          // If a worker is selected, filter by that worker; else load all
-          loadAllReports(selectedWorker);
-        });
-      }
-      if (btnClear) {
-        btnClear.addEventListener('click', () => {
-          filterEl.value = ''; // Reset to "-- All Workers --"
-          loadAllReports('');
-        });
-      }
-
-      // Time Edit Request buttons (Admin only)
-      const btnLoadPendingEdits = document.getElementById('btnLoadPendingEdits');
-      const btnLoadAllEdits = document.getElementById('btnLoadAllEdits');
-      if (btnLoadPendingEdits) {
-        btnLoadPendingEdits.addEventListener('click', () => loadTimeEditRequests('pending'));
-      }
-      if (btnLoadAllEdits) {
-        btnLoadAllEdits.addEventListener('click', () => loadTimeEditRequests('all'));
-      }
-
-      // QuickBooks Sync buttons (Admin only)
-      const btnSyncVendorsDryRun = document.getElementById('btnSyncVendorsDryRun');
-      const btnSyncVendorsLive = document.getElementById('btnSyncVendorsLive');
-      if (btnSyncVendorsDryRun) {
-        btnSyncVendorsDryRun.addEventListener('click', () => triggerVendorSync(true));
-      }
-      if (btnSyncVendorsLive) {
-        btnSyncVendorsLive.addEventListener('click', () => triggerVendorSync(false));
-      }
-
-      // Note: Run Payroll is handled by admin-tools.js ES6 module (run-payroll.js)
-      // The module automatically wires up the button and populates the dropdown
+      // Note: All admin tools are now handled by admin-tools.js ES6 module:
+      // - Clock-In Manager (clockin-manager.js) - handles btnLoadAll/btnClearFilter
+      // - Time Edit Requests (time-edit-requests.js) - handles btnLoadPendingEdits/btnLoadAllEdits
+      // - QuickBooks Sync (quickbooks-sync.js) - handles btnSyncVendorsDryRun/btnSyncVendorsLive
+      // - Run Payroll (run-payroll.js) - handles payroll button and dropdown
+      // - View As (view-as.js) - handles view as functionality
 
       // Language init
       initLanguage();
