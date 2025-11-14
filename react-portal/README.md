@@ -1,25 +1,55 @@
 # CLS Employee Portal - React
 
-Modern, production-ready React-based employee portal for Carolina Lumpers Service. Fully functional replacement for the legacy HTML portal with enhanced UX, real-time updates, and comprehensive admin tools.
+Modern, production-ready React-based employee portal for Carolina Lumpers Service. **Currently migrating from Google Apps Script to Supabase + Vercel** for improved performance and cost efficiency.
+
+## 🎯 Migration Status
+
+**Current State:** Google Apps Script backend (operational)  
+**Target State:** Supabase + Vercel (free tier)  
+**Progress:** React Portal 95% complete, ready for Supabase integration  
 
 ## 📋 Table of Contents
 
+- [Migration Plan](#migration-plan)
 - [Quick Start](#quick-start)
 - [Features](#features)
-- [Project Structure](#project-structure)
 - [Technology Stack](#technology-stack)
-- [Backend Integration](#backend-integration)
+- [Implementation Plan](#implementation-plan)
 - [Development](#development)
-- [Deployment](#deployment)
-- [Documentation](#documentation)
+- [Deployment Strategy](#deployment-strategy)
+
+---
+
+## 🚀 Migration Plan
+
+### **Phase 1: Supabase Setup (Week 1)**
+1. Create Supabase project (free tier)
+2. Design database schema (replace Google Sheets)
+3. Set up Row Level Security (RLS) policies
+4. Create initial data migration scripts
+
+### **Phase 2: API Migration (Week 1-2)**  
+1. Replace Google Apps Script API calls with Supabase queries
+2. Update authentication to Supabase Auth
+3. Implement real-time subscriptions
+4. Test parallel with existing system
+
+### **Phase 3: Deployment (Week 2)**
+1. Deploy to Vercel free tier
+2. Configure custom domain
+3. Run parallel with Google system
+4. Full employee migration when stable
+
+**Expected Cost:** $0/month (free tiers) vs current $0/month Google system  
+**Expected Performance:** 10x faster API responses (200ms vs 2-5s)
 
 ---
 
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Node.js 18+ and npm
-- Access to existing Google Apps Script backend
+- Node.js 18+ and npm  
+- Supabase account (migration target)
 - Modern browser with geolocation support
 
 ### Installation
@@ -202,18 +232,28 @@ react-portal/
 - **Service Workers** - Offline capabilities (future implementation)
 
 ### Backend Integration
-- **Google Apps Script** - Serverless backend (unchanged)
-- **Cloudflare Workers** - CORS proxy (`cls-proxy.s-garay.workers.dev`)
-- **Google Sheets API v4** - Direct read access via OAuth service account (optional)
+- **Current:** Google Apps Script + Cloudflare Workers proxy  
+- **Target:** Supabase (PostgreSQL + Auth + Storage + Real-time)  
+- **Migration:** Parallel implementation, switch when stable  
 
 ---
 
-## 🔌 Backend Integration
+## 🔌 Backend Integration Strategy
 
-### Primary API: Google Apps Script Web App
+### Current: Google Apps Script (Operational)
 
 **Endpoint:** `https://cls-proxy.s-garay.workers.dev`  
-**Proxy Target:** `https://script.google.com/macros/s/AKfycbwHBLEQ5QHuhD-O4uI4hRN_5_yS9YsFgtn_dMAdoAO2C7zHLoi3qfHO82vas3Uv0wXXpg/exec`
+**Proxy Target:** `https://script.google.com/macros/s/AKfycbwHBLEQ5QHuhD-O4uI4hRN_5_yS9YsFgtn_dMAdoAO2C7zHLoi3qfHO82vas3Uv0wXXpg/exec`  
+**Status:** ✅ Production system (15 employees, 150-250 API calls/day)  
+**Performance:** 2-5 second response times  
+
+### Target: Supabase (Migration Goal)
+
+**Database:** PostgreSQL (replaces Google Sheets)  
+**Auth:** Supabase Auth (replaces custom Google Apps Script auth)  
+**API:** Auto-generated REST + GraphQL (replaces manual script functions)  
+**Real-time:** WebSocket subscriptions (replaces manual polling)  
+**Expected Performance:** 200ms response times (10x improvement)  
 
 **Available Actions** (30+ API functions):
 ```javascript

@@ -1,9 +1,9 @@
 /**
  * Cloudflare Worker: Generic Google Sheets API Proxy
- * 
+ *
  * Simple pass-through proxy for Google Sheets API with service account authentication.
  * Follows React Portal pattern - frontend does filtering/formatting.
- * 
+ *
  * Service Account: react-portal-sheets@cls-operations-hub.iam.gserviceaccount.com
  * Spreadsheet: CLS_Hub_Backend (1U8hSNREN5fEhskp0UM-Z80iiW39beaOj3oIsaLZyFzk)
  */
@@ -33,7 +33,9 @@ export default {
 
       // Generic Sheets API proxy (like React Portal pattern)
       // Route: /api/sheets/{spreadsheetId}/values/{range}
-      const sheetsMatch = pathname.match(/^\/api\/sheets\/([^\/]+)\/values\/(.+)$/);
+      const sheetsMatch = pathname.match(
+        /^\/api\/sheets\/([^\/]+)\/values\/(.+)$/
+      );
       if (sheetsMatch) {
         const spreadsheetId = sheetsMatch[1];
         const range = decodeURIComponent(sheetsMatch[2]);
@@ -43,16 +45,25 @@ export default {
 
       // Health check
       if (pathname === "/health" || pathname === "/") {
-        return jsonResponse({ status: "ok", message: "Generic Sheets proxy running" });
+        return jsonResponse({
+          status: "ok",
+          message: "Generic Sheets proxy running",
+        });
       }
 
-      return jsonResponse({ ok: false, error: "Not found. Use /api/sheets/{spreadsheetId}/values/{range}" }, 404);
+      return jsonResponse(
+        {
+          ok: false,
+          error: "Not found. Use /api/sheets/{spreadsheetId}/values/{range}",
+        },
+        404
+      );
     } catch (error) {
       console.error("Error:", error);
       return jsonResponse({ ok: false, error: error.message }, 500);
     }
   },
-};// =================== Google OAuth Token Generation ===================
+}; // =================== Google OAuth Token Generation ===================
 async function getServiceAccountToken(env) {
   // Service account credentials stored as Cloudflare environment variables
   const serviceAccount = {
@@ -174,10 +185,10 @@ function jsonResponse(data, status = 200) {
 
 /*
  * OLD ACTION HANDLERS REMOVED
- * 
+ *
  * This worker now follows the React Portal pattern - it's a simple generic proxy.
  * Frontend does all filtering/formatting of data.
- * 
+ *
  * Example usage from frontend:
  * const response = await fetch(`${SHEETS_API_URL}/api/sheets/${SPREADSHEET_ID}/values/ClockIn!A2:L100`);
  * const { data } = await response.json();

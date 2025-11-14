@@ -6,7 +6,7 @@
   <script>
     const CACHE_VERSION = '20251111-1045'; // Format: YYYYMMDD-HHMM
   </script>
-  
+
   <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-JPETF03TJ0"></script>
   <script>
@@ -45,10 +45,15 @@
   <style>
     /* Feather Icons Spin Animation */
     @keyframes spin {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
     }
-    
+
     /* Time Edit Modal Styles */
     .modal {
       position: fixed;
@@ -60,6 +65,7 @@
       background-color: rgba(0, 0, 0, 0.8);
       backdrop-filter: blur(4px);
     }
+
     .modal-content {
       background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
       margin: 5% auto;
@@ -70,6 +76,7 @@
       max-width: 500px;
       box-shadow: 0 8px 32px rgba(255, 193, 7, 0.3);
     }
+
     .modal-header {
       padding: 20px;
       border-bottom: 1px solid #333;
@@ -77,10 +84,12 @@
       justify-content: space-between;
       align-items: center;
     }
+
     .modal-header h3 {
       margin: 0;
       color: #FFC107;
     }
+
     .close {
       color: #aaa;
       font-size: 28px;
@@ -88,21 +97,26 @@
       cursor: pointer;
       transition: color 0.3s;
     }
+
     .close:hover {
       color: #FFC107;
     }
+
     .modal-body {
       padding: 20px;
     }
+
     .form-group {
       margin-bottom: 15px;
     }
+
     .form-group label {
       display: block;
       margin-bottom: 5px;
       color: #FFC107;
       font-weight: bold;
     }
+
     .form-input {
       width: 100%;
       padding: 10px;
@@ -112,11 +126,13 @@
       color: #fff;
       font-size: 14px;
     }
+
     .form-input:focus {
       border-color: #FFC107;
       outline: none;
       box-shadow: 0 0 0 2px rgba(255, 193, 7, 0.2);
     }
+
     .readonly-field {
       padding: 10px;
       background: #111;
@@ -125,12 +141,14 @@
       color: #aaa;
       display: block;
     }
+
     .info-text {
       font-size: 12px;
       color: #aaa;
       font-style: italic;
       margin: 0;
     }
+
     .modal-footer {
       padding: 20px;
       border-top: 1px solid #333;
@@ -139,6 +157,7 @@
       gap: 10px;
       justify-content: flex-end;
     }
+
     .status-badge {
       padding: 4px 10px;
       border-radius: 12px;
@@ -148,26 +167,31 @@
       display: inline-block;
       border: 1px solid;
     }
-    .status-confirmed { 
-      background: rgba(76, 175, 80, 0.2); 
-      color: #4CAF50; 
+
+    .status-confirmed {
+      background: rgba(76, 175, 80, 0.2);
+      color: #4CAF50;
       border-color: rgba(76, 175, 80, 0.4);
     }
-    .status-pending { 
-      background: rgba(255, 193, 7, 0.2); 
-      color: #FFC107; 
+
+    .status-pending {
+      background: rgba(255, 193, 7, 0.2);
+      color: #FFC107;
       border-color: rgba(255, 193, 7, 0.4);
     }
-    .status-editing { 
-      background: rgba(255, 193, 7, 0.2); 
-      color: #FFC107; 
+
+    .status-editing {
+      background: rgba(255, 193, 7, 0.2);
+      color: #FFC107;
       border-color: rgba(255, 193, 7, 0.4);
     }
-    .status-denied { 
-      background: rgba(244, 67, 54, 0.2); 
-      color: #f44336; 
+
+    .status-denied {
+      background: rgba(244, 67, 54, 0.2);
+      color: #f44336;
       border-color: rgba(244, 67, 54, 0.4);
     }
+
     .action-btn {
       padding: 8px 12px;
       font-size: 14px;
@@ -179,16 +203,19 @@
       border: 1px solid transparent;
       line-height: 1;
     }
+
     .edit-btn {
       background: rgba(255, 193, 7, 0.1);
       color: #FFC107;
       border-color: rgba(255, 193, 7, 0.3);
     }
+
     .edit-btn:hover:not(:disabled) {
       background: rgba(255, 193, 7, 0.3);
       transform: scale(1.1);
       color: #FFD54F;
     }
+
     .edit-btn:disabled {
       opacity: 0.3;
       cursor: not-allowed;
@@ -196,9 +223,11 @@
       background: transparent;
       border-color: transparent;
     }
+
     .edit-btn i {
       pointer-events: none;
     }
+
     /* Admin Subsection Styles */
     .admin-subsection {
       background: rgba(255, 193, 7, 0.05);
@@ -209,14 +238,16 @@
       text-align: left;
       max-width: 860px;
     }
+
     .admin-subsection h4 {
       margin-top: 0;
       margin-bottom: 16px;
       color: #FFC107;
       font-size: 1.1em;
     }
+
     /* Note: Action buttons now use .btn-success and .btn-danger from dashboard.css */
-    
+
     /* Full-Screen Loading Overlay */
     .loading-overlay {
       display: none;
@@ -231,16 +262,16 @@
       justify-content: center;
       align-items: center;
     }
-    
+
     .loading-overlay.active {
       display: flex;
     }
-    
+
     .loading-content {
       text-align: center;
       color: #FFC107;
     }
-    
+
     .loading-spinner {
       width: 60px;
       height: 60px;
@@ -250,16 +281,18 @@
       animation: spin 1s linear infinite;
       margin: 0 auto 20px;
     }
-    
+
     .loading-text {
       font-size: 18px;
       font-weight: 500;
       margin: 0;
       color: #FFC107;
     }
-    
+
     @keyframes spin {
-      to { transform: rotate(360deg); }
+      to {
+        transform: rotate(360deg);
+      }
     }
   </style>
   <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet" />
@@ -287,7 +320,8 @@
     <div class="info" id="userInfo"></div>
 
     <!-- W-9 STATUS BANNER (shown for pending/rejected only) -->
-    <div id="w9StatusBanner" style="display: none; margin: var(--space-lg) 0; padding: var(--space-md); border-radius: var(--radius-md); text-align: center;">
+    <div id="w9StatusBanner"
+      style="display: none; margin: var(--space-lg) 0; padding: var(--space-md); border-radius: var(--radius-md); text-align: center;">
       <span id="w9BannerIcon" style="font-size: 24px; margin-right: var(--space-sm);"></span>
       <span id="w9BannerText" style="font-weight: 600;"></span>
       <a href="w9Status.html" id="w9BannerLink" style="margin-left: var(--space-md); text-decoration: underline;">
@@ -385,25 +419,29 @@
 
       <!-- Clock-In Manager Subsection -->
       <div id="clockinManager" class="admin-subsection">
-        <h4 class="section-title" data-en="Clock-In Manager" data-es="Gestor de Entradas" data-pt="Gerenciador de Registros" 
-            style="padding:12px;background:rgba(255,193,7,0.1);border-radius:6px;margin-bottom:12px;">
+        <h4 class="section-title" data-en="Clock-In Manager" data-es="Gestor de Entradas"
+          data-pt="Gerenciador de Registros"
+          style="padding:12px;background:rgba(255,193,7,0.1);border-radius:6px;margin-bottom:12px;">
           <span>Clock-In Manager</span>
         </h4>
         <div id="clockinManagerContent" class="admin-section-content">
-        <label for="workerFilter" style="display:block;margin:12px 0;">
-          <span data-en="Filter by worker:" data-es="Filtrar por empleado:" data-pt="Filtrar por funcionário:">Filter by worker:</span>
-          <select id="workerFilter"
-            style="width:100%;background:#000;color:#fff;border:1px solid #333;border-radius:6px;padding:8px;margin-top:6px;">
-            <option value="">-- All Workers --</option>
-          </select>
-        </label>
+          <label for="workerFilter" style="display:block;margin:12px 0;">
+            <span data-en="Filter by worker:" data-es="Filtrar por empleado:" data-pt="Filtrar por funcionário:">Filter
+              by worker:</span>
+            <select id="workerFilter"
+              style="width:100%;background:#000;color:#fff;border:1px solid #333;border-radius:6px;padding:8px;margin-top:6px;">
+              <option value="">-- All Workers --</option>
+            </select>
+          </label>
 
-        <div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
-          <button id="btnLoadAll" class="btn btn-primary" data-en="Load All Clock-Ins" data-es="Cargar Todas las Entradas" data-pt="Carregar Todos os Registros">Load All Clock-Ins</button>
-          <button id="btnClearFilter" class="btn btn-ghost" data-en="Clear Filter" data-es="Borrar Filtro" data-pt="Limpar Filtro">Clear Filter</button>
-        </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
+            <button id="btnLoadAll" class="btn btn-primary" data-en="Load All Clock-Ins"
+              data-es="Cargar Todas las Entradas" data-pt="Carregar Todos os Registros">Load All Clock-Ins</button>
+            <button id="btnClearFilter" class="btn btn-ghost" data-en="Clear Filter" data-es="Borrar Filtro"
+              data-pt="Limpar Filtro">Clear Filter</button>
+          </div>
 
-        <div id="allReportsContainer" style="overflow:auto;"></div>
+          <div id="allReportsContainer" style="overflow:auto;"></div>
         </div>
       </div>
 
@@ -415,25 +453,25 @@
           <span>Time Edit Requests</span>
         </h4>
         <div id="timeEditRequestsContent" class="admin-section-content">
-        
-        <div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
-          <button id="btnLoadPendingEdits" class="btn btn-primary" data-en="Load Pending Requests" 
-                  data-es="Cargar Solicitudes Pendientes" data-pt="Carregar Solicitações Pendentes">
-            Load Pending Requests
-          </button>
-          <button id="btnLoadAllEdits" class="btn btn-ghost" data-en="Load All Requests" 
-                  data-es="Cargar Todas" data-pt="Carregar Todas">
-            Load All Requests
-          </button>
-        </div>
-        
-        <div id="timeEditRequestsContainer" style="overflow:auto;margin-top:12px;">
-          <p class="muted" data-en="Click 'Load Pending Requests' to view time edit requests" 
-             data-es="Haga clic en 'Cargar Solicitudes Pendientes' para ver las solicitudes"
-             data-pt="Clique em 'Carregar Solicitações Pendentes' para ver as solicitações">
-            Click 'Load Pending Requests' to view time edit requests
-          </p>
-        </div>
+
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
+            <button id="btnLoadPendingEdits" class="btn btn-primary" data-en="Load Pending Requests"
+              data-es="Cargar Solicitudes Pendientes" data-pt="Carregar Solicitações Pendentes">
+              Load Pending Requests
+            </button>
+            <button id="btnLoadAllEdits" class="btn btn-ghost" data-en="Load All Requests" data-es="Cargar Todas"
+              data-pt="Carregar Todas">
+              Load All Requests
+            </button>
+          </div>
+
+          <div id="timeEditRequestsContainer" style="overflow:auto;margin-top:12px;">
+            <p class="muted" data-en="Click 'Load Pending Requests' to view time edit requests"
+              data-es="Haga clic en 'Cargar Solicitudes Pendientes' para ver las solicitudes"
+              data-pt="Clique em 'Carregar Solicitações Pendentes' para ver as solicitações">
+              Click 'Load Pending Requests' to view time edit requests
+            </p>
+          </div>
         </div>
       </div>
 
@@ -445,116 +483,105 @@
           <span>W-9 Form Management</span>
         </h4>
         <div id="w9ManagementContent" class="admin-section-content">
-        
-        <p class="muted" style="margin-bottom:12px;" 
-           data-en="Review and approve W-9 submissions from 1099 contractors" 
-           data-es="Revisar y aprobar envíos de W-9 de contratistas 1099"
-           data-pt="Revisar e aprovar envios de W-9 de contratados 1099">
-          Review and approve W-9 submissions from 1099 contractors
-        </p>
-        
-        <div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
-          <button id="btnLoadPendingW9s" class="btn btn-primary" 
-                  data-en="Load Pending W-9s" 
-                  data-es="Cargar W-9 Pendientes" 
-                  data-pt="Carregar W-9 Pendentes">
-            Load Pending W-9s
-          </button>
-          <button id="btnRefreshW9s" class="btn btn-ghost" 
-                  data-en="Refresh" 
-                  data-es="Actualizar" 
-                  data-pt="Atualizar">
-            Refresh
-          </button>
-        </div>
-        
-        <div id="w9Container" style="overflow:auto;margin-top:12px;">
-          <p class="muted" data-en="Click 'Load Pending W-9s' to view submissions awaiting approval" 
-             data-es="Haga clic en 'Cargar W-9 Pendientes' para ver envíos en espera de aprobación"
-             data-pt="Clique em 'Carregar W-9 Pendentes' para ver envios aguardando aprovação">
-            Click 'Load Pending W-9s' to view submissions awaiting approval
+
+          <p class="muted" style="margin-bottom:12px;"
+            data-en="Review and approve W-9 submissions from 1099 contractors"
+            data-es="Revisar y aprobar envíos de W-9 de contratistas 1099"
+            data-pt="Revisar e aprovar envios de W-9 de contratados 1099">
+            Review and approve W-9 submissions from 1099 contractors
           </p>
-        </div>
-        
-        <!-- W-9 Details Modal -->
-        <div id="w9DetailsModal" class="modal" style="display:none;">
-          <div class="modal-content" style="max-width:600px;">
-            <div class="modal-header">
-              <h3 data-en="W-9 Form Details" data-es="Detalles del Formulario W-9" data-pt="Detalhes do Formulário W-9">W-9 Form Details</h3>
-              <span class="close" onclick="closeW9Modal()">&times;</span>
-            </div>
-            <div class="modal-body">
-              <div id="w9DetailsContent"></div>
-              
-              <div class="form-group" style="margin-top:20px;">
-                <label for="w9RejectionReason">
-                  <span data-en="Rejection Reason (if rejecting):" 
-                        data-es="Razón del Rechazo (si rechaza):" 
-                        data-pt="Motivo da Rejeição (se rejeitando):">
-                    Rejection Reason (if rejecting):
-                  </span>
-                </label>
-                <textarea id="w9RejectionReason" class="form-input" rows="3" 
-                          placeholder="Enter reason for rejection..."
-                          data-en="Enter reason for rejection..."
-                          data-es="Ingrese la razón del rechazo..."
-                          data-pt="Digite o motivo da rejeição..."></textarea>
+
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
+            <button id="btnLoadPendingW9s" class="btn btn-primary" data-en="Load Pending W-9s"
+              data-es="Cargar W-9 Pendientes" data-pt="Carregar W-9 Pendentes">
+              Load Pending W-9s
+            </button>
+            <button id="btnRefreshW9s" class="btn btn-ghost" data-en="Refresh" data-es="Actualizar" data-pt="Atualizar">
+              Refresh
+            </button>
+          </div>
+
+          <div id="w9Container" style="overflow:auto;margin-top:12px;">
+            <p class="muted" data-en="Click 'Load Pending W-9s' to view submissions awaiting approval"
+              data-es="Haga clic en 'Cargar W-9 Pendientes' para ver envíos en espera de aprobación"
+              data-pt="Clique em 'Carregar W-9 Pendentes' para ver envios aguardando aprovação">
+              Click 'Load Pending W-9s' to view submissions awaiting approval
+            </p>
+          </div>
+
+          <!-- W-9 Details Modal -->
+          <div id="w9DetailsModal" class="modal" style="display:none;">
+            <div class="modal-content" style="max-width:600px;">
+              <div class="modal-header">
+                <h3 data-en="W-9 Form Details" data-es="Detalles del Formulario W-9"
+                  data-pt="Detalhes do Formulário W-9">W-9 Form Details</h3>
+                <span class="close" onclick="closeW9Modal()">&times;</span>
+              </div>
+              <div class="modal-body">
+                <div id="w9DetailsContent"></div>
+
+                <div class="form-group" style="margin-top:20px;">
+                  <label for="w9RejectionReason">
+                    <span data-en="Rejection Reason (if rejecting):" data-es="Razón del Rechazo (si rechaza):"
+                      data-pt="Motivo da Rejeição (se rejeitando):">
+                      Rejection Reason (if rejecting):
+                    </span>
+                  </label>
+                  <textarea id="w9RejectionReason" class="form-input" rows="3"
+                    placeholder="Enter reason for rejection..." data-en="Enter reason for rejection..."
+                    data-es="Ingrese la razón del rechazo..." data-pt="Digite o motivo da rejeição..."></textarea>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button class="btn btn-ghost" onclick="closeW9Modal()" data-en="Cancel" data-es="Cancelar"
+                  data-pt="Cancelar">Cancel</button>
+                <button id="btnRejectW9" class="btn btn-danger" onclick="rejectW9()" data-en="Reject W-9"
+                  data-es="Rechazar W-9" data-pt="Rejeitar W-9">Reject W-9</button>
+                <button id="btnApproveW9" class="btn btn-success" onclick="approveW9()" data-en="Approve W-9"
+                  data-es="Aprobar W-9" data-pt="Aprovar W-9">Approve W-9</button>
               </div>
             </div>
-            <div class="modal-footer">
-              <button class="btn btn-ghost" onclick="closeW9Modal()"
-                      data-en="Cancel" data-es="Cancelar" data-pt="Cancelar">Cancel</button>
-              <button id="btnRejectW9" class="btn btn-danger" onclick="rejectW9()"
-                      data-en="Reject W-9" data-es="Rechazar W-9" data-pt="Rejeitar W-9">Reject W-9</button>
-              <button id="btnApproveW9" class="btn btn-success" onclick="approveW9()"
-                      data-en="Approve W-9" data-es="Aprobar W-9" data-pt="Aprovar W-9">Approve W-9</button>
-            </div>
           </div>
-        </div>
-        
+
         </div>
       </div>
 
       <!-- RUN PAYROLL Subsection -->
       <div id="runPayrollWrap" class="admin-subsection">
-        <h4 class="section-title" data-en="Run Payroll" data-es="Ejecutar Nómina"
-          data-pt="Executar Folha de Pagamento"
+        <h4 class="section-title" data-en="Run Payroll" data-es="Ejecutar Nómina" data-pt="Executar Folha de Pagamento"
           style="padding:12px;background:rgba(255,193,7,0.1);border-radius:6px;margin-bottom:12px;">
           <span>Run Payroll</span>
         </h4>
         <div id="runPayrollContent" class="admin-section-content">
-        
-        <p class="muted" style="margin-bottom:12px;" 
-           data-en="Process weekly payroll and create bills in QuickBooks" 
-           data-es="Procesar nómina semanal y crear facturas en QuickBooks"
-           data-pt="Processar folha de pagamento semanal e criar contas no QuickBooks">
-          Process weekly payroll and create bills in QuickBooks
-        </p>
-        
-        <div style="margin-bottom:12px;">
-          <label for="weekPeriodSelect" 
-                 data-en="Select Week Period:" 
-                 data-es="Seleccionar Período Semanal:" 
-                 data-pt="Selecionar Período Semanal:"
-                 style="display:block;margin-bottom:8px;font-weight:600;">
-            Select Week Period:
-          </label>
-          <select id="runPayrollWeekSelect" style="width:100%;background:#000;color:#fff;border:1px solid #333;border-radius:6px;padding:8px;margin-top:6px;">
-            <option value="" data-en="-- Select Week --" data-es="-- Seleccionar Semana --" data-pt="-- Selecionar Semana --">-- Select Week --</option>
-          </select>
-        </div>
-        
-        <button id="btnRunPayroll" class="btn btn-primary" style="width:100%;"
-                data-en="Run Payroll" 
-                data-es="Ejecutar Nómina" 
-                data-pt="Executar Folha de Pagamento">
-          Run Payroll
-        </button>
-        
-        <div id="payrollResults" style="margin-top:12px;padding:12px;background:#f9f9f9;border:1px solid #ddd;border-radius:6px;display:none;">
-          <div id="payrollStatus" style="font-weight:600;margin-bottom:8px;"></div>
-          <div id="payrollMessage" style="color:#666;"></div>
-        </div>
+
+          <p class="muted" style="margin-bottom:12px;" data-en="Process weekly payroll and create bills in QuickBooks"
+            data-es="Procesar nómina semanal y crear facturas en QuickBooks"
+            data-pt="Processar folha de pagamento semanal e criar contas no QuickBooks">
+            Process weekly payroll and create bills in QuickBooks
+          </p>
+
+          <div style="margin-bottom:12px;">
+            <label for="weekPeriodSelect" data-en="Select Week Period:" data-es="Seleccionar Período Semanal:"
+              data-pt="Selecionar Período Semanal:" style="display:block;margin-bottom:8px;font-weight:600;">
+              Select Week Period:
+            </label>
+            <select id="runPayrollWeekSelect"
+              style="width:100%;background:#000;color:#fff;border:1px solid #333;border-radius:6px;padding:8px;margin-top:6px;">
+              <option value="" data-en="-- Select Week --" data-es="-- Seleccionar Semana --"
+                data-pt="-- Selecionar Semana --">-- Select Week --</option>
+            </select>
+          </div>
+
+          <button id="btnRunPayroll" class="btn btn-primary" style="width:100%;" data-en="Run Payroll"
+            data-es="Ejecutar Nómina" data-pt="Executar Folha de Pagamento">
+            Run Payroll
+          </button>
+
+          <div id="payrollResults"
+            style="margin-top:12px;padding:12px;background:#f9f9f9;border:1px solid #ddd;border-radius:6px;display:none;">
+            <div id="payrollStatus" style="font-weight:600;margin-bottom:8px;"></div>
+            <div id="payrollMessage" style="color:#666;"></div>
+          </div>
         </div>
       </div>
 
@@ -566,48 +593,45 @@
           <span>QuickBooks Sync</span>
         </h4>
         <div id="qbSyncContent" class="admin-section-content">
-        
-        <p class="muted" style="margin-bottom:12px;" 
-           data-en="Sync active workers to QuickBooks Online as Vendors" 
-           data-es="Sincronizar empleados activos a QuickBooks Online como Proveedores"
-           data-pt="Sincronizar funcionários ativos ao QuickBooks Online como Fornecedores">
-          Sync active workers to QuickBooks Online as Vendors
-        </p>
-        
-        <div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
-          <button id="btnSyncVendorsDryRun" class="btn btn-primary" 
-                  data-en="Preview Sync (Dry Run)" 
-                  data-es="Vista Previa de Sincronización" 
-                  data-pt="Visualizar Sincronização">
-            Preview Sync (Dry Run)
-          </button>
-          <button id="btnSyncVendorsLive" class="btn btn-success" 
-                  data-en="Run Sync (Live)" 
-                  data-es="Ejecutar Sincronización" 
-                  data-pt="Executar Sincronização">
-            Run Sync (Live)
-          </button>
-        </div>
-        
-        <div id="qbSyncResultsContainer" style="overflow:auto;margin-top:12px;max-height:400px;">
-          <p class="muted" data-en="Click 'Preview Sync' to see what changes would be made" 
-             data-es="Haga clic en 'Vista Previa' para ver qué cambios se harían"
-             data-pt="Clique em 'Visualizar' para ver quais alterações seriam feitas">
-            Click 'Preview Sync' to see what changes would be made
+
+          <p class="muted" style="margin-bottom:12px;" data-en="Sync active workers to QuickBooks Online as Vendors"
+            data-es="Sincronizar empleados activos a QuickBooks Online como Proveedores"
+            data-pt="Sincronizar funcionários ativos ao QuickBooks Online como Fornecedores">
+            Sync active workers to QuickBooks Online as Vendors
           </p>
-        </div>
+
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
+            <button id="btnSyncVendorsDryRun" class="btn btn-primary" data-en="Preview Sync (Dry Run)"
+              data-es="Vista Previa de Sincronización" data-pt="Visualizar Sincronização">
+              Preview Sync (Dry Run)
+            </button>
+            <button id="btnSyncVendorsLive" class="btn btn-success" data-en="Run Sync (Live)"
+              data-es="Ejecutar Sincronización" data-pt="Executar Sincronização">
+              Run Sync (Live)
+            </button>
+          </div>
+
+          <div id="qbSyncResultsContainer" style="overflow:auto;margin-top:12px;max-height:400px;">
+            <p class="muted" data-en="Click 'Preview Sync' to see what changes would be made"
+              data-es="Haga clic en 'Vista Previa' para ver qué cambios se harían"
+              data-pt="Clique em 'Visualizar' para ver quais alterações seriam feitas">
+              Click 'Preview Sync' to see what changes would be made
+            </p>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- VIEW AS Section (Always visible for admins, above language toggle) -->
-    <div id="viewAsWrap" class="hidden" style="margin: var(--space-lg) auto; max-width: 860px; padding: var(--space-md); background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: var(--radius-md);">
-      <h4 style="color: var(--color-primary); margin: 0 0 var(--space-md) 0; text-align: center;" 
-          data-en="View As (Admin)" data-es="Ver Como (Admin)" data-pt="Ver Como (Admin)">
+    <div id="viewAsWrap" class="hidden"
+      style="margin: var(--space-lg) auto; max-width: 860px; padding: var(--space-md); background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: var(--radius-md);">
+      <h4 style="color: var(--color-primary); margin: 0 0 var(--space-md) 0; text-align: center;"
+        data-en="View As (Admin)" data-es="Ver Como (Admin)" data-pt="Ver Como (Admin)">
         View As (Admin)
       </h4>
       <label for="viewAsSelect" style="display:block;margin:12px 0;">
-        <span data-en="Choose a worker:" data-es="Elija un empleado:" data-pt="Escolha um funcionário:">Choose a worker:</span>
+        <span data-en="Choose a worker:" data-es="Elija un empleado:" data-pt="Escolha um funcionário:">Choose a
+          worker:</span>
         <select id="viewAsSelect"
           style="width:100%;background:#000;color:#fff;border:1px solid #333;border-radius:6px;padding:8px;margin-top:6px;"></select>
       </label>
@@ -639,45 +663,49 @@
       </div>
       <div class="modal-body">
         <div class="form-group">
-          <span style="font-weight:600;display:block;margin-bottom:8px;" data-en="Original Time:" data-es="Tiempo Original:" data-pt="Tempo Original:">Original Time:</span>
+          <span style="font-weight:600;display:block;margin-bottom:8px;" data-en="Original Time:"
+            data-es="Tiempo Original:" data-pt="Tempo Original:">Original Time:</span>
           <span id="originalTime" class="readonly-field"></span>
         </div>
         <div class="form-group">
-          <label for="requestedTime" data-en="Requested Time:" data-es="Tiempo Solicitado:" data-pt="Tempo Solicitado:">Requested Time:</label>
+          <label for="requestedTime" data-en="Requested Time:" data-es="Tiempo Solicitado:"
+            data-pt="Tempo Solicitado:">Requested Time:</label>
           <input type="datetime-local" id="requestedTime" class="form-input" required>
         </div>
         <div class="form-group">
-          <label for="editReason" data-en="Reason for Change:" data-es="Razón del Cambio:" data-pt="Motivo da Mudança:">Reason for Change:</label>
-          <textarea id="editReason" class="form-input" rows="3" 
-                    data-en="Please explain why this time adjustment is needed..." 
-                    data-es="Por favor explique por qué se necesita este ajuste de tiempo..."
-                    data-pt="Por favor explique por que esse ajuste de tempo é necessário..."
-                    placeholder="Please explain why this time adjustment is needed..." required></textarea>
+          <label for="editReason" data-en="Reason for Change:" data-es="Razón del Cambio:"
+            data-pt="Motivo da Mudança:">Reason for Change:</label>
+          <textarea id="editReason" class="form-input" rows="3"
+            data-en="Please explain why this time adjustment is needed..."
+            data-es="Por favor explique por qué se necesita este ajuste de tiempo..."
+            data-pt="Por favor explique por que esse ajuste de tempo é necessário..."
+            placeholder="Please explain why this time adjustment is needed..." required></textarea>
         </div>
         <div class="form-group">
-          <span style="font-weight:600;display:block;margin-bottom:8px;" data-en="Note:" data-es="Nota:" data-pt="Nota:">Note:</span>
-          <p class="info-text" 
-             data-en="This request will be sent to your supervisor for approval. You will be notified once it's reviewed."
-             data-es="Esta solicitud será enviada a su supervisor para aprobación. Se le notificará una vez que sea revisada."
-             data-pt="Esta solicitação será enviada ao seu supervisor para aprovação. Você será notificado assim que for revisada.">
+          <span style="font-weight:600;display:block;margin-bottom:8px;" data-en="Note:" data-es="Nota:"
+            data-pt="Nota:">Note:</span>
+          <p class="info-text"
+            data-en="This request will be sent to your supervisor for approval. You will be notified once it's reviewed."
+            data-es="Esta solicitud será enviada a su supervisor para aprobación. Se le notificará una vez que sea revisada."
+            data-pt="Esta solicitação será enviada ao seu supervisor para aprovação. Você será notificado assim que for revisada.">
             This request will be sent to your supervisor for approval. You will be notified once it's reviewed.
           </p>
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-ghost" onclick="closeTimeEditModal()" 
-                data-en="Cancel" data-es="Cancelar" data-pt="Cancelar">Cancel</button>
-        <button type="button" class="btn btn-primary" onclick="submitTimeEditRequest()" 
-                data-en="Submit Request" data-es="Enviar Solicitud" data-pt="Enviar Solicitação">Submit Request</button>
+        <button type="button" class="btn btn-ghost" onclick="closeTimeEditModal()" data-en="Cancel" data-es="Cancelar"
+          data-pt="Cancelar">Cancel</button>
+        <button type="button" class="btn btn-primary" onclick="submitTimeEditRequest()" data-en="Submit Request"
+          data-es="Enviar Solicitud" data-pt="Enviar Solicitação">Submit Request</button>
       </div>
     </div>
   </div>
 
   <script>
     // ======================== CONFIG ========================
-  const API_URL = "https://cls-proxy.s-garay.workers.dev"; // Apps Script for most operations
-  const SHEETS_API_URL = "https://sheets-direct-proxy.steve-3d1.workers.dev"; // Direct Sheets API (generic proxy)
-    
+    const API_URL = "https://cls-proxy.s-garay.workers.dev"; // Apps Script for most operations
+    const SHEETS_API_URL = "https://sheets-direct-proxy.steve-3d1.workers.dev"; // Direct Sheets API (generic proxy)
+
     // Local getText function for dashboard (fallback until script.js loads)
     function getText(path, lang) {
       const dashboardTexts = {
@@ -712,7 +740,7 @@
           pt: 'Modo App: Online'
         }
       };
-      
+
       const text = dashboardTexts[path];
       return text ? (text[lang] || text.en) : '';
     }
@@ -762,16 +790,16 @@
         'fas fa-edit': 'edit-2',
         'fas fa-wifi-slash': 'wifi-off'
       };
-      
+
       const featherName = iconMap[iconName] || iconName;
       const icon = document.createElement('i');
       icon.setAttribute('data-feather', featherName);
-      
+
       // For spinning icons, add rotation class
       if (iconName.includes('fa-spin')) {
         icon.style.animation = 'spin 1s linear infinite';
       }
-      
+
       return icon;
     }
 
@@ -782,7 +810,7 @@
       // Strip HTML tags for text-only use
       return message.replace(/<[^>]*>/g, '');
     }
-    
+
     // Helper to set status with icon
     function setStatusWithIcon(element, iconClasses, message) {
       if (!element) return;
@@ -809,23 +837,23 @@
         const fullUrl = `${url}${sep}callback=${cb}`;
         s.src = fullUrl;
         s.async = true;
-        const timeout = setTimeout(() => { 
-          delete window[cb]; 
-          s.remove(); 
-          reject(new Error("Request timed out after 30s")); 
+        const timeout = setTimeout(() => {
+          delete window[cb];
+          s.remove();
+          reject(new Error("Request timed out after 30s"));
         }, 30000);
-        window[cb] = (data) => { 
-          clearTimeout(timeout); 
-          delete window[cb]; 
-          s.remove(); 
-          resolve(data); 
+        window[cb] = (data) => {
+          clearTimeout(timeout);
+          delete window[cb];
+          s.remove();
+          resolve(data);
         };
-        s.onerror = (e) => { 
-          clearTimeout(timeout); 
-          delete window[cb]; 
-          s.remove(); 
+        s.onerror = (e) => {
+          clearTimeout(timeout);
+          delete window[cb];
+          s.remove();
           console.error('JSONP script load error:', e, 'URL:', fullUrl);
-          reject(new Error("Script load failed - check if Cloudflare Worker is responding")); 
+          reject(new Error("Script load failed - check if Cloudflare Worker is responding"));
         };
         console.log('📡 Loading JSONP script:', fullUrl);
         document.body.appendChild(s);
@@ -918,23 +946,23 @@
     // Handle online/offline events (at global scope for PWA icon updates)
     window.addEventListener('online', async () => {
       updatePWAStatus();
-      
+
       const status = document.getElementById('clockInStatus');
       const pendingCount = await getPendingSyncCount();
-      
+
       if (pendingCount > 0 && status) {
         setStatusWithIcon(status, 'fas fa-sync-alt fa-spin', getMSG('syncInProgress'));
-        
+
         try {
           await triggerSync();
-          
+
           // Wait a moment for sync to complete
           setTimeout(async () => {
             const remainingCount = await getPendingSyncCount();
             if (remainingCount === 0) {
               setStatusWithIcon(status, 'check-circle', 'All clock-ins synced successfully!');
               loadReport(); // Refresh the report
-              
+
               // Clear message after 3 seconds
               setTimeout(() => {
                 if (status) status.innerHTML = '';
@@ -996,19 +1024,19 @@
     let USER_ROLE = null;           // cached role
 
     // =================== INIT (All Event Bindings + Defaults) ===================
-    
+
     // PWA Status Detection and Display (Updates navbar icon)
     let pwaStatusUpdateTimer = null;
-    window.updatePWAStatus = function() {
+    window.updatePWAStatus = function () {
       // Debounce to prevent redundant updates
       if (pwaStatusUpdateTimer) return;
       pwaStatusUpdateTimer = setTimeout(() => { pwaStatusUpdateTimer = null; }, 100);
-      
+
       const pwaIcon = document.getElementById('pwaStatusIcon');
       if (!pwaIcon) {
         return; // Icon not loaded yet
       }
-      
+
       const currentLang = localStorage.getItem("CLS_Lang") || "en";
 
       // Detect PWA/offline state and update icon (using Feather Icons - works offline!)
@@ -1052,7 +1080,7 @@
     };
 
     // API call with retry logic (reduced to 1 retry to prevent excessive 60-90s timeouts)
-    window.apiCallWithRetry = async function(url, maxRetries = 1) {
+    window.apiCallWithRetry = async function (url, maxRetries = 1) {
       for (let i = 0; i < maxRetries; i++) {
         try {
           return await jsonp(url);
@@ -1067,13 +1095,13 @@
         }
       }
     };
-    
+
     window.addEventListener("DOMContentLoaded", () => {
       // Initialize Feather Icons
       if (typeof feather !== 'undefined') {
         feather.replace();
       }
-      
+
       const currentLang = localStorage.getItem("CLS_Lang") || "en";
       const greeting = getText('dashboard.greeting', currentLang);
       document.getElementById("welcomeName").textContent = `${greeting}, ${displayName || "Employee"}!`;
@@ -1083,7 +1111,7 @@
       window.addEventListener('navbarLoaded', () => {
         updatePWAStatus();
       });
-      
+
       // Also check if navbar is already loaded (in case event fired before listener added)
       setTimeout(() => {
         const pwaIcon = document.getElementById('pwaStatusIcon');
@@ -1091,10 +1119,10 @@
           updatePWAStatus();
         }
       }, 200);
-      
+
       // Expose function for manual testing
       window.testPWAStatus = updatePWAStatus;
-      
+
       // Listen for language changes to update dashboard content
       window.addEventListener('languageChanged', (event) => {
         const newLang = event.detail.language;
@@ -1119,7 +1147,7 @@
       // Tabs
       document.getElementById("tabClock").addEventListener("click", () => switchTab("clock"));
       document.getElementById("tabPayroll").addEventListener("click", () => switchTab("payroll"));
-      
+
       // Admin tab (only if visible)
       const tabAdmin = document.getElementById("tabAdmin");
       if (tabAdmin) {
@@ -1188,7 +1216,7 @@
 
       // Language init
       initLanguage();
-      
+
       // W-9 Status Banner init
       initW9StatusBanner();
     });
@@ -1200,13 +1228,13 @@
       const text = document.getElementById('w9BannerText');
       const w9Status = localStorage.getItem('CLS_W9Status');
       const storedRole = localStorage.getItem('CLS_Role');
-      
+
       // Only show for non-admin workers with pending/rejected status
       if (storedRole === 'Admin' || storedRole === 'Lead') {
         banner.style.display = 'none';
         return;
       }
-      
+
       if (w9Status === 'pending_admin_review') {
         // Yellow banner for pending
         banner.style.display = 'block';
@@ -1229,13 +1257,13 @@
         text.setAttribute('data-en', 'W-9 Rejected - Please review the reason and resubmit.');
         text.setAttribute('data-es', 'W-9 Rechazado - Por favor revise el motivo y reenvíe.');
         text.setAttribute('data-pt', 'W-9 Rejeitado - Por favor, revise o motivo e reenvie.');
-        
+
         // Add resubmit button for rejected status
         const resubmitBtn = document.createElement('a');
         resubmitBtn.href = 'w9Form.html';
         resubmitBtn.style.cssText = 'margin-left: var(--space-md); padding: 8px 16px; background-color: #ef4444; color: white; text-decoration: none; border-radius: var(--radius-sm); font-weight: 600; display: inline-block;';
         resubmitBtn.innerHTML = '<span data-en="Resubmit W-9" data-es="Reenviar W-9" data-pt="Reenviar W-9">Resubmit W-9</span>';
-        
+
         // Clear any existing buttons and add new one
         const existingResubmit = banner.querySelector('a[href="w9Form.html"]');
         if (existingResubmit) {
@@ -1246,7 +1274,7 @@
         // Hide banner for 'none' or 'approved'
         banner.style.display = 'none';
       }
-      
+
       // Reapply translations if available
       if (typeof applyTranslations === 'function') {
         applyTranslations();
@@ -1263,44 +1291,44 @@
         const workerId = localStorage.getItem('CLS_WorkerID');
         const storedRole = localStorage.getItem('CLS_Role');
         const currentStatus = localStorage.getItem('CLS_W9Status');
-        
+
         // Only check for non-admin workers
         if (!workerId || storedRole === 'Admin' || storedRole === 'Lead') {
           return;
         }
-        
+
         // Skip polling if already approved (no need to check)
         if (currentStatus === 'approved' && source === 'poll') {
           console.log('✅ W-9 polling disabled - already approved');
           return;
         }
-        
+
         // Cooldown check: Skip if checked within last 30 seconds
         const now = Date.now();
         if (now - lastW9Check < W9_CHECK_COOLDOWN) {
           console.log(`⏭️ W-9 check skipped (${source}) - checked ${Math.round((now - lastW9Check) / 1000)}s ago`);
           return;
         }
-        
+
         lastW9Check = now;
         w9CheckCount++;
         console.log(`🔄 W-9 status check #${w9CheckCount} (${source})`);
-        
+
         const url = `${API_URL}?action=getW9Status&workerId=${encodeURIComponent(workerId)}`;
         const response = await fetch(url);
         const data = await response.json();
-        
+
         if (data.success) {
           const newStatus = data.status || 'none';
-          
+
           // If status changed, update localStorage and refresh banner
           if (currentStatus !== newStatus) {
             console.log(`📄 W-9 status updated: ${currentStatus} → ${newStatus}`);
             localStorage.setItem('CLS_W9Status', newStatus);
-            
+
             // Refresh the banner immediately
             initW9StatusBanner();
-            
+
             // Show toast notification
             showW9StatusChangeNotification(currentStatus, newStatus);
           }
@@ -1333,10 +1361,10 @@
           color: '#FFC107'
         }
       };
-      
+
       const config = statusMessages[newStatus];
       if (!config) return;
-      
+
       // Create toast element
       const toast = document.createElement('div');
       toast.style.cssText = `
@@ -1353,7 +1381,7 @@
         max-width: 350px;
         animation: slideInRight 0.3s ease-out;
       `;
-      
+
       toast.innerHTML = `
         <div style="display: flex; align-items: start; gap: var(--space-sm);">
           <span style="font-size: 24px;">${config.icon}</span>
@@ -1363,7 +1391,7 @@
           </div>
         </div>
       `;
-      
+
       // Add animation keyframe if not exists
       if (!document.getElementById('toastAnimationStyle')) {
         const style = document.createElement('style');
@@ -1380,9 +1408,9 @@
         `;
         document.head.appendChild(style);
       }
-      
+
       document.body.appendChild(toast);
-      
+
       // Auto-remove after 5 seconds
       setTimeout(() => {
         toast.style.animation = 'slideOutRight 0.3s ease-in';
@@ -1394,20 +1422,20 @@
     function startW9StatusPolling() {
       const currentStatus = localStorage.getItem('CLS_W9Status');
       const storedRole = localStorage.getItem('CLS_Role');
-      
+
       // Don't start polling for admins/leads
       if (storedRole === 'Admin' || storedRole === 'Lead') {
         return;
       }
-      
+
       // Don't start polling if already approved
       if (currentStatus === 'approved') {
         console.log('✅ W-9 already approved - polling not needed');
         return;
       }
-      
+
       console.log('⏳ W-9 status monitoring started (pending/rejected/none)');
-      
+
       // Adaptive schedule: 10s → 1m → 3m → every 5m
       setTimeout(() => {
         checkW9Status('poll');
@@ -1433,14 +1461,14 @@
     async function loadPayrollWeekPeriods() {
       // Check W-9 status before loading payroll
       await checkW9BeforeAction('payroll');
-      
+
       const dropdown = document.getElementById("weekPeriodSelect");
       dropdown.innerHTML = '<option value="">Loading...</option>';
 
       try {
         const targetWorkerId = VIEW_AS_ACTIVE ? VIEW_AS_WORKER : workerId;
         const url = `${API_URL}?action=payrollWeekPeriods&workerId=${encodeURIComponent(targetWorkerId)}`;
-        
+
         const data = await apiCallWithRetry(url);
 
         if (!data || !data.success) {
@@ -1449,7 +1477,7 @@
         }
 
         const periods = data.periods || [];
-        
+
         if (periods.length === 0) {
           dropdown.innerHTML = '<option value="">No payroll periods found</option>';
           return;
@@ -1496,17 +1524,17 @@
       const clockSec = document.getElementById("clockin-section");
       const paySec = document.getElementById("payroll-section");
       const adminSec = document.getElementById("admin-section");
-      
+
       // Remove active class from all tabs
       clockBtn.classList.remove("active");
       payBtn.classList.remove("active");
       if (adminBtn) adminBtn.classList.remove("active");
-      
+
       // Hide all sections
       clockSec.classList.add("hidden");
       paySec.classList.add("hidden");
       if (adminSec) adminSec.classList.add("hidden");
-      
+
       // Show selected tab
       if (tab === "clock") {
         clockBtn.classList.add("active");
@@ -1535,7 +1563,7 @@
     async function handleClockIn() {
       const btn = document.getElementById("clockInBtn");
       const status = document.getElementById("clockInStatus");
-      
+
       // Hide button and show spinner in status
       btn.style.display = 'none';
       status.innerHTML = '<span class="btn-spinner"></span> ' + getMSG('gettingLocation');
@@ -1552,13 +1580,13 @@
         // Prepare clock-in data
         const lang = localStorage.getItem("CLS_Lang") || "en";
         const deviceInfo = window.getDeviceInfo ? window.getDeviceInfo() : { displayString: 'Unknown Device' };
-        
+
         // Try sending immediately (works both online and with cached service worker)
         status.innerHTML = '<span class="btn-spinner"></span> ' + getMSG('recordingClockIn');
-        
+
         const clockInUrl = `${API_URL}?action=clockin&workerId=${encodeURIComponent(workerId)}&lat=${latitude}&lng=${longitude}&lang=${lang}&email=${encodeURIComponent(email)}&device=${encodeURIComponent(deviceInfo.displayString)}`;
         console.log('🔵 Clock-in URL:', clockInUrl);
-        
+
         try {
           console.log('⏱️ Sending clock-in request...');
           const res = await jsonp(clockInUrl);
@@ -1593,7 +1621,7 @@
             device: deviceInfo.displayString,
             timestamp: new Date().toISOString()
           };
-          
+
           const saved = await saveClockInOffline(clockData);
           if (saved) {
             setStatusWithIcon(status, 'smartphone', getMSG('offlineSaved'));
@@ -1659,15 +1687,15 @@
     async function openTimeEditModal(entryId, originalTime, canEdit = true) {
       // Check W-9 status before opening time edit modal
       await checkW9BeforeAction('timeEdit');
-      
+
       if (!canEdit) {
         alert(getMSG('timeEditError')); // Use a better message for 'cannot edit'
         return;
       }
-      
+
       currentEditEntry = entryId;
       document.getElementById('originalTime').textContent = originalTime;
-      
+
       // Set default requested time to original time
       const timeInput = document.getElementById('requestedTime');
       // Convert display time to datetime-local format
@@ -1675,19 +1703,19 @@
       const [time, period] = originalTime.split(' ');
       const [hours, minutes] = time.split(':');
       let hour24 = parseInt(hours);
-      
+
       if (period === 'PM' && hour24 !== 12) hour24 += 12;
       if (period === 'AM' && hour24 === 12) hour24 = 0;
-      
-      const isoString = date.getFullYear() + '-' + 
-                       String(date.getMonth() + 1).padStart(2, '0') + '-' + 
-                       String(date.getDate()).padStart(2, '0') + 'T' + 
-                       String(hour24).padStart(2, '0') + ':' + 
-                       String(minutes).padStart(2, '0');
-      
+
+      const isoString = date.getFullYear() + '-' +
+        String(date.getMonth() + 1).padStart(2, '0') + '-' +
+        String(date.getDate()).padStart(2, '0') + 'T' +
+        String(hour24).padStart(2, '0') + ':' +
+        String(minutes).padStart(2, '0');
+
       timeInput.value = isoString;
       document.getElementById('editReason').value = '';
-      
+
       document.getElementById('timeEditModal').style.display = 'block';
     }
 
@@ -1699,12 +1727,12 @@
     async function submitTimeEditRequest() {
       const requestedTime = document.getElementById('requestedTime').value;
       const reason = document.getElementById('editReason').value.trim();
-      
+
       if (!requestedTime || !reason) {
         alert('Please fill in all required fields.');
         return;
       }
-      
+
       try {
         // Format the requested time for display
         const requestedDate = new Date(requestedTime);
@@ -1713,7 +1741,7 @@
           minute: '2-digit',
           hour12: true
         });
-        
+
         const editData = {
           employeeId: workerId, // Correctly set employeeId
           recordId: currentEditEntry, // Correctly set recordId (ClockinID)
@@ -1724,7 +1752,7 @@
           status: 'pending',
           submittedAt: new Date().toISOString()
         };
-        
+
         // Submit to backend API
         const queryParams = new URLSearchParams({
           action: 'submitTimeEdit',
@@ -1737,9 +1765,9 @@
           status: editData.status,
           submittedAt: editData.submittedAt
         });
-        
+
         const response = await fetch(`${API_URL}?${queryParams.toString()}`);
-        
+
         if (response.ok) {
           alert(getMSG('timeEditRequest'));
           closeTimeEditModal();
@@ -1768,7 +1796,7 @@
 
       try {
         let records = [];
-        
+
         if (VIEW_AS_ACTIVE && USER_ROLE === 'Admin') {
           // Admin viewing as someone else - use Apps Script (has access control)
           const data = await jsonp(`${API_URL}?action=reportAs&requesterId=${encodeURIComponent(workerId)}&targetId=${encodeURIComponent(VIEW_AS_WORKER)}`);
@@ -1777,18 +1805,18 @@
           // 🚀 HYBRID: Use direct Sheets API for faster loading (proof of concept)
           const targetWorker = workerId;
           const SPREADSHEET_ID = '1U8hSNREN5fEhskp0UM-Z80iiW39beaOj3oIsaLZyFzk';
-          
+
           // Fetch ClockIn sheet data directly (columns: A=ClockinID, B=WorkerID, C=Date, D=Time, E=Notes, F=TaskID, G=Approve, H=Lat, I=Lng, J=NeedsProcessing, K=NearestClient, L=Distance)
           const response = await fetch(`${SHEETS_API_URL}/api/sheets/${SPREADSHEET_ID}/values/ClockIn!A2:L`);
           const result = await response.json();
           const rows = result.data?.values || [];
-          
+
           // Calculate date range (last 7 days)
           const now = new Date();
           const weekAgo = new Date(now);
           weekAgo.setDate(now.getDate() - 7);
           weekAgo.setHours(0, 0, 0, 0);
-          
+
           // Filter and format client-side
           records = rows
             .filter(row => {
@@ -1801,21 +1829,21 @@
               const dateVal = row[2]; // C: Date
               const timeVal = row[3]; // D: Time
               const d = new Date(dateVal);
-              
+
               // Format date as MM/dd/yyyy
-              const formattedDate = d.toLocaleDateString('en-US', { 
+              const formattedDate = d.toLocaleDateString('en-US', {
                 timeZone: 'America/New_York',
                 month: '2-digit',
                 day: '2-digit',
                 year: 'numeric'
               });
-              
+
               // Format time
               let formattedTime = '';
               if (timeVal) {
                 const t = new Date(timeVal);
                 if (!isNaN(t)) {
-                  formattedTime = t.toLocaleTimeString('en-US', { 
+                  formattedTime = t.toLocaleTimeString('en-US', {
                     timeZone: 'America/New_York',
                     hour: '2-digit',
                     minute: '2-digit',
@@ -1826,7 +1854,7 @@
                   formattedTime = String(timeVal);
                 }
               }
-              
+
               return {
                 date: formattedDate,
                 time: formattedTime,
@@ -1841,7 +1869,7 @@
         body.innerHTML = "";
         // 🔧 Fixed: Format with leading zeros to match backend MM/dd/yyyy format
         const now = new Date();
-        const formatter = new Intl.DateTimeFormat("en-US", { 
+        const formatter = new Intl.DateTimeFormat("en-US", {
           timeZone: "America/New_York",
           month: "2-digit",
           day: "2-digit",
@@ -1856,19 +1884,19 @@
             const t2 = b.time ? new Date(`1970-01-01T${b.time}`) : 0;
             return t2 - t1;
           });
-          
+
           todayRecords.forEach((r, index) => {
             const tr = document.createElement("tr");
-            
+
             // Determine status and edit capability from backend
             const status = r.editStatus || 'confirmed';
             const canEdit = (status === 'confirmed');
             const entryId = r.id || `entry_${index}`;
-            
-            const editIcon = canEdit 
+
+            const editIcon = canEdit
               ? `<button class=\"action-btn edit-btn\" onclick=\"openTimeEditModal('${entryId}', '${r.time}', true)\" title=\"${getMSG('editButton')}\"><i data-feather=\"edit-2\"></i></button>`
               : `<button class=\"action-btn edit-btn\" disabled title=\"${status === 'editing' ? 'Edit request pending' : 'Cannot edit this entry'}\"><i data-feather=\"edit-2\"></i></button>`;
-            
+
             tr.innerHTML = `<td>${r.date}</td><td>${r.time}</td><td style="text-align: center;">${editIcon}</td>`;
             body.appendChild(tr);
           });
@@ -2086,7 +2114,7 @@
         // Show Admin tab button for Admin/Lead users (section stays hidden until tab clicked)
         if (USER_ROLE === 'Admin' || USER_ROLE === 'Lead') {
           const adminTab = document.getElementById('tabAdmin');
-          
+
           if (adminTab) {
             adminTab.classList.remove('hidden');
           }
@@ -2098,17 +2126,17 @@
           // Show View As section for admins
           const viewAsWrap = document.getElementById('viewAsWrap');
           if (viewAsWrap) viewAsWrap.classList.remove('hidden');
-          
+
           // Populate View As list and worker filter using workers from Workers sheet
           try {
             const data = await jsonp(`${API_URL}?action=reportAll&workerId=${encodeURIComponent(workerId)}`);
-            
+
             const viewAsSelect = document.getElementById('viewAsSelect');
             const workerFilter = document.getElementById('workerFilter');
-            
+
             if (data && data.workers && data.workers.length > 0) {
               const workers = data.workers.sort((a, b) => (a.name || a.id).localeCompare(b.name || b.id));
-              
+
               // Populate View As dropdown
               if (viewAsSelect) {
                 viewAsSelect.innerHTML = '';
@@ -2119,7 +2147,7 @@
                   viewAsSelect.appendChild(opt);
                 });
               }
-              
+
               // Populate worker filter dropdown
               if (workerFilter) {
                 workerFilter.innerHTML = '';
@@ -2133,10 +2161,10 @@
             } else {
               if (viewAsSelect) viewAsSelect.innerHTML = '<option value="">No workers found</option>';
               if (workerFilter) workerFilter.innerHTML = '<option value="">No workers found</option>';
-              }
-            } catch (err) {
-              // Silently fail - admin features not critical
-            }          document.getElementById('btnActivateViewAs').onclick = () => activateViewAs();
+            }
+          } catch (err) {
+            // Silently fail - admin features not critical
+          } document.getElementById('btnActivateViewAs').onclick = () => activateViewAs();
           document.getElementById('btnExitViewAs').onclick = () => exitViewAs();
         }
       } catch (e) {
@@ -2149,7 +2177,7 @@
     function setViewAsBanner(targetId, name) {
       const b = document.getElementById('viewAsBanner');
       const lang = localStorage.getItem("CLS_Lang") || "en";
-      
+
       b.classList.remove('hidden');
       b.textContent =
         (lang === 'es')
@@ -2205,30 +2233,30 @@
       loadReport();
       loadPayrollWeekPeriods(); // Reload admin's own week periods
     }
-    
+
     // ===== W-9 Management Functions =====
     let currentW9RecordId = null;
     let pendingW9List = [];
-    
+
     // Load pending W-9 submissions
     async function loadPendingW9s() {
       const container = document.getElementById('w9Container');
       container.innerHTML = '<p class="muted">Loading...</p>';
-      
+
       const adminId = WORKER_ID;
-      
+
       try {
         const result = await jsonp(`${API_URL}?action=listPendingW9s&requesterId=${encodeURIComponent(adminId)}`);
-        
+
         if (result.ok && result.pending && result.pending.length > 0) {
           pendingW9List = result.pending;
-          
+
           let html = '<table style="width:100%;border-collapse:collapse;"><thead><tr>';
           html += '<th style="text-align:left;padding:12px;border-bottom:1px solid #333;" data-en="Worker" data-es="Empleado" data-pt="Funcionário">Worker</th>';
           html += '<th style="text-align:left;padding:12px;border-bottom:1px solid #333;" data-en="Submitted" data-es="Enviado" data-pt="Enviado">Submitted</th>';
           html += '<th style="text-align:center;padding:12px;border-bottom:1px solid #333;" data-en="Actions" data-es="Acciones" data-pt="Ações">Actions</th>';
           html += '</tr></thead><tbody>';
-          
+
           result.pending.forEach(w9 => {
             html += `<tr style="border-bottom:1px solid #222;">`;
             html += `<td style="padding:12px;">${w9.displayName || w9.workerId}<br><small style="color:#888;">${w9.workerId}</small></td>`;
@@ -2240,10 +2268,10 @@
             }
             html += `</td></tr>`;
           });
-          
+
           html += '</tbody></table>';
           container.innerHTML = html;
-          
+
           // Apply translations
           if (typeof applyTranslations === 'function') {
             applyTranslations();
@@ -2259,66 +2287,66 @@
         container.innerHTML = '<p style="color:#ef4444;">Error loading W-9 submissions. Please try again.</p>';
       }
     }
-    
+
     // View W-9 details in modal
     function viewW9Details(w9RecordId) {
       currentW9RecordId = w9RecordId;
-      
+
       // Find the W-9 in the pending list
       const w9 = pendingW9List.find(w => w.w9RecordId === w9RecordId);
-      
+
       if (!w9) {
         alert('W-9 record not found');
         return;
       }
-      
+
       // Build details HTML
       let html = '<div style="display:flex;flex-direction:column;gap:12px;">';
       html += `<div><strong data-en="W-9 Record ID:" data-es="ID de Registro W-9:" data-pt="ID de Registro W-9:">W-9 Record ID:</strong> ${w9.w9RecordId}</div>`;
       html += `<div><strong data-en="Worker:" data-es="Empleado:" data-pt="Funcionário:">Worker:</strong> ${w9.displayName} (${w9.workerId})</div>`;
       html += `<div><strong data-en="Submitted:" data-es="Enviado:" data-pt="Enviado:">Submitted:</strong> ${formatDate(w9.submittedDate)}</div>`;
-      
+
       if (w9.pdfUrl) {
         html += `<div><a href="${w9.pdfUrl}" target="_blank" class="btn btn-primary" style="display:inline-block;padding:8px 16px;text-decoration:none;" data-en="View W-9 PDF" data-es="Ver PDF W-9" data-pt="Ver PDF W-9">View W-9 PDF</a></div>`;
       }
-      
+
       html += '</div>';
-      
+
       document.getElementById('w9DetailsContent').innerHTML = html;
       document.getElementById('w9RejectionReason').value = '';
-      
+
       // Show modal
       document.getElementById('w9DetailsModal').style.display = 'block';
-      
+
       // Apply translations
       if (typeof applyTranslations === 'function') {
         applyTranslations();
       }
     }
-    
+
     // Close W-9 modal
     function closeW9Modal() {
       document.getElementById('w9DetailsModal').style.display = 'none';
       currentW9RecordId = null;
     }
-    
+
     // Approve W-9
     async function approveW9() {
       if (!currentW9RecordId) return;
-      
+
       if (!confirm('Are you sure you want to APPROVE this W-9? The worker will gain full dashboard access.')) {
         return;
       }
-      
+
       const adminId = WORKER_ID;
       const deviceInfo = typeof getDeviceInfo === 'function' ? getDeviceInfo() : { displayString: 'Unknown' };
-      
+
       try {
         document.getElementById('btnApproveW9').disabled = true;
         document.getElementById('btnApproveW9').textContent = 'Approving...';
-        
+
         const result = await jsonp(`${API_URL}?action=approveW9&w9RecordId=${encodeURIComponent(currentW9RecordId)}&adminId=${encodeURIComponent(adminId)}&device=${encodeURIComponent(deviceInfo.displayString)}`);
-        
+
         if (result.ok) {
           alert(result.message || 'W-9 approved successfully!');
           closeW9Modal();
@@ -2335,31 +2363,31 @@
         document.getElementById('btnApproveW9').textContent = 'Approve W-9';
       }
     }
-    
+
     // Reject W-9
     async function rejectW9() {
       if (!currentW9RecordId) return;
-      
+
       const reason = document.getElementById('w9RejectionReason').value.trim();
-      
+
       if (!reason) {
         alert('Please enter a reason for rejection.');
         return;
       }
-      
+
       if (!confirm('Are you sure you want to REJECT this W-9? The worker will be notified.')) {
         return;
       }
-      
+
       const adminId = WORKER_ID;
       const deviceInfo = typeof getDeviceInfo === 'function' ? getDeviceInfo() : { displayString: 'Unknown' };
-      
+
       try {
         document.getElementById('btnRejectW9').disabled = true;
         document.getElementById('btnRejectW9').textContent = 'Rejecting...';
-        
+
         const result = await jsonp(`${API_URL}?action=rejectW9&w9RecordId=${encodeURIComponent(currentW9RecordId)}&adminId=${encodeURIComponent(adminId)}&reason=${encodeURIComponent(reason)}&device=${encodeURIComponent(deviceInfo.displayString)}`);
-        
+
         if (result.ok) {
           alert(result.message || 'W-9 rejected successfully!');
           closeW9Modal();
@@ -2376,15 +2404,15 @@
         document.getElementById('btnRejectW9').textContent = 'Reject W-9';
       }
     }
-    
+
     // Format date helper
     function formatDate(dateStr) {
       if (!dateStr) return 'N/A';
       try {
         const date = new Date(dateStr);
-        return date.toLocaleDateString('en-US', { 
-          year: 'numeric', 
-          month: 'short', 
+        return date.toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'short',
           day: 'numeric',
           hour: '2-digit',
           minute: '2-digit'
@@ -2393,20 +2421,20 @@
         return dateStr;
       }
     }
-    
+
     // Wire up W-9 buttons
     document.addEventListener('DOMContentLoaded', () => {
       const btnLoadPendingW9s = document.getElementById('btnLoadPendingW9s');
       const btnRefreshW9s = document.getElementById('btnRefreshW9s');
-      
+
       if (btnLoadPendingW9s) {
         btnLoadPendingW9s.addEventListener('click', loadPendingW9s);
       }
-      
+
       if (btnRefreshW9s) {
         btnRefreshW9s.addEventListener('click', loadPendingW9s);
       }
-      
+
       // Close modal when clicking outside
       const w9Modal = document.getElementById('w9DetailsModal');
       if (w9Modal) {
@@ -2417,7 +2445,7 @@
         });
       }
     });
-    
+
     // Make functions globally accessible
     window.viewW9Details = viewW9Details;
     window.closeW9Modal = closeW9Modal;
@@ -2430,14 +2458,14 @@
     // Import with cache version
     const adminToolsUrl = `./js/admin/admin-tools.js?v=${CACHE_VERSION}`;
     const { AdminTools } = await import(adminToolsUrl);
-    
+
     // Initialize admin tools after DOM is ready
     document.addEventListener('DOMContentLoaded', () => {
       const apiUrl = window.API_URL || 'https://cls-proxy.s-garay.workers.dev';
-      
+
       const adminTools = new AdminTools(apiUrl);
       adminTools.init();
-      
+
       // Expose to window for debugging
       window.adminTools = adminTools;
     });
@@ -2449,10 +2477,10 @@
       // 🔥 Clear old caches immediately on page load
       const REQUIRED_VERSION = 'cls-employee-v18';
       caches.keys().then(cacheNames => {
-        const oldCaches = cacheNames.filter(name => 
+        const oldCaches = cacheNames.filter(name =>
           name.startsWith('cls-employee-') && name !== REQUIRED_VERSION
         );
-        
+
         if (oldCaches.length > 0) {
           Promise.all(oldCaches.map(name => caches.delete(name)))
             .then(() => {
@@ -2469,7 +2497,7 @@
         .then(registration => {
           console.log('✅ SW registered on dashboard');
           console.log('📦 Cache version:', CACHE_VERSION);
-          
+
           // 🔧 Force immediate update check on page load
           registration.update();
 
