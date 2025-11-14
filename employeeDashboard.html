@@ -4,7 +4,7 @@
 <head>
   <!-- Cache Version Control - Update this timestamp when deploying -->
   <script>
-    const CACHE_VERSION = '20251114-1530'; // Format: YYYYMMDD-HHMM
+    window.CACHE_VERSION = '20251114-1530'; // Format: YYYYMMDD-HHMM (exposed as window.CACHE_VERSION for ES6 modules)
   </script>
 
   <!-- Google Analytics -->
@@ -2422,8 +2422,8 @@
 
   <!-- Admin Tools Module (ES6) -->
   <script type="module">
-    // Import with cache version
-    const adminToolsUrl = `./js/admin/admin-tools.js?v=${CACHE_VERSION}`;
+    // Import with cache version (use window.CACHE_VERSION since modules have separate scope)
+    const adminToolsUrl = `./js/admin/admin-tools.js?v=${window.CACHE_VERSION}`;
     const { AdminTools } = await import(adminToolsUrl);
 
     // Initialize admin tools after DOM is ready
