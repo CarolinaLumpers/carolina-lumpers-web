@@ -1,5 +1,37 @@
 # Carolina Lumpers Service - AI Coding Agent Instructions
 
+## 📋 Table of Contents
+- [Development Workflow Rules](#development-workflow-rules)
+- [System Architecture](#system-architecture)
+- [Backend Development](#backend-development-googleappsscriptsemployeelogin)
+- [Frontend Development](#frontend-development-carolina-lumpers-web)
+- [React Portal](#react-portal-quick-reference)
+- [Common Pitfalls & Solutions](#common-pitfalls--solutions)
+- [Testing & Debugging](#testing--debugging)
+- [Quick Reference](#quick-reference)
+- [Documentation Locations](#documentation-locations)
+
+---
+
+## 📊 Project Overview
+
+### Current State
+- **Workers**: 18 migrated to Supabase (Phase 1 ✅)
+- **W9 Records**: 4 approved W9s in Supabase (Phase 2 ✅)
+- **Migration**: 40% complete (Phases 3-5 planned)
+- **Dual Backend**: Supabase (new) + Google Sheets (legacy)
+- **Feature Flag**: `VITE_USE_SUPABASE=true`
+
+### Key Systems
+| System | Technology | Status | Purpose |
+|--------|-----------|--------|---------|
+| carolina-lumpers-web | HTML/CSS/JS | ✅ Production | Public website, employee portal |
+| react-portal | React + Supabase | 🔄 Migrating | Internal admin dashboard |
+| GoogleAppsScripts | Apps Script | ✅ Production | Time tracking, payroll backend |
+| Cloudflare Worker | Edge proxy | ✅ Production | CORS proxy for Apps Script |
+
+---
+
 ## Development Workflow Rules
 
 ### Before Making Changes (CRITICAL)
@@ -13,7 +45,7 @@ This includes:
 - Waiting for explicit approval ("yes", "let's go", "proceed", etc.)
 
 ### Migration Progress Documentation (CRITICAL)
-**ALWAYS update `react-portal/MIGRATION_PROGRESS.md` when making Supabase migration changes.**
+**ALWAYS update `react-portal/docs/migration/MIGRATION_PROGRESS.md` when making Supabase migration changes.**
 
 Update the document when:
 - Completing a migration phase (Phase 1-5)
@@ -39,6 +71,7 @@ Keep these sections current:
 2. Implement `supabaseApi.getPendingW9s()` → Add to "API Methods Implemented"
 3. Enable W9Management.jsx queries → Update "Files Updated" and "Feature Availability"
 4. Test and find issue → Add to "Known Issues & Limitations"
+5. Document in `docs/migration/MIGRATION_PROGRESS.md` with full details
 
 **Example:**
 ```
@@ -72,21 +105,96 @@ This workspace contains **three distinct systems**:
 ```
 React Portal (localhost:5173)
     ↓ Feature flag: VITE_USE_SUPABASE=true
-    ├── Supabase PostgreSQL (PRIMARY - Phase 1-5)
-    │   ├── workers table (✅ Complete - 17 active records)
-    │   ├── w9_submissions table (❌ TODO - Phase 2)
-    │   ├── time_edit_requests table (❌ TODO - Phase 3)
-    │   ├── clock_ins table (❌ TODO - Phase 4)
-    │   └── payroll_line_items table (❌ TODO - Phase 5)
+    ├── Supabase PostgreSQL (PRIMARY)
+    │   ├── workers table (✅ Phase 1 COMPLETE - 18 workers)
+    │   ├── w9_submissions table (✅ Phase 2 COMPLETE - 4 W9s)
+    │   ├── time_edit_requests table (⏳ Phase 3 - Planned)
+    │   ├── clock_ins table (⏳ Phase 4 - Planned)
+    │   └── payroll_line_items table (⏳ Phase 5 - Planned)
     │
     └── Google Sheets via Proxy (LEGACY - Being Deprecated)
         ↓ http://localhost:3001/api/sheets
         └── CLS_Hub_Backend spreadsheet
 ```
 
-**Migration Status**: Phase 1 Complete (Workers) - See `react-portal/MIGRATION_PROGRESS.md`
-**Active Development**: Migrating from Google Sheets backend to Supabase PostgreSQL
-**Documentation**: All migration changes MUST be documented in `react-portal/MIGRATION_PROGRESS.md`
+**Migration Status**: 
+- ✅ **Phase 1 Complete**: Workers table (18 workers, Supabase Auth integrated)
+- ✅ **Phase 2 Complete**: W9 submissions table (4 approved W9s migrated)
+- ⏳ **Phase 3-5**: Time edits, clock-ins, payroll (planned)
+
+**Documentation**: All migration changes MUST be documented in `react-portal/docs/migration/MIGRATION_PROGRESS.md`
+
+### React Portal Directory Structure
+```
+react-portal/
+├── docs/                        # All documentation organized by purpose
+│   ├── guides/                  # User guides and how-tos
+│   │   ├── DIRECT_SHEETS_ACCESS.md
+│   │   ├── USER_SWITCHER.md
+│   │   ├── SYNC_WORKERS_README.md
+│   │   ├── COLOR_DEMO_GUIDE.md
+│   │   └── LOGIN_COLOR_GUIDE.md
+│   ├── migration/               # Migration tracking and progress
+│   │   ├── MIGRATION_PROGRESS.md  ⭐ UPDATE FREQUENTLY
+│   │   ├── PHASE_1_COMPLETE.md
+│   │   ├── PHASE_2_COMPLETE.md
+│   │   ├── SUPABASE_MIGRATION_PLAN.md
+│   │   └── SESSION_*.md
+│   ├── completed/               # Completed implementation docs
+│   │   ├── DASHBOARD_REFACTOR_COMPLETE.md
+│   │   ├── TIME_DISPLAY_BUG_FIX.md
+│   │   └── IMPLEMENTATION_DOCS.md
+│   ├── deprecated/              # Deprecated documentation
+│   ├── archived/                # Archived documentation
+│   ├── QUICKSTART.md
+│   └── SETUP.md
+│
+├── scripts/                     # All executable scripts organized by purpose
+│   ├── migration/               # Migration utilities
+│   │   ├── sync-workers-from-sheets.js   # Sync workers from Google Sheets
+│   │   ├── import-w9-submissions.js      # Import W9 records
+│   │   ├── fetch-w9-records.js           # Fetch W9 data from Sheets
+│   │   ├── inspect-workers-sheet.js      # Debug tool for Sheets structure
+│   │   └── add-nataly-worker.js          # One-off worker addition
+│   ├── setup/                   # Database and environment setup
+│   │   ├── setup-database-v2.js          # Main setup script
+│   │   ├── create-admin-auth.js          # Create admin accounts
+│   │   └── create-all-worker-auth.js     # Bulk auth creation
+│   ├── test/                    # Test and validation scripts
+│   │   ├── test-supabase-workers.js
+│   │   ├── test-proper-auth.js
+│   │   ├── test-login.js
+│   │   └── test-uuid-structure.js
+│   └── deprecated/              # Old scripts (Python, deprecated JS)
+│
+├── sql/                         # SQL schemas and migrations
+│   ├── migrations/              # Numbered sequential migrations
+│   │   ├── 001-create-w9-table.sql
+│   │   ├── 002-migrate-to-uuid.sql
+│   │   └── 003-add-auth-column.sql
+│   └── schemas/                 # Complete schema definitions
+│       ├── supabase-schema.sql
+│       └── supabase-ready.sql
+│
+├── data/                        # Exported data and backups
+│   └── exports/
+│       ├── w9-records-export.json
+│       ├── CLS_Hub_Backend - Workers (2).csv
+│       └── CLS_Hub_Backend.xlsx
+│
+├── src/                         # React application source
+├── public/                      # Static assets
+├── server/                      # Proxy server for Google Sheets API
+└── [config files]               # package.json, vite.config.js, etc.
+```
+
+**Key Locations:**
+- **Migration Docs**: `docs/migration/MIGRATION_PROGRESS.md` - Primary migration tracking (update frequently!)
+- **Worker Sync**: `scripts/migration/sync-workers-from-sheets.js` - Tool to sync from Google Sheets
+- **Database Setup**: `scripts/setup/setup-database-v2.js` - Initialize Supabase schema
+- **SQL Migrations**: `sql/migrations/` - Numbered files (001, 002, 003) run sequentially
+- **User Guides**: `docs/guides/` - Component and feature documentation
+- **Deprecated Files**: `scripts/deprecated/` and `docs/deprecated/` - Archived legacy code
 
 ### Critical API Flow
 ```
@@ -621,12 +729,13 @@ $result.data.values
 
 - **Frontend**: `carolina-lumpers-web/README.md`
 - **React Portal**: `react-portal/README.md`
-- **React Portal Migration**: `react-portal/MIGRATION_PROGRESS.md` ⭐ **UPDATE FREQUENTLY**
+- **React Portal Migration**: `react-portal/docs/migration/MIGRATION_PROGRESS.md` ⭐ **UPDATE FREQUENTLY**
 - **Backend EmployeeLogin**: `GoogleAppsScripts/EmployeeLogin/README.md`
 - **Database Schema**: `.github/DATABASE_SCHEMA.md` (22 sheets, complete structure)
 - **Centralized Logging**: `GoogleAppsScripts/LoggingLibrary/START_HERE.md`
 - **Migration Complete**: `GoogleAppsScripts/LoggingLibrary/EMPLOYEELOGIN_MIGRATION_COMPLETE.md`
 - **Device Detection**: `GoogleAppsScripts/LoggingLibrary/DEVICE_DETECTION_IMPLEMENTATION.md`
-- **Direct Sheets Access**: `react-portal/DIRECT_SHEETS_ACCESS.md` (proxy server, OAuth setup)
-- **UserSwitcher Component**: `react-portal/USER_SWITCHER.md` (dev tool for testing roles)
+- **Direct Sheets Access**: `react-portal/docs/guides/DIRECT_SHEETS_ACCESS.md` (proxy server, OAuth setup)
+- **UserSwitcher Component**: `react-portal/docs/guides/USER_SWITCHER.md` (dev tool for testing roles)
+- **Worker Sync Tools**: `react-portal/docs/guides/SYNC_WORKERS_README.md` (Google Sheets → Supabase sync)
 - **This File**: `.github/copilot-instructions.md`

@@ -1,50 +1,121 @@
 # CLS Employee Portal - React
 
-Modern, production-ready React-based employee portal for Carolina Lumpers Service. **Currently migrating from Google Apps Script to Supabase + Vercel** for improved performance and cost efficiency.
+Modern, production-ready React-based employee portal for Carolina Lumpers Service. **Successfully migrated to Supabase PostgreSQL** for improved performance and scalability.
 
 ## 🎯 Migration Status
 
-**Current State:** Google Apps Script backend (operational)  
-**Target State:** Supabase + Vercel (free tier)  
-**Progress:** React Portal 95% complete, ready for Supabase integration
+**Current State:** Supabase PostgreSQL + React Portal (operational)  
+**Phase 1:** ✅ Workers table (18 workers with UUID auth)  
+**Phase 2:** ✅ W9 Management (4 submissions migrated)  
+**Progress:** Core migration complete, implementing advanced features
 
 ## 📋 Table of Contents
 
-- [Migration Plan](#migration-plan)
+- [Project Structure](#project-structure)
 - [Quick Start](#quick-start)
 - [Features](#features)
 - [Technology Stack](#technology-stack)
-- [Implementation Plan](#implementation-plan)
+- [Documentation](#documentation)
 - [Development](#development)
-- [Deployment Strategy](#deployment-strategy)
+- [Migration Tools](#migration-tools)
 
 ---
 
-## 🚀 Migration Plan
+## 📁 Project Structure
 
-### **Phase 1: Supabase Setup (Week 1)**
+```
+react-portal/
+├── docs/                      # Documentation
+│   ├── guides/               # Feature guides & how-tos
+│   ├── migration/            # Migration progress & plans
+│   ├── completed/            # Completed feature docs
+│   ├── deprecated/           # Archived outdated docs
+│   ├── archived/             # Historical reference docs
+│   ├── QUICKSTART.md         # Quick start guide
+│   └── SETUP.md              # Detailed setup instructions
+│
+├── scripts/                   # Utility scripts
+│   ├── migration/            # Data migration scripts
+│   ├── setup/                # Database & auth setup
+│   ├── test/                 # Testing utilities
+│   └── deprecated/           # Archived old scripts
+│
+├── sql/                       # SQL schemas & migrations
+│   ├── migrations/           # Numbered migration files
+│   └── schemas/              # Database schemas
+│
+├── data/                      # Data files
+│   └── exports/              # Exported data from Google Sheets
+│
+├── src/                       # React application source
+│   ├── components/           # Reusable UI components
+│   ├── contexts/             # React contexts (Auth, Language)
+│   ├── features/             # Feature-specific components
+│   ├── hooks/                # Custom React hooks
+│   ├── i18n/                 # Internationalization
+│   ├── layouts/              # Page layouts
+│   ├── pages/                # Route pages
+│   ├── services/             # API services (Supabase)
+│   └── utils/                # Utility functions
+│
+├── server/                    # Node.js proxy server
+│   ├── sheets-proxy.js       # Direct Google Sheets API access
+│   └── service-account-key.json  # Google Service Account (gitignored)
+│
+├── public/                    # Static assets
+└── [config files]            # Vite, Tailwind, PostCSS configs
+```
 
-1. Create Supabase project (free tier)
-2. Design database schema (replace Google Sheets)
-3. Set up Row Level Security (RLS) policies
-4. Create initial data migration scripts
+---
 
-### **Phase 2: API Migration (Week 1-2)**
+## 📚 Documentation
 
-1. Replace Google Apps Script API calls with Supabase queries
-2. Update authentication to Supabase Auth
-3. Implement real-time subscriptions
-4. Test parallel with existing system
+- **[Quick Start Guide](docs/QUICKSTART.md)** - Get up and running in 5 minutes
+- **[Setup Guide](docs/SETUP.md)** - Detailed environment configuration
+- **[Migration Progress](docs/migration/MIGRATION_PROGRESS.md)** - Current migration status & next steps
+- **[Direct Sheets Access](docs/guides/DIRECT_SHEETS_ACCESS.md)** - Using the Node.js proxy server
+- **[Worker Sync Tool](docs/guides/SYNC_WORKERS_README.md)** - Syncing workers from Google Sheets
+- **[User Switcher](docs/guides/USER_SWITCHER.md)** - Dev tool for testing different user roles
 
-### **Phase 3: Deployment (Week 2)**
+---
 
-1. Deploy to Vercel free tier
-2. Configure custom domain
-3. Run parallel with Google system
-4. Full employee migration when stable
+## 🔧 Migration Tools
 
-**Expected Cost:** $0/month (free tiers) vs current $0/month Google system  
-**Expected Performance:** 10x faster API responses (200ms vs 2-5s)
+### Sync Workers from Google Sheets
+
+Keep Supabase in sync with Google Sheets (legacy source of truth):
+
+```bash
+# Dry run - show what would be added
+node scripts/migration/sync-workers-from-sheets.js
+
+# Add missing workers
+node scripts/migration/sync-workers-from-sheets.js --execute
+
+# Add missing + update existing workers
+node scripts/migration/sync-workers-from-sheets.js --update
+```
+
+### Database Migrations
+
+SQL migrations in `sql/migrations/`:
+
+- `001-create-w9-table.sql` - W9 submissions table
+- `002-migrate-to-uuid.sql` - UUID standardization
+- `003-add-auth-column.sql` - Authentication columns
+
+### Test Scripts
+
+```bash
+# Test Supabase connection
+node scripts/test/test-supabase-workers.js
+
+# Test login flow
+node scripts/test/test-login.js
+
+# Validate UUID structure
+node scripts/test/test-uuid-structure.js
+```
 
 ---
 
