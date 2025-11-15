@@ -77,23 +77,23 @@ function transformW9Record(record) {
 async function importW9Records() {
   console.log("🚀 Starting W9 records migration...\n");
 
-  // Fetch all workers to validate IDs exist
+  // Fetch all workers to validate IDs exist and create mapping
   console.log("📋 Fetching worker mappings from Supabase...");
   const { data: workers, error: workersError } = await supabase
     .from("workers")
-    .select("id");
+    .select("id, employee_id"); // UUID and legacy text ID
 
   if (workersError) {
     console.error("❌ Failed to fetch workers:", workersError.message);
     process.exit(1);
   }
 
-  // Create set of valid worker IDs
-  const workerIds = new Set(workers.map((w) => w.id));
+  // Create map: employee_id -> UUID
+  const workerIdMap = new Map(workers.map((w) => [w.employee_id, w.id]));
 
-  console.log(`✅ Loaded ${workers.length} worker IDs\n`);
+  console.log(`✅ Loaded ${workers.length} worker mappings\n`);
 
-  // Transform all records with TEXT ID mapping
+  // Transform all records - map employee_id to UUID
   const transformedRecords = w9Data.records
     .map((record) => {
       // Strip hash suffix from WorkerID (e.g., "YBQp-043-7868a066" -> "YBQp-043")
@@ -102,15 +102,21 @@ async function importW9Records() {
         ? record.ApprovedBy.split("-").slice(0, 2).join("-")
         : null;
 
-      if (!workerIds.has(cleanWorkerId)) {
+      // Look up UUID from employee_id
+      const workerUuid = workerIdMap.get(cleanWorkerId);
+      const reviewerUuid = cleanReviewerId
+        ? workerIdMap.get(cleanReviewerId)
+        : null;
+
+      if (!workerUuid) {
         console.warn(
-          `⚠️  Worker ${record.WorkerID} (cleaned: ${cleanWorkerId}) not found in workers table, skipping record ${record.W9RecordID}`
+          `⚠️  Worker ${record.WorkerID} (employee_id: ${cleanWorkerId}) not found in workers table, skipping record ${record.W9RecordID}`
         );
         return null;
       }
 
       return {
-        worker_id: cleanWorkerId, // TEXT worker ID (e.g., "YBQp-043")
+        worker_id: workerUuid, // UUID foreign key to workers.id
         w9_record_id: record.W9RecordID,
         legal_name: record.LegalName,
         business_name: record.BusinessName || null,
@@ -121,14 +127,14 @@ async function importW9Records() {
         zip: record.ZIP || null,
         ssn_encrypted: record.SSN_Encrypted || null,
         ssn_last4: record.SSN_Last4 || null,
-        backup_withholding: record.BackupWithholding === "YES",
+        backup_withholding: record.BackupWithholding === "TRUE",
         pdf_url: record.W9_PDF_URL || null,
         status: record.Status.toLowerCase(),
         submitted_date: parseSheetDate(record.SubmissionDate),
         reviewed_date: record.ApprovedDate
           ? parseSheetDate(record.ApprovedDate)
           : null,
-        reviewed_by: cleanReviewerId, // TEXT worker ID (e.g., "SG-001")
+        reviewed_by: reviewerUuid, // UUID foreign key (nullable)
         rejection_reason: record.RejectionReason || null,
         admin_notes: record.AdminNotes || null,
       };
