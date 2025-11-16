@@ -44,6 +44,105 @@ This includes:
 - Outlining expected behavior and user experience
 - Waiting for explicit approval ("yes", "let's go", "proceed", etc.)
 
+### Best Practice Guidelines (CRITICAL)
+**ALWAYS recommend industry best practices and identify anti-patterns across ALL development decisions.**
+
+**User Context**: Limited development experience, migrating from legacy system that didn't follow best practices. User needs education and guidance, not just implementation.
+
+#### When Suggesting ANY Implementation:
+
+1. **Present Best Practice First**
+   - Explain the industry-standard approach
+   - Why it's the standard (not just "do this")
+   - Real-world benefits (performance, security, maintainability, scalability)
+
+2. **Identify Anti-patterns**
+   - Call out problematic approaches in existing code
+   - Explain why they're problematic
+   - Show consequences (technical debt, bugs, security risks)
+
+3. **Use Clear Comparisons**
+   ```
+   ❌ Anti-pattern: [Bad approach]
+      Problems: [Specific issues]
+      
+   ✅ Best Practice: [Correct approach]
+      Benefits: [Specific advantages]
+      Trade-offs: [Time/complexity cost]
+   ```
+
+4. **Provide Learning Context**
+   - Explain the "why" behind decisions
+   - Reference industry standards (React patterns, SQL best practices, security principles)
+   - Show how it scales/maintains long-term
+
+5. **Wait for Informed Confirmation**
+   - Present options with full context
+   - Let user choose based on understanding
+   - Confirm before implementing
+
+#### Applies To ALL Development Areas:
+
+- **Architecture**: Component design, state management, API structure
+- **Database**: Schema design, indexing, foreign keys, normalization
+- **Security**: Authentication, authorization, RLS, input validation, secrets management
+- **Code Organization**: File structure, separation of concerns, reusability
+- **Performance**: Optimization, caching, lazy loading, query efficiency
+- **Error Handling**: Try-catch, user feedback, logging, fallbacks
+- **Testing**: Unit tests, integration tests, E2E tests
+- **Deployment**: CI/CD, environment variables, rollback strategies
+
+#### Communication Style:
+
+**Instead of**: "Add this code..."
+
+**Always use**:
+```
+I see [X] approaches:
+
+❌ Quick Fix: [Simple but problematic approach]
+   Why it's tempting: [Faster now]
+   Problems: [Tech debt, security, performance issues]
+   
+✅ Best Practice: [Industry standard approach]
+   Why it's standard: [Industry reasons]
+   Benefits: [Long-term value]
+   Trade-off: [Extra effort now, huge savings later]
+   
+✨ Alternative: [If there's a middle ground]
+   
+Recommendation: [Best practice] because [reasoning based on project context]
+
+Want me to implement the best practice approach?
+```
+
+**Rationale**: User is building to **replace** legacy system precisely because best practices weren't followed. This is the opportunity to build it right. Always educate and recommend the correct path first, discuss shortcuts only if explicitly requested.
+
+**Example Scenarios:**
+
+```
+User: "How do I store the auth token?"
+Agent: 
+  ❌ localStorage without encryption - XSS vulnerable
+  ✅ httpOnly cookies or secure token management - Industry standard
+  [Detailed explanation of why]
+  Proceed with best practice?
+
+User: "Should I add validation?"
+Agent:
+  ❌ Client-side only - Can be bypassed
+  ✅ Client + Server validation - Defense in depth
+  [Explanation of validation layers]
+  Want me to implement both?
+
+User: "How to structure this component?"
+Agent:
+  ❌ 500-line component with mixed concerns
+  ✅ Small, focused components with single responsibility
+  [Explanation of React component patterns]
+  Let me refactor into proper structure?
+```
+
 ### Migration Progress Documentation (CRITICAL)
 **ALWAYS update `react-portal/docs/migration/MIGRATION_PROGRESS.md` when making Supabase migration changes.**
 

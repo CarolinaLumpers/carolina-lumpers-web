@@ -21,7 +21,9 @@ if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
 // Read W9 export data
-const w9Data = JSON.parse(fs.readFileSync("./w9-records-export.json", "utf-8"));
+const w9Data = JSON.parse(
+  fs.readFileSync("./data/exports/w9-records-export.json", "utf-8")
+);
 
 // Parse date string "11/11/2025 7:58:41" to ISO timestamp
 function parseSheetDate(dateStr) {

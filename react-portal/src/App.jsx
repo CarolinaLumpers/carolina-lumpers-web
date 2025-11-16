@@ -14,9 +14,8 @@ import LoginColorDemo from './pages/LoginColorDemo'
 import Signup from './pages/Signup'
 import NotFound from './pages/NotFound'
 
-// Dashboard Pages (Role-specific)
-import WorkerDashboard from './pages/WorkerDashboard'
-import SupervisorDashboard from './pages/SupervisorDashboard'
+// Dashboard Pages
+import Dashboard from './pages/Dashboard'
 import AdminDashboard from './pages/AdminDashboard'
 
 // Feature Pages (All roles)
@@ -33,27 +32,19 @@ import TimeTrackingPage from './pages/TimeTrackingPage'
 import ApprovalsPage from './pages/ApprovalsPage'
 import ReportsPage from './pages/ReportsPage'
 
-// Legacy Dashboard (for fallback)
-import Dashboard from './pages/Dashboard'
-
 /**
- * Role-based dashboard router
- * Renders appropriate dashboard based on user role
+ * Role-based Dashboard - Shows different dashboard based on user role
  */
 function RoleBasedDashboard() {
   const { user } = useAuth();
-  
-  if (!user) return <Navigate to="/login" replace />;
-  
-  switch (user.role) {
-    case 'Admin':
-      return <AdminDashboard />;
-    case 'Lead':
-      return <SupervisorDashboard />;
-    case 'Worker':
-    default:
-      return <WorkerDashboard />;
+
+  // Admin and Lead see AdminDashboard with KPIs
+  if (user?.role === 'Admin' || user?.role === 'Lead') {
+    return <AdminDashboard />;
   }
+
+  // Workers see regular Dashboard with TimeTracker
+  return <Dashboard />;
 }
 
 /**
@@ -62,16 +53,16 @@ function RoleBasedDashboard() {
  */
 function ProtectedRoute({ roles, children }) {
   const { user } = useAuth();
-  
+
   if (!user) {
     return <Navigate to="/login" replace />;
   }
-  
+
   if (roles && !roles.includes(user.role)) {
     // User doesn't have required role - redirect to dashboard
     return <Navigate to="/dashboard" replace />;
   }
-  
+
   return children;
 }
 
@@ -93,78 +84,75 @@ function App() {
         <BrowserRouter>
           <AuthProvider>
             <Routes>
-            {/* Public routes */}
-            <Route path="/login" element={<Login />} />
-            <Route path="/login-demo" element={<LoginColorDemo />} />
-            <Route path="/signup" element={<Signup />} />
-            
-            {/* Protected routes with DashboardLayout */}
-            <Route element={<PrivateRoute />}>
-              <Route element={<DashboardLayout />}>
-                {/* Dashboard - role-based routing */}
-                <Route path="/dashboard" element={<RoleBasedDashboard />} />
-                
-                {/* Common routes - all authenticated users */}
-                <Route path="/time-entries" element={<TimeEntriesPage />} />
-                <Route path="/payroll" element={<PayrollPage />} />
-                <Route path="/profile" element={<ProfilePage />} />
-                
-                {/* Supervisor routes - Lead only */}
-                <Route 
-                  path="/team" 
-                  element={
-                    <ProtectedRoute roles={['Lead', 'Admin']}>
-                      <TeamPage />
-                    </ProtectedRoute>
-                  } 
-                />
-                
-                {/* Admin routes - Admin only */}
-                <Route 
-                  path="/workers" 
-                  element={
-                    <ProtectedRoute roles={['Admin']}>
-                      <WorkersPage />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/time-tracking" 
-                  element={
-                    <ProtectedRoute roles={['Admin']}>
-                      <TimeTrackingPage />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/approvals" 
-                  element={
-                    <ProtectedRoute roles={['Admin']}>
-                      <ApprovalsPage />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/reports" 
-                  element={
-                    <ProtectedRoute roles={['Admin']}>
-                      <ReportsPage />
-                    </ProtectedRoute>
-                  } 
-                />
-              </Route>
-              
-              {/* Legacy dashboard route (fallback) */}
-              <Route path="/dashboard-old" element={<Dashboard />} />
-            </Route>
+              {/* Public routes */}
+              <Route path="/login" element={<Login />} />
+              <Route path="/login-demo" element={<LoginColorDemo />} />
+              <Route path="/signup" element={<Signup />} />
 
-            {/* Redirects */}
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </AuthProvider>
-      </BrowserRouter>
-    </ThemeProvider>
+              {/* Protected routes with DashboardLayout */}
+              <Route element={<PrivateRoute />}>
+                <Route element={<DashboardLayout />}>
+                  {/* Dashboard - role-based view */}
+                  <Route path="/dashboard" element={<RoleBasedDashboard />} />
+
+                  {/* Common routes - all authenticated users */}
+                  <Route path="/time-entries" element={<TimeEntriesPage />} />
+                  <Route path="/payroll" element={<PayrollPage />} />
+                  <Route path="/profile" element={<ProfilePage />} />
+
+                  {/* Supervisor routes - Lead only */}
+                  <Route
+                    path="/team"
+                    element={
+                      <ProtectedRoute roles={['Lead', 'Admin']}>
+                        <TeamPage />
+                      </ProtectedRoute>
+                    }
+                  />
+
+                  {/* Admin routes - Admin only */}
+                  <Route
+                    path="/workers"
+                    element={
+                      <ProtectedRoute roles={['Admin']}>
+                        <WorkersPage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/time-tracking"
+                    element={
+                      <ProtectedRoute roles={['Admin']}>
+                        <TimeTrackingPage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/approvals"
+                    element={
+                      <ProtectedRoute roles={['Admin']}>
+                        <ApprovalsPage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/reports"
+                    element={
+                      <ProtectedRoute roles={['Admin']}>
+                        <ReportsPage />
+                      </ProtectedRoute>
+                    }
+                  />
+                </Route>
+              </Route>
+
+              {/* Redirects */}
+              <Route path="/" element={<Navigate to="/dashboard" replace />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </AuthProvider>
+        </BrowserRouter>
+      </ThemeProvider>
     </QueryClientProvider>
   )
 }

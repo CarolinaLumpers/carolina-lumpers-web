@@ -1,8 +1,8 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
-import { format } from 'date-fns';
-import { sheetsApi } from '../services/sheets';
+import { format, parseISO } from 'date-fns';
+import { supabase } from '../services/supabase';
 import { useAuth } from '../features/auth/AuthContext';
 import Table from './Table';
 import Badge from './Badge';
@@ -12,56 +12,73 @@ const ClockInHistory = ({ refreshTrigger }) => {
   const { t } = useTranslation();
   const { user } = useAuth();
 
-  // Get today's date in M/D/YYYY format to match sheet format
-  const getTodayDate = () => {
-    const now = new Date();
-    const formatter = new Intl.DateTimeFormat("en-US", { 
-      timeZone: "America/New_York",
-      month: "numeric",
-      day: "numeric",
-      year: "numeric"
-    });
-    return formatter.format(now); // e.g., "11/12/2025"
-  };
+  // Fetch today's clock-ins from Supabase
+  const { data: clockIns, isLoading, error, refetch } = useQuery({
+    queryKey: ['clockInsToday', user.workerId, refreshTrigger],
+    queryFn: async () => {
+      const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
 
-  const todayDate = getTodayDate();
+      const { data, error } = await supabase
+        .from('clock_ins')
+        .select('*')
+        .eq('worker_id', user.workerId)
+        .gte('clock_in_time', `${today}T00:00:00`)
+        .lte('clock_in_time', `${today}T23:59:59`)
+        .order('clock_in_time', { ascending: false });
 
-  // Fetch today's clock-ins using Direct Sheets API
-  const { data, isLoading, error, refetch } = useQuery({
-    queryKey: ['clockInsDirect', user.workerId, todayDate, refreshTrigger],
-    queryFn: () => sheetsApi.getClockInsDirect(user.workerId, todayDate),
+      if (error) throw error;
+      return data || [];
+    },
     staleTime: 60000, // 1 minute
-    refetchInterval: false, // No polling - only refetch on refreshTrigger change
+    refetchInterval: false,
   });
 
   const columns = [
     {
       header: t('common.date', 'Date'),
-      accessor: 'date',
+      accessor: 'clock_in_time',
       cell: (row) => {
         try {
-          // Sheet format: "M/D/YYYY" -> Convert to "MMM dd, yyyy"
-          const [month, day, year] = row.date.split('/');
-          const dateObj = new Date(year, month - 1, day);
-          return format(dateObj, 'MMM dd, yyyy');
+          return format(parseISO(row.clock_in_time), 'MMM dd, yyyy');
         } catch {
-          return row.date;
+          return '-';
         }
       },
     },
     {
       header: t('common.time', 'Time'),
-      accessor: 'time',
-      cell: (row) => row.time || '12:00 AM',
+      accessor: 'clock_in_time',
+      cell: (row) => {
+        try {
+          return format(parseISO(row.clock_in_time), 'h:mm a');
+        } catch {
+          return '-';
+        }
+      },
     },
     {
       header: t('common.site', 'Site'),
-      accessor: 'site',
+      accessor: 'site_name',
+      cell: (row) => row.site_name || '-',
     },
     {
       header: t('common.distance', 'Distance'),
-      accessor: 'distance',
-      cell: (row) => row.distance ? `${row.distance} mi` : '-',
+      accessor: 'distance_miles',
+      cell: (row) => row.distance_miles ? `${row.distance_miles} mi` : '-',
+    },
+    {
+      header: t('common.status', 'Status'),
+      accessor: 'edit_status',
+      cell: (row) => {
+        const statusMap = {
+          'confirmed': { variant: 'success', label: 'Confirmed' },
+          'pending': { variant: 'warning', label: 'Pending' },
+          'editing': { variant: 'info', label: 'Editing' },
+          'denied': { variant: 'error', label: 'Denied' }
+        };
+        const status = statusMap[row.edit_status] || statusMap['confirmed'];
+        return <Badge variant={status.variant}>{status.label}</Badge>;
+      },
     },
   ];
 
@@ -88,13 +105,10 @@ const ClockInHistory = ({ refreshTrigger }) => {
     );
   }
 
-  // Direct Sheets API returns array of clock-ins already filtered to today
-  const todayEntries = data || [];
-
   return (
     <Table
       columns={columns}
-      data={todayEntries}
+      data={clockIns}
       emptyMessage={t('dashboard.noEntriesToday', 'No clock-ins yet today. Clock in to get started!')}
     />
   );

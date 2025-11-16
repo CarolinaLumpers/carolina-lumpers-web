@@ -73,11 +73,11 @@ export const supabaseApi = {
 
     if (error) throw error;
 
-    // Get worker profile using auth_user_id link
+    // Get worker profile using UUID link (id references auth.users)
     const { data: worker, error: workerError } = await supabase
       .from("workers")
       .select("*")
-      .eq("auth_user_id", data.user.id)
+      .eq("id", data.user.id)
       .single();
 
     if (workerError) throw workerError;
@@ -102,7 +102,7 @@ export const supabaseApi = {
       const { error: profileError } = await supabase.from("workers").insert({
         ...workerData,
         email,
-        auth_user_id: data.user.id,
+        id: data.user.id, // UUID from Supabase Auth
       });
 
       if (profileError) throw profileError;
@@ -129,11 +129,11 @@ export const supabaseApi = {
 
     if (!user) return null;
 
-    // Get worker profile
+    // Get worker profile using UUID
     const { data: worker, error: workerError } = await supabase
       .from("workers")
       .select("*")
-      .eq("auth_user_id", user.id)
+      .eq("id", user.id)
       .single();
 
     if (workerError) throw workerError;
@@ -249,12 +249,12 @@ export const supabaseApi = {
       if (clockInsResult.error) throw clockInsResult.error;
 
       const workers = (workersResult.data || []).map((worker) => ({
-        id: worker.id,
+        id: worker.employee_id, // Business code for display (SG-001, etc.)
         name: worker.display_name,
         role: worker.role || "Worker",
         availability: worker.is_active ? "Active" : "Inactive",
         // Additional details for modal - mapped from Supabase columns
-        employeeId: worker.id, // Using id as employee ID
+        employeeId: worker.employee_id, // Business code (was worker.id)
         firstName: worker.display_name.split(" ")[0] || "",
         lastName: worker.display_name.split(" ").slice(1).join(" ") || "",
         email: worker.email || "",
@@ -352,6 +352,339 @@ export const supabaseApi = {
 
     return {
       success: true,
+      data: data || [],
+    };
+  },
+
+  // W9 Management
+  async getPendingW9s() {
+    const { data, error } = await supabase
+      .from("w9_submissions")
+      .select(
+        `
+        *,
+        worker:workers!worker_id(employee_id, display_name, email)
+      `
+      )
+      .eq("status", "pending")
+      .order("submitted_date", { ascending: false });
+
+    if (error) throw error;
+
+    return {
+      success: true,
+      data: data || [],
+    };
+  },
+
+  async getAllW9s() {
+    const { data, error } = await supabase
+      .from("w9_submissions")
+      .select(
+        `
+        *,
+        worker:workers!worker_id(employee_id, display_name, email),
+        reviewer:workers!reviewed_by(employee_id, display_name)
+      `
+      )
+      .order("submitted_date", { ascending: false });
+
+    if (error) throw error;
+
+    return {
+      success: true,
+      data: data || [],
+    };
+  },
+
+  async getWorkerW9(workerId) {
+    const { data, error } = await supabase
+      .from("w9_submissions")
+      .select(
+        `
+        *,
+        worker:workers!worker_id(employee_id, display_name, email)
+      `
+      )
+      .eq("worker_id", workerId)
+      .order("submitted_date", { ascending: false })
+      .limit(1)
+      .single();
+
+    if (error && error.code !== "PGRST116") throw error;
+
+    return {
+      success: true,
+      data: data || null,
+    };
+  },
+
+  async updateW9Status(w9RecordId, status, reviewerId, reason = null) {
+    const updates = {
+      status,
+      reviewed_date: new Date().toISOString(),
+      reviewed_by: reviewerId,
+      updated_at: new Date().toISOString(),
+    };
+
+    if (reason) {
+      updates.rejection_reason = reason;
+    }
+
+    const { data, error } = await supabase
+      .from("w9_submissions")
+      .update(updates)
+      .eq("w9_record_id", w9RecordId)
+      .select(
+        `
+        *,
+        worker:workers!w9_submissions_worker_id_fkey(employee_id, display_name, email)
+      `
+      )
+      .single();
+
+    if (error) throw error;
+
+    // Update worker's w9_status
+    if (data && data.worker_id) {
+      await supabase
+        .from("workers")
+        .update({
+          w9_status: status,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", data.worker_id);
+    }
+
+    return {
+      success: true,
+      data: data,
+    };
+  },
+
+  async submitW9(w9Data) {
+    const { data, error } = await supabase
+      .from("w9_submissions")
+      .insert({
+        ...w9Data,
+        submitted_date: new Date().toISOString(),
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      })
+      .select(
+        `
+        *,
+        worker:workers!w9_submissions_worker_id_fkey(employee_id, display_name, email)
+      `
+      )
+      .single();
+
+    if (error) throw error;
+
+    // Update worker's w9_status to 'submitted'
+    if (data && data.worker_id) {
+      await supabase
+        .from("workers")
+        .update({
+          w9_status: "submitted",
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", data.worker_id);
+    }
+
+    return {
+      success: true,
+      data: data,
+    };
+  },
+
+  // ===================================================
+  // Clock-ins Management
+  // ===================================================
+
+  /**
+   * Get clock-ins for a specific worker
+   * @param {string} workerId - Worker UUID
+   * @param {string} startDate - Optional start date (YYYY-MM-DD)
+   * @param {string} endDate - Optional end date (YYYY-MM-DD)
+   * @returns {Promise<{success: boolean, data: Array}>}
+   */
+  async getWorkerClockIns(workerId, startDate = null, endDate = null) {
+    let query = supabase
+      .from("clock_ins")
+      .select(
+        `
+        *,
+        worker:workers!worker_id(employee_id, display_name, email)
+      `
+      )
+      .eq("worker_id", workerId)
+      .order("date", { ascending: false })
+      .order("time", { ascending: false });
+
+    if (startDate) {
+      query = query.gte("date", startDate);
+    }
+    if (endDate) {
+      query = query.lte("date", endDate);
+    }
+
+    const { data, error } = await query;
+
+    if (error) throw error;
+
+    return {
+      success: true,
+      data: data || [],
+    };
+  },
+
+  /**
+   * Get all clock-ins (admin view)
+   * @param {Object} filters - Optional filters { workerId, startDate, endDate, editStatus }
+   * @returns {Promise<{success: boolean, data: Array}>}
+   */
+  async getAllClockIns(filters = {}) {
+    let query = supabase
+      .from("clock_ins")
+      .select(
+        `
+        *,
+        worker:workers!worker_id(employee_id, display_name, email)
+      `
+      )
+      .order("date", { ascending: false })
+      .order("time", { ascending: false });
+
+    if (filters.workerId) {
+      query = query.eq("worker_id", filters.workerId);
+    }
+    if (filters.startDate) {
+      query = query.gte("date", filters.startDate);
+    }
+    if (filters.endDate) {
+      query = query.lte("date", filters.endDate);
+    }
+    if (filters.editStatus) {
+      query = query.eq("edit_status", filters.editStatus);
+    }
+
+    const { data, error } = await query;
+
+    if (error) throw error;
+
+    return {
+      success: true,
+      data: data || [],
+    };
+  },
+
+  /**
+   * Submit new clock-in (from mobile device)
+   * @param {Object} clockInData - Clock-in data
+   * @returns {Promise<{success: boolean, data: Object}>}
+   */
+  async submitClockIn(clockInData) {
+    const { data, error } = await supabase
+      .from("clock_ins")
+      .insert({
+        ...clockInData,
+        edit_status: "confirmed",
+        created_at: new Date().toISOString(),
+      })
+      .select(
+        `
+        *,
+        worker:workers!worker_id(employee_id, display_name, email)
+      `
+      )
+      .single();
+
+    if (error) throw error;
+
+    return {
+      success: true,
+      data: data,
+    };
+  },
+
+  /**
+   * Update clock-in edit status
+   * @param {string} clockInId - Clock-in UUID
+   * @param {string} editStatus - New status (confirmed, pending, editing, denied)
+   * @param {string} notes - Optional notes
+   * @returns {Promise<{success: boolean, data: Object}>}
+   */
+  async updateClockInStatus(clockInId, editStatus, notes = null) {
+    const updates = {
+      edit_status: editStatus,
+    };
+
+    if (notes) {
+      updates.notes = notes;
+    }
+
+    const { data, error } = await supabase
+      .from("clock_ins")
+      .update(updates)
+      .eq("id", clockInId)
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    return {
+      success: true,
+      data: data,
+    };
+  },
+
+  /**
+   * Get clock-ins for today (dashboard quick view)
+   * @returns {Promise<{success: boolean, data: Array}>}
+   */
+  async getTodayClockIns() {
+    const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
+
+    const { data, error } = await supabase
+      .from("clock_ins")
+      .select(
+        `
+        *,
+        worker:workers!worker_id(employee_id, display_name, email)
+      `
+      )
+      .eq("date", today)
+      .order("time", { ascending: false });
+
+    if (error) throw error;
+
+    return {
+      success: true,
+      data: data || [],
+    };
+  },
+
+  /**
+   * Get clock-in count for worker in date range (for payroll)
+   * @param {string} workerId - Worker UUID
+   * @param {string} startDate - Start date (YYYY-MM-DD)
+   * @param {string} endDate - End date (YYYY-MM-DD)
+   * @returns {Promise<{success: boolean, count: number, data: Array}>}
+   */
+  async getWorkerClockInCount(workerId, startDate, endDate) {
+    const { data, error, count } = await supabase
+      .from("clock_ins")
+      .select("*", { count: "exact" })
+      .eq("worker_id", workerId)
+      .gte("date", startDate)
+      .lte("date", endDate);
+
+    if (error) throw error;
+
+    return {
+      success: true,
+      count: count || 0,
       data: data || [],
     };
   },

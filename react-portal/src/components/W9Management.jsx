@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import api from '../services/api';
-// TODO: Migrate to Supabase - W9s management not yet implemented
-// import { sheetsApi } from '../services/sheets';
+import { supabaseApi } from '../services/supabase';
 import Card from './Card';
 import Badge from './Badge';
 import Button from './Button';
@@ -11,31 +9,36 @@ import Loading from './Loading';
 
 /**
  * W9Management - List and manage pending W-9 submissions
+ * Migrated to Supabase (Phase 2)
  */
 function W9Management({ user }) {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [processingId, setProcessingId] = useState(null);
 
-  // TODO: Migrate to Supabase - W9s management not yet implemented
+  // Fetch pending W9s from Supabase
   const { data, isLoading, error, refetch } = useQuery({
-    queryKey: ['pendingW9sDirect'],
-    queryFn: () => {
-      throw new Error('W9s management not yet migrated to Supabase. Please implement supabaseApi.getPendingW9s()');
-      // return sheetsApi.getPendingW9s();
+    queryKey: ['pendingW9s'],
+    queryFn: async () => {
+      const result = await supabaseApi.getPendingW9s();
+      return result.data;
     },
     staleTime: 60000,
-    enabled: false, // Disable until Supabase migration complete
   });
 
-  // TODO: Migrate to Supabase - Implement supabaseApi.updateW9Status()
+  // Approve W9 mutation
   const approveMutation = useMutation({
-    mutationFn: (w9RecordId) => {
-      throw new Error('W9 approval not yet migrated to Supabase');
-      // return sheetsApi.updateW9Status(w9RecordId, 'Approved');
+    mutationFn: async (w9RecordId) => {
+      const result = await supabaseApi.updateW9Status(
+        w9RecordId,
+        'approved',
+        user.workerId // Pass current admin's UUID
+      );
+      return result.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['pendingW9sDirect'] });
+      queryClient.invalidateQueries({ queryKey: ['pendingW9s'] });
+      queryClient.invalidateQueries({ queryKey: ['workers'] });
       setProcessingId(null);
     },
     onError: () => {
@@ -43,14 +46,20 @@ function W9Management({ user }) {
     },
   });
 
-  // TODO: Migrate to Supabase - Implement supabaseApi.updateW9Status() with rejection
+  // Reject W9 mutation
   const rejectMutation = useMutation({
-    mutationFn: ({ w9RecordId, reason }) => {
-      throw new Error('W9 rejection not yet migrated to Supabase');
-      // return sheetsApi.updateW9Status(w9RecordId, 'Rejected', reason);
+    mutationFn: async ({ w9RecordId, reason }) => {
+      const result = await supabaseApi.updateW9Status(
+        w9RecordId,
+        'rejected',
+        user.workerId, // Pass current admin's UUID
+        reason
+      );
+      return result.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['pendingW9sDirect'] });
+      queryClient.invalidateQueries({ queryKey: ['pendingW9s'] });
+      queryClient.invalidateQueries({ queryKey: ['workers'] });
       setProcessingId(null);
     },
     onError: () => {
@@ -133,16 +142,16 @@ function W9Management({ user }) {
       {/* W-9 List */}
       <div className="space-y-4">
         {w9List.map((w9) => (
-          <Card key={w9.w9RecordId} variant="default">
+          <Card key={w9.w9_record_id} variant="default">
             <div className="space-y-4">
               {/* Header */}
               <div className="flex items-start justify-between">
                 <div>
                   <h4 className="font-semibold text-gray-800 dark:text-gray-200">
-                    {w9.displayName || w9.workerId}
+                    {w9.worker?.display_name || w9.worker?.employee_id || 'Unknown'}
                   </h4>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
-                    {w9.workerId}
+                    {w9.worker?.employee_id || 'N/A'} • {w9.worker?.email || 'N/A'}
                   </p>
                 </div>
                 <Badge variant="warning">
@@ -157,7 +166,7 @@ function W9Management({ user }) {
                     {t('admin.w9.legalName', 'Legal Name')}
                   </p>
                   <p className="font-medium text-gray-800 dark:text-gray-200">
-                    {w9.legalName || 'N/A'}
+                    {w9.legal_name || 'N/A'}
                   </p>
                 </div>
                 <div>
@@ -165,7 +174,7 @@ function W9Management({ user }) {
                     {t('admin.w9.taxClass', 'Tax Classification')}
                   </p>
                   <p className="font-medium text-gray-800 dark:text-gray-200">
-                    {w9.taxClassification || 'N/A'}
+                    {w9.tax_classification || 'N/A'}
                   </p>
                 </div>
                 <div>
@@ -174,6 +183,7 @@ function W9Management({ user }) {
                   </p>
                   <p className="font-medium text-gray-800 dark:text-gray-200">
                     {w9.address || 'N/A'}
+                    {w9.city && w9.state && `, ${w9.city}, ${w9.state} ${w9.zip || ''}`}
                   </p>
                 </div>
                 <div>
@@ -181,23 +191,27 @@ function W9Management({ user }) {
                     {t('admin.w9.ssnLast4', 'SSN (Last 4)')}
                   </p>
                   <p className="font-medium text-gray-800 dark:text-gray-200">
-                    {w9.ssnLast4 ? `***-**-${w9.ssnLast4}` : 'N/A'}
+                    {w9.ssn_last4 ? `***-**-${w9.ssn_last4}` : 'N/A'}
                   </p>
                 </div>
               </div>
 
               {/* Submitted Date */}
               <p className="text-xs text-gray-500 dark:text-gray-500">
-                {t('admin.w9.submitted', 'Submitted')}: {w9.submittedDate || 'N/A'}
+                {t('admin.w9.submitted', 'Submitted')}: {
+                  w9.submitted_date
+                    ? new Date(w9.submitted_date).toLocaleDateString()
+                    : 'N/A'
+                }
               </p>
 
               {/* Actions */}
               <div className="flex gap-2 pt-2 border-t border-gray-200 dark:border-gray-700">
-                {w9.pdfUrl && (
+                {w9.pdf_url && (
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => handleViewPdf(w9.pdfUrl)}
+                    onClick={() => handleViewPdf(w9.pdf_url)}
                     className="flex-1"
                   >
                     <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -210,11 +224,11 @@ function W9Management({ user }) {
                 <Button
                   variant="primary"
                   size="sm"
-                  onClick={() => handleApprove(w9.w9RecordId)}
-                  disabled={processingId === w9.w9RecordId}
+                  onClick={() => handleApprove(w9.w9_record_id)}
+                  disabled={processingId === w9.w9_record_id}
                   className="flex-1"
                 >
-                  {processingId === w9.w9RecordId && approveMutation.isLoading
+                  {processingId === w9.w9_record_id && approveMutation.isLoading
                     ? t('common.processing', 'Processing...')
                     : t('admin.w9.approve', 'Approve')
                   }
@@ -222,11 +236,11 @@ function W9Management({ user }) {
                 <Button
                   variant="danger"
                   size="sm"
-                  onClick={() => handleReject(w9.w9RecordId)}
-                  disabled={processingId === w9.w9RecordId}
+                  onClick={() => handleReject(w9.w9_record_id)}
+                  disabled={processingId === w9.w9_record_id}
                   className="flex-1"
                 >
-                  {processingId === w9.w9RecordId && rejectMutation.isLoading
+                  {processingId === w9.w9_record_id && rejectMutation.isLoading
                     ? t('common.processing', 'Processing...')
                     : t('admin.w9.reject', 'Reject')
                   }

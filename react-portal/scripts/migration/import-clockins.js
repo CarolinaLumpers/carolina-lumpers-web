@@ -1,0 +1,285 @@
+/**
+ * Import Clock-in Records to Supabase
+ *
+ * This script imports historical clock-in data from Google Sheets export
+ * into the Supabase clock_ins table, mapping employee_id to UUID.
+ *
+ * Usage: node scripts/migration/import-clockins.js
+ */
+
+import { createClient } from "@supabase/supabase-js";
+import fs from "fs";
+import dotenv from "dotenv";
+
+// Load environment variables
+dotenv.config({ path: ".env.local" });
+
+// Validate required environment variables
+const SUPABASE_URL = process.env.VITE_SUPABASE_URL;
+const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
+
+if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
+  console.error("❌ Missing required environment variables:");
+  if (!SUPABASE_URL) console.error("  - VITE_SUPABASE_URL");
+  if (!SUPABASE_SERVICE_KEY) console.error("  - SUPABASE_SERVICE_KEY");
+  process.exit(1);
+}
+
+// Create Supabase client with service role key (bypasses RLS)
+const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
+
+// Read clock-in export data
+const clockInsData = JSON.parse(
+  fs.readFileSync("./data/exports/clockins-export.json", "utf-8")
+);
+
+// Parse Google Sheets date format "MM/DD/YYYY" to ISO date
+function parseDateString(dateStr) {
+  if (!dateStr || dateStr.trim() === "") return null;
+
+  const [month, day, year] = dateStr.split("/");
+  if (!month || !day || !year) return null;
+
+  // Return YYYY-MM-DD format
+  return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+}
+
+// Parse Google Sheets time format "HH:MM:SS AM/PM" to HH:MM:SS (24-hour)
+function parseTimeString(timeStr) {
+  if (!timeStr || timeStr.trim() === "") return null;
+
+  const match = timeStr.match(/(\d{1,2}):(\d{2}):(\d{2})\s*(AM|PM)/i);
+  if (!match) return null;
+
+  let [, hours, minutes, seconds, period] = match;
+  hours = parseInt(hours);
+
+  // Convert to 24-hour format
+  if (period.toUpperCase() === "PM" && hours !== 12) {
+    hours += 12;
+  } else if (period.toUpperCase() === "AM" && hours === 12) {
+    hours = 0;
+  }
+
+  return `${hours.toString().padStart(2, "0")}:${minutes}:${seconds}`;
+}
+
+async function importClockIns() {
+  console.log("🚀 Starting clock-in records migration...\n");
+
+  try {
+    // Step 1: Fetch worker mappings (employee_id → UUID)
+    console.log("📋 Fetching worker mappings from Supabase...");
+    const { data: workers, error: workersError } = await supabase
+      .from("workers")
+      .select("id, employee_id");
+
+    if (workersError) throw workersError;
+
+    // Create lookup map: employee_id → UUID
+    // Note: Google Sheets WorkerID includes hash suffix (e.g., "CAB-031-64294414")
+    // but Supabase employee_id is just prefix (e.g., "CAB-031")
+    const workerMap = {};
+    workers.forEach((w) => {
+      workerMap[w.employee_id] = w.id;
+    });
+
+    console.log(`✅ Loaded ${workers.length} worker mappings\n`);
+
+    // Step 2: Transform clock-in data
+    console.log(`📊 Processing ${clockInsData.length} clock-in records...`);
+
+    const transformedClockIns = [];
+    const skippedRecords = [];
+    let transformedCount = 0;
+
+    for (const record of clockInsData) {
+      // Extract employee prefix from WorkerID (remove hash suffix)
+      // Example: "CAB-031-64294414" → "CAB-031"
+      const workerIdParts = record.worker_id.split("-");
+      let employeePrefix = record.worker_id;
+
+      if (workerIdParts.length >= 2) {
+        employeePrefix = `${workerIdParts[0]}-${workerIdParts[1]}`;
+      }
+
+      const workerUUID = workerMap[employeePrefix];
+
+      if (!workerUUID) {
+        skippedRecords.push({
+          clockin_id: record.clockin_id,
+          worker_id: record.worker_id,
+          reason: "Worker not found in Supabase",
+        });
+        continue;
+      }
+
+      const date = parseDateString(record.date);
+      const time = parseTimeString(record.time);
+
+      if (!date || !time) {
+        skippedRecords.push({
+          clockin_id: record.clockin_id,
+          worker_id: record.worker_id,
+          reason: `Invalid date/time format: ${record.date} ${record.time}`,
+        });
+        continue;
+      }
+
+      // Combine date and time into a single timestamp
+      const clockInTime = new Date(`${date}T${time}`).toISOString();
+
+      // Map edit_status (not present in old data, default to 'confirmed')
+      const editStatus = "confirmed";
+
+      transformedClockIns.push({
+        worker_id: workerUUID,
+        clock_in_time: clockInTime,
+        latitude: record.latitude,
+        longitude: record.longitude,
+        // client_id: INTEGER foreign key - Skip for now, will map client names later
+        distance_miles: record.distance_miles,
+        edit_status: editStatus,
+        status: "pending", // Required: must be 'pending' per check constraint
+        notes: record.notes || null,
+        device: "Legacy Import", // Mark as imported from old system
+        minutes_late: 0, // Old data doesn't track this
+        // created_at auto-generated by database
+      });
+
+      transformedCount++;
+
+      // Show progress every 100 records
+      if (transformedCount % 100 === 0) {
+        console.log(
+          `   Processed ${transformedCount}/${clockInsData.length} records...`
+        );
+      }
+    }
+
+    console.log(`\n✅ Transformed ${transformedCount} records`);
+    if (skippedRecords.length > 0) {
+      console.log(`⚠️  Skipped ${skippedRecords.length} records:`);
+      skippedRecords.slice(0, 5).forEach((skip) => {
+        console.log(
+          `   - ${skip.clockin_id} (${skip.worker_id}): ${skip.reason}`
+        );
+      });
+      if (skippedRecords.length > 5) {
+        console.log(`   ... and ${skippedRecords.length - 5} more`);
+      }
+    }
+
+    // Step 3: Show sample transformation
+    if (transformedClockIns.length > 0) {
+      console.log("\n📝 Sample transformation (first record):");
+      console.log("Source:", JSON.stringify(clockInsData[0], null, 2));
+      console.log("Target:", JSON.stringify(transformedClockIns[0], null, 2));
+    }
+
+    // Step 4: Insert into Supabase (in batches of 100)
+    console.log("\n💾 Importing to Supabase...");
+
+    const BATCH_SIZE = 100;
+    let insertedCount = 0;
+
+    for (let i = 0; i < transformedClockIns.length; i += BATCH_SIZE) {
+      const batch = transformedClockIns.slice(i, i + BATCH_SIZE);
+
+      const { data, error } = await supabase
+        .from("clock_ins")
+        .insert(batch)
+        .select("id");
+
+      if (error) {
+        console.error(
+          `❌ Error inserting batch ${i / BATCH_SIZE + 1}:`,
+          error.message
+        );
+        console.error(
+          "First record in failed batch:",
+          JSON.stringify(batch[0], null, 2)
+        );
+        throw error;
+      }
+
+      insertedCount += data.length;
+      console.log(
+        `   Inserted batch ${Math.floor(i / BATCH_SIZE) + 1}/${Math.ceil(
+          transformedClockIns.length / BATCH_SIZE
+        )} (${insertedCount} total)`
+      );
+    }
+
+    console.log(`\n✅ Successfully imported ${insertedCount} clock-in records`);
+
+    // Step 5: Verification
+    console.log("\n📊 Migration Verification:");
+
+    const { count, error: countError } = await supabase
+      .from("clock_ins")
+      .select("*", { count: "exact", head: true });
+
+    if (countError) throw countError;
+
+    console.log(`  Total clock-ins in database: ${count}`);
+
+    // Get date range
+    const { data: dateRange } = await supabase
+      .from("clock_ins")
+      .select("date")
+      .order("date", { ascending: true })
+      .limit(1);
+
+    const { data: dateRangeEnd } = await supabase
+      .from("clock_ins")
+      .select("date")
+      .order("date", { ascending: false })
+      .limit(1);
+
+    if (dateRange && dateRangeEnd) {
+      console.log(
+        `  Date range: ${dateRange[0].date} to ${dateRangeEnd[0].date}`
+      );
+    }
+
+    // Get worker with most clock-ins
+    const { data: topWorker } = await supabase
+      .from("clock_ins")
+      .select("worker_id, worker:workers!worker_id(employee_id, display_name)")
+      .limit(1000); // Sample for counting
+
+    if (topWorker && topWorker.length > 0) {
+      const workerCounts = topWorker.reduce((acc, ci) => {
+        const key = ci.worker?.employee_id || "Unknown";
+        acc[key] = (acc[key] || 0) + 1;
+        return acc;
+      }, {});
+
+      console.log(`\n  Top workers by clock-ins (sample):`);
+      Object.entries(workerCounts)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 5)
+        .forEach(([empId, count]) => {
+          console.log(`    ${empId}: ${count} clock-ins`);
+        });
+    }
+
+    console.log("\n✅ Phase 4 clock-in migration complete!");
+  } catch (error) {
+    console.error("\n❌ Migration failed:", error.message);
+    if (error.code) {
+      console.error("Error code:", error.code);
+    }
+    if (error.details) {
+      console.error("Details:", error.details);
+    }
+    process.exit(1);
+  }
+}
+
+// Run the import
+importClockIns().catch((error) => {
+  console.error("Fatal error:", error);
+  process.exit(1);
+});

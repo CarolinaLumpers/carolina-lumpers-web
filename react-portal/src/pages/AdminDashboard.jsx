@@ -3,15 +3,12 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../features/auth/AuthContext';
 import { useQuery } from '@tanstack/react-query';
-// TODO: Migrate to Supabase - legacy Google Sheets API disabled
-// import { sheetsApi } from '../services/sheets';
 import { supabaseApi } from '../services/supabase';
 import { format } from 'date-fns';
 import { storage } from '../services/storage';
 import Card from '../components/Card';
 import Badge from '../components/Badge';
 import Loading from '../components/Loading';
-import UserSwitcher from '../components/UserSwitcher';
 
 /**
  * AdminDashboard - Executive overview with KPIs, alerts, and activity
@@ -42,17 +39,11 @@ function AdminDashboard() {
     }).format(now);
   };
 
-  const useSupabase = import.meta.env.VITE_USE_SUPABASE === 'true';
-
   // Fetch all workers with today's clock-ins (filter Active only)
   const { data: teamData, isLoading: teamLoading } = useQuery({
-    queryKey: useSupabase ? ['allWorkersSupabase'] : ['allWorkersDirect'],
+    queryKey: ['allWorkersSupabase'],
     queryFn: async () => {
-      const data = useSupabase
-        ? await supabaseApi.getAllWorkersWithClockIns()
-        // TODO: Migrate to Supabase - legacy Google Sheets fallback disabled
-        : (() => { throw new Error('Legacy Google Sheets API disabled. Please set VITE_USE_SUPABASE=true'); })();
-      // : await sheetsApi.getAllWorkersWithClockIns();
+      const data = await supabaseApi.getAllWorkersWithClockIns();
       // Filter only Active workers (must be explicitly Active)
       const activeWorkers = data.workers.filter(w =>
         w.availability === 'Active'
@@ -63,27 +54,21 @@ function AdminDashboard() {
   });
 
   // Fetch pending W-9s
-  // TODO: Migrate to Supabase - W9s management not yet implemented in Supabase
   const { data: pendingW9s, isLoading: w9Loading } = useQuery({
-    queryKey: ['pendingW9sDirect'],
-    queryFn: () => {
-      throw new Error('W9s management not yet migrated to Supabase');
-      // return sheetsApi.getPendingW9s();
-    },
+    queryKey: ['pendingW9s'],
+    queryFn: () => supabaseApi.getPendingW9s(),
     staleTime: 60000,
-    enabled: false, // Disable until Supabase migration complete
   });
 
   // Fetch pending time edit requests
-  // TODO: Migrate to Supabase - Time edit requests not yet implemented in Supabase
+  // TODO: Implement time edit requests in Supabase
   const { data: timeEditRequests, isLoading: timeEditsLoading } = useQuery({
-    queryKey: ['timeEditRequestsDirect'],
+    queryKey: ['timeEditRequests'],
     queryFn: () => {
-      throw new Error('Time edit requests not yet migrated to Supabase');
-      // return sheetsApi.getTimeEditRequests();
+      // Placeholder - will be implemented with time_edit_requests table
+      return Promise.resolve([]);
     },
     staleTime: 60000,
-    enabled: false, // Disable until Supabase migration complete
   });
 
   const workers = teamData?.workers || [];
@@ -355,9 +340,6 @@ function AdminDashboard() {
           </div>
         </Card>
       </div>
-
-      {/* User Switcher - Admin Only (dev tool) */}
-      <UserSwitcher />
     </div>
   );
 }
