@@ -18,7 +18,7 @@ export class InvoiceManagement {
   init() {
     const btnLoadInvoices = document.getElementById('btnLoadInvoices');
     const btnRefreshInvoices = document.getElementById('btnRefreshInvoices');
-    const invoiceFilter = document.getElementById('invoiceDateFilter');
+    const invoiceFilter = document.getElementById('invoiceWeekFilter');
     
     if (btnLoadInvoices) {
       btnLoadInvoices.addEventListener('click', () => this.loadInvoices());
@@ -32,7 +32,49 @@ export class InvoiceManagement {
       invoiceFilter.addEventListener('change', () => this.filterInvoices());
     }
 
+    // Populate week selector with Saturdays (like Run Payroll)
+    this.populateWeekSelector();
+
     console.log('✅ Invoice Management initialized');
+  }
+
+  /**
+   * Populate the week period selector with last 4 Saturdays (like Run Payroll)
+   */
+  populateWeekSelector() {
+    const dropdown = document.getElementById('invoiceWeekFilter');
+    if (!dropdown) return;
+    
+    const weeks = [];
+    const today = new Date();
+    
+    // Generate 4 Saturdays: This week and last 3 weeks
+    for (let i = 0; i < 4; i++) {
+      const date = new Date(today);
+      const dayOfWeek = date.getDay();
+      const daysToSaturday = (6 - dayOfWeek + 7) % 7;
+      date.setDate(date.getDate() + daysToSaturday - (i * 7));
+      
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      const year = date.getFullYear();
+      const saturday = `${month}/${day}/${year}`;
+      
+      weeks.push(saturday);
+    }
+    
+    // Build dropdown with week options
+    const options = weeks.map((sat, index) => {
+      let tag = '';
+      if (index === 0) tag = ' (This Week)';
+      else if (index === 1) tag = ' (Last Week)';
+      return `<option value="${sat}">${sat}${tag}</option>`;
+    }).join('');
+    
+    dropdown.innerHTML = '<option value="">-- All Invoices --</option>' + options;
+    
+    // Auto-select last week (index 1) as default
+    dropdown.value = weeks[1];
   }
 
   /**
@@ -99,40 +141,28 @@ export class InvoiceManagement {
   }
 
   /**
-   * Filter invoices by date range
+   * Filter invoices by week period (Saturday to Saturday)
    */
   filterInvoices() {
-    const filter = document.getElementById('invoiceDateFilter');
+    const filter = document.getElementById('invoiceWeekFilter');
     if (!filter || !this.invoices) return;
 
-    const selectedRange = filter.value;
+    const selectedWeek = filter.value;
     
     let filtered = this.invoices;
-    if (selectedRange !== 'all') {
-      const now = new Date();
-      const ranges = {
-        'last_week': () => {
-          const weekAgo = new Date(now);
-          weekAgo.setDate(now.getDate() - 7);
-          return weekAgo;
-        },
-        'this_month': () => {
-          return new Date(now.getFullYear(), now.getMonth(), 1);
-        },
-        'last_month': () => {
-          return new Date(now.getFullYear(), now.getMonth() - 1, 1);
-        },
-        'last_3_months': () => {
-          const threeMonthsAgo = new Date(now);
-          threeMonthsAgo.setMonth(now.getMonth() - 3);
-          return threeMonthsAgo;
-        }
-      };
-
-      const startDate = ranges[selectedRange]();
+    if (selectedWeek) {
+      // Parse the selected Saturday date
+      const [month, day, year] = selectedWeek.split('/');
+      const saturday = new Date(year, month - 1, day);
+      
+      // Calculate Sunday (start of week)
+      const sunday = new Date(saturday);
+      sunday.setDate(saturday.getDate() - 6);
+      
+      // Filter invoices within this week (Sunday to Saturday)
       filtered = this.invoices.filter(inv => {
         const invDate = new Date(inv.date);
-        return invDate >= startDate;
+        return invDate >= sunday && invDate <= saturday;
       });
     }
 
