@@ -250,24 +250,33 @@ export class AdminDashboard {
     try {
       const workerId = localStorage.getItem('CLS_WorkerID');
 
-      // Load pending time edits
-      const editRequests = await this.fetchTimeEditRequests();
+      // Show loading state
+      document.getElementById('statPendingEdits').innerHTML = '<div class="stat-loader"></div>';
+      document.getElementById('statActiveWorkers').innerHTML = '<div class="stat-loader"></div>';
+      document.getElementById('statWeekHours').innerHTML = '<div class="stat-loader"></div>';
+      document.getElementById('statWeekRevenue').innerHTML = '<div class="stat-loader"></div>';
+
+      // Load all stats in parallel
+      const [editRequests, workers, weekHours, weekRevenue] = await Promise.all([
+        this.fetchTimeEditRequests(),
+        this.fetchAllWorkers(),
+        this.calculateWeekHours(),
+        this.calculateWeekRevenue()
+      ]);
+
+      // Update stats
       const pendingEdits = editRequests.filter(req => req.status === 'pending').length;
       document.getElementById('statPendingEdits').textContent = pendingEdits;
-
-      // Load active workers count
-      const workers = await this.fetchAllWorkers();
       document.getElementById('statActiveWorkers').textContent = workers.length;
-
-      // Calculate this week's hours
-      const weekHours = await this.calculateWeekHours();
       document.getElementById('statWeekHours').textContent = weekHours.toFixed(1);
+      document.getElementById('statWeekRevenue').textContent = `$${weekRevenue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
     } catch (error) {
       console.error('Error loading overview stats:', error);
       document.getElementById('statPendingEdits').textContent = '0';
       document.getElementById('statActiveWorkers').textContent = '0';
       document.getElementById('statWeekHours').textContent = '0';
+      document.getElementById('statWeekRevenue').textContent = '$0.00';
     }
   }
 
@@ -412,6 +421,65 @@ export class AdminDashboard {
       return totalHours;
     } catch (error) {
       console.error('Error calculating week hours:', error);
+      return 0;
+    }
+  }
+
+  /**
+   * Calculate this week's revenue via direct Sheets API
+   * Reads from Invoices sheet and sums amounts for current week
+   */
+  async calculateWeekRevenue() {
+    try {
+      const sheetsProxyUrl = 'https://sheets-direct-proxy.steve-3d1.workers.dev';
+      const spreadsheetId = '1U8hSNREN5fEhskp0UM-Z80iiW39beaOj3oIsaLZyFzk';
+      const range = 'Invoices!A2:E'; // InvoiceNumber, Customer, Date, DueDate, Amount
+      
+      const url = `${sheetsProxyUrl}/api/sheets/${spreadsheetId}/values/${encodeURIComponent(range)}`;
+      const response = await fetch(url);
+      
+      if (!response.ok) {
+        throw new Error(`Sheets API error: ${response.status}`);
+      }
+      
+      const result = await response.json();
+      const rows = result.data?.values || [];
+      
+      if (rows.length === 0) return 0;
+      
+      // Get current week's Sunday-Saturday range
+      const now = new Date();
+      const dayOfWeek = now.getDay();
+      const sunday = new Date(now);
+      sunday.setDate(now.getDate() - dayOfWeek);
+      sunday.setHours(0, 0, 0, 0);
+      
+      const saturday = new Date(sunday);
+      saturday.setDate(sunday.getDate() + 6);
+      saturday.setHours(23, 59, 59, 999);
+      
+      // Sum amounts for this week's invoices
+      let totalRevenue = 0;
+      
+      rows.forEach(row => {
+        const dateStr = row[2]; // Date column (index 2)
+        const amountStr = row[4]; // Amount column (index 4)
+        
+        if (!dateStr || !amountStr) return;
+        
+        // Parse date
+        const invoiceDate = new Date(dateStr);
+        
+        if (!isNaN(invoiceDate.getTime()) && invoiceDate >= sunday && invoiceDate <= saturday) {
+          // Parse amount (strip $ and commas)
+          const amount = parseFloat(amountStr.replace(/[$,]/g, '')) || 0;
+          totalRevenue += amount;
+        }
+      });
+      
+      return totalRevenue;
+    } catch (error) {
+      console.error('Error calculating week revenue:', error);
       return 0;
     }
   }

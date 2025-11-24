@@ -673,6 +673,32 @@ body {
   }
 }
 
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* ================================
+   Stat Card Loader
+   ================================ */
+
+.stat-loader {
+  width: 40px;
+  height: 32px;
+  background: linear-gradient(90deg, var(--color-dark-lighter) 25%, var(--color-dark-light) 50%, var(--color-dark-lighter) 75%);
+  border-radius: 4px;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+html.light .stat-loader,
+body.light .stat-loader {
+  background: linear-gradient(90deg, hsl(0 0% 90%) 25%, hsl(0 0% 95%) 50%, hsl(0 0% 90%) 75%);
+}
+
 /* ================================
    Empty States
    ================================ */
