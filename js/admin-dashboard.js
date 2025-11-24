@@ -33,6 +33,9 @@ export class AdminDashboard {
     this.setupUserInfo();
     this.setupLogout();
     
+    // Show loading spinners immediately
+    this.showStatLoadingSpinners();
+    
     // Initialize admin modules
     await this.initModules();
     
@@ -40,6 +43,16 @@ export class AdminDashboard {
     await this.loadOverviewStats();
 
     console.log('✅ Admin Dashboard initialized');
+  }
+
+  /**
+   * Show loading spinners in stat cards immediately
+   */
+  showStatLoadingSpinners() {
+    document.getElementById('statPendingEdits').innerHTML = '<div class="stat-spinner"></div>';
+    document.getElementById('statActiveWorkers').innerHTML = '<div class="stat-spinner"></div>';
+    document.getElementById('statWeekHours').innerHTML = '<div class="stat-spinner"></div>';
+    document.getElementById('statWeekRevenue').innerHTML = '<div class="stat-spinner"></div>';
   }
 
   /**
@@ -250,13 +263,7 @@ export class AdminDashboard {
     try {
       const workerId = localStorage.getItem('CLS_WorkerID');
 
-      // Show loading state
-      document.getElementById('statPendingEdits').innerHTML = '<div class="stat-loader"></div>';
-      document.getElementById('statActiveWorkers').innerHTML = '<div class="stat-loader"></div>';
-      document.getElementById('statWeekHours').innerHTML = '<div class="stat-loader"></div>';
-      document.getElementById('statWeekRevenue').innerHTML = '<div class="stat-loader"></div>';
-
-      // Load all stats in parallel
+      // Load all stats in parallel (spinners already showing)
       const [editRequests, workers, weekHours, weekRevenue] = await Promise.all([
         this.fetchTimeEditRequests(),
         this.fetchAllWorkers(),

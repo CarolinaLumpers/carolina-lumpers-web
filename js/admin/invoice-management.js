@@ -439,6 +439,9 @@ export class InvoiceManagement {
       let errorCount = 0;
       const errors = [];
 
+      // Track successful syncs with QB links
+      const syncedInvoices = [];
+
       // Sync each pending invoice with progress updates
       for (let i = 0; i < pendingInvoices.length; i++) {
         const invoice = pendingInvoices[i];
@@ -469,6 +472,11 @@ export class InvoiceManagement {
 
           if (data && data.status !== '❌ Error') {
             successCount++;
+            // Store QB invoice link if available
+            if (data.qboInvoiceId) {
+              const qboLink = `https://app.qbo.intuit.com/app/invoice?txnId=${data.qboInvoiceId}`;
+              syncedInvoices.push({ invoiceNumber: invoice.invoiceNumber, qboLink });
+            }
             console.log(`✅ [${progress}/${total}] ${invoice.invoiceNumber} synced successfully`);
           } else {
             errorCount++;
@@ -490,8 +498,16 @@ export class InvoiceManagement {
 
       this.hideLoading();
 
-      // Show results
+      // Show results with QB links
       let message = `Successfully synced ${successCount} invoice(s) to QuickBooks.`;
+      
+      if (syncedInvoices.length > 0) {
+        message += '\n\nView in QuickBooks:';
+        syncedInvoices.forEach(inv => {
+          message += `\n• ${inv.invoiceNumber}: ${inv.qboLink}`;
+        });
+      }
+      
       if (errorCount > 0) {
         message += `\n\n${errorCount} invoice(s) failed:\n${errors.join('\n')}`;
       }

@@ -12,53 +12,183 @@
 /* Light theme overrides */
 html.light,
 body.light {
-  --color-dark: hsl(0 0% 100%);           /* White background */
-  --color-dark-light: hsl(0 0% 98%);      /* Light gray background */
-  --color-dark-lighter: hsl(0 0% 95%);    /* Slightly darker gray */
-  --text-primary: hsl(0 0% 10%);          /* Dark text */
-  --text-muted: hsl(0 0% 40%);            /* Muted dark text */
-  --text-very-muted: hsl(0 0% 60%);       /* Very muted text */
-  --border-color: hsl(0 0% 90%);          /* Light border */
+  --color-dark: #ffffff;                  /* Pure white background */
+  --color-dark-light: #f8fafc;            /* Very light gray background */
+  --color-dark-lighter: #f1f5f9;          /* Light gray hover */
+  --text-primary: #0f172a;                /* Dark slate text */
+  --text-muted: #64748b;                  /* Muted slate text */
+  --text-very-muted: #94a3b8;             /* Very muted text */
+  --border-color: #e2e8f0;                /* Light slate border */
   
-  /* Amber adjustments for light theme - darker amber with dark text */
-  --color-primary: hsl(45 95% 45%);       /* Darker amber for better contrast */
-  --color-primary-hover: hsl(45 95% 40%); /* Even darker on hover */
+  /* Amber adjustments for light theme */
+  --color-primary: #f59e0b;               /* Amber 500 */
+  --color-primary-hover: #d97706;         /* Amber 600 */
+  
+  background-color: #f8fafc;
+  color: #0f172a;
 }
 
 /* Light theme specific adjustments */
+html.light .sidebar,
+body.light .sidebar {
+  background: #ffffff;
+  border-right: 1px solid #e2e8f0;
+}
+
+html.light .nav-link,
+body.light .nav-link {
+  color: #64748b;
+}
+
+html.light .nav-link:hover,
+body.light .nav-link:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
 html.light .nav-link.active,
 body.light .nav-link.active {
-  background: var(--color-primary);
-  color: hsl(0 0% 10%);  /* Force dark text on amber */
+  background: #fef3c7;
+  color: #92400e;
   font-weight: 600;
 }
 
 html.light .btn-primary,
 body.light .btn-primary {
-  background: var(--color-primary);
-  color: hsl(0 0% 10%);  /* Force dark text on amber */
+  background: #f59e0b !important;
+  color: #ffffff !important;
   font-weight: 600;
+}
+
+html.light .btn-primary:hover,
+body.light .btn-primary:hover {
+  background: #d97706 !important;
+  color: #ffffff !important;
+}
+
+html.light .btn-primary span,
+html.light .btn-primary i,
+body.light .btn-primary span,
+body.light .btn-primary i {
+  color: #ffffff !important;
+}
+
+html.light .btn-secondary,
+body.light .btn-secondary {
+  background: #f1f5f9 !important;
+  color: #0f172a !important;
+  border: 1px solid #e2e8f0;
+}
+
+html.light .btn-secondary:hover,
+body.light .btn-secondary:hover {
+  background: #e2e8f0 !important;
+  color: #0f172a !important;
+}
+
+html.light .btn-secondary span,
+html.light .btn-secondary i,
+body.light .btn-secondary span,
+body.light .btn-secondary i {
+  color: #0f172a !important;
 }
 
 html.light .section-title,
 body.light .section-title {
-  color: hsl(45 95% 40%);  /* Darker amber for headings */
+  color: #0f172a;
 }
 
 html.light .data-table th,
 body.light .data-table th {
-  color: hsl(45 95% 40%);  /* Darker amber for table headers */
-  background: hsl(0 0% 98%);
+  color: #0f172a;
+  background: #f8fafc;
+  border-bottom: 2px solid #e2e8f0;
 }
 
-html.light .data-table thead,
-body.light .data-table thead {
-  border-bottom-color: hsl(45 95% 45%);
+html.light .bottom-nav,
+body.light .bottom-nav {
+  background: #ffffff;
+  border-top: 1px solid #e2e8f0;
+}
+
+html.light .bottom-nav-item,
+body.light .bottom-nav-item {
+  color: #64748b;
 }
 
 html.light .bottom-nav-item.active,
 body.light .bottom-nav-item.active {
-  color: hsl(45 95% 40%);  /* Darker amber for active state */
+  color: #f59e0b;
+}
+
+html.light .rounded-xl,
+body.light .rounded-xl {
+  background: #ffffff;
+  border-color: #e2e8f0;
+}
+
+html.light .form-select,
+body.light .form-select {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  color: #0f172a;
+}
+
+html.light .form-label,
+body.light .form-label {
+  color: #0f172a;
+}
+
+html.light .text-muted-foreground,
+body.light .text-muted-foreground {
+  color: #64748b !important;
+}
+
+html.light h2,
+html.light h3,
+html.light h4,
+html.light .tracking-tight,
+body.light h2,
+body.light h3,
+body.light h4,
+body.light .tracking-tight {
+  color: #0f172a;
+}
+
+html.light .font-semibold:not(.btn-primary):not(.btn-secondary),
+body.light .font-semibold:not(.btn-primary):not(.btn-secondary) {
+  color: #0f172a;
+}
+
+html.light p:not(.btn-primary *):not(.btn-secondary *),
+html.light td,
+html.light label,
+body.light p:not(.btn-primary *):not(.btn-secondary *),
+body.light td,
+body.light label {
+  color: #0f172a;
+}
+
+html.light .user-info,
+body.light .user-info {
+  color: #0f172a;
+}
+
+html.light .text-xs,
+body.light .text-xs {
+  color: #64748b;
+}
+
+html.light .text-2xl,
+html.light .font-bold,
+body.light .text-2xl,
+body.light .font-bold {
+  color: #0f172a !important;
+}
+
+html.light .main-content,
+body.light .main-content {
+  background: #f8fafc;
 }
 
 html.light .bottom-nav-item.active::before,
@@ -686,17 +816,19 @@ body {
    Stat Card Loader
    ================================ */
 
-.stat-loader {
-  width: 40px;
-  height: 32px;
-  background: linear-gradient(90deg, var(--color-dark-lighter) 25%, var(--color-dark-light) 50%, var(--color-dark-lighter) 75%);
-  border-radius: 4px;
-  animation: pulse 1.5s ease-in-out infinite;
+.stat-spinner {
+  width: 24px;
+  height: 24px;
+  border: 3px solid rgba(255, 193, 7, 0.2);
+  border-top-color: #FFC107;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
 }
 
-html.light .stat-loader,
-body.light .stat-loader {
-  background: linear-gradient(90deg, hsl(0 0% 90%) 25%, hsl(0 0% 95%) 50%, hsl(0 0% 90%) 75%);
+html.light .stat-spinner,
+body.light .stat-spinner {
+  border: 3px solid rgba(245, 158, 11, 0.2);
+  border-top-color: #f59e0b;
 }
 
 /* ================================
