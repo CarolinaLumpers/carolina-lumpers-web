@@ -95,7 +95,7 @@ function sendInvoiceToQBO(invoiceNumber) {
         const QBOinvoiceID = jsonResponse.Invoice.Id;
         logEvent("QBO Sync", invoiceNumber, "Success", `Invoice successfully ${existingInvoice ? 'updated' : 'created'} in QuickBooks with QBO ID: ${QBOinvoiceID}`);
         markInvoiceAsSynced(invoiceNumber);
-        return true;
+        return { success: true, qboInvoiceId: QBOinvoiceID };
     } else {
         if (jsonResponse && jsonResponse.Fault) {
             logEvent("QBO Sync", invoiceNumber, "Error", `QuickBooks Error Fault: ${JSON.stringify(jsonResponse.Fault)}`);
@@ -103,7 +103,7 @@ function sendInvoiceToQBO(invoiceNumber) {
             logEvent("QBO Sync", invoiceNumber, "Error", `QuickBooks Error Detail: ${JSON.stringify(jsonResponse.ErrorDetail)}`);
         }
         logEvent("QBO Sync", invoiceNumber, "Error", `Invoice ${existingInvoice ? 'update' : 'creation'} response did not include an ID.`);
-        return false;
+        return { success: false, error: 'Invoice response did not include an ID' };
     }
 }
 

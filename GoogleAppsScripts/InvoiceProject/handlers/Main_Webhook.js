@@ -43,6 +43,7 @@ function doPost(e) {
         }
 
         // Route event to appropriate handler
+        let result;
         switch (eventType) {
             case "Invoice_Creation":
                 handleInvoiceCreation(requestData);
@@ -51,8 +52,17 @@ function doPost(e) {
                 handleLineItemUpdate(requestData);
                 break;
             case "QBO_Approval":
-                handleQBOApproval(requestData);
-                break;
+                result = handleQBOApproval(requestData);
+                // Return the result from QBO sync (includes qboInvoiceId)
+                return ContentService.createTextOutput(
+                    JSON.stringify({ 
+                        status: result?.success ? "✅ Success" : "❌ Error",
+                        event: eventType,
+                        invoiceNumber: invoiceNumber,
+                        qboInvoiceId: result?.qboInvoiceId,
+                        error: result?.error
+                    })
+                ).setMimeType(ContentService.MimeType.JSON);
             case "QBO_Payment_Update":
                 handleQBO_PaymentUpdate(requestData);
                 break;
@@ -125,15 +135,16 @@ function handleLineItemUpdate(requestData) {
 /**
  * Syncs invoices to QuickBooks Online when 'Push to QBO' is set to 'Yes'.
  * @param {object} requestData - Data payload from the webhook.
+ * @returns {object} - Result with success status and qboInvoiceId if successful
  */
 function handleQBOApproval(requestData) {
     logEvent(`QBO Approval: ${JSON.stringify(requestData)}`, "Processing");
     const invoiceNumber = requestData.invoiceNumber;
     if (!invoiceNumber) {
         logEvent("QBO Approval Error: Invoice number is not defined", "Error");
-        return;
+        return { success: false, error: 'Invoice number is not defined' };
     }
-    sendInvoiceToQBO(invoiceNumber);
+    return sendInvoiceToQBO(invoiceNumber);
 }
 
 /**
