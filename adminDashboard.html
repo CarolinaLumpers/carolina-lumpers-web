@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title data-en="Admin Dashboard | Carolina Lumper Service" data-es="Panel de Administración | Carolina Lumper Service"
+    data-pt="Painel de Administração | Carolina Lumper Service">
+    Admin Dashboard | Carolina Lumper Service
+  </title>
+
+  <link rel="icon" type="image/png" href="assets/CLS-favicon.png" />
+  <meta name="theme-color" content="#ffcc00">
+
+  <!-- Feather Icons -->
+  <script src="js/feather.min.js"></script>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            border: 'hsl(0 0% 20%)',
+            input: 'hsl(0 0% 18%)',
+            ring: 'hsl(45 100% 50%)',
+            background: 'hsl(0 0% 10%)',
+            foreground: 'hsl(0 0% 100%)',
+            primary: {
+              DEFAULT: 'hsl(45 100% 50%)',
+              foreground: 'hsl(0 0% 10%)',
+            },
+            secondary: {
+              DEFAULT: 'hsl(0 0% 18%)',
+              foreground: 'hsl(0 0% 100%)',
+            },
+            destructive: {
+              DEFAULT: 'hsl(0 84% 60%)',
+              foreground: 'hsl(0 0% 100%)',
+            },
+            muted: {
+              DEFAULT: 'hsl(0 0% 20%)',
+              foreground: 'hsl(0 0% 70%)',
+            },
+            accent: {
+              DEFAULT: 'hsl(30 100% 62%)',
+              foreground: 'hsl(0 0% 10%)',
+            },
+            popover: {
+              DEFAULT: 'hsl(0 0% 18%)',
+              foreground: 'hsl(0 0% 100%)',
+            },
+            card: {
+              DEFAULT: 'hsl(0 0% 18%)',
+              foreground: 'hsl(0 0% 100%)',
+            },
+            'chart-1': 'hsl(45 100% 50%)',
+            'chart-2': 'hsl(30 100% 62%)',
+            'chart-3': 'hsl(142 76% 36%)',
+            'chart-4': 'hsl(217 91% 60%)',
+            'chart-5': 'hsl(0 84% 60%)',
+          },
+          borderRadius: {
+            lg: 'var(--radius)',
+            md: 'calc(var(--radius) - 2px)',
+            sm: 'calc(var(--radius) - 4px)',
+          },
+          keyframes: {
+            'accordion-down': {
+              from: { height: '0' },
+              to: { height: 'var(--radix-accordion-content-height)' },
+            },
+            'accordion-up': {
+              from: { height: 'var(--radix-accordion-content-height)' },
+              to: { height: '0' },
+            },
+          },
+          animation: {
+            'accordion-down': 'accordion-down 0.2s ease-out',
+            'accordion-up': 'accordion-up 0.2s ease-out',
+          },
+        },
+      },
+    }
+  </script>
+  <style type="text/tailwindcss">
+    @layer base {
+      :root {
+        --radius: 0.5rem;
+      }
+    }
+  </style>
+
+  <!-- Global CSS System -->
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/admin-dashboard.css">
+</head>
+
+<body class="dark bg-background text-foreground antialiased">
+  <!-- Sidebar Navigation -->
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-header">
+      <div class="flex items-center gap-3">
+        <img src="assets/CLS-favicon.png" alt="CLS Logo" class="w-10 h-10">
+        <div>
+          <h1 class="text-xl font-bold text-primary">CLS Admin</h1>
+          <p class="text-xs text-muted-foreground">Dashboard</p>
+        </div>
+      </div>
+      <button id="sidebarToggle" class="lg:hidden">
+        <i data-feather="x" class="w-6 h-6"></i>
+      </button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="#overview" data-section="overview" class="nav-link active">
+        <i data-feather="home" class="w-5 h-5"></i>
+        <span data-en="Overview" data-es="Resumen" data-pt="Visão Geral">Overview</span>
+      </a>
+      <a href="#payroll" data-section="payroll" class="nav-link">
+        <i data-feather="dollar-sign" class="w-5 h-5"></i>
+        <span data-en="Run Payroll" data-es="Ejecutar Nómina" data-pt="Executar Folha">Run Payroll</span>
+      </a>
+      <a href="#invoices" data-section="invoices" class="nav-link">
+        <i data-feather="file-text" class="w-5 h-5"></i>
+        <span data-en="Invoice Management" data-es="Gestión de Facturas" data-pt="Gestão de Faturas">Invoice Management</span>
+      </a>
+      <a href="#time-edits" data-section="time-edits" class="nav-link">
+        <i data-feather="clock" class="w-5 h-5"></i>
+        <span data-en="Time Edit Requests" data-es="Solicitudes de Edición" data-pt="Solicitações de Edição">Time Edit Requests</span>
+      </a>
+      <a href="#workers" data-section="workers" class="nav-link">
+        <i data-feather="users" class="w-5 h-5"></i>
+        <span data-en="All Workers" data-es="Todos los Trabajadores" data-pt="Todos os Trabalhadores">All Workers</span>
+      </a>
+      <a href="#view-as" data-section="view-as" class="nav-link">
+        <i data-feather="eye" class="w-5 h-5"></i>
+        <span data-en="View As Worker" data-es="Ver Como Trabajador" data-pt="Ver Como Trabalhador">View As Worker</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-bold">
+            <span id="userInitials">AD</span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p id="userName" class="text-sm font-medium truncate">Admin User</p>
+            <p id="userRole" class="text-xs text-muted-foreground">Administrator</p>
+          </div>
+        </div>
+      </div>
+      <button id="btnLogout" class="btn-logout">
+        <i data-feather="log-out" class="w-4 h-4"></i>
+        <span data-en="Logout" data-es="Cerrar Sesión" data-pt="Sair">Logout</span>
+      </button>
+      <a href="employeeDashboard.html" class="btn-secondary mt-2">
+        <i data-feather="arrow-left" class="w-4 h-4"></i>
+        <span data-en="Employee View" data-es="Vista de Empleado" data-pt="Visão do Funcionário">Employee View</span>
+      </a>
+    </div>
+  </aside>
+
+  <!-- Mobile Header -->
+  <header class="mobile-header lg:hidden">
+    <button id="mobileMenuToggle" class="p-2">
+      <i data-feather="menu" class="w-6 h-6"></i>
+    </button>
+    <h1 class="text-lg font-bold text-primary">CLS Admin</h1>
+    <div class="w-10"></div>
+  </header>
+
+  <!-- Bottom Navigation (AppSheet style) -->
+  <nav class="bottom-nav lg:hidden">
+    <button data-section="overview" class="bottom-nav-item active">
+      <i data-feather="home" class="w-5 h-5"></i>
+      <span class="text-xs" data-en="Home" data-es="Inicio" data-pt="Início">Home</span>
+    </button>
+    <button data-section="payroll" class="bottom-nav-item">
+      <i data-feather="dollar-sign" class="w-5 h-5"></i>
+      <span class="text-xs" data-en="Payroll" data-es="Nómina" data-pt="Folha">Payroll</span>
+    </button>
+    <button data-section="invoices" class="bottom-nav-item">
+      <i data-feather="file-text" class="w-5 h-5"></i>
+      <span class="text-xs" data-en="Invoices" data-es="Facturas" data-pt="Faturas">Invoices</span>
+    </button>
+    <button data-section="time-edits" class="bottom-nav-item">
+      <i data-feather="clock" class="w-5 h-5"></i>
+      <span class="text-xs" data-en="Edits" data-es="Ediciones" data-pt="Edições">Edits</span>
+    </button>
+    <button data-section="workers" class="bottom-nav-item">
+      <i data-feather="users" class="w-5 h-5"></i>
+      <span class="text-xs" data-en="Workers" data-es="Trabajadores" data-pt="Trabalhadores">Workers</span>
+    </button>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <!-- Overview Section -->
+    <section id="overview" class="content-section active">
+      <div class="section-header">
+        <h2 class="section-title">
+          <i data-feather="home" class="inline w-6 h-6 mr-2"></i>
+          <span data-en="Admin Overview" data-es="Resumen Administrativo" data-pt="Visão Geral Administrativa">Admin Overview</span>
+        </h2>
+        <p class="text-muted-foreground" data-en="Manage all administrative tasks from one place" 
+          data-es="Gestione todas las tareas administrativas desde un solo lugar" 
+          data-pt="Gerencie todas as tarefas administrativas em um só lugar">
+          Manage all administrative tasks from one place
+        </p>
+      </div>
+
+      <div class="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-3">
+        <!-- Stat Card 1 -->
+        <div class="rounded-xl border bg-card text-card-foreground shadow">
+          <div class="p-6 flex flex-row items-center justify-between space-y-0 pb-2">
+            <h3 class="tracking-tight text-sm font-medium" data-en="Pending Time Edits" data-es="Ediciones Pendientes" data-pt="Edições Pendentes">Pending Time Edits</h3>
+            <i data-feather="clock" class="h-4 w-4 text-muted-foreground"></i>
+          </div>
+          <div class="p-6 pt-0">
+            <div id="statPendingEdits" class="text-2xl font-bold">--</div>
+            <p class="text-xs text-muted-foreground" data-en="Awaiting approval" data-es="En espera de aprobación" data-pt="Aguardando aprovação">
+              Awaiting approval
+            </p>
+          </div>
+        </div>
+
+        <!-- Stat Card 2 -->
+        <div class="rounded-xl border bg-card text-card-foreground shadow">
+          <div class="p-6 flex flex-row items-center justify-between space-y-0 pb-2">
+            <h3 class="tracking-tight text-sm font-medium" data-en="Active Workers" data-es="Trabajadores Activos" data-pt="Trabalhadores Ativos">Active Workers</h3>
+            <i data-feather="users" class="h-4 w-4 text-muted-foreground"></i>
+          </div>
+          <div class="p-6 pt-0">
+            <div id="statActiveWorkers" class="text-2xl font-bold">--</div>
+            <p class="text-xs text-muted-foreground" data-en="Total in system" data-es="Total en el sistema" data-pt="Total no sistema">
+              Total in system
+            </p>
+          </div>
+        </div>
+
+        <!-- Stat Card 3 -->
+        <div class="rounded-xl border bg-card text-card-foreground shadow">
+          <div class="p-6 flex flex-row items-center justify-between space-y-0 pb-2">
+            <h3 class="tracking-tight text-sm font-medium" data-en="This Week's Hours" data-es="Horas Esta Semana" data-pt="Horas Esta Semana">This Week's Hours</h3>
+            <i data-feather="trending-up" class="h-4 w-4 text-muted-foreground"></i>
+          </div>
+          <div class="p-6 pt-0">
+            <div id="statWeekHours" class="text-2xl font-bold">--</div>
+            <p class="text-xs text-muted-foreground" data-en="Sunday to Saturday" data-es="Domingo a Sábado" data-pt="Domingo a Sábado">
+              Sunday to Saturday
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="rounded-xl border bg-card text-card-foreground shadow mt-6">
+        <div class="flex flex-col space-y-1.5 p-6">
+          <h3 class="font-semibold leading-none tracking-tight" data-en="Quick Actions" data-es="Acciones Rápidas" data-pt="Ações Rápidas">Quick Actions</h3>
+          <p class="text-sm text-muted-foreground" data-en="Common administrative tasks" data-es="Tareas administrativas comunes" data-pt="Tarefas administrativas comuns">
+            Common administrative tasks
+          </p>
+        </div>
+        <div class="p-6 pt-0">
+          <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <button data-navigate="payroll" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-16">
+              <i data-feather="dollar-sign" class="h-5 w-5"></i>
+              <span data-en="Generate Payroll" data-es="Generar Nómina" data-pt="Gerar Folha">Generate Payroll</span>
+            </button>
+            <button data-navigate="invoices" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-16">
+              <i data-feather="send" class="h-5 w-5"></i>
+              <span data-en="Send Invoices" data-es="Enviar Facturas" data-pt="Enviar Faturas">Send Invoices</span>
+            </button>
+            <button data-navigate="time-edits" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-16">
+              <i data-feather="check-circle" class="h-5 w-5"></i>
+              <span data-en="Approve Edits" data-es="Aprobar Ediciones" data-pt="Aprovar Edições">Approve Edits</span>
+            </button>
+            <button data-navigate="workers" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-16">
+              <i data-feather="file-text" class="h-5 w-5"></i>
+              <span data-en="View Reports" data-es="Ver Reportes" data-pt="Ver Relatórios">View Reports</span>
+            </button>
+            <button data-navigate="view-as" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-16">
+              <i data-feather="eye" class="h-5 w-5"></i>
+              <span data-en="Switch User View" data-es="Cambiar Vista" data-pt="Mudar Visualização">Switch User View</span>
+            </button>
+            <a href="employeeDashboard.html?view=employee" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-16">
+              <i data-feather="user" class="h-5 w-5"></i>
+              <span data-en="Employee View" data-es="Vista Empleado" data-pt="Visão Funcionário">Employee View</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Run Payroll Section -->
+    <section id="payroll" class="content-section">
+      <div class="section-header">
+        <h2 class="section-title">
+          <i data-feather="dollar-sign" class="inline w-6 h-6 mr-2"></i>
+          <span data-en="Run Payroll" data-es="Ejecutar Nómina" data-pt="Executar Folha de Pagamento">Run Payroll</span>
+        </h2>
+        <p class="text-muted-foreground" data-en="Generate and manage payroll for workers" 
+          data-es="Generar y gestionar nómina para trabajadores" 
+          data-pt="Gerar e gerenciar folha de pagamento para trabalhadores">
+          Generate and manage payroll for workers
+        </p>
+      </div>
+
+      <div class="rounded-xl border bg-card text-card-foreground shadow">
+        <div class="flex flex-col space-y-1.5 p-6">
+          <h3 class="font-semibold leading-none tracking-tight" data-en="Generate Payroll Report" data-es="Generar Reporte de Nómina" data-pt="Gerar Relatório de Folha">Generate Payroll Report</h3>
+        </div>
+        <div class="p-6 pt-0">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label for="runPayrollWeekSelect" class="form-label" data-en="Select Week Period:" data-es="Seleccionar Período Semanal:" data-pt="Selecionar Período Semanal:">
+                Select Week Period:
+              </label>
+              <select id="runPayrollWeekSelect" class="form-select">
+                <option value="">-- Select Week --</option>
+              </select>
+            </div>
+            <div>
+              <label for="payrollWorkerSelect" class="form-label" data-en="Select Worker:" data-es="Seleccionar Trabajador:" data-pt="Selecionar Trabalhador:">
+                Select Worker:
+              </label>
+              <select id="payrollWorkerSelect" class="form-select">
+                <option value="">-- All Workers --</option>
+              </select>
+            </div>
+          </div>
+          <div class="flex gap-3">
+            <button id="btnRunPayroll" class="btn-primary">
+              <i data-feather="play" class="w-4 h-4"></i>
+              <span data-en="Generate Payroll" data-es="Generar Nómina" data-pt="Gerar Folha">Generate Payroll</span>
+            </button>
+            <button id="btnEmailPayroll" class="btn-secondary">
+              <i data-feather="mail" class="w-4 h-4"></i>
+              <span data-en="Email to QB" data-es="Enviar a QB" data-pt="Enviar para QB">Email to QB</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div id="payrollResults" class="rounded-xl border bg-card text-card-foreground shadow mt-6 hidden">
+        <div class="flex flex-col space-y-1.5 p-6">
+          <h3 class="font-semibold leading-none tracking-tight" data-en="Payroll Results" data-es="Resultados de Nómina" data-pt="Resultados da Folha">Payroll Results</h3>
+        </div>
+        <div class="p-6 pt-0">
+          <div id="payrollContent" class="overflow-x-auto"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Invoice Management Section -->
+    <section id="invoices" class="content-section">
+      <div class="section-header">
+        <h2 class="section-title">
+          <i data-feather="file-text" class="inline w-6 h-6 mr-2"></i>
+          <span data-en="Invoice Management" data-es="Gestión de Facturas" data-pt="Gestão de Faturas">Invoice Management</span>
+        </h2>
+        <p class="text-muted-foreground" data-en="Send invoices and sync to QuickBooks" 
+          data-es="Enviar facturas y sincronizar con QuickBooks" 
+          data-pt="Enviar faturas e sincronizar com QuickBooks">
+          Send invoices and sync to QuickBooks
+        </p>
+      </div>
+
+      <div class="rounded-xl border bg-card text-card-foreground shadow">
+        <div class="flex flex-col space-y-1.5 p-6">
+          <h3 class="font-semibold leading-none tracking-tight" data-en="Invoice List" data-es="Lista de Facturas" data-pt="Lista de Faturas">Invoice List</h3>
+        </div>
+        <div class="p-6 pt-0">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label for="invoiceWeekFilter" class="form-label" data-en="Select Week Period:" data-es="Seleccionar Período Semanal:" data-pt="Selecionar Período Semanal:">
+                Select Week Period:
+              </label>
+              <select id="invoiceWeekFilter" class="form-select">
+                <option value="">-- All Invoices --</option>
+              </select>
+            </div>
+            <div class="flex items-end">
+              <!-- Empty column for grid alignment -->
+            </div>
+          </div>
+          <div class="flex gap-3 mb-4">
+            <button id="btnLoadInvoices" class="btn-primary">
+              <i data-feather="download" class="w-4 h-4"></i>
+              <span data-en="Load Invoices" data-es="Cargar Facturas" data-pt="Carregar Faturas">Load Invoices</span>
+            </button>
+            <button id="btnRefreshInvoices" class="btn-secondary">
+              <i data-feather="refresh-cw" class="w-4 h-4"></i>
+              <span data-en="Refresh" data-es="Actualizar" data-pt="Atualizar">Refresh</span>
+            </button>
+          </div>
+          <div id="invoiceList" class="overflow-x-auto"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Time Edit Requests Section -->
+    <section id="time-edits" class="content-section">
+      <div class="section-header">
+        <h2 class="section-title">
+          <i data-feather="clock" class="inline w-6 h-6 mr-2"></i>
+          <span data-en="Time Edit Requests" data-es="Solicitudes de Edición de Tiempo" data-pt="Solicitações de Edição de Tempo">Time Edit Requests</span>
+        </h2>
+        <p class="text-muted-foreground" data-en="Review and approve worker time edit requests" 
+          data-es="Revisar y aprobar solicitudes de edición de tiempo" 
+          data-pt="Revisar e aprovar solicitações de edição de tempo">
+          Review and approve worker time edit requests
+        </p>
+      </div>
+
+      <div class="rounded-xl border bg-card text-card-foreground shadow">
+        <div class="flex flex-col space-y-1.5 p-6">
+          <div class="flex items-center justify-between">
+            <h3 class="font-semibold leading-none tracking-tight" data-en="Pending Requests" data-es="Solicitudes Pendientes" data-pt="Solicitações Pendentes">Pending Requests</h3>
+            <button id="btnRefreshTimeEdits" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-9 px-3">
+              <i data-feather="refresh-cw" class="h-4 w-4"></i>
+              <span data-en="Refresh" data-es="Actualizar" data-pt="Atualizar">Refresh</span>
+            </button>
+          </div>
+        </div>
+        <div class="p-6 pt-0">
+          <div id="timeEditList" class="overflow-x-auto"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- All Workers Section -->
+    <section id="workers" class="content-section">
+      <div class="section-header">
+        <h2 class="section-title">
+          <i data-feather="users" class="inline w-6 h-6 mr-2"></i>
+          <span data-en="All Workers Report" data-es="Reporte de Todos los Trabajadores" data-pt="Relatório de Todos os Trabalhadores">All Workers Report</span>
+        </h2>
+        <p class="text-muted-foreground" data-en="View clock-in records for all workers" 
+          data-es="Ver registros de entrada de todos los trabajadores" 
+          data-pt="Ver registros de entrada de todos os trabalhadores">
+          View clock-in records for all workers
+        </p>
+      </div>
+
+      <div class="rounded-xl border bg-card text-card-foreground shadow">
+        <div class="flex flex-col space-y-1.5 p-6">
+          <h3 class="font-semibold leading-none tracking-tight" data-en="Clock-In Records" data-es="Registros de Entrada" data-pt="Registros de Entrada">Clock-In Records</h3>
+        </div>
+        <div class="p-6 pt-0">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label for="workerFilterSelect" class="form-label" data-en="Filter by Worker:" data-es="Filtrar por Trabajador:" data-pt="Filtrar por Trabalhador:">
+                Filter by Worker:
+              </label>
+              <select id="workerFilterSelect" class="form-select">
+                <option value="">-- All Workers --</option>
+              </select>
+            </div>
+            <div class="flex items-end">
+              <!-- Empty column for grid alignment -->
+            </div>
+          </div>
+          <div class="flex gap-3 mb-4">
+            <button id="btnLoadAllWorkers" class="btn-primary">
+              <i data-feather="download" class="w-4 h-4"></i>
+              <span data-en="Load Records" data-es="Cargar Registros" data-pt="Carregar Registros">Load Records</span>
+            </button>
+            <button id="btnRefreshAllWorkers" class="btn-secondary">
+              <i data-feather="refresh-cw" class="w-4 h-4"></i>
+              <span data-en="Refresh" data-es="Actualizar" data-pt="Atualizar">Refresh</span>
+            </button>
+          </div>
+          <div id="allWorkersReport" class="overflow-x-auto"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- View As Worker Section -->
+    <section id="view-as" class="content-section">
+      <div class="section-header">
+        <h2 class="section-title">
+          <i data-feather="eye" class="inline w-6 h-6 mr-2"></i>
+          <span data-en="View As Worker" data-es="Ver Como Trabajador" data-pt="Ver Como Trabalhador">View As Worker</span>
+        </h2>
+        <p class="text-muted-foreground" data-en="Switch to view dashboard as any worker for testing" 
+          data-es="Cambiar para ver el panel como cualquier trabajador para pruebas" 
+          data-pt="Mudar para visualizar o painel como qualquer trabalhador para testes">
+          Switch to view dashboard as any worker for testing
+        </p>
+      </div>
+
+      <div class="rounded-xl border bg-card text-card-foreground shadow">
+        <div class="flex flex-col space-y-1.5 p-6">
+          <h3 class="font-semibold leading-none tracking-tight" data-en="Worker Selection" data-es="Selección de Trabajador" data-pt="Seleção de Trabalhador">Worker Selection</h3>
+        </div>
+        <div class="p-6 pt-0">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label for="viewAsWorkerSelect" class="form-label" data-en="Select Worker:" data-es="Seleccionar Trabajador:" data-pt="Selecionar Trabalhador:">
+                Select Worker:
+              </label>
+              <select id="viewAsWorkerSelect" class="form-select">
+                <option value="">-- Select a Worker --</option>
+              </select>
+            </div>
+          </div>
+          <div class="flex gap-3">
+            <button id="btnViewAsWorker" class="btn-primary">
+              <i data-feather="eye" class="w-4 h-4"></i>
+              <span data-en="View as Worker" data-es="Ver como Trabajador" data-pt="Ver como Trabalhador">View as Worker</span>
+            </button>
+            <button id="btnResetView" class="btn-secondary">
+              <i data-feather="refresh-ccw" class="w-4 h-4"></i>
+              <span data-en="Reset to Admin View" data-es="Volver a Vista Admin" data-pt="Voltar para Visão Admin">Reset to Admin View</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Multilingual Support -->
+  <script src="assets/lang-auto.js"></script>
+
+  <!-- Admin Dashboard Module (ES6) -->
+  <script type="module">
+    import { AdminDashboard } from './js/admin-dashboard.js';
+    
+    // Initialize dashboard when DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initDashboard);
+    } else {
+      initDashboard();
+    }
+
+    function initDashboard() {
+      const dashboard = new AdminDashboard();
+      dashboard.init();
+      
+      // Expose for debugging
+      window.adminDashboard = dashboard;
+      
+      // Initialize Feather icons (must happen after dashboard init)
+      setTimeout(() => {
+        if (typeof feather !== 'undefined') {
+          feather.replace();
+        }
+      }, 100);
+    }
+  </script>
+</body>
+
+</html>

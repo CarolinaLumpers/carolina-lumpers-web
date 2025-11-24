@@ -13,16 +13,76 @@ export class ViewAs {
   /**
    * Initialize the View As module
    */
-  init() {
+  async init() {
     const dropdown = document.getElementById('viewAsWorkerSelect');
-    const btnToggle = document.getElementById('btnToggleViewAs');
+    const btnViewAs = document.getElementById('btnViewAsWorker');
+    const btnReset = document.getElementById('btnResetView');
 
     if (dropdown) {
-      this.populateWorkerDropdown();
+      await this.populateWorkerDropdown();
     }
 
-    if (btnToggle) {
-      btnToggle.addEventListener('click', () => this.toggle());
+    if (btnViewAs) {
+      btnViewAs.addEventListener('click', () => this.activateViewAs());
+    }
+
+    if (btnReset) {
+      btnReset.addEventListener('click', () => this.resetView());
+    }
+  }
+
+  /**
+   * Activate View As mode
+   */
+  activateViewAs() {
+    const dropdown = document.getElementById('viewAsWorkerSelect');
+    if (!dropdown || !dropdown.value) {
+      alert('Please select a worker first');
+      return;
+    }
+
+    const selectedOption = dropdown.options[dropdown.selectedIndex];
+    const workerId = dropdown.value;
+    const workerName = selectedOption.text.split(' (')[0];
+
+    // Store current admin info
+    if (!localStorage.getItem('CLS_AdminID')) {
+      localStorage.setItem('CLS_AdminID', localStorage.getItem('CLS_WorkerID'));
+      localStorage.setItem('CLS_AdminName', localStorage.getItem('CLS_WorkerName'));
+      localStorage.setItem('CLS_AdminRole', localStorage.getItem('CLS_Role'));
+    }
+
+    // Switch to worker view
+    localStorage.setItem('CLS_WorkerID', workerId);
+    localStorage.setItem('CLS_WorkerName', workerName);
+    localStorage.setItem('CLS_Role', 'Worker');
+    localStorage.setItem('CLS_ViewAsActive', 'true');
+
+    console.log(`👤 Viewing as: ${workerName} (${workerId})`);
+    
+    // Redirect to employee dashboard
+    window.location.href = 'employeeDashboard.html?view=employee';
+  }
+
+  /**
+   * Reset to admin view
+   */
+  resetView() {
+    const adminId = localStorage.getItem('CLS_AdminID');
+    const adminName = localStorage.getItem('CLS_AdminName');
+    const adminRole = localStorage.getItem('CLS_AdminRole');
+
+    if (adminId) {
+      localStorage.setItem('CLS_WorkerID', adminId);
+      localStorage.setItem('CLS_WorkerName', adminName);
+      localStorage.setItem('CLS_Role', adminRole);
+      localStorage.removeItem('CLS_AdminID');
+      localStorage.removeItem('CLS_AdminName');
+      localStorage.removeItem('CLS_AdminRole');
+      localStorage.removeItem('CLS_ViewAsActive');
+      
+      console.log('🔄 Reset to admin view');
+      window.location.reload();
     }
   }
 
@@ -34,21 +94,50 @@ export class ViewAs {
     if (!dropdown) return;
 
     try {
-      const url = `${this.apiUrl}?action=listWorkers`;
+      // Get current admin's worker ID
+      const adminWorkerId = localStorage.getItem('CLS_WorkerID');
+      const url = `${this.apiUrl}?action=reportAll&workerId=${encodeURIComponent(adminWorkerId)}`;
       const response = await fetch(url);
       const data = await response.json();
 
-      if (!data.ok || !data.workers) {
-        throw new Error('Failed to load workers list');
+      // Extract unique workers from the report data
+      let workers = [];
+      if (data.workers && Array.isArray(data.workers)) {
+        workers = data.workers;
+      } else if (data.report && Array.isArray(data.report)) {
+        // Extract unique workers from report records
+        const workerMap = new Map();
+        data.report.forEach(record => {
+          if (record.WorkerID && !workerMap.has(record.WorkerID)) {
+            workerMap.set(record.WorkerID, {
+              workerId: record.WorkerID,
+              displayName: record.DisplayName || record.WorkerID
+            });
+          }
+        });
+        workers = Array.from(workerMap.values());
       }
 
-      const workers = data.workers || [];
-      dropdown.innerHTML = '<option value="">-- Select Worker --</option>' +
-        workers.map(w => `<option value="${w.workerId}">${this.escapeHtml(w.displayName)} (${w.workerId})</option>`).join('');
+      if (workers.length === 0) {
+        dropdown.innerHTML = '<option value="">-- No workers found --</option>';
+        return;
+      }
+
+      // Sort workers by name
+      workers.sort((a, b) => {
+        const nameA = (a.displayName || a.name || a.workerId).toLowerCase();
+        const nameB = (b.displayName || b.name || b.workerId).toLowerCase();
+        return nameA.localeCompare(nameB);
+      });
+
+      dropdown.innerHTML = '<option value="">-- Select a Worker --</option>' +
+        workers.map(w => `<option value="${w.workerId}">${this.escapeHtml(w.displayName || w.name || w.workerId)} (${w.workerId})</option>`).join('');
+
+      console.log(`✅ View As: Loaded ${workers.length} workers`);
 
     } catch (err) {
       console.error('Failed to populate View As dropdown:', err);
-      dropdown.innerHTML = '<option value="">Error loading workers</option>';
+      dropdown.innerHTML = '<option value="">-- Error loading workers --</option>';
     }
   }
 

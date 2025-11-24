@@ -335,8 +335,6 @@
         data-pt="Registros">Clock-Ins</button>
       <button id="tabPayroll" class="tab-btn" data-en="Payroll" data-es="Nómina"
         data-pt="Folha de Pagamento">Payroll</button>
-      <button id="tabAdmin" class="tab-btn hidden" data-en="Admin Tools" data-es="Herramientas Admin"
-        data-pt="Ferramentas Admin">Admin Tools</button>
     </div>
 
     <!-- CLOCK-IN SECTION -->
@@ -411,13 +409,9 @@
       </p>
     </div>
 
-    <!-- ADMIN SECTION -->
-    <div id="admin-section" class="card hidden">
-      <h3 class="section-title" data-en="Admin Tools" data-es="Herramientas de Admin" data-pt="Ferramentas de Admin">
-        Admin Tools
-      </h3>
+    <!-- ADMIN SECTION REMOVED - See adminDashboard.html for admin tools -->
 
-      <!-- Clock-In Manager Subsection -->
+    <!-- VIEW AS Section (Always visible for admins, above language toggle) -->
       <div id="clockinManager" class="admin-subsection">
         <h4 class="section-title" data-en="Clock-In Manager" data-es="Gestor de Entradas"
           data-pt="Gerenciador de Registros"
@@ -664,11 +658,8 @@
               Click 'Preview Sync' to see what changes would be made
             </p>
           </div>
-        </div>
-      </div>
-    </div>
+    <!-- Admins: redirect to adminDashboard.html for admin tools -->
 
-    <!-- VIEW AS Section (Always visible for admins, above language toggle) -->
     <div id="viewAsWrap" class="hidden"
       style="margin: var(--space-lg) auto; max-width: 860px; padding: var(--space-md); background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: var(--radius-md);">
       <h4 style="color: var(--color-primary); margin: 0 0 var(--space-md) 0; text-align: center;"
@@ -2125,14 +2116,17 @@
         // Normalize role (handle case variations)
         USER_ROLE = storedRole ? storedRole.charAt(0).toUpperCase() + storedRole.slice(1).toLowerCase() : null;
 
-        // Show Admin tab button for Admin/Lead users (section stays hidden until tab clicked)
-        if (USER_ROLE === 'Admin' || USER_ROLE === 'Lead') {
-          const adminTab = document.getElementById('tabAdmin');
-
-          if (adminTab) {
-            adminTab.classList.remove('hidden');
+        // Redirect admins to dedicated admin dashboard
+        if (USER_ROLE === 'Admin' || USER_ROLE === 'Supervisor') {
+          // Check if user has explicitly requested employee view via URL parameter
+          const urlParams = new URLSearchParams(window.location.search);
+          const forceEmployeeView = urlParams.get('view') === 'employee';
+          
+          if (!forceEmployeeView) {
+            console.log('Admin/Supervisor detected - redirecting to adminDashboard.html');
+            window.location.href = 'adminDashboard.html';
+            return;
           }
-          // Note: admin-section stays hidden until user clicks Admin Tools tab
         }
 
         // Admin-only features (View As, Time Edit Requests)
