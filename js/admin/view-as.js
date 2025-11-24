@@ -1,7 +1,9 @@
 /**
  * View As Module
- * Allows admins to view the dashboard as another worker
+ * Allows admins to view dashboard as another worker
  */
+
+import { Dialog } from '../utils/dialog.js';
 
 export class ViewAs {
   constructor(apiUrl) {
@@ -133,7 +135,7 @@ export class ViewAs {
       dropdown.innerHTML = '<option value="">-- Select a Worker --</option>' +
         workers.map(w => `<option value="${w.workerId}">${this.escapeHtml(w.displayName || w.name || w.workerId)} (${w.workerId})</option>`).join('');
 
-      console.log(`✅ View As: Loaded ${workers.length} workers`);
+
 
     } catch (err) {
       console.error('Failed to populate View As dropdown:', err);
@@ -144,7 +146,7 @@ export class ViewAs {
   /**
    * Toggle View As mode
    */
-  toggle() {
+  async toggle() {
     const dropdown = document.getElementById('viewAsWorkerSelect');
     const btnToggle = document.getElementById('btnToggleViewAs');
     const indicator = document.getElementById('viewAsIndicator');
@@ -153,10 +155,10 @@ export class ViewAs {
       // Activate View As mode
       const selectedWorkerId = dropdown?.value;
       if (!selectedWorkerId) {
-        alert('Please select a worker first');
+        await Dialog.alert('Worker Required', 'Please select a worker first');
         return;
       }
-
+      
       this.isActive = true;
       this.selectedWorkerId = selectedWorkerId;
 

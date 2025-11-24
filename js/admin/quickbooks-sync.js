@@ -3,6 +3,8 @@
  * Handles syncing active workers to QuickBooks Online as vendors
  */
 
+import { Dialog } from '../utils/dialog.js';
+
 export class QuickBooksSync {
   constructor() {
     this.syncApiUrl = 'https://vendorsync-proxy.s-garay.workers.dev';
@@ -35,12 +37,12 @@ export class QuickBooksSync {
 
     // Confirm for live sync
     if (!dryRun) {
-      const confirm = window.confirm(
-        '⚠️ WARNING: This will ACTUALLY create/update vendors in QuickBooks Online.\n\n' +
-        'Make sure you reviewed the dry run results first!\n\n' +
-        'Continue with LIVE sync?'
+      const confirmed = await Dialog.confirm(
+        '⚠️ WARNING: Live Vendor Sync',
+        'This will ACTUALLY create/update vendors in QuickBooks Online.\n\nMake sure you reviewed the dry run results first!\n\nContinue with LIVE sync?',
+        { confirmText: 'Sync Now', cancelText: 'Cancel', variant: 'destructive' }
       );
-      if (!confirm) return;
+      if (!confirmed) return;
     }
 
     // Disable buttons and show loading

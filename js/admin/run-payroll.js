@@ -3,6 +3,8 @@
  * Handles weekly payroll processing and week period selection
  */
 
+import { Dialog } from '../utils/dialog.js';
+
 export class RunPayroll {
   constructor() {
     this.payrollApiUrl = 'https://payroll-proxy.s-garay.workers.dev';
@@ -71,17 +73,17 @@ export class RunPayroll {
     const weekPeriod = dropdown.value;
     
     if (!weekPeriod) {
-      alert('Please select a week period first');
+      await Dialog.alert('Week Period Required', 'Please select a week period first');
       return;
     }
 
     // Confirm before running
-    const confirm = window.confirm(
-      `⚠️ WARNING: This will process payroll and create bills in QuickBooks Online.\n\n` +
-      `Week Period: ${weekPeriod}\n\n` +
-      `This action cannot be undone. Continue?`
+    const confirmed = await Dialog.confirm(
+      '⚠️ WARNING: Process Payroll',
+      `This will process payroll and create bills in QuickBooks Online.\n\nWeek Period: ${weekPeriod}\n\nThis action cannot be undone. Continue?`,
+      { confirmText: 'Generate Payroll', cancelText: 'Cancel', variant: 'destructive' }
     );
-    if (!confirm) return;
+    if (!confirmed) return;
 
     // Show loading state
     button.disabled = true;

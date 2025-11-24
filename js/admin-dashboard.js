@@ -21,8 +21,6 @@ export class AdminDashboard {
    * Initialize the admin dashboard
    */
   async init() {
-    console.log('🚀 Initializing Admin Dashboard...');
-
     // Check authentication
     if (!this.checkAuth()) {
       window.location.href = 'employeelogin.html';
@@ -222,6 +220,8 @@ export class AdminDashboard {
       // Initialize Invoice Management
       this.modules.invoiceManagement = new InvoiceManagement();
       this.modules.invoiceManagement.init();
+      // Expose to window for onclick handlers
+      window.invoiceManager = this.modules.invoiceManagement;
 
       // Initialize View As
       this.modules.viewAs = new ViewAs(this.apiUrl);
@@ -229,7 +229,7 @@ export class AdminDashboard {
         console.warn('View As module failed to initialize:', err);
       });
 
-      console.log('✅ All admin modules initialized');
+
     } catch (error) {
       console.error('Error initializing modules:', error);
     }

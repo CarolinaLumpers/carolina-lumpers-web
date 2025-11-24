@@ -97,6 +97,7 @@
   <link rel="stylesheet" href="css/variables.css">
   <link rel="stylesheet" href="css/admin-dashboard.css">
   <link rel="stylesheet" href="css/admin-dashboard-theme.css">
+  <link rel="stylesheet" href="css/dialog.css">
 </head>
 
 <body class="dark bg-background text-foreground antialiased">
@@ -395,13 +396,17 @@
             </div>
           </div>
           <div class="flex gap-3 mb-4">
-            <button id="btnLoadInvoices" class="btn-primary">
-              <i data-feather="download" class="w-4 h-4"></i>
-              <span data-en="Load Invoices" data-es="Cargar Facturas" data-pt="Carregar Faturas">Load Invoices</span>
+            <button id="btnDryRun" class="btn-secondary">
+              <i data-feather="eye" class="w-4 h-4"></i>
+              <span data-en="Dry Run (Preview)" data-es="Vista Previa" data-pt="Visualização">Dry Run (Preview)</span>
             </button>
-            <button id="btnRefreshInvoices" class="btn-secondary">
+            <button id="btnRefreshPaymentStatus" class="btn-secondary">
               <i data-feather="refresh-cw" class="w-4 h-4"></i>
-              <span data-en="Refresh" data-es="Actualizar" data-pt="Atualizar">Refresh</span>
+              <span data-en="Check Payment Status" data-es="Verificar Estado de Pago" data-pt="Verificar Status de Pagamento">Check Payment Status</span>
+            </button>
+            <button id="btnSyncToQBO" class="btn-primary">
+              <i data-feather="upload-cloud" class="w-4 h-4"></i>
+              <span data-en="Sync to QuickBooks" data-es="Sincronizar a QuickBooks" data-pt="Sincronizar ao QuickBooks">Sync to QuickBooks</span>
             </button>
           </div>
           <div id="invoiceList" class="overflow-x-auto"></div>
@@ -602,6 +607,24 @@
       }, 100);
     }
   </script>
+
+  <!-- Loading Overlay -->
+  <div id="loadingOverlay" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:9999;backdrop-filter:blur(4px);">
+    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;">
+      <div style="width:60px;height:60px;border:4px solid rgba(255,193,7,0.3);border-top-color:#FFC107;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 20px;"></div>
+      <div id="loadingText" style="color:#FFC107;font-size:18px;font-weight:600;margin-bottom:8px;">Processing...</div>
+      <div style="color:#999;font-size:14px;">Please wait</div>
+    </div>
+  </div>
+
+  <style>
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    #loadingOverlay.active {
+      display: block !important;
+    }
+  </style>
 </body>
 
 </html>

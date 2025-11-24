@@ -33,7 +33,9 @@ function doPost(e) {
             }
         }
 
-        if (!invoiceNumber) {
+        // Invoice number is optional for certain events (like Check_Payment_Status)
+        const eventsWithoutInvoiceNumber = ["Check_Payment_Status"];
+        if (!invoiceNumber && !eventsWithoutInvoiceNumber.includes(eventType)) {
             logEvent("Webhook Error: Missing Invoice Number", "Failed");
             return ContentService.createTextOutput(
                 JSON.stringify({ status: "❌ Error", message: "Missing Invoice Number" })
@@ -54,11 +56,19 @@ function doPost(e) {
             case "QBO_Payment_Update":
                 handleQBO_PaymentUpdate(requestData);
                 break;
+            case "Check_Payment_Status":
+                // Manual trigger to check all unpaid invoices
+                dailyPaymentStatusCheck();
+                break;
             default:
         }
 
         return ContentService.createTextOutput(
-            JSON.stringify({ status: "✅ Success", invoiceNumber: invoiceNumber })
+            JSON.stringify({ 
+                status: "✅ Success", 
+                event: eventType,
+                invoiceNumber: invoiceNumber || "N/A"
+            })
         ).setMimeType(ContentService.MimeType.JSON);
 
     } catch (error) {

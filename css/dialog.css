@@ -1,0 +1,243 @@
+/**
+ * shadcn/ui-inspired Dialog Styles
+ * Modal dialog component for confirmations and alerts
+ */
+
+/* Dialog Overlay */
+.dialog-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-md);
+  animation: fadeIn 0.2s ease;
+}
+
+.dialog-overlay.closing {
+  animation: fadeOut 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* Dialog Content */
+.dialog-content {
+  background: var(--color-dark-light);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  max-width: 500px;
+  width: 100%;
+  animation: slideUp 0.2s ease;
+  border: 1px solid var(--border-color);
+}
+
+.dialog-content.closing {
+  animation: slideDown 0.2s ease;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+}
+
+/* Dialog Header */
+.dialog-header {
+  padding: var(--space-lg);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.dialog-title {
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  margin: 0;
+  color: var(--text-primary);
+}
+
+/* Dialog Body */
+.dialog-body {
+  padding: var(--space-lg);
+}
+
+.dialog-description {
+  font-size: var(--font-size-base);
+  line-height: 1.6;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* Dialog Footer */
+.dialog-footer {
+  padding: var(--space-lg);
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  gap: var(--space-md);
+  justify-content: flex-end;
+}
+
+/* Dialog Buttons */
+.btn-dialog-cancel {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  height: 2.5rem;
+  padding: 0 1rem;
+  border: 1px solid var(--border-color);
+  background: transparent;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-dialog-cancel:hover {
+  background: var(--color-dark-lighter);
+}
+
+.btn-dialog-cancel:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.btn-dialog-confirm {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  height: 2.5rem;
+  padding: 0 1rem;
+  background: var(--color-primary);
+  color: var(--color-dark);
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-dialog-confirm:hover {
+  background: var(--color-primary-hover);
+}
+
+.btn-dialog-confirm:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.btn-dialog-confirm.destructive {
+  background: var(--color-danger);
+  color: var(--text-primary);
+}
+
+.btn-dialog-confirm.destructive:hover {
+  background: var(--color-danger-hover);
+}
+
+/* Light Theme Adjustments */
+html.light .dialog-overlay,
+body.light .dialog-overlay {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+html.light .dialog-content,
+body.light .dialog-content {
+  background: #ffffff;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  border-color: #e2e8f0;
+}
+
+html.light .dialog-header,
+body.light .dialog-header {
+  border-bottom-color: #e2e8f0;
+}
+
+html.light .dialog-footer,
+body.light .dialog-footer {
+  border-top-color: #e2e8f0;
+}
+
+html.light .btn-dialog-confirm,
+body.light .btn-dialog-confirm {
+  background: #f59e0b;
+  color: #ffffff;
+}
+
+html.light .btn-dialog-confirm:hover,
+body.light .btn-dialog-confirm:hover {
+  background: #d97706;
+}
+
+html.light .btn-dialog-confirm.destructive,
+body.light .btn-dialog-confirm.destructive {
+  background: #ef4444;
+  color: #ffffff;
+}
+
+html.light .btn-dialog-confirm.destructive:hover,
+body.light .btn-dialog-confirm.destructive:hover {
+  background: #dc2626;
+}
+
+html.light .btn-dialog-cancel,
+body.light .btn-dialog-cancel {
+  border-color: #e2e8f0;
+  color: #0f172a;
+}
+
+html.light .btn-dialog-cancel:hover,
+body.light .btn-dialog-cancel:hover {
+  background: #f1f5f9;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .dialog-content {
+    max-width: 100%;
+    margin: var(--space-md);
+  }
+
+  .dialog-footer {
+    flex-direction: column-reverse;
+  }
+
+  .btn-dialog-cancel,
+  .btn-dialog-confirm {
+    width: 100%;
+  }
+}

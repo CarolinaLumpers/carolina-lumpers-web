@@ -3,6 +3,8 @@
  * Handles invoice viewing, email sending, and QBO sync
  */
 
+import { Dialog } from '../utils/dialog.js';
+
 export class InvoiceManagement {
   constructor(apiUrl) {
     this.apiUrl = apiUrl;
@@ -16,26 +18,33 @@ export class InvoiceManagement {
    * Initialize the Invoice Management module
    */
   init() {
-    const btnLoadInvoices = document.getElementById('btnLoadInvoices');
-    const btnRefreshInvoices = document.getElementById('btnRefreshInvoices');
+    const btnDryRun = document.getElementById('btnDryRun');
+    const btnRefreshPaymentStatus = document.getElementById('btnRefreshPaymentStatus');
+    const btnSyncToQBO = document.getElementById('btnSyncToQBO');
     const invoiceFilter = document.getElementById('invoiceWeekFilter');
     
-    if (btnLoadInvoices) {
-      btnLoadInvoices.addEventListener('click', () => this.loadInvoices());
+    if (btnDryRun) {
+      btnDryRun.addEventListener('click', () => this.runDryRun());
     }
 
-    if (btnRefreshInvoices) {
-      btnRefreshInvoices.addEventListener('click', () => this.loadInvoices());
+    if (btnRefreshPaymentStatus) {
+      btnRefreshPaymentStatus.addEventListener('click', () => this.refreshPaymentStatus());
+    }
+
+    if (btnSyncToQBO) {
+      btnSyncToQBO.addEventListener('click', () => this.syncWeekToQBO());
     }
 
     if (invoiceFilter) {
-      invoiceFilter.addEventListener('change', () => this.filterInvoices());
+      invoiceFilter.addEventListener('change', () => {
+        // Clear preview when week changes
+        const container = document.getElementById('invoiceList');
+        if (container) container.innerHTML = '';
+      });
     }
 
     // Populate week selector with Saturdays (like Run Payroll)
     this.populateWeekSelector();
-
-    console.log('✅ Invoice Management initialized');
   }
 
   /**
@@ -78,16 +87,29 @@ export class InvoiceManagement {
   }
 
   /**
-   * Load all invoices from Google Sheets (Direct Sheets API)
+   * Run dry run - preview invoices for selected week
    */
-  async loadInvoices() {
-    const container = document.getElementById('invoiceContainer');
-    const button = document.getElementById('btnLoadInvoices');
+  async runDryRun() {
+    console.log('📦 runDryRun() called');
     
-    if (!container) return;
+    const container = document.getElementById('invoiceList');
+    const button = document.getElementById('btnDryRun');
+    const weekFilter = document.getElementById('invoiceWeekFilter');
+    
+    if (!container) {
+      console.error('❌ Container not found, aborting');
+      return;
+    }
+
+    if (!weekFilter || !weekFilter.value) {
+      await Dialog.alert('Select Week Period', 'Please select a week period from the dropdown first.');
+      return;
+    }
+
+    const selectedWeek = weekFilter.value;
 
     // Show loading state
-    container.innerHTML = '<p class="muted">Loading invoices...</p>';
+    container.innerHTML = '<p class="muted">Loading invoices for selected week...</p>';
     if (button) {
       button.disabled = true;
       button.innerHTML = '<span>Loading...</span>';
@@ -119,21 +141,47 @@ export class InvoiceManagement {
           customer: row[1] || '',
           date: row[2] || '',
           dueDate: row[3] || '',
-          amount: row[4] || 0,
+          amount: parseFloat((row[4] || '0').replace(/[$,]/g, '')) || 0, // Strip $ and commas
           status: row[5] || 'Unpaid',
           synced: row[6] || 'No',
           pushToQBO: row[7] || 'Pending',
           lastUpdated: row[8] || ''
         }));
 
+      // Filter by selected week
+      const [month, day, year] = selectedWeek.split('/');
+      const saturday = new Date(year, month - 1, day);
+      const sunday = new Date(saturday);
+      sunday.setDate(saturday.getDate() - 6);
+
+      console.log(`📅 Selected week: ${selectedWeek}`);
+      console.log(`📅 Date range: ${sunday.toLocaleDateString()} to ${saturday.toLocaleDateString()}`);
+
+      let weekInvoices = this.invoices.filter(inv => {
+        const invDate = new Date(inv.date);
+        return invDate >= sunday && invDate <= saturday;
+      });
+
+      console.log(`📊 Invoices in date range: ${weekInvoices.length}`);
+      console.log(`📊 Status breakdown:`, weekInvoices.reduce((acc, inv) => {
+        acc[inv.status] = (acc[inv.status] || 0) + 1;
+        return acc;
+      }, {}));
+
+      // Filter out paid invoices by default (they don't need to sync)
+      // Only show unpaid invoices that need attention
+      const beforeFilter = weekInvoices.length;
+      weekInvoices = weekInvoices.filter(inv => inv.status !== 'Paid');
+      console.log(`📊 After filtering out paid: ${weekInvoices.length} (removed ${beforeFilter - weekInvoices.length} paid invoices)`);
+
       // Sort by date descending (newest first)
-      this.invoices.sort((a, b) => {
+      weekInvoices.sort((a, b) => {
         const dateA = new Date(a.date);
         const dateB = new Date(b.date);
         return dateB - dateA;
       });
 
-      this.renderInvoices(this.invoices);
+      this.renderDryRunSummary(weekInvoices, selectedWeek);
 
     } catch (err) {
       console.error('Failed to load invoices:', err);
@@ -141,53 +189,73 @@ export class InvoiceManagement {
     } finally {
       if (button) {
         button.disabled = false;
-        button.innerHTML = '<span data-en="Load Invoices" data-es="Cargar Facturas" data-pt="Carregar Faturas">Load Invoices</span>';
+        button.innerHTML = '<span>🔍 Dry Run (Preview)</span>';
       }
     }
   }
 
   /**
-   * Filter invoices by week period (Saturday to Saturday)
+   * Render dry run summary with totals and pending status
    */
-  filterInvoices() {
-    const filter = document.getElementById('invoiceWeekFilter');
-    if (!filter || !this.invoices) return;
-
-    const selectedWeek = filter.value;
-    
-    let filtered = this.invoices;
-    if (selectedWeek) {
-      // Parse the selected Saturday date
-      const [month, day, year] = selectedWeek.split('/');
-      const saturday = new Date(year, month - 1, day);
-      
-      // Calculate Sunday (start of week)
-      const sunday = new Date(saturday);
-      sunday.setDate(saturday.getDate() - 6);
-      
-      // Filter invoices within this week (Sunday to Saturday)
-      filtered = this.invoices.filter(inv => {
-        const invDate = new Date(inv.date);
-        return invDate >= sunday && invDate <= saturday;
-      });
-    }
-
-    this.renderInvoices(filtered);
-  }
-
-  /**
-   * Render invoices table
-   */
-  renderInvoices(invoices) {
-    const container = document.getElementById('invoiceContainer');
+  renderDryRunSummary(invoices, weekLabel) {
+    const container = document.getElementById('invoiceList');
     if (!container) return;
 
     if (!invoices || invoices.length === 0) {
-      container.innerHTML = '<p class="muted">No invoices found</p>';
+      container.innerHTML = `
+        <div style="background:rgba(76,175,80,0.1);border:1px solid rgba(76,175,80,0.3);border-radius:8px;padding:16px;margin-top:12px;">
+          <div style="color:#4CAF50;font-weight:600;">✅ No unpaid invoices for ${weekLabel}</div>
+          <div style="color:#999;font-size:14px;margin-top:8px;">
+            All invoices for this week are either paid or don't exist.<br>
+            Paid invoices are automatically filtered out since they don't need syncing.
+          </div>
+        </div>
+      `;
       return;
     }
 
+    // Calculate totals
+    const totalAmount = invoices.reduce((sum, inv) => sum + inv.amount, 0);
+    const pendingInvoices = invoices.filter(inv => inv.pushToQBO === 'Pending');
+    const pushedInvoices = invoices.filter(inv => inv.pushToQBO === 'Pushed');
+    const unpaidInvoices = invoices.filter(inv => inv.status === 'Unpaid' || inv.status === 'Overdue');
+    const totalPending = pendingInvoices.reduce((sum, inv) => sum + inv.amount, 0);
+    const totalUnpaid = unpaidInvoices.reduce((sum, inv) => sum + inv.amount, 0);
+
     const html = `
+      <div style="background:rgba(255,193,7,0.1);border:1px solid rgba(255,193,7,0.3);border-radius:8px;padding:16px;margin-bottom:16px;">
+        <h4 style="margin:0 0 12px 0;color:#FFC107;font-size:16px;">📊 Week Summary: ${weekLabel} (Unpaid Invoices Only)</h4>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;">
+          <div>
+            <div style="color:#999;font-size:12px;">Unpaid Invoices</div>
+            <div style="font-size:24px;font-weight:600;">${invoices.length}</div>
+          </div>
+          <div>
+            <div style="color:#999;font-size:12px;">Total Outstanding</div>
+            <div style="font-size:24px;font-weight:600;color:#f44336;">$${totalUnpaid.toFixed(2)}</div>
+          </div>
+          <div>
+            <div style="color:#999;font-size:12px;">Pending QBO Sync</div>
+            <div style="font-size:24px;font-weight:600;color:#FFC107;">${pendingInvoices.length}</div>
+          </div>
+          <div>
+            <div style="color:#999;font-size:12px;">Already in QBO</div>
+            <div style="font-size:24px;font-weight:600;color:#4CAF50;">${pushedInvoices.length}</div>
+          </div>
+        </div>
+        ${pendingInvoices.length > 0 ? `
+          <div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,193,7,0.2);">
+            <div style="color:#FFC107;font-weight:600;">⚠️ ${pendingInvoices.length} invoice(s) need to be synced to QuickBooks (Total: $${totalPending.toFixed(2)})</div>
+            <div style="color:#999;font-size:12px;margin-top:4px;">Click "Sync to QuickBooks" to push these invoices to QBO</div>
+          </div>
+        ` : `
+          <div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(76,175,80,0.2);">
+            <div style="color:#4CAF50;font-weight:600;">✅ All unpaid invoices for this week are already synced to QuickBooks</div>
+            <div style="color:#999;font-size:12px;margin-top:4px;">Note: Paid invoices are automatically filtered out - they don't need syncing</div>
+          </div>
+        `}
+      </div>
+
       <table style="width:100%;border-collapse:collapse;margin-top:12px;">
         <thead>
           <tr style="background:rgba(255,193,7,0.1);border-bottom:2px solid rgba(255,193,7,0.3);">
@@ -196,12 +264,11 @@ export class InvoiceManagement {
             <th style="padding:10px;text-align:left;">Date</th>
             <th style="padding:10px;text-align:right;">Amount</th>
             <th style="padding:10px;text-align:center;">Status</th>
-            <th style="padding:10px;text-align:center;">QBO</th>
-            <th style="padding:10px;text-align:center;">Actions</th>
+            <th style="padding:10px;text-align:center;">QBO Status</th>
           </tr>
         </thead>
         <tbody>
-          ${invoices.map(inv => this.renderInvoiceRow(inv)).join('')}
+          ${invoices.map(inv => this.renderDryRunRow(inv)).join('')}
         </tbody>
       </table>
     `;
@@ -210,12 +277,12 @@ export class InvoiceManagement {
   }
 
   /**
-   * Render a single invoice row
+   * Render a single dry run invoice row
    */
-  renderInvoiceRow(invoice) {
+  renderDryRunRow(invoice) {
     const statusBadge = this.getStatusBadge(invoice.status);
     const qboBadge = this.getQBOBadge(invoice.pushToQBO);
-    const amount = invoice.amount ? `$${parseFloat(invoice.amount).toFixed(2)}` : '-';
+    const amount = invoice.amount ? `$${invoice.amount.toFixed(2)}` : '-';
 
     return `
       <tr style="border-bottom:1px solid #333;">
@@ -225,26 +292,223 @@ export class InvoiceManagement {
         <td style="padding:10px;text-align:right;font-weight:600;">${amount}</td>
         <td style="padding:10px;text-align:center;">${statusBadge}</td>
         <td style="padding:10px;text-align:center;">${qboBadge}</td>
-        <td style="padding:10px;text-align:center;">
-          <div style="display:flex;gap:6px;justify-content:center;">
-            <button 
-              class="btn btn-ghost" 
-              style="padding:6px 10px;font-size:12px;"
-              onclick="window.invoiceManager.sendInvoiceEmail('${invoice.invoiceNumber}')"
-              title="Send invoice via email">
-              📧 Email
-            </button>
-            <button 
-              class="btn btn-ghost" 
-              style="padding:6px 10px;font-size:12px;"
-              onclick="window.invoiceManager.syncToQBO('${invoice.invoiceNumber}')"
-              title="Sync to QuickBooks">
-              🔄 Sync
-            </button>
-          </div>
-        </td>
       </tr>
     `;
+  }
+
+  /**
+   * Manually trigger payment status check from QuickBooks
+   * Calls the Apps Script daily payment check function on-demand
+   */
+  async refreshPaymentStatus() {
+    console.log('🔄 refreshPaymentStatus() called');
+    
+    const confirmed = await Dialog.confirm(
+      'Check Payment Status',
+      'Query QuickBooks Online to update payment status for all unpaid invoices?\n\nThis will check if any invoices have been paid and update their status in the system.',
+      { confirmText: 'Check Now', cancelText: 'Cancel' }
+    );
+    
+    if (!confirmed) {
+      console.log('❌ User cancelled payment status check');
+      return;
+    }
+
+    try {
+      console.log('📞 Calling InvoiceProject to check payment status...');
+      this.showLoading('Checking payment status from QuickBooks...');
+
+      // Call InvoiceProject to run payment status check
+      const payload = {
+        event: 'Check_Payment_Status'
+      };
+
+      console.log('📤 Sending payload:', payload);
+      console.log('📍 API URL:', this.invoiceApiUrl);
+
+      const response = await fetch(this.invoiceApiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      console.log('📥 Response status:', response.status);
+      const data = await response.json();
+      console.log('📊 Response data:', data);
+
+      this.hideLoading();
+
+      if (!data || data.status === '❌ Error') {
+        console.error('❌ Payment check failed:', data);
+        throw new Error(data?.message || 'Failed to check payment status');
+      }
+
+      console.log('✅ Payment status check completed successfully');
+
+      await Dialog.alert(
+        'Payment Status Updated',
+        'Successfully checked QuickBooks for payment updates.\n\nRefreshing invoice data to show updated statuses...'
+      );
+
+      // Give Apps Script a moment to finish writing to Sheets
+      console.log('⏳ Waiting 2 seconds for Sheets to update...');
+      this.showLoading('Reloading invoice data from Sheets...');
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // Clear cached data and reload from Sheets to get updated statuses
+      console.log('🗑️ Clearing cached invoice data');
+      this.invoices = null;
+      
+      // Auto-run dry run to show fresh data with updated payment statuses
+      const weekFilter = document.getElementById('invoiceWeekFilter');
+      if (weekFilter && weekFilter.value) {
+        console.log('🔄 Auto-running dry run to show updated data...');
+        await this.runDryRun();
+      } else {
+        console.log('⚠️ No week selected, skipping auto-refresh');
+        this.hideLoading();
+      }
+
+      console.log('✅ Payment status refresh complete');
+
+    } catch (err) {
+      this.hideLoading();
+      console.error('❌ Failed to refresh payment status:', err);
+      console.error('Error details:', err.stack);
+      await Dialog.alert('Error', err.message);
+    }
+  }
+
+  /**
+   * Sync entire week to QuickBooks (live run)
+   */
+  async syncWeekToQBO() {
+    const weekFilter = document.getElementById('invoiceWeekFilter');
+    
+    if (!weekFilter || !weekFilter.value) {
+      await Dialog.alert('Select Week Period', 'Please select a week period and run Dry Run first to preview.');
+      return;
+    }
+
+    if (!this.invoices || this.invoices.length === 0) {
+      await Dialog.alert('Run Dry Run First', 'Please click "Dry Run (Preview)" first to load and preview the invoices.');
+      return;
+    }
+
+    const selectedWeek = weekFilter.value;
+    
+    // Filter by selected week
+    const [month, day, year] = selectedWeek.split('/');
+    const saturday = new Date(year, month - 1, day);
+    const sunday = new Date(saturday);
+    sunday.setDate(saturday.getDate() - 6);
+
+    let weekInvoices = this.invoices.filter(inv => {
+      const invDate = new Date(inv.date);
+      return invDate >= sunday && invDate <= saturday;
+    });
+
+    // Filter out paid invoices (they don't need to sync)
+    weekInvoices = weekInvoices.filter(inv => inv.status !== 'Paid');
+
+    const pendingInvoices = weekInvoices.filter(inv => inv.pushToQBO === 'Pending');
+
+    if (pendingInvoices.length === 0) {
+      await Dialog.alert('Nothing to Sync', 'All invoices for this week are already synced to QuickBooks.');
+      return;
+    }
+
+    const totalAmount = pendingInvoices.reduce((sum, inv) => sum + inv.amount, 0);
+
+    const confirmed = await Dialog.confirm(
+      'Sync to QuickBooks',
+      `Push ${pendingInvoices.length} pending invoice(s) to QuickBooks Online?\n\nTotal Amount: $${totalAmount.toFixed(2)}\nWeek: ${selectedWeek}\n\nThis action cannot be undone.`,
+      { 
+        confirmText: 'Sync to QBO', 
+        cancelText: 'Cancel',
+        variant: 'destructive'
+      }
+    );
+    
+    if (!confirmed) return;
+
+    try {
+      this.showLoading(`Syncing ${pendingInvoices.length} invoice(s) to QuickBooks...`);
+
+      let successCount = 0;
+      let errorCount = 0;
+      const errors = [];
+
+      // Sync each pending invoice with progress updates
+      for (let i = 0; i < pendingInvoices.length; i++) {
+        const invoice = pendingInvoices[i];
+        const progress = i + 1;
+        const total = pendingInvoices.length;
+        
+        // Update loading message with progress
+        const loadingText = document.getElementById('loadingText');
+        if (loadingText) {
+          loadingText.textContent = `Syncing ${progress}/${total}: ${invoice.invoiceNumber} ($${invoice.amount.toFixed(2)})...`;
+        }
+        
+        console.log(`📤 [${progress}/${total}] Syncing invoice ${invoice.invoiceNumber}`);
+
+        try {
+          const payload = {
+            event: 'QBO_Approval',
+            invoiceNumber: invoice.invoiceNumber
+          };
+
+          const response = await fetch(this.invoiceApiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+
+          const data = await response.json();
+
+          if (data && data.status !== '❌ Error') {
+            successCount++;
+            console.log(`✅ [${progress}/${total}] ${invoice.invoiceNumber} synced successfully`);
+          } else {
+            errorCount++;
+            const errorMsg = data?.message || 'Unknown error';
+            errors.push(`${invoice.invoiceNumber}: ${errorMsg}`);
+            console.error(`❌ [${progress}/${total}] ${invoice.invoiceNumber} failed: ${errorMsg}`);
+          }
+        } catch (err) {
+          errorCount++;
+          errors.push(`${invoice.invoiceNumber}: ${err.message}`);
+          console.error(`❌ [${progress}/${total}] ${invoice.invoiceNumber} error: ${err.message}`);
+        }
+        
+        // Small delay between requests to avoid rate limiting
+        if (i < pendingInvoices.length - 1) {
+          await new Promise(resolve => setTimeout(resolve, 500));
+        }
+      }
+
+      this.hideLoading();
+
+      // Show results
+      let message = `Successfully synced ${successCount} invoice(s) to QuickBooks.`;
+      if (errorCount > 0) {
+        message += `\n\n${errorCount} invoice(s) failed:\n${errors.join('\n')}`;
+      }
+
+      await Dialog.alert(
+        errorCount > 0 ? 'Sync Completed with Errors' : 'Sync Completed',
+        message
+      );
+
+      // Refresh the dry run to show updated status
+      await this.runDryRun();
+
+    } catch (err) {
+      this.hideLoading();
+      console.error('Failed to sync invoices:', err);
+      await Dialog.alert('Error', err.message);
+    }
   }
 
   /**
@@ -272,99 +536,7 @@ export class InvoiceManagement {
     return '<span style="color:#999;">-</span>';
   }
 
-  /**
-   * Send invoice via email (calls InvoiceProject)
-   */
-  async sendInvoiceEmail(invoiceNumber) {
-    const confirm = window.confirm(
-      `Send invoice ${invoiceNumber} to client?\n\n` +
-      `This will generate a PDF and email it to the client's payables email address.`
-    );
-    if (!confirm) return;
 
-    try {
-      // Show loading overlay
-      this.showLoading(`Sending invoice ${invoiceNumber}...`);
-
-      // Call InvoiceProject to send email
-      const payload = {
-        action: 'sendInvoiceEmail',
-        invoiceNumber: invoiceNumber
-      };
-
-      const response = await fetch(this.invoiceApiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(payload)
-      });
-
-      const data = await response.json();
-
-      this.hideLoading();
-
-      if (!data || data.status === '❌ Error') {
-        throw new Error(data?.message || 'Failed to send invoice');
-      }
-
-      alert(`✅ Invoice ${invoiceNumber} sent successfully!`);
-      this.loadInvoices(); // Refresh the list
-
-    } catch (err) {
-      this.hideLoading();
-      console.error('Failed to send invoice:', err);
-      alert(`❌ Error: ${err.message}`);
-    }
-  }
-
-  /**
-   * Sync invoice to QuickBooks (calls InvoiceProject)
-   */
-  async syncToQBO(invoiceNumber) {
-    const confirm = window.confirm(
-      `Sync invoice ${invoiceNumber} to QuickBooks Online?\n\n` +
-      `This will create or update the invoice in QBO.`
-    );
-    if (!confirm) return;
-
-    try {
-      // Show loading overlay
-      this.showLoading(`Syncing invoice ${invoiceNumber} to QBO...`);
-
-      // Call InvoiceProject to sync to QBO
-      const payload = {
-        event: 'QBO_Approval',
-        invoiceNumber: invoiceNumber
-      };
-
-      const response = await fetch(this.invoiceApiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(payload)
-      });
-
-      const data = await response.json();
-
-      this.hideLoading();
-
-      if (!data || data.status === '❌ Error') {
-        throw new Error(data?.message || 'Failed to sync invoice');
-      }
-
-      alert(`✅ Invoice ${invoiceNumber} synced to QuickBooks successfully!`);
-      
-      // Wait a moment for backend to update, then refresh
-      setTimeout(() => this.loadInvoices(), 1500);
-
-    } catch (err) {
-      this.hideLoading();
-      console.error('Failed to sync invoice:', err);
-      alert(`❌ Error: ${err.message}`);
-    }
-  }
 
   /**
    * Show loading overlay

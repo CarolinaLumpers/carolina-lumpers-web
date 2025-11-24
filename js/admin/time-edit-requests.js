@@ -3,6 +3,8 @@
  * Handles loading, approving, and denying time edit requests
  */
 
+import { Dialog } from '../utils/dialog.js';
+
 export class TimeEditRequests {
   constructor(apiUrl) {
     this.apiUrl = apiUrl;
@@ -102,7 +104,12 @@ export class TimeEditRequests {
    * Approve a time edit request
    */
   async approve(requestId) {
-    if (!confirm('Approve this time edit request?')) return;
+    const confirmed = await Dialog.confirm(
+      'Approve Time Edit',
+      'Are you sure you want to approve this time edit request?',
+      { confirmText: 'Approve', cancelText: 'Cancel' }
+    );
+    if (!confirmed) return;
 
     try {
       const url = `${this.apiUrl}?action=approveTimeEdit&requestId=${encodeURIComponent(requestId)}`;
@@ -110,14 +117,14 @@ export class TimeEditRequests {
       const data = await response.json();
 
       if (data.ok) {
-        alert('Time edit request approved successfully!');
+        await Dialog.alert('Success', 'Time edit request approved successfully!');
         this.loadRequests('pending'); // Refresh the list
       } else {
-        alert('Failed to approve request: ' + (data.message || 'Unknown error'));
+        await Dialog.alert('Error', 'Failed to approve request: ' + (data.message || 'Unknown error'));
       }
     } catch (err) {
       console.error('Error approving time edit:', err);
-      alert('Failed to approve request. Please try again.');
+      await Dialog.alert('Error', 'Failed to approve request. Please try again.');
     }
   }
 
@@ -134,14 +141,14 @@ export class TimeEditRequests {
       const data = await response.json();
 
       if (data.ok) {
-        alert('Time edit request denied.');
+        await Dialog.alert('Success', 'Time edit request denied.');
         this.loadRequests('pending'); // Refresh the list
       } else {
-        alert('Failed to deny request: ' + (data.message || 'Unknown error'));
+        await Dialog.alert('Error', 'Failed to deny request: ' + (data.message || 'Unknown error'));
       }
     } catch (err) {
       console.error('Error denying time edit:', err);
-      alert('Failed to deny request. Please try again.');
+      await Dialog.alert('Error', 'Failed to deny request. Please try again.');
     }
   }
 
