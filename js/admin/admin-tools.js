@@ -7,6 +7,7 @@ import { ClockInManager } from './clockin-manager.js';
 import { TimeEditRequests } from './time-edit-requests.js';
 import { RunPayroll } from './run-payroll.js';
 import { QuickBooksSync } from './quickbooks-sync.js';
+import { InvoiceManagement } from './invoice-management.js';
 import { ViewAs } from './view-as.js';
 
 export class AdminTools {
@@ -49,6 +50,10 @@ export class AdminTools {
     this.modules.quickBooksSync = new QuickBooksSync();
     this.modules.quickBooksSync.init();
 
+    // Initialize Invoice Management
+    this.modules.invoiceManagement = new InvoiceManagement(this.apiUrl);
+    this.modules.invoiceManagement.init();
+
     // Initialize View As
     this.modules.viewAs = new ViewAs(this.apiUrl);
     this.modules.viewAs.init();
@@ -56,6 +61,7 @@ export class AdminTools {
     // Expose modules to window for onclick handlers in rendered HTML
     window.clockInManager = this.modules.clockInManager;
     window.timeEditManager = this.modules.timeEditRequests;
+    window.invoiceManager = this.modules.invoiceManagement;
     window.viewAsManager = this.modules.viewAs;
 
     // Listen for View As changes and reload dashboard data

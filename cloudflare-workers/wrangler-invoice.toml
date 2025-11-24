@@ -1,0 +1,9 @@
+name = "invoice-proxy"
+main = "invoice-proxy.js"
+compatibility_date = "2024-01-01"
+
+[env.production]
+name = "invoice-proxy"
+routes = [
+  { pattern = "invoice-proxy.s-garay.workers.dev", zone_name = "s-garay.workers.dev" }
+]
