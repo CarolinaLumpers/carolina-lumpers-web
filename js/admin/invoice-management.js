@@ -3,7 +3,7 @@
  * Handles invoice viewing, email sending, and QBO sync
  */
 
-import { Dialog } from '../utils/dialog.js';
+import { Dialog } from '../utils/dialog.js?v=2024-dialog-fix';
 
 export class InvoiceManagement {
   constructor(apiUrl) {

@@ -8,6 +8,7 @@ import { TimeEditRequests } from './admin/time-edit-requests.js';
 import { RunPayroll } from './admin/run-payroll.js';
 import { QuickBooksSync } from './admin/quickbooks-sync.js';
 import { InvoiceManagement } from './admin/invoice-management.js';
+import { W9Management } from './admin/w9-management.js';
 import { ViewAs } from './admin/view-as.js';
 
 export class AdminDashboard {
@@ -53,9 +54,10 @@ export class AdminDashboard {
       return false;
     }
 
-    if (role !== 'Admin' && role !== 'Supervisor') {
-      console.warn('User is not admin/supervisor');
-      alert('Access denied. Admin privileges required.');
+    if (role !== 'Admin') {
+      console.warn('User is not admin - redirecting to employee dashboard');
+      alert('Access denied. This admin panel is for administrators only.\n\nSupervisors and workers should use the employee dashboard.');
+      window.location.href = 'employeeDashboard.html';
       return false;
     }
 
@@ -222,6 +224,12 @@ export class AdminDashboard {
       this.modules.invoiceManagement.init();
       // Expose to window for onclick handlers
       window.invoiceManager = this.modules.invoiceManagement;
+
+      // Initialize W9 Management
+      this.modules.w9Management = new W9Management(this.apiUrl);
+      this.modules.w9Management.init();
+      // Expose to window for onclick handlers
+      window.w9Manager = this.modules.w9Management;
 
       // Initialize View As
       this.modules.viewAs = new ViewAs(this.apiUrl);

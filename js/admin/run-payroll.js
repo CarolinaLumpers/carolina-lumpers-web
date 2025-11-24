@@ -3,7 +3,7 @@
  * Handles weekly payroll processing and week period selection
  */
 
-import { Dialog } from '../utils/dialog.js';
+import { Dialog } from '../utils/dialog.js?v=2024-dialog-fix';
 
 export class RunPayroll {
   constructor() {
@@ -20,7 +20,6 @@ export class RunPayroll {
       btnRunPayroll.addEventListener('click', () => this.trigger());
     }
 
-    // Populate week selector
     this.populateWeekSelector();
   }
 
@@ -34,7 +33,7 @@ export class RunPayroll {
     const weeks = [];
     const today = new Date();
     
-    // Generate only 2 Saturdays: This week and last week
+    // Generate last 2 Saturdays
     for (let i = 0; i < 2; i++) {
       const date = new Date(today);
       const dayOfWeek = date.getDay();
@@ -49,14 +48,13 @@ export class RunPayroll {
       weeks.push(saturday);
     }
     
-    // Build dropdown with only 2 options
     dropdown.innerHTML = '<option value="">-- Select Week --</option>' + 
       weeks.map((sat, index) => {
         const tag = index === 0 ? ' (This Week)' : ' (Last Week)';
         return `<option value="${sat}">${sat}${tag}</option>`;
       }).join('');
     
-    // Auto-select last week (index 1) as that's the typical payroll run
+    // Auto-select last week as that's typical for payroll
     dropdown.value = weeks[1];
   }
 
@@ -65,12 +63,7 @@ export class RunPayroll {
    */
   async trigger() {
     const dropdown = document.getElementById('runPayrollWeekSelect');
-    const button = document.getElementById('btnRunPayroll');
-    const resultsDiv = document.getElementById('payrollResults');
-    const statusDiv = document.getElementById('payrollStatus');
-    const messageDiv = document.getElementById('payrollMessage');
-    
-    const weekPeriod = dropdown.value;
+    const weekPeriod = dropdown?.value;
     
     if (!weekPeriod) {
       await Dialog.alert('Week Period Required', 'Please select a week period first');
@@ -80,26 +73,18 @@ export class RunPayroll {
     // Confirm before running
     const confirmed = await Dialog.confirm(
       '⚠️ WARNING: Process Payroll',
-      `This will process payroll and create bills in QuickBooks Online.\n\nWeek Period: ${weekPeriod}\n\nThis action cannot be undone. Continue?`,
-      { confirmText: 'Generate Payroll', cancelText: 'Cancel', variant: 'destructive' }
+      `This will process payroll for ALL ACTIVE WORKERS and create bills in QuickBooks Online.\n\nWeek Period: ${weekPeriod}\n\nThis action cannot be undone. Continue?`,
+      { confirmText: 'Run Payroll', cancelText: 'Cancel', variant: 'destructive' }
     );
     if (!confirmed) return;
 
-    // Show loading state
-    button.disabled = true;
-    button.innerHTML = '<span>Processing...</span>';
-    resultsDiv.style.display = 'block';
-    statusDiv.innerHTML = '⏳ Processing payroll...';
-    statusDiv.style.color = '#FFC107';
-    messageDiv.innerHTML = 'Please wait. This may take a minute.';
-
     try {
+      this.showLoading('Processing payroll for all active workers...');
+
       const payload = {
         "Webhook Type": "Run Payroll",
         "Week Period": weekPeriod
       };
-
-      console.log('📤 Sending payroll request:', payload);
 
       const response = await fetch(this.payrollApiUrl, {
         method: 'POST',
@@ -111,25 +96,48 @@ export class RunPayroll {
       });
 
       const data = await response.json();
-      console.log('📥 Payroll response:', data);
+
+      this.hideLoading();
 
       if (!data || (data.status && data.status !== 200)) {
         throw new Error(data?.message || 'Payroll processing failed');
       }
 
       // Success
-      statusDiv.innerHTML = '✅ Payroll Complete';
-      statusDiv.style.color = '#4CAF50';
-      messageDiv.innerHTML = `Payroll processed successfully for week ${weekPeriod}. Bills have been created/updated in QuickBooks Online.`;
+      await Dialog.alert(
+        '✅ Payroll Complete',
+        `Payroll processed successfully for week ${weekPeriod}.\n\nBills have been created/updated in QuickBooks Online for all active workers.`
+      );
 
     } catch (err) {
+      this.hideLoading();
       console.error('Payroll error:', err);
-      statusDiv.innerHTML = '❌ Payroll Failed';
-      statusDiv.style.color = '#f44336';
-      messageDiv.innerHTML = `Error: ${err.message || err}<br><br>Check that PayrollProject script is deployed and accessible.`;
-    } finally {
-      button.disabled = false;
-      button.innerHTML = '<span data-en="Run Payroll" data-es="Ejecutar Nómina" data-pt="Executar Folha de Pagamento">Run Payroll</span>';
+      await Dialog.alert(
+        '❌ Payroll Failed',
+        `Error: ${err.message || err}\n\nCheck that PayrollProject script is deployed and accessible.`
+      );
+    }
+  }
+
+  /**
+   * Show loading overlay
+   */
+  showLoading(message) {
+    const overlay = document.getElementById('loadingOverlay');
+    const text = document.getElementById('loadingText');
+    if (overlay) {
+      overlay.style.display = 'block';
+      if (text) text.textContent = message;
+    }
+  }
+
+  /**
+   * Hide loading overlay
+   */
+  hideLoading() {
+    const overlay = document.getElementById('loadingOverlay');
+    if (overlay) {
+      overlay.style.display = 'none';
     }
   }
 }

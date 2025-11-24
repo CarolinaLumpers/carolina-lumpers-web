@@ -28,7 +28,7 @@ export class Dialog {
             <h2 class="dialog-title">${this.escapeHtml(title)}</h2>
           </div>
           <div class="dialog-body">
-            <p class="dialog-description">${this.escapeHtml(message)}</p>
+            <p class="dialog-description">${this.formatMessage(message)}</p>
           </div>
           <div class="dialog-footer">
             <button class="btn-dialog-cancel" data-action="cancel">
@@ -106,7 +106,7 @@ export class Dialog {
             <h2 class="dialog-title">${this.escapeHtml(title)}</h2>
           </div>
           <div class="dialog-body">
-            <p class="dialog-description">${this.escapeHtml(message)}</p>
+            <p class="dialog-description">${this.formatMessage(message)}</p>
           </div>
           <div class="dialog-footer">
             <button class="btn-dialog-confirm" data-action="ok">
@@ -155,6 +155,13 @@ export class Dialog {
         if (okBtn) okBtn.focus();
       }, 100);
     });
+  }
+
+  /**
+   * Format message with line breaks
+   */
+  static formatMessage(text) {
+    return this.escapeHtml(text).replace(/\n/g, '<br>');
   }
 
   /**

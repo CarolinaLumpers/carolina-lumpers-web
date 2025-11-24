@@ -97,7 +97,7 @@
   <link rel="stylesheet" href="css/variables.css">
   <link rel="stylesheet" href="css/admin-dashboard.css">
   <link rel="stylesheet" href="css/admin-dashboard-theme.css">
-  <link rel="stylesheet" href="css/dialog.css">
+  <link rel="stylesheet" href="css/dialog.css?v=2024-dialog-fix">
 </head>
 
 <body class="dark bg-background text-foreground antialiased">
@@ -197,6 +197,10 @@
     <button data-section="time-edits" class="bottom-nav-item">
       <i data-feather="clock" class="w-5 h-5"></i>
       <span class="text-xs" data-en="Edits" data-es="Ediciones" data-pt="Edições">Edits</span>
+    </button>
+    <button data-section="w9-management" class="bottom-nav-item">
+      <i data-feather="file-text" class="w-5 h-5"></i>
+      <span class="text-xs" data-en="W-9" data-es="W-9" data-pt="W-9">W-9</span>
     </button>
     <button data-section="workers" class="bottom-nav-item">
       <i data-feather="users" class="w-5 h-5"></i>
@@ -319,37 +323,26 @@
 
       <div class="rounded-xl border bg-card text-card-foreground shadow">
         <div class="flex flex-col space-y-1.5 p-6">
-          <h3 class="font-semibold leading-none tracking-tight" data-en="Generate Payroll Report" data-es="Generar Reporte de Nómina" data-pt="Gerar Relatório de Folha">Generate Payroll Report</h3>
+          <h3 class="font-semibold leading-none tracking-tight" data-en="Process Weekly Payroll" data-es="Procesar Nómina Semanal" data-pt="Processar Folha Semanal">Process Weekly Payroll</h3>
+          <p class="text-sm text-muted-foreground" data-en="Creates QuickBooks bills for all active workers for the selected week" 
+            data-es="Crea facturas de QuickBooks para todos los trabajadores activos de la semana seleccionada" 
+            data-pt="Cria contas do QuickBooks para todos os trabalhadores ativos da semana selecionada">
+            Creates QuickBooks bills for all active workers for the selected week
+          </p>
         </div>
         <div class="p-6 pt-0">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            <div>
-              <label for="runPayrollWeekSelect" class="form-label" data-en="Select Week Period:" data-es="Seleccionar Período Semanal:" data-pt="Selecionar Período Semanal:">
-                Select Week Period:
-              </label>
-              <select id="runPayrollWeekSelect" class="form-select">
-                <option value="">-- Select Week --</option>
-              </select>
-            </div>
-            <div>
-              <label for="payrollWorkerSelect" class="form-label" data-en="Select Worker:" data-es="Seleccionar Trabajador:" data-pt="Selecionar Trabalhador:">
-                Select Worker:
-              </label>
-              <select id="payrollWorkerSelect" class="form-select">
-                <option value="">-- All Workers --</option>
-              </select>
-            </div>
+          <div class="mb-4">
+            <label for="runPayrollWeekSelect" class="form-label" data-en="Select Week Period:" data-es="Seleccionar Período Semanal:" data-pt="Selecionar Período Semanal:">
+              Select Week Period:
+            </label>
+            <select id="runPayrollWeekSelect" class="form-select">
+              <option value="">-- Select Week --</option>
+            </select>
           </div>
-          <div class="flex gap-3">
-            <button id="btnRunPayroll" class="btn-primary">
-              <i data-feather="play" class="w-4 h-4"></i>
-              <span data-en="Generate Payroll" data-es="Generar Nómina" data-pt="Gerar Folha">Generate Payroll</span>
-            </button>
-            <button id="btnEmailPayroll" class="btn-secondary">
-              <i data-feather="mail" class="w-4 h-4"></i>
-              <span data-en="Email to QB" data-es="Enviar a QB" data-pt="Enviar para QB">Email to QB</span>
-            </button>
-          </div>
+          <button id="btnRunPayroll" class="btn-primary">
+            <i data-feather="play" class="w-4 h-4"></i>
+            <span data-en="Run Payroll" data-es="Ejecutar Nómina" data-pt="Executar Folha">Run Payroll</span>
+          </button>
         </div>
       </div>
 
@@ -395,16 +388,16 @@
               <!-- Empty column for grid alignment -->
             </div>
           </div>
-          <div class="flex gap-3 mb-4">
-            <button id="btnDryRun" class="btn-secondary">
+          <div class="flex flex-wrap gap-3 mb-4">
+            <button id="btnDryRun" class="btn-secondary flex-shrink-0">
               <i data-feather="eye" class="w-4 h-4"></i>
               <span data-en="Dry Run (Preview)" data-es="Vista Previa" data-pt="Visualização">Dry Run (Preview)</span>
             </button>
-            <button id="btnRefreshPaymentStatus" class="btn-secondary">
+            <button id="btnRefreshPaymentStatus" class="btn-secondary flex-shrink-0">
               <i data-feather="refresh-cw" class="w-4 h-4"></i>
               <span data-en="Check Payment Status" data-es="Verificar Estado de Pago" data-pt="Verificar Status de Pagamento">Check Payment Status</span>
             </button>
-            <button id="btnSyncToQBO" class="btn-primary">
+            <button id="btnSyncToQBO" class="btn-primary flex-shrink-0">
               <i data-feather="upload-cloud" class="w-4 h-4"></i>
               <span data-en="Sync to QuickBooks" data-es="Sincronizar a QuickBooks" data-pt="Sincronizar ao QuickBooks">Sync to QuickBooks</span>
             </button>
@@ -440,6 +433,34 @@
         </div>
         <div class="p-6 pt-0">
           <div id="timeEditList" class="overflow-x-auto"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- W9 Management Section -->
+    <section id="w9-management" class="content-section">
+      <div class="section-header">
+        <h2 class="section-title">
+          <i data-feather="file-text" class="inline w-6 h-6 mr-2"></i>
+          <span data-en="W-9 Form Management" data-es="Gestión de Formularios W-9" data-pt="Gerenciamento de Formulários W-9">W-9 Form Management</span>
+        </h2>
+        <p class="text-muted-foreground" data-en="Review and approve W-9 submissions from 1099 contractors" 
+          data-es="Revisar y aprobar envíos de W-9 de contratistas 1099" 
+          data-pt="Revisar e aprovar envios de W-9 de contratados 1099">
+          Review and approve W-9 submissions from 1099 contractors
+        </p>
+      </div>
+
+      <div class="rounded-xl border bg-card text-card-foreground shadow">
+        <div class="flex flex-col space-y-1.5 p-6">
+          <h3 class="font-semibold leading-none tracking-tight" data-en="Pending W-9 Submissions" data-es="Envíos de W-9 Pendientes" data-pt="Envios de W-9 Pendentes">Pending W-9 Submissions</h3>
+        </div>
+        <div class="p-6 pt-0">
+          <button id="btnLoadPendingW9s" class="btn-primary mb-4">
+            <i data-feather="refresh-cw" class="w-4 h-4"></i>
+            <span data-en="Load Pending W-9s" data-es="Cargar W-9 Pendientes" data-pt="Carregar W-9 Pendentes">Load Pending W-9s</span>
+          </button>
+          <div id="w9List" class="overflow-x-auto"></div>
         </div>
       </div>
     </section>
@@ -540,7 +561,7 @@
 
   <!-- Admin Dashboard Module (ES6) -->
   <script type="module">
-    import { AdminDashboard } from './js/admin-dashboard.js';
+    import { AdminDashboard } from './js/admin-dashboard.js?v=2024-dialog-fix';
     
     // Initialize dashboard when DOM is ready
     if (document.readyState === 'loading') {
