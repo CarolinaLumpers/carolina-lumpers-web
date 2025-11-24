@@ -96,11 +96,17 @@ export class InvoiceManagement {
     try {
       // Fetch directly from Invoices sheet via Sheets API proxy
       const url = `${this.sheetsApiUrl}/api/sheets/${this.spreadsheetId}/values/Invoices!A2:I`;
+      console.log('📊 Fetching invoices from:', url);
+      
       const response = await fetch(url);
+      console.log('📊 Response status:', response.status);
+      
       const data = await response.json();
+      console.log('📊 Response data:', data);
 
-      if (!data || !data.success) {
-        throw new Error(data?.message || 'Failed to load invoices');
+      // Handle both success formats: {ok: true} and {success: true}
+      if (!data || (!data.success && !data.ok)) {
+        throw new Error(data?.message || data?.error || 'Failed to load invoices');
       }
 
       const rows = data.data?.values || [];

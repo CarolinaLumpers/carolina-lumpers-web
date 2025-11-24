@@ -1,0 +1,179 @@
+/**
+ * Admin Dashboard Theme System
+ * Light/Dark theme support with proper amber contrast
+ */
+
+/* ================================
+   Light Theme Overrides
+   ================================ */
+
+/* Light theme CSS variable overrides - Standard light theme */
+html.light,
+body.light {
+  --color-dark: #ffffff;                  /* Pure white background */
+  --color-dark-light: #f8fafc;            /* Slate 50 */
+  --color-dark-lighter: #f1f5f9;          /* Slate 100 */
+  --text-primary: #0f172a;                /* Slate 900 - dark text */
+  --text-muted: #64748b;                  /* Slate 500 */
+  --text-very-muted: #94a3b8;             /* Slate 400 */
+  --border-color: #e2e8f0;                /* Slate 200 */
+  
+  /* Primary color adjustments - darker for light backgrounds */
+  --color-primary: #f59e0b;               /* Amber 500 */
+  --color-primary-hover: #d97706;         /* Amber 600 */
+  
+  /* Danger/success colors for light theme */
+  --color-danger: #ef4444;                /* Red 500 */
+  --color-danger-hover: #dc2626;          /* Red 600 */
+  --color-success: #10b981;               /* Emerald 500 */
+  --color-success-hover: #059669;         /* Emerald 600 */
+  --color-warning: #f59e0b;               /* Amber 500 */
+}
+
+/* Light theme specific component adjustments */
+html.light .nav-link.active,
+body.light .nav-link.active {
+  background: #fef3c7;                    /* Amber 100 - soft amber bg */
+  color: #92400e !important;              /* Amber 800 - dark amber text */
+  font-weight: 600;
+  border-left: 3px solid #f59e0b;         /* Amber 500 accent */
+}
+
+html.light .btn-primary,
+body.light .btn-primary {
+  background: #f59e0b;                    /* Amber 500 */
+  color: #ffffff !important;              /* White text */
+  font-weight: 600;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+html.light .btn-primary:hover,
+body.light .btn-primary:hover {
+  background: #d97706;                    /* Amber 600 */
+}
+
+html.light .section-title,
+body.light .section-title {
+  color: #0f172a !important;              /* Slate 900 - dark text */
+}
+
+html.light .data-table th,
+body.light .data-table th {
+  color: #64748b !important;              /* Slate 500 - muted text */
+  background: #f8fafc;                    /* Slate 50 */
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.75rem;
+}
+
+html.light .data-table thead,
+body.light .data-table thead {
+  border-bottom: 2px solid #e2e8f0;       /* Slate 200 */
+}
+
+html.light .data-table tbody tr,
+body.light .data-table tbody tr {
+  border-bottom: 1px solid #f1f5f9;       /* Slate 100 */
+}
+
+html.light .bottom-nav-item.active,
+body.light .bottom-nav-item.active {
+  color: #f59e0b !important;              /* Amber 500 */
+}
+
+html.light .bottom-nav-item.active::before,
+body.light .bottom-nav-item.active::before {
+  background: #f59e0b;                    /* Amber 500 */
+}
+
+html.light .table-action-btn,
+body.light .table-action-btn {
+  color: #ffffff !important;              /* White text on amber */
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* Light theme shadows for depth */
+html.light .sidebar,
+body.light .sidebar {
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
+  border-right: 1px solid #e2e8f0;
+}
+
+html.light .mobile-header,
+body.light .mobile-header {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  border-bottom: 1px solid #e2e8f0;
+}
+
+html.light .bottom-nav,
+body.light .bottom-nav {
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
+  border-top: 1px solid #e2e8f0;
+}
+
+/* Light theme card adjustments */
+html.light .rounded-xl,
+body.light .rounded-xl {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e2e8f0;
+}
+
+/* Light theme hover states */
+html.light .data-table tbody tr:hover,
+body.light .data-table tbody tr:hover {
+  background: #f8fafc;                    /* Slate 50 */
+}
+
+html.light .nav-link:hover,
+body.light .nav-link:hover {
+  background: #f1f5f9;                    /* Slate 100 */
+  color: #0f172a;                         /* Slate 900 */
+}
+
+html.light .form-select:hover,
+body.light .form-select:hover {
+  background: #f8fafc;                    /* Slate 50 */
+  border-color: #cbd5e1;                  /* Slate 300 */
+}
+
+html.light .btn-secondary:hover,
+body.light .btn-secondary:hover {
+  background: #f1f5f9;                    /* Slate 100 */
+  border-color: #cbd5e1;                  /* Slate 300 */
+}
+
+/* Light theme stat cards */
+html.light .text-3xl,
+body.light .text-3xl {
+  color: #0f172a;                         /* Slate 900 - dark numbers */
+}
+
+html.light .text-muted-foreground,
+body.light .text-muted-foreground {
+  color: #64748b;                         /* Slate 500 */
+}
+
+/* Light theme user info */
+html.light .user-info,
+body.light .user-info {
+  border-top: 1px solid #e2e8f0;
+}
+
+html.light .bg-primary,
+body.light .bg-primary {
+  background: #f59e0b !important;         /* Amber 500 */
+  color: #ffffff !important;              /* White text */
+}
+
+/* Theme toggle button */
+#themeToggle {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#themeToggle:hover {
+  opacity: 0.8;
+}

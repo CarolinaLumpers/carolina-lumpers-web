@@ -96,6 +96,7 @@
   <!-- Global CSS System -->
   <link rel="stylesheet" href="css/variables.css">
   <link rel="stylesheet" href="css/admin-dashboard.css">
+  <link rel="stylesheet" href="css/admin-dashboard-theme.css">
 </head>
 
 <body class="dark bg-background text-foreground antialiased">
@@ -109,9 +110,14 @@
           <p class="text-xs text-muted-foreground">Dashboard</p>
         </div>
       </div>
-      <button id="sidebarToggle" class="lg:hidden">
-        <i data-feather="x" class="w-6 h-6"></i>
-      </button>
+      <div class="flex items-center gap-2">
+        <button id="themeToggle" class="p-2 rounded-md hover:bg-muted/50 transition-colors" title="Toggle Theme">
+          <i data-feather="sun" class="w-5 h-5"></i>
+        </button>
+        <button id="sidebarToggle" class="lg:hidden">
+          <i data-feather="x" class="w-6 h-6"></i>
+        </button>
+      </div>
     </div>
 
     <nav class="sidebar-nav">
@@ -533,9 +539,52 @@
     
     // Initialize dashboard when DOM is ready
     if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', initDashboard);
+      document.addEventListener('DOMContentLoaded', () => {
+        initTheme();
+        initDashboard();
+      });
     } else {
+      initTheme();
       initDashboard();
+    }
+
+    // Theme toggle functionality
+    function initTheme() {
+      const themeToggle = document.getElementById('themeToggle');
+      if (!themeToggle) return; // Guard clause
+      
+      const html = document.documentElement;
+      const body = document.body;
+      
+      // Load saved theme or default to dark
+      const savedTheme = localStorage.getItem('CLS_AdminTheme') || 'dark';
+      html.classList.toggle('light', savedTheme === 'light');
+      body.classList.toggle('light', savedTheme === 'light');
+      updateThemeIcon(savedTheme);
+      
+      themeToggle.addEventListener('click', () => {
+        const isLight = html.classList.contains('light');
+        const newTheme = isLight ? 'dark' : 'light';
+        
+        html.classList.toggle('light');
+        body.classList.toggle('light');
+        localStorage.setItem('CLS_AdminTheme', newTheme);
+        updateThemeIcon(newTheme);
+      });
+      
+      function updateThemeIcon(theme) {
+        const icon = themeToggle.querySelector('i');
+        if (!icon) return; // Guard clause
+        
+        icon.setAttribute('data-feather', theme === 'light' ? 'moon' : 'sun');
+        
+        // Re-render Feather icons after changing icon
+        setTimeout(() => {
+          if (typeof feather !== 'undefined') {
+            feather.replace();
+          }
+        }, 10);
+      }
     }
 
     function initDashboard() {

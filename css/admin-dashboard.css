@@ -4,6 +4,85 @@
  */
 
 /* ================================
+   Theme System
+   ================================ */
+
+/* Dark theme (default) uses existing CSS variables */
+
+/* Light theme overrides */
+html.light,
+body.light {
+  --color-dark: hsl(0 0% 100%);           /* White background */
+  --color-dark-light: hsl(0 0% 98%);      /* Light gray background */
+  --color-dark-lighter: hsl(0 0% 95%);    /* Slightly darker gray */
+  --text-primary: hsl(0 0% 10%);          /* Dark text */
+  --text-muted: hsl(0 0% 40%);            /* Muted dark text */
+  --text-very-muted: hsl(0 0% 60%);       /* Very muted text */
+  --border-color: hsl(0 0% 90%);          /* Light border */
+  
+  /* Amber adjustments for light theme - darker amber with dark text */
+  --color-primary: hsl(45 95% 45%);       /* Darker amber for better contrast */
+  --color-primary-hover: hsl(45 95% 40%); /* Even darker on hover */
+}
+
+/* Light theme specific adjustments */
+html.light .nav-link.active,
+body.light .nav-link.active {
+  background: var(--color-primary);
+  color: hsl(0 0% 10%);  /* Force dark text on amber */
+  font-weight: 600;
+}
+
+html.light .btn-primary,
+body.light .btn-primary {
+  background: var(--color-primary);
+  color: hsl(0 0% 10%);  /* Force dark text on amber */
+  font-weight: 600;
+}
+
+html.light .section-title,
+body.light .section-title {
+  color: hsl(45 95% 40%);  /* Darker amber for headings */
+}
+
+html.light .data-table th,
+body.light .data-table th {
+  color: hsl(45 95% 40%);  /* Darker amber for table headers */
+  background: hsl(0 0% 98%);
+}
+
+html.light .data-table thead,
+body.light .data-table thead {
+  border-bottom-color: hsl(45 95% 45%);
+}
+
+html.light .bottom-nav-item.active,
+body.light .bottom-nav-item.active {
+  color: hsl(45 95% 40%);  /* Darker amber for active state */
+}
+
+html.light .bottom-nav-item.active::before,
+body.light .bottom-nav-item.active::before {
+  background: hsl(45 95% 45%);
+}
+
+/* Light theme shadows for depth */
+html.light .sidebar,
+body.light .sidebar {
+  box-shadow: 1px 0 3px rgba(0, 0, 0, 0.1);
+}
+
+html.light .mobile-header,
+body.light .mobile-header {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+html.light .bottom-nav,
+body.light .bottom-nav {
+  box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* ================================
    Layout Structure
    ================================ */
 
