@@ -38,3 +38,4 @@ config/token.json
 
 # Testing
 coverage/
+.vercel

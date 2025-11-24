@@ -18,7 +18,7 @@ export class InvoiceManagement {
   init() {
     const btnLoadInvoices = document.getElementById('btnLoadInvoices');
     const btnRefreshInvoices = document.getElementById('btnRefreshInvoices');
-    const invoiceFilter = document.getElementById('invoiceStatusFilter');
+    const invoiceFilter = document.getElementById('invoiceDateFilter');
     
     if (btnLoadInvoices) {
       btnLoadInvoices.addEventListener('click', () => this.loadInvoices());
@@ -99,21 +99,40 @@ export class InvoiceManagement {
   }
 
   /**
-   * Filter invoices by status
+   * Filter invoices by date range
    */
   filterInvoices() {
-    const filter = document.getElementById('invoiceStatusFilter');
+    const filter = document.getElementById('invoiceDateFilter');
     if (!filter || !this.invoices) return;
 
-    const selectedStatus = filter.value;
+    const selectedRange = filter.value;
     
     let filtered = this.invoices;
-    if (selectedStatus !== 'all') {
-      filtered = this.invoices.filter(inv => {
-        if (selectedStatus === 'pending_sync') {
-          return inv.pushToQBO === 'Pending';
+    if (selectedRange !== 'all') {
+      const now = new Date();
+      const ranges = {
+        'last_week': () => {
+          const weekAgo = new Date(now);
+          weekAgo.setDate(now.getDate() - 7);
+          return weekAgo;
+        },
+        'this_month': () => {
+          return new Date(now.getFullYear(), now.getMonth(), 1);
+        },
+        'last_month': () => {
+          return new Date(now.getFullYear(), now.getMonth() - 1, 1);
+        },
+        'last_3_months': () => {
+          const threeMonthsAgo = new Date(now);
+          threeMonthsAgo.setMonth(now.getMonth() - 3);
+          return threeMonthsAgo;
         }
-        return inv.status === selectedStatus;
+      };
+
+      const startDate = ranges[selectedRange]();
+      filtered = this.invoices.filter(inv => {
+        const invDate = new Date(inv.date);
+        return invDate >= startDate;
       });
     }
 
