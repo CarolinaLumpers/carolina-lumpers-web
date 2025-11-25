@@ -19,8 +19,13 @@ function doPost(e) {
       logEvent("Payroll Processing", payload, "🔄 Processing Payroll...");
       const result = processPayroll(payload["Week Period"]);
       
-      logEvent("Payroll Completed", { ...payload, result }, "✅ Payroll processed");
-      return createResponse(200, "Payroll processed");
+      logEvent("Payroll Completed", { ...payload, billsCreated: result.bills.length, totalAmount: result.totalAmount }, "✅ Payroll processed");
+      
+      return ContentService.createTextOutput(JSON.stringify({
+        status: 200,
+        message: "Payroll processed",
+        summary: result
+      })).setMimeType(ContentService.MimeType.JSON);
     }
 
     // 📄 **Handle PDF Report Generation**

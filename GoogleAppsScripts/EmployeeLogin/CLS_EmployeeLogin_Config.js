@@ -29,7 +29,7 @@ const CC_EMAIL = PROPS.getProperty('CC_EMAIL');
 // --- PDF GENERATION CONFIGURATION ---
 const LOGO_FILE_ID = PROPS.getProperty('LOGO_FILE_ID');
 const PDF_FOLDER_ID = PROPS.getProperty('PDF_FOLDER_ID');
-const SEND_PDF_TO_WORKER = false; // Toggle to email PDFs to workers
+const SEND_PDF_TO_WORKER = true; // Toggle to email PDFs to workers
 
 // --- LOGGING CONFIGURATION ---
 const LOG_SHEET = 'Log';

@@ -103,10 +103,15 @@ export class RunPayroll {
         throw new Error(data?.message || 'Payroll processing failed');
       }
 
-      // Success
+      // Display summary
+      if (data.summary) {
+        this.displayPayrollSummary(data.summary);
+      }
+
+      // Success alert
       await Dialog.alert(
         '✅ Payroll Complete',
-        `Payroll processed successfully for week ${weekPeriod}.\n\nBills have been created/updated in QuickBooks Online for all active workers.`
+        `Payroll processed successfully for week ${weekPeriod}.\n\n${data.summary?.bills.length || 0} bills created/updated.\nTotal: $${(data.summary?.totalAmount || 0).toFixed(2)}`
       );
 
     } catch (err) {
@@ -117,6 +122,77 @@ export class RunPayroll {
         `Error: ${err.message || err}\n\nCheck that PayrollProject script is deployed and accessible.`
       );
     }
+  }
+
+  /**
+   * Display payroll summary in the results section
+   */
+  displayPayrollSummary(summary) {
+    const resultsDiv = document.getElementById('payrollResults');
+    const contentDiv = document.getElementById('payrollContent');
+    
+    if (!resultsDiv || !contentDiv) return;
+
+    // Sort bills by amount (highest first)
+    const bills = summary.bills || [];
+    bills.sort((a, b) => b.amount - a.amount);
+
+    const html = `
+      <div class="space-y-4">
+        <!-- Summary Stats -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+          <div class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
+            <div class="text-sm text-muted-foreground">Week Period</div>
+            <div class="text-lg font-semibold">${summary.weekPeriod}</div>
+          </div>
+          <div class="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg">
+            <div class="text-sm text-muted-foreground">Bills Created</div>
+            <div class="text-lg font-semibold">${bills.length}</div>
+          </div>
+          <div class="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg">
+            <div class="text-sm text-muted-foreground">Total Amount</div>
+            <div class="text-lg font-semibold">$${summary.totalAmount.toFixed(2)}</div>
+          </div>
+        </div>
+
+        <!-- Bills List -->
+        <div class="space-y-2">
+          ${bills.map(bill => `
+            <div class="flex items-center justify-between p-3 bg-muted/50 rounded-lg hover:bg-muted transition-colors">
+              <div class="flex-1 min-w-0">
+                <div class="font-medium truncate">${bill.workerName}</div>
+                <div class="text-xs text-muted-foreground truncate">${bill.checkNumber}</div>
+              </div>
+              <div class="flex items-center gap-2 ml-4">
+                <span class="text-sm font-semibold">$${bill.amount.toFixed(2)}</span>
+                <span class="inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
+                  bill.action === 'created' 
+                    ? 'bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-400' 
+                    : 'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
+                }">
+                  ${bill.action}
+                </span>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+
+        ${summary.errors && summary.errors.length > 0 ? `
+          <div class="mt-6 p-4 bg-red-50 dark:bg-red-900/20 rounded-lg">
+            <div class="font-semibold text-red-700 dark:text-red-400 mb-2">Errors</div>
+            <ul class="text-sm text-red-600 dark:text-red-300 space-y-1">
+              ${summary.errors.map(err => `<li>• ${err}</li>`).join('')}
+            </ul>
+          </div>
+        ` : ''}
+      </div>
+    `;
+
+    contentDiv.innerHTML = html;
+    resultsDiv.classList.remove('hidden');
+
+    // Scroll to results
+    resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 
   /**

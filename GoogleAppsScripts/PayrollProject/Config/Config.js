@@ -22,7 +22,8 @@ const CONFIG = {
   SHEETS: {
     WORKERS: "Workers",
     LOG: "Log",
-    PAYROLL_LINE_ITEMS: "Payroll LineItems"
+    PAYROLL_LINE_ITEMS: "Payroll LineItems",
+    INVOICE_LINE_ITEMS: "Invoice LineItems"
   },
   COLUMNS: {
     WORKERS: {
