@@ -613,8 +613,14 @@ function toggleTheme() {
   window.dispatchEvent(new CustomEvent('themeChanged', { detail: { theme: newTheme } }));
 }
 
-// Initialize theme on page load
+// Initialize theme on page load (dashboard only)
 function initTheme() {
+  // Only initialize theme on dashboard page
+  const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+  if (currentPage !== 'employeeDashboard.html') {
+    return; // Skip theme initialization for non-dashboard pages
+  }
+  
   // Check if user has a saved preference, otherwise use system preference
   let theme = localStorage.getItem('CLS_Theme');
   
