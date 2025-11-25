@@ -409,255 +409,36 @@
       </p>
     </div>
 
-    <!-- ADMIN SECTION REMOVED - See adminDashboard.html for admin tools -->
+    <!-- ADMIN TOOLS REMOVED - All admin features now in adminDashboard.html -->
+    <!-- Admins are automatically redirected to adminDashboard.html on login -->
 
-    <!-- VIEW AS Section (Always visible for admins, above language toggle) -->
-      <div id="clockinManager" class="admin-subsection">
-        <h4 class="section-title" data-en="Clock-In Manager" data-es="Gestor de Entradas"
-          data-pt="Gerenciador de Registros"
-          style="padding:12px;background:rgba(255,193,7,0.1);border-radius:6px;margin-bottom:12px;">
-          <span>Clock-In Manager</span>
-        </h4>
-        <div id="clockinManagerContent" class="admin-section-content">
-          <label for="workerFilter" style="display:block;margin:12px 0;">
-            <span data-en="Filter by worker:" data-es="Filtrar por empleado:" data-pt="Filtrar por funcionário:">Filter
-              by worker:</span>
-            <select id="workerFilter"
-              style="width:100%;background:#000;color:#fff;border:1px solid #333;border-radius:6px;padding:8px;margin-top:6px;">
-              <option value="">-- All Workers --</option>
-            </select>
-          </label>
-
-          <div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
-            <button id="btnLoadAll" class="btn btn-primary" data-en="Load All Clock-Ins"
-              data-es="Cargar Todas las Entradas" data-pt="Carregar Todos os Registros">Load All Clock-Ins</button>
-            <button id="btnClearFilter" class="btn btn-ghost" data-en="Clear Filter" data-es="Borrar Filtro"
-              data-pt="Limpar Filtro">Clear Filter</button>
-          </div>
-
-          <div id="allReportsContainer" style="overflow:auto;"></div>
-        </div>
+    <!-- VIEW AS Section (Admin-only feature - shown dynamically by ensureRoleAndRevealAdmin() function) -->
+    <div id="viewAsWrap" class="hidden"
+      style="margin: var(--space-lg) auto; max-width: 860px; padding: var(--space-md); background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: var(--radius-md);">
+      <h4 style="color: var(--color-primary); margin: 0 0 var(--space-md) 0; text-align: center;"
+        data-en="View As (Admin)" data-es="Ver Como (Admin)" data-pt="Ver Como (Admin)">
+        View As (Admin)
+      </h4>
+      <label for="viewAsSelect" style="display:block;margin:12px 0;">
+        <span data-en="Choose a worker:" data-es="Elija un empleado:" data-pt="Escolha um funcionário:">Choose a
+          worker:</span>
+        <select id="viewAsSelect"
+          style="width:100%;background:#000;color:#fff;border:1px solid #333;border-radius:6px;padding:8px;margin-top:6px;"></select>
+      </label>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:12px 0;">
+        <button id="btnActivateViewAs" class="btn btn-primary" data-en="Activate View As" data-es="Activar Ver Como"
+          data-pt="Ativar Ver Como">Activate View As</button>
+        <button id="btnExitViewAs" class="btn btn-ghost hidden" data-en="Exit View As" data-es="Salir de Ver Como"
+          data-pt="Sair do Ver Como">Exit View As</button>
       </div>
-
-      <!-- TIME EDIT REQUESTS Subsection -->
-      <div id="timeEditRequestsWrap" class="admin-subsection">
-        <h4 class="section-title" data-en="Time Edit Requests" data-es="Solicitudes de Edición de Tiempo"
-          data-pt="Solicitações de Edição de Tempo"
-          style="padding:12px;background:rgba(255,193,7,0.1);border-radius:6px;margin-bottom:12px;">
-          <span>Time Edit Requests</span>
-        </h4>
-        <div id="timeEditRequestsContent" class="admin-section-content">
-
-          <div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
-            <button id="btnLoadPendingEdits" class="btn btn-primary" data-en="Load Pending Requests"
-              data-es="Cargar Solicitudes Pendientes" data-pt="Carregar Solicitações Pendentes">
-              Load Pending Requests
-            </button>
-            <button id="btnLoadAllEdits" class="btn btn-ghost" data-en="Load All Requests" data-es="Cargar Todas"
-              data-pt="Carregar Todas">
-              Load All Requests
-            </button>
-          </div>
-
-          <div id="timeEditRequestsContainer" style="overflow:auto;margin-top:12px;">
-            <p class="muted" data-en="Click 'Load Pending Requests' to view time edit requests"
-              data-es="Haga clic en 'Cargar Solicitudes Pendientes' para ver las solicitudes"
-              data-pt="Clique em 'Carregar Solicitações Pendentes' para ver as solicitações">
-              Click 'Load Pending Requests' to view time edit requests
-            </p>
-          </div>
-        </div>
+      <div id="viewAsAlert" class="hidden"
+        style="margin:12px 0;padding:12px;background:#FFC107;color:#000;border-radius:6px;text-align:center;font-weight:600;">
+        ⚠️ <span data-en="Viewing as:" data-es="Viendo como:" data-pt="Visualizando como:">Viewing as:</span> <span
+          id="viewAsWorkerName"></span>
       </div>
+    </div>
 
-      <!-- W-9 MANAGEMENT Subsection -->
-      <div id="w9ManagementWrap" class="admin-subsection">
-        <h4 class="section-title" data-en="W-9 Form Management" data-es="Gestión de Formularios W-9"
-          data-pt="Gerenciamento de Formulários W-9"
-          style="padding:12px;background:rgba(255,193,7,0.1);border-radius:6px;margin-bottom:12px;">
-          <span>W-9 Form Management</span>
-        </h4>
-        <div id="w9ManagementContent" class="admin-section-content">
 
-          <p class="muted" style="margin-bottom:12px;"
-            data-en="Review and approve W-9 submissions from 1099 contractors"
-            data-es="Revisar y aprobar envíos de W-9 de contratistas 1099"
-            data-pt="Revisar e aprovar envios de W-9 de contratados 1099">
-            Review and approve W-9 submissions from 1099 contractors
-          </p>
-
-          <div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
-            <button id="btnLoadPendingW9s" class="btn btn-primary" data-en="Load Pending W-9s"
-              data-es="Cargar W-9 Pendientes" data-pt="Carregar W-9 Pendentes">
-              Load Pending W-9s
-            </button>
-            <button id="btnRefreshW9s" class="btn btn-ghost" data-en="Refresh" data-es="Actualizar" data-pt="Atualizar">
-              Refresh
-            </button>
-          </div>
-
-          <div id="w9Container" style="overflow:auto;margin-top:12px;">
-            <p class="muted" data-en="Click 'Load Pending W-9s' to view submissions awaiting approval"
-              data-es="Haga clic en 'Cargar W-9 Pendientes' para ver envíos en espera de aprobación"
-              data-pt="Clique em 'Carregar W-9 Pendentes' para ver envios aguardando aprovação">
-              Click 'Load Pending W-9s' to view submissions awaiting approval
-            </p>
-          </div>
-
-          <!-- W-9 Details Modal -->
-          <div id="w9DetailsModal" class="modal" style="display:none;">
-            <div class="modal-content" style="max-width:600px;">
-              <div class="modal-header">
-                <h3 data-en="W-9 Form Details" data-es="Detalles del Formulario W-9"
-                  data-pt="Detalhes do Formulário W-9">W-9 Form Details</h3>
-                <span class="close" onclick="closeW9Modal()">&times;</span>
-              </div>
-              <div class="modal-body">
-                <div id="w9DetailsContent"></div>
-
-                <div class="form-group" style="margin-top:20px;">
-                  <label for="w9RejectionReason">
-                    <span data-en="Rejection Reason (if rejecting):" data-es="Razón del Rechazo (si rechaza):"
-                      data-pt="Motivo da Rejeição (se rejeitando):">
-                      Rejection Reason (if rejecting):
-                    </span>
-                  </label>
-                  <textarea id="w9RejectionReason" class="form-input" rows="3"
-                    placeholder="Enter reason for rejection..." data-en="Enter reason for rejection..."
-                    data-es="Ingrese la razón del rechazo..." data-pt="Digite o motivo da rejeição..."></textarea>
-                </div>
-              </div>
-              <div class="modal-footer">
-                <button class="btn btn-ghost" onclick="closeW9Modal()" data-en="Cancel" data-es="Cancelar"
-                  data-pt="Cancelar">Cancel</button>
-                <button id="btnRejectW9" class="btn btn-danger" onclick="rejectW9()" data-en="Reject W-9"
-                  data-es="Rechazar W-9" data-pt="Rejeitar W-9">Reject W-9</button>
-                <button id="btnApproveW9" class="btn btn-success" onclick="approveW9()" data-en="Approve W-9"
-                  data-es="Aprobar W-9" data-pt="Aprovar W-9">Approve W-9</button>
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </div>
-
-      <!-- RUN PAYROLL Subsection -->
-      <div id="runPayrollWrap" class="admin-subsection">
-        <h4 class="section-title" data-en="Run Payroll" data-es="Ejecutar Nómina" data-pt="Executar Folha de Pagamento"
-          style="padding:12px;background:rgba(255,193,7,0.1);border-radius:6px;margin-bottom:12px;">
-          <span>Run Payroll</span>
-        </h4>
-        <div id="runPayrollContent" class="admin-section-content">
-
-          <p class="muted" style="margin-bottom:12px;" data-en="Process weekly payroll and create bills in QuickBooks"
-            data-es="Procesar nómina semanal y crear facturas en QuickBooks"
-            data-pt="Processar folha de pagamento semanal e criar contas no QuickBooks">
-            Process weekly payroll and create bills in QuickBooks
-          </p>
-
-          <div style="margin-bottom:12px;">
-            <label for="weekPeriodSelect" data-en="Select Week Period:" data-es="Seleccionar Período Semanal:"
-              data-pt="Selecionar Período Semanal:" style="display:block;margin-bottom:8px;font-weight:600;">
-              Select Week Period:
-            </label>
-            <select id="runPayrollWeekSelect"
-              style="width:100%;background:#000;color:#fff;border:1px solid #333;border-radius:6px;padding:8px;margin-top:6px;">
-              <option value="" data-en="-- Select Week --" data-es="-- Seleccionar Semana --"
-                data-pt="-- Selecionar Semana --">-- Select Week --</option>
-            </select>
-          </div>
-
-          <button id="btnRunPayroll" class="btn btn-primary" style="width:100%;" data-en="Run Payroll"
-            data-es="Ejecutar Nómina" data-pt="Executar Folha de Pagamento">
-            Run Payroll
-          </button>
-
-          <div id="payrollResults"
-            style="margin-top:12px;padding:12px;background:#f9f9f9;border:1px solid #ddd;border-radius:6px;display:none;">
-            <div id="payrollStatus" style="font-weight:600;margin-bottom:8px;"></div>
-            <div id="payrollMessage" style="color:#666;"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- INVOICE MANAGEMENT Subsection -->
-      <div id="invoiceManagementWrap" class="admin-subsection">
-        <h4 class="section-title" data-en="Invoice Management" data-es="Gestión de Facturas"
-          data-pt="Gerenciamento de Faturas"
-          style="padding:12px;background:rgba(255,193,7,0.1);border-radius:6px;margin-bottom:12px;">
-          <span>Invoice Management</span>
-        </h4>
-        <div id="invoiceManagementContent" class="admin-section-content">
-
-          <p class="muted" style="margin-bottom:12px;" data-en="View and manage invoices, send to clients, sync to QuickBooks"
-            data-es="Ver y gestionar facturas, enviar a clientes, sincronizar con QuickBooks"
-            data-pt="Ver e gerenciar faturas, enviar para clientes, sincronizar com QuickBooks">
-            View and manage invoices, send to clients, sync to QuickBooks
-          </p>
-
-          <div style="margin-bottom:12px;">
-            <label for="invoiceWeekFilter" data-en="Select Week Period:" data-es="Seleccionar Período Semanal:"
-              data-pt="Selecionar Período Semanal:" style="display:block;margin-bottom:8px;font-weight:600;">
-              Select Week Period:
-            </label>
-            <select id="invoiceWeekFilter"
-              style="width:100%;background:#000;color:#fff;border:1px solid #333;border-radius:6px;padding:8px;margin-top:6px;">
-              <option value="" data-en="-- All Invoices --" data-es="-- Todas las Facturas --" data-pt="-- Todas as Faturas --">-- All Invoices --</option>
-            </select>
-          </div>
-
-          <div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
-            <button id="btnLoadInvoices" class="btn btn-primary" data-en="Load Invoices"
-              data-es="Cargar Facturas" data-pt="Carregar Faturas">
-              Load Invoices
-            </button>
-            <button id="btnRefreshInvoices" class="btn btn-ghost" data-en="Refresh" data-es="Actualizar" data-pt="Atualizar">
-              Refresh
-            </button>
-          </div>
-
-          <div id="invoiceContainer" style="overflow:auto;margin-top:12px;">
-            <p class="muted" data-en="Click 'Load Invoices' to view all invoices"
-              data-es="Haga clic en 'Cargar Facturas' para ver todas las facturas"
-              data-pt="Clique em 'Carregar Faturas' para ver todas as faturas">
-              Click 'Load Invoices' to view all invoices
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <!-- QUICKBOOKS SYNC Subsection -->
-      <div id="qbSyncWrap" class="admin-subsection">
-        <h4 class="section-title" data-en="QuickBooks Sync" data-es="Sincronización de QuickBooks"
-          data-pt="Sincronização do QuickBooks"
-          style="padding:12px;background:rgba(255,193,7,0.1);border-radius:6px;margin-bottom:12px;">
-          <span>QuickBooks Sync</span>
-        </h4>
-        <div id="qbSyncContent" class="admin-section-content">
-
-          <p class="muted" style="margin-bottom:12px;" data-en="Sync active workers to QuickBooks Online as Vendors"
-            data-es="Sincronizar empleados activos a QuickBooks Online como Proveedores"
-            data-pt="Sincronizar funcionários ativos ao QuickBooks Online como Fornecedores">
-            Sync active workers to QuickBooks Online as Vendors
-          </p>
-
-          <div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
-            <button id="btnSyncVendorsDryRun" class="btn btn-primary" data-en="Preview Sync (Dry Run)"
-              data-es="Vista Previa de Sincronización" data-pt="Visualizar Sincronização">
-              Preview Sync (Dry Run)
-            </button>
-            <button id="btnSyncVendorsLive" class="btn btn-success" data-en="Run Sync (Live)"
-              data-es="Ejecutar Sincronización" data-pt="Executar Sincronização">
-              Run Sync (Live)
-            </button>
-          </div>
-
-          <div id="qbSyncResultsContainer" style="overflow:auto;margin-top:12px;max-height:400px;">
-            <p class="muted" data-en="Click 'Preview Sync' to see what changes would be made"
-              data-es="Haga clic en 'Vista Previa' para ver qué cambios se harían"
-              data-pt="Clique em 'Visualizar' para ver quais alterações seriam feitas">
-              Click 'Preview Sync' to see what changes would be made
-            </p>
-          </div>
     <!-- Admins: redirect to adminDashboard.html for admin tools -->
 
     <div id="viewAsWrap" class="hidden"
@@ -2115,15 +1896,17 @@
         }
         // Normalize role (handle case variations)
         USER_ROLE = storedRole ? storedRole.charAt(0).toUpperCase() + storedRole.slice(1).toLowerCase() : null;
+        
+        console.log('🔍 Role check:', { storedRole, USER_ROLE });
 
-        // Redirect admins to dedicated admin dashboard
-        if (USER_ROLE === 'Admin' || USER_ROLE === 'Supervisor') {
+        // Redirect only admins to dedicated admin dashboard
+        if (USER_ROLE === 'Admin') {
           // Check if user has explicitly requested employee view via URL parameter
           const urlParams = new URLSearchParams(window.location.search);
           const forceEmployeeView = urlParams.get('view') === 'employee';
           
           if (!forceEmployeeView) {
-            console.log('Admin/Supervisor detected - redirecting to adminDashboard.html');
+            console.log('Admin detected - redirecting to adminDashboard.html');
             window.location.href = 'adminDashboard.html';
             return;
           }
