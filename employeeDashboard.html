@@ -639,6 +639,12 @@
     };
 
     window.addEventListener("DOMContentLoaded", () => {
+      // Hide loading overlay once DOM is ready
+      const loadingOverlay = document.getElementById('loadingOverlay');
+      if (loadingOverlay) {
+        loadingOverlay.style.display = 'none';
+      }
+
       // Initialize Feather Icons
       if (typeof feather !== 'undefined') {
         feather.replace();
