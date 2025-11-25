@@ -33,17 +33,17 @@ export class AdminDashboard {
     this.setupUserInfo();
     this.setupLogout();
     
+    // Handle initial hash navigation FIRST (before loading stats)
+    this.handleInitialHash();
+    
     // Show loading spinners immediately
     this.showStatLoadingSpinners();
     
     // Initialize admin modules
     await this.initModules();
     
-    // Load overview stats
+    // Load overview stats (in background, doesn't affect navigation)
     await this.loadOverviewStats();
-
-    // Handle initial hash navigation (for page refreshes)
-    this.handleInitialHash();
 
     console.log('✅ Admin Dashboard initialized');
   }
@@ -53,9 +53,11 @@ export class AdminDashboard {
    */
   handleInitialHash() {
     const hash = window.location.hash.replace('#', '');
+    
     if (hash && hash !== 'overview') {
       // Check if section exists
       const sectionExists = document.getElementById(hash);
+      
       if (sectionExists) {
         this.navigateToSection(hash);
       } else {
@@ -196,6 +198,12 @@ export class AdminDashboard {
 
     // Update URL hash
     window.location.hash = section;
+    
+    // Scroll to top of main content area
+    const mainContent = document.querySelector('.main-content');
+    if (mainContent) {
+      mainContent.scrollTop = 0;
+    }
   }
 
   /**
