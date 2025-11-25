@@ -6,6 +6,21 @@
 // Ensure OAuth2 Library is added: 1B7FSrk5Zi6L1rSxxTDgDEUsPzlukDsi4KGuTMorsTQHhGBzBkMun4iDF
 
 /**
+ * Helper to log to the Log sheet (shared with PayrollController)
+ */
+function logToSheet(eventType, payload, status) {
+  try {
+    const sheet = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID).getSheetByName(CONFIG.SHEETS.LOG);
+    if (sheet) {
+      const timestamp = new Date().toISOString();
+      sheet.appendRow([timestamp, eventType, JSON.stringify(payload), status]);
+    }
+  } catch (err) {
+    // Silent fail if logging fails
+  }
+}
+
+/**
  * Retrieves the OAuth2 service for QuickBooks.
  * @returns {OAuth2.Service} - The OAuth2 service.
  */
@@ -115,15 +130,52 @@ function callQBOApi(endpoint, method = "GET", payload = null) {
 
     try {
         const response = UrlFetchApp.fetch(url, options);
-        const jsonResponse = JSON.parse(response.getContentText());
-        if (response.getResponseCode() >= 200 && response.getResponseCode() < 300) {
+        const responseCode = response.getResponseCode();
+        const responseText = response.getContentText();
+        
+        // Log detailed response for owner bills
+        const isOwnerBill = payload && (payload.DocNumber?.includes('SG-001-844c9f7b') || payload.DocNumber?.includes('DMR-002-5c6334ca'));
+        if (isOwnerBill) {
+            logToSheet("QBO API Raw Response", {
+                docNumber: payload.DocNumber,
+                responseCode: responseCode,
+                responseText: responseText,
+                url: url,
+                method: method
+            }, `📡 Raw API Response for ${payload.VendorRef?.name}`);
+        }
+        
+        const jsonResponse = JSON.parse(responseText);
+        if (responseCode >= 200 && responseCode < 300) {
             return jsonResponse;
         } else {
-            Logger.log(`❌ API Error: ${jsonResponse.Fault.Error[0].Message}`);
+            const errorMessage = jsonResponse?.Fault?.Error?.[0]?.Message || jsonResponse?.Fault?.Error?.[0]?.Detail || 'Unknown error';
+            Logger.log(`❌ API Error (${responseCode}): ${errorMessage}`);
+            
+            if (isOwnerBill) {
+                logToSheet("QBO API Error", {
+                    docNumber: payload.DocNumber,
+                    responseCode: responseCode,
+                    errorMessage: errorMessage,
+                    fullFault: jsonResponse?.Fault
+                }, `❌ QuickBooks rejected owner bill: ${errorMessage}`);
+            }
+            
             return null;
         }
     } catch (e) {
         Logger.log(`❌ Exception: ${e.message}`);
+        
+        // Log exceptions for owner bills
+        const isOwnerBill = payload && (payload.DocNumber?.includes('SG-001-844c9f7b') || payload.DocNumber?.includes('DMR-002-5c6334ca'));
+        if (isOwnerBill) {
+            logToSheet("QBO API Exception", {
+                docNumber: payload.DocNumber,
+                error: e.message,
+                stack: e.stack
+            }, `❌ Exception calling QuickBooks API: ${e.message}`);
+        }
+        
         return null;
     }
 }

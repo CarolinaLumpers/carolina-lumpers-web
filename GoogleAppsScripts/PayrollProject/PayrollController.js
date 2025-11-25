@@ -275,7 +275,12 @@ function createOwnerDistributionBills(weekPeriod, workerLookup) {
   }, `🔍 Steve lookup: ${workerLookup[steveId] ? 'Found' : 'NOT FOUND'}`);
   
   if (workerLookup[steveId] && workerLookup[steveId].qboVendorId) {
-    const steveCheckNumber = `${steveId}-${weekPeriod}`;
+    // Format: SG-YYMMDD (e.g., SG-251122)
+    const dateObj = parseDate(weekPeriod);
+    const yy = String(dateObj.getFullYear()).slice(-2);
+    const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
+    const dd = String(dateObj.getDate()).padStart(2, '0');
+    const steveCheckNumber = `SG-${yy}${mm}${dd}`;
     
     billPayloads.push({
       TxnDate: txnDate,
@@ -311,7 +316,12 @@ function createOwnerDistributionBills(weekPeriod, workerLookup) {
   }, `🔍 Daniela lookup: ${workerLookup[danielaId] ? 'Found' : 'NOT FOUND'}`);
   
   if (workerLookup[danielaId] && workerLookup[danielaId].qboVendorId) {
-    const danielaCheckNumber = `${danielaId}-${weekPeriod}`;
+    // Format: DM-YYMMDD (e.g., DM-251122)
+    const dateObj = parseDate(weekPeriod);
+    const yy = String(dateObj.getFullYear()).slice(-2);
+    const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
+    const dd = String(dateObj.getDate()).padStart(2, '0');
+    const danielaCheckNumber = `DM-${yy}${mm}${dd}`;
     
     billPayloads.push({
       TxnDate: txnDate,

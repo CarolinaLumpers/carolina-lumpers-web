@@ -42,7 +42,30 @@ export class AdminDashboard {
     // Load overview stats
     await this.loadOverviewStats();
 
+    // Handle initial hash navigation (for page refreshes)
+    this.handleInitialHash();
+
     console.log('✅ Admin Dashboard initialized');
+  }
+
+  /**
+   * Handle initial hash on page load (for refresh preservation)
+   */
+  handleInitialHash() {
+    const hash = window.location.hash.replace('#', '');
+    if (hash && hash !== 'overview') {
+      // Check if section exists
+      const sectionExists = document.getElementById(hash);
+      if (sectionExists) {
+        this.navigateToSection(hash);
+      } else {
+        // Invalid hash, go to overview
+        this.navigateToSection('overview');
+      }
+    } else {
+      // No hash or overview, ensure overview is shown
+      this.navigateToSection('overview');
+    }
   }
 
   /**
