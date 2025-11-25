@@ -4,7 +4,7 @@
 <head>
   <!-- Cache Version Control - Update this timestamp when deploying -->
   <script>
-    window.CACHE_VERSION = '20251114-1530'; // Format: YYYYMMDD-HHMM (exposed as window.CACHE_VERSION for ES6 modules)
+    window.CACHE_VERSION = '20251125-1645'; // Format: YYYYMMDD-HHMM (exposed as window.CACHE_VERSION for ES6 modules)
   </script>
 
   <!-- Google Analytics -->
@@ -397,7 +397,6 @@
           console.error('JSONP script load error:', e, 'URL:', fullUrl);
           reject(new Error("Script load failed - check if Cloudflare Worker is responding"));
         };
-        console.log('📡 Loading JSONP script:', fullUrl);
         document.body.appendChild(s);
       });
     }
@@ -1626,8 +1625,6 @@
         }
         // Normalize role (handle case variations)
         USER_ROLE = storedRole ? storedRole.charAt(0).toUpperCase() + storedRole.slice(1).toLowerCase() : null;
-        
-        console.log('🔍 Role check:', { storedRole, USER_ROLE });
 
         // Redirect only admins to dedicated admin dashboard
         if (USER_ROLE === 'Admin') {

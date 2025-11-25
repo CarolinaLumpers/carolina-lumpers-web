@@ -32,8 +32,6 @@ export class AdminTools {
       return;
     }
 
-    console.log('Initializing admin tools...');
-
     // Initialize Clock-In Manager
     this.modules.clockInManager = new ClockInManager(this.apiUrl);
     this.modules.clockInManager.init();
@@ -68,8 +66,6 @@ export class AdminTools {
     window.addEventListener('viewAsChanged', (event) => {
       this.handleViewAsChange(event.detail);
     });
-
-    console.log('✅ Admin tools initialized');
   }
 
   /**
@@ -79,7 +75,6 @@ export class AdminTools {
     try {
       const workerId = localStorage.getItem('CLS_WorkerID');
       if (!workerId) {
-        console.log('No worker ID found in localStorage');
         return false;
       }
 
@@ -89,8 +84,6 @@ export class AdminTools {
 
       const role = data.role || '';
       const isAdmin = role === 'Admin' || role === 'Lead';
-      
-      console.log(`User role: ${role}, isAdmin: ${isAdmin}`);
       return isAdmin;
 
     } catch (err) {
@@ -107,7 +100,6 @@ export class AdminTools {
     const { active, workerId } = detail;
 
     if (active && workerId) {
-      console.log(`View As activated for worker: ${workerId}`);
       // Reload dashboard data for selected worker
       // This would trigger re-fetching of reports, payroll, etc.
       // Implementation depends on parent dashboard structure
@@ -119,7 +111,6 @@ export class AdminTools {
       window.dispatchEvent(reloadEvent);
 
     } else {
-      console.log('View As deactivated - restoring original view');
       // Reload dashboard data for original user
       const originalWorkerId = localStorage.getItem('CLS_WorkerID');
       const reloadEvent = new CustomEvent('reloadDashboard', {

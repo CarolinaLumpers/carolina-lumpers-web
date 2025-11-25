@@ -11,9 +11,9 @@
     return;
   }
 
-  const CACHE_VERSION = window.CACHE_VERSION || '20251114-1530';
-  const REQUIRED_VERSION = 'cls-employee-v18';
-  const SESSION_FLAG = 'cache_cleared_v18';
+  const CACHE_VERSION = window.CACHE_VERSION || '20251125-1645';
+  const REQUIRED_VERSION = 'cls-employee-v19';
+  const SESSION_FLAG = 'cache_cleared_v19';
 
   // Clear old caches immediately on page load
   caches.keys().then(cacheNames => {
@@ -24,12 +24,9 @@
     if (oldCaches.length > 0) {
       Promise.all(oldCaches.map(name => caches.delete(name)))
         .then(() => {
-          console.log('🗑️  Deleted old caches:', oldCaches);
-
           // Set flag to prevent reload loop
           if (!sessionStorage.getItem(SESSION_FLAG)) {
             sessionStorage.setItem(SESSION_FLAG, 'true');
-            console.log('🔄 Reloading to apply new cache version...');
             window.location.reload();
           }
         });
@@ -39,8 +36,7 @@
   // Register the service worker
   navigator.serviceWorker.register('service-worker-employee.js?v=' + CACHE_VERSION)
     .then(registration => {
-      console.log('✅ SW registered for scope:', registration.scope);
-      console.log('📦 Cache version:', CACHE_VERSION);
+
 
       // Force immediate update check on page load
       registration.update();
@@ -51,7 +47,6 @@
         if (newWorker) {
           newWorker.addEventListener('statechange', () => {
             if (newWorker.state === 'activated' && navigator.serviceWorker.controller) {
-              console.log('🔄 New service worker activated - reloading');
               window.location.reload();
             }
           });
@@ -62,7 +57,6 @@
 
   // Listen for controller change (new SW took over)
   navigator.serviceWorker.addEventListener('controllerchange', () => {
-    console.log('🔄 Service worker controller changed - reloading');
     window.location.reload();
   });
 
