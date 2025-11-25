@@ -451,10 +451,17 @@ async function loadNavbar() {
       if (currentPage === 'employeeDashboard.html') {
         const navLinks = document.querySelector('.nav-links');
         
-        // Replace nav links with logout-only menu
+        // Replace nav links with logout-only menu + language toggle
         if (navLinks) {
           navLinks.innerHTML = `
             <li><a href="#" id="navLogout" data-en="Logout" data-es="Cerrar Sesión" data-pt="Sair">Logout</a></li>
+            
+            <!-- Language Toggle -->
+            <li class="language-toggle nav-language-toggle">
+              <button data-lang="en" onclick="switchLanguage('en')" title="English">EN</button>
+              <button data-lang="es" onclick="switchLanguage('es')" title="Español">ES</button>
+              <button data-lang="pt" onclick="switchLanguage('pt')" title="Português">PT</button>
+            </li>
           `;
           
           // Attach logout handler
