@@ -36,10 +36,13 @@
   // Register the service worker
   navigator.serviceWorker.register('service-worker-employee.js?v=' + CACHE_VERSION)
     .then(registration => {
-
-
       // Force immediate update check on page load
       registration.update();
+      
+      // Skip waiting and activate immediately if update available
+      if (registration.waiting) {
+        registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+      }
 
       // Auto-reload when new service worker takes control
       registration.addEventListener('updatefound', () => {

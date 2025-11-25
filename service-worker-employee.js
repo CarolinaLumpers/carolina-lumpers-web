@@ -1,6 +1,6 @@
 // 📦 Cache version matches deployment timestamp in HTML files (CACHE_VERSION)
 // Update this when deploying to force cache refresh
-const CACHE_NAME = "cls-employee-20251114-1530";
+const CACHE_NAME = "cls-employee-20251125-1645";
 const ASSETS = [
   "./employeelogin.html",
   "./employeeDashboard.html",
@@ -199,6 +199,8 @@ async function getPendingSyncCount() {
 // Install: cache assets
 self.addEventListener("install", (e) => {
   console.log("[Service Worker] Installing with cache:", CACHE_NAME);
+  // Skip waiting to activate immediately (enables instant updates)
+  self.skipWaiting();
   e.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       console.log("[Service Worker] Caching", ASSETS.length, "assets");
@@ -210,14 +212,18 @@ self.addEventListener("install", (e) => {
 // Activate: clean old caches
 self.addEventListener("activate", (e) => {
   console.log("[Service Worker] Activating with cache:", CACHE_NAME);
+  // Take control of all pages immediately (no waiting for reload)
   e.waitUntil(
-    caches.keys().then((keys) => {
-      const oldCaches = keys.filter((k) => k !== CACHE_NAME);
-      if (oldCaches.length > 0) {
-        console.log("[Service Worker] Deleting old caches:", oldCaches);
-      }
-      return Promise.all(oldCaches.map((k) => caches.delete(k)));
-    })
+    Promise.all([
+      self.clients.claim(),
+      caches.keys().then((keys) => {
+        const oldCaches = keys.filter((k) => k !== CACHE_NAME);
+        if (oldCaches.length > 0) {
+          console.log("[Service Worker] Deleting old caches:", oldCaches);
+        }
+        return Promise.all(oldCaches.map((k) => caches.delete(k)));
+      })
+    ])
   );
 });
 
@@ -250,6 +256,11 @@ self.addEventListener("message", async (event) => {
   const { type, data } = event.data;
 
   switch (type) {
+    case "SKIP_WAITING":
+      // Force immediate activation of new service worker
+      self.skipWaiting();
+      break;
+
     case "QUEUE_CLOCK_IN":
       const queued = await queueClockIn(data);
       event.ports[0].postMessage({ success: queued });
