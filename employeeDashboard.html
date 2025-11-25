@@ -2,9 +2,22 @@
 <html lang="en">
 
 <head>
+  <!-- Theme Initialization - Must be first to prevent flash -->
+  <script>
+    (function() {
+      try {
+        var theme = localStorage.getItem('CLS_Theme');
+        if (!theme) {
+          theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        document.documentElement.setAttribute('data-theme', theme);
+      } catch(e) {}
+    })();
+  </script>
+
   <!-- Cache Version Control - Update this timestamp when deploying -->
   <script>
-    window.CACHE_VERSION = '20251125-1645'; // Format: YYYYMMDD-HHMM (exposed as window.CACHE_VERSION for ES6 modules)
+    window.CACHE_VERSION = '20251125-1735'; // Format: YYYYMMDD-HHMM (exposed as window.CACHE_VERSION for ES6 modules)
   </script>
 
   <!-- Google Analytics -->
@@ -246,6 +259,52 @@
     // ======================== CONFIG ========================
     const API_URL = "https://cls-proxy.s-garay.workers.dev"; // Apps Script for most operations
     const SHEETS_API_URL = "https://sheets-direct-proxy.steve-3d1.workers.dev"; // Direct Sheets API (generic proxy)
+
+    // ======================== THEME TOGGLE ========================
+    // Theme toggle function (must be global for onclick handlers)
+    window.toggleTheme = function() {
+      const html = document.documentElement;
+      const currentTheme = html.getAttribute('data-theme') || 'dark';
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      
+      html.setAttribute('data-theme', newTheme);
+      localStorage.setItem('CLS_Theme', newTheme);
+      
+      // Re-render feather icons after theme change
+      if (typeof feather !== 'undefined') {
+        feather.replace();
+      }
+      
+      console.log('Theme switched to:', newTheme);
+    };
+
+    // Initialize theme immediately
+    (function initTheme() {
+      // Check if user has a saved preference, otherwise use system preference
+      let theme = localStorage.getItem('CLS_Theme');
+      
+      if (!theme) {
+        // Detect system preference
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        theme = prefersDark ? 'dark' : 'light';
+      }
+      
+      document.documentElement.setAttribute('data-theme', theme);
+      console.log('Theme initialized:', theme);
+      
+      // Listen for system theme changes (if user hasn't set a preference)
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+        // Only auto-update if user hasn't manually set a preference
+        if (!localStorage.getItem('CLS_Theme')) {
+          const newTheme = e.matches ? 'dark' : 'light';
+          document.documentElement.setAttribute('data-theme', newTheme);
+          if (typeof feather !== 'undefined') {
+            feather.replace();
+          }
+          console.log('Theme auto-updated to match system:', newTheme);
+        }
+      });
+    })();
 
     // Local getText function for dashboard (fallback until script.js loads)
     function getText(path, lang) {

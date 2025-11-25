@@ -118,3 +118,49 @@
   --thead: #222;
   --rowalt: var(--cls-charcoal-lighter);
 }
+
+/* ================================
+   Light Theme
+   ================================ */
+[data-theme="light"] {
+  /* Background Colors */
+  --bg-primary: #f5f5f5;
+  --bg-secondary: #ffffff;
+  --bg-card: #ffffff;
+  --bg-service: #f9f9f9;
+  --bg-overlay: rgba(0, 0, 0, 0.5);
+
+  /* Text Colors */
+  --text-primary: #1a1a1a;
+  --text-secondary: #2e2e2e;
+  --text-muted: #666666;
+  --text-light-muted: #777777;
+  --text-very-muted: #999999;
+
+  /* Brand Colors (darker for better contrast) */
+  --color-primary: #d4a017; /* Darker amber/gold */
+  --color-primary-hover: #b8860b;
+  --color-primary-light: #FFF8E1;
+
+  /* Border & Shadow */
+  --border-color: #e0e0e0;
+  --border-light: #f0f0f0;
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(212, 160, 23, 0.08);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.16), 0 4px 8px rgba(212, 160, 23, 0.12);
+  --shadow-accent: 0 0 20px rgba(212, 160, 23, 0.3), 0 4px 12px rgba(0, 0, 0, 0.15);
+
+  /* Dark variants for light theme */
+  --color-dark: #2e2e2e;
+  --color-dark-light: #3d3d3d;
+  --color-dark-lighter: #4a4a4a;
+
+  /* Legacy support overrides */
+  --primary-bg: var(--bg-primary);
+  --secondary-bg: var(--bg-secondary);
+  --text-color: var(--text-primary);
+  --text-color-2: var(--text-secondary);
+  --card: #f9f9f9;
+  --thead: #f0f0f0;
+  --rowalt: #fafafa;
+}

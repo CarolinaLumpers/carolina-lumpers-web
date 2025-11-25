@@ -2,7 +2,8 @@
 <nav class="navbar" id="navbar">
   <div class="logo-container">
     <a href="index.html" class="logo-link">
-      <img src="assets/CLS_Nav_Logo.png" alt="CLS Logo" class="logo">
+      <img src="assets/CLS_logo_black-BG.png" alt="CLS Logo" class="logo logo-dark">
+      <img src="assets/CLS_logo_white-BG.png" alt="CLS Logo" class="logo logo-light">
     </a>
     <a href="index.html" class="company-name">Carolina Lumper Service</a>
   </div>
@@ -18,6 +19,14 @@
   </button>
   
   <ul class="nav-links" id="navLinks">
+    <!-- Theme Toggle -->
+    <li class="nav-theme-toggle">
+      <button id="themeToggle" onclick="toggleTheme()" title="Toggle Light/Dark Theme" aria-label="Toggle theme">
+        <i data-feather="moon" class="theme-icon theme-icon-dark"></i>
+        <i data-feather="sun" class="theme-icon theme-icon-light"></i>
+      </button>
+    </li>
+    
     <li><a href="index.html" data-en="Home" data-es="Inicio" data-pt="Início">Home</a></li>
     <li><a href="about.html" data-en="About Us" data-es="Sobre Nosotros" data-pt="Sobre Nós">About Us</a></li>
     <li><a href="services.html" data-en="Services" data-es="Servicios" data-pt="Serviços">Services</a></li>
@@ -26,14 +35,16 @@
     <li><a href="employeeSignup.html" data-en="Sign Up" data-es="Regístrate" data-pt="Cadastre-se">Sign Up</a></li>
     <li><a href="employeelogin.html" data-en="Login" data-es="Iniciar Sesión" data-pt="Entrar">Login</a></li>
     <li><a href="employeeDashboard.html" data-en="Dashboard" data-es="Panel" data-pt="Painel">Dashboard</a></li>
-    
-    <!-- Language Toggle -->
-    <li class="language-toggle nav-language-toggle">
-      <button data-lang="en" onclick="switchLanguage('en')" title="English">EN</button>
-      <button data-lang="es" onclick="switchLanguage('es')" title="Español">ES</button>
-      <button data-lang="pt" onclick="switchLanguage('pt')" title="Português">PT</button>
-    </li>
   </ul>
+  
+  <!-- Language Dropdown - Separate from nav-links for mobile bottom positioning -->
+  <div class="nav-language-container">
+    <select id="languageSelect" onchange="switchLanguage(this.value)" aria-label="Select Language">
+      <option value="en">English</option>
+      <option value="es">Español</option>
+      <option value="pt">Português</option>
+    </select>
+  </div>
 </nav>
 
 <!-- Mobile menu overlay -->

@@ -451,18 +451,47 @@ async function loadNavbar() {
       if (currentPage === 'employeeDashboard.html') {
         const navLinks = document.querySelector('.nav-links');
         
-        // Replace nav links with logout-only menu + language toggle
+        // Replace nav links with logout-only menu + theme toggle
         if (navLinks) {
           navLinks.innerHTML = `
             <li><a href="#" id="navLogout" data-en="Logout" data-es="Cerrar Sesión" data-pt="Sair">Logout</a></li>
             
-            <!-- Language Toggle -->
-            <li class="language-toggle nav-language-toggle">
-              <button data-lang="en" onclick="switchLanguage('en')" title="English">EN</button>
-              <button data-lang="es" onclick="switchLanguage('es')" title="Español">ES</button>
-              <button data-lang="pt" onclick="switchLanguage('pt')" title="Português">PT</button>
+            <!-- Theme Toggle -->
+            <li class="nav-theme-toggle">
+              <button id="themeToggle" onclick="toggleTheme()" title="Toggle Light/Dark Theme" aria-label="Toggle theme">
+                <i data-feather="moon" class="theme-icon theme-icon-dark"></i>
+                <i data-feather="sun" class="theme-icon theme-icon-light"></i>
+              </button>
             </li>
           `;
+          
+          // Add language dropdown after nav-links (separate container)
+          const navbarContainer = navLinks.parentElement;
+          let langContainer = navbarContainer.querySelector('.nav-language-container');
+          if (!langContainer) {
+            langContainer = document.createElement('div');
+            langContainer.className = 'nav-language-container';
+            langContainer.innerHTML = `
+              <select id="languageSelect" onchange="switchLanguage(this.value)" aria-label="Select Language">
+                <option value="en">English</option>
+                <option value="es">Español</option>
+                <option value="pt">Português</option>
+              </select>
+            `;
+            navbarContainer.appendChild(langContainer);
+          }
+          
+          // Set current language in dropdown
+          const currentLang = localStorage.getItem('CLS_Lang') || 'en';
+          setTimeout(() => {
+            const langSelect = document.getElementById('languageSelect');
+            if (langSelect) langSelect.value = currentLang;
+          }, 0);
+          
+          // Re-initialize Feather icons after dynamic content load
+          if (typeof feather !== 'undefined') {
+            feather.replace();
+          }
           
           // Attach logout handler
           setTimeout(() => {
@@ -566,6 +595,49 @@ async function loadFooter() {
    GLOBAL NAVIGATION & LANGUAGE
    ================================ */
 
+// Theme Toggle Function
+function toggleTheme() {
+  const html = document.documentElement;
+  const currentTheme = html.getAttribute('data-theme') || 'dark';
+  const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+  
+  html.setAttribute('data-theme', newTheme);
+  localStorage.setItem('CLS_Theme', newTheme);
+  
+  // Re-render feather icons after theme change
+  if (typeof feather !== 'undefined') {
+    feather.replace();
+  }
+  
+  // Dispatch event for other components to react
+  window.dispatchEvent(new CustomEvent('themeChanged', { detail: { theme: newTheme } }));
+}
+
+// Initialize theme on page load
+function initTheme() {
+  // Check if user has a saved preference, otherwise use system preference
+  let theme = localStorage.getItem('CLS_Theme');
+  
+  if (!theme) {
+    // Detect system preference
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    theme = prefersDark ? 'dark' : 'light';
+  }
+  
+  document.documentElement.setAttribute('data-theme', theme);
+  
+  // Listen for system theme changes (if user hasn't set a preference)
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+    // Only auto-update if user hasn't manually set a preference
+    if (!localStorage.getItem('CLS_Theme')) {
+      const newTheme = e.matches ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      if (typeof feather !== 'undefined') {
+        feather.replace();
+      }
+    }
+  });
+}
 
 function switchLanguage(lang) {
   localStorage.setItem("CLS_Lang", lang);
@@ -581,7 +653,13 @@ function switchLanguage(lang) {
     if (text) el.innerHTML = text;
   });
 
-  // Highlight active button
+  // Update language dropdown selection
+  const languageSelect = document.getElementById('languageSelect');
+  if (languageSelect) {
+    languageSelect.value = lang;
+  }
+  
+  // Highlight active button (for legacy buttons if any)
   document.querySelectorAll(".language-toggle button").forEach(btn => {
     const btnLang = btn.getAttribute("data-lang") || btn.getAttribute("onclick")?.match(/switchLanguage\('(\w+)'\)/)?.[1];
     btn.classList.toggle("active", btnLang === lang);
@@ -639,6 +717,7 @@ function initLanguageSystem() {
 /* Run on page load */
 // Use a function that works whether DOMContentLoaded has fired or not
 function initializeApp() {
+  initTheme(); // Initialize theme before loading components
   loadNavbar(); // Load shared navbar component
   loadFooter(); // Load shared footer component
   initLanguageSystem();
