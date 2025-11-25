@@ -48,16 +48,50 @@ function processPayroll(weekPeriod) {
 
     for (const fullPayload of billPayloads) {
       try {
+        const isOwner = fullPayload.DocNumber.includes('SG-001-844c9f7b') || fullPayload.DocNumber.includes('DMR-002-5c6334ca');
+        
+        if (isOwner) {
+          Logger.log(`🔍 OWNER BILL - Starting process for ${fullPayload.VendorRef.name}`);
+          Logger.log(`📋 DocNumber: ${fullPayload.DocNumber}`);
+          Logger.log(`💰 Amount: $${fullPayload.TotalAmt}`);
+          Logger.log(`🏢 Vendor ID: ${fullPayload.VendorRef.value}`);
+          Logger.log(`📦 Payload: ${JSON.stringify(fullPayload)}`);
+        }
+        
         const existingBill = findExistingBill(fullPayload.DocNumber);
         const action = existingBill ? 'updated' : 'created';
+        
+        if (isOwner) {
+          Logger.log(`🔎 Existing bill check: ${existingBill ? 'Found (will update)' : 'Not found (will create)'}`);
+          if (existingBill) {
+            Logger.log(`📄 Existing Bill ID: ${existingBill.Id}, SyncToken: ${existingBill.SyncToken}`);
+          }
+        }
         
         if (existingBill) {
           fullPayload.Id = existingBill.Id;
           fullPayload.SyncToken = existingBill.SyncToken;
           const qboResponse = callQBOApi(`/bill`, 'POST', fullPayload);
+          
+          if (isOwner) {
+            Logger.log(`📥 QBO Response: ${JSON.stringify(qboResponse)}`);
+            Logger.log(`✅ Response null check: ${qboResponse === null ? 'NULL' : 'HAS DATA'}`);
+          }
+          
           Logger.log(`✅ Bill updated: ${fullPayload.VendorRef.name} - $${fullPayload.TotalAmt}`);
         } else {
           const qboResponse = callQBOApi(`/bill`, 'POST', fullPayload);
+          
+          if (isOwner) {
+            Logger.log(`📥 QBO Response: ${JSON.stringify(qboResponse)}`);
+            Logger.log(`✅ Response null check: ${qboResponse === null ? 'NULL' : 'HAS DATA'}`);
+            if (qboResponse && qboResponse.Bill) {
+              Logger.log(`🎯 Bill Created Successfully - ID: ${qboResponse.Bill.Id}`);
+            } else if (qboResponse && qboResponse.Fault) {
+              Logger.log(`❌ QBO Fault: ${JSON.stringify(qboResponse.Fault)}`);
+            }
+          }
+          
           Logger.log(`✅ Bill created: ${fullPayload.VendorRef.name} - $${fullPayload.TotalAmt}`);
         }
         
@@ -225,6 +259,12 @@ function createOwnerDistributionBills(weekPeriod, workerLookup) {
   
   // Steve's distribution bill
   const steveId = "SG-001-844c9f7b";
+  Logger.log(`🔍 Steve lookup: ${workerLookup[steveId] ? 'Found' : 'NOT FOUND'}`);
+  if (workerLookup[steveId]) {
+    Logger.log(`   - Display Name: ${workerLookup[steveId].displayName}`);
+    Logger.log(`   - QBO Vendor ID: ${workerLookup[steveId].qboVendorId || 'MISSING'}`);
+  }
+  
   if (workerLookup[steveId] && workerLookup[steveId].qboVendorId) {
     const steveCheckNumber = `${steveId}-${weekPeriod}`;
     
@@ -255,6 +295,12 @@ function createOwnerDistributionBills(weekPeriod, workerLookup) {
   
   // Daniela's distribution bill
   const danielaId = "DMR-002-5c6334ca";
+  Logger.log(`🔍 Daniela lookup: ${workerLookup[danielaId] ? 'Found' : 'NOT FOUND'}`);
+  if (workerLookup[danielaId]) {
+    Logger.log(`   - Display Name: ${workerLookup[danielaId].displayName}`);
+    Logger.log(`   - QBO Vendor ID: ${workerLookup[danielaId].qboVendorId || 'MISSING'}`);
+  }
+  
   if (workerLookup[danielaId] && workerLookup[danielaId].qboVendorId) {
     const danielaCheckNumber = `${danielaId}-${weekPeriod}`;
     
