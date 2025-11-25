@@ -99,16 +99,39 @@ form textarea:focus {
 /* [COMPONENT: Form Grid Layout] */
 .form-grid {
   width: 100%;
-  max-width: 100%;
+  max-width: 800px;
   display: grid;
-  grid-template-columns: 220px 1fr;
+  grid-template-columns: 200px 1fr;
   gap: var(--space-md) var(--space-lg);
+  padding: 0;
+  margin: 0 auto;
   text-align: left;
   align-items: center;
 }
 
+/* Grid system for contact forms */
+.grid {
+  display: grid;
+  gap: var(--space-md);
+}
+
+.grid-2 {
+  grid-template-columns: repeat(2, 1fr);
+  max-width: 900px;
+  margin: 0 auto;
+}
+
 .form-grid .full {
   grid-column: 1 / -1;
+}
+
+/* Add extra spacing at top and bottom of form-grid */
+.form-step .form-grid > label:first-child {
+  padding-top: 12px;
+}
+
+.form-step .form-grid > *:last-child {
+  padding-bottom: 12px;
 }
 
 .form-grid label {
@@ -196,19 +219,23 @@ form textarea:focus {
   background: rgba(0, 0, 0, 0.8);
   border: 1px solid #333;
   border-radius: var(--radius-md);
-  padding: var(--space-xl);
-  margin-top: var(--space-lg);
+  padding: 48px !important;
+  margin: var(--space-lg) auto;
   box-shadow: var(--shadow-accent);
-  width: 50%;
-  max-width: 40%;
+  width: 100%;
+  max-width: 1000px;
   box-sizing: border-box;
 }
 
 .form-step.active {
   display: block;
   animation: fadeIn 0.3s ease-in;
-    box-shadow: var(--shadow-accent);
+  box-shadow: var(--shadow-accent);
+}
 
+/* Specific override for apply page form-steps */
+body[data-page="apply"] .form-step {
+  padding: 48px !important;
 }
 
 @keyframes fadeIn {
@@ -230,9 +257,10 @@ form textarea:focus {
   height: auto !important;
   overflow: visible !important;
   border: 1px solid #333 !important;
-  max-width: 100% !important;
+  max-width: 1000px !important;
   width: 100% !important;
   box-shadow: var(--shadow-accent) !important;
+  box-sizing: border-box !important;
 }
 
 .form-container .progress-top,
@@ -743,6 +771,11 @@ form textarea:focus {
 
   .form-grid label {
     margin-bottom: var(--space-xs);
+  }
+
+  /* Grid-2 becomes single column on mobile */
+  .grid-2 {
+    grid-template-columns: 1fr;
   }
 
   /* Form steps use full width on mobile */
