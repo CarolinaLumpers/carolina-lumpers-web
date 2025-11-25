@@ -51,21 +51,25 @@ function processPayroll(weekPeriod) {
         const isOwner = fullPayload.DocNumber.includes('SG-001-844c9f7b') || fullPayload.DocNumber.includes('DMR-002-5c6334ca');
         
         if (isOwner) {
-          Logger.log(`🔍 OWNER BILL - Starting process for ${fullPayload.VendorRef.name}`);
-          Logger.log(`📋 DocNumber: ${fullPayload.DocNumber}`);
-          Logger.log(`💰 Amount: $${fullPayload.TotalAmt}`);
-          Logger.log(`🏢 Vendor ID: ${fullPayload.VendorRef.value}`);
-          Logger.log(`📦 Payload: ${JSON.stringify(fullPayload)}`);
+          logToSheet("Owner Bill Start", {
+            vendor: fullPayload.VendorRef.name,
+            docNumber: fullPayload.DocNumber,
+            amount: fullPayload.TotalAmt,
+            vendorId: fullPayload.VendorRef.value,
+            payload: fullPayload
+          }, `🔍 Processing owner bill: ${fullPayload.VendorRef.name}`);
         }
         
         const existingBill = findExistingBill(fullPayload.DocNumber);
         const action = existingBill ? 'updated' : 'created';
         
         if (isOwner) {
-          Logger.log(`🔎 Existing bill check: ${existingBill ? 'Found (will update)' : 'Not found (will create)'}`);
-          if (existingBill) {
-            Logger.log(`📄 Existing Bill ID: ${existingBill.Id}, SyncToken: ${existingBill.SyncToken}`);
-          }
+          logToSheet("Owner Bill Existing Check", {
+            docNumber: fullPayload.DocNumber,
+            existingBillFound: !!existingBill,
+            existingBillId: existingBill?.Id,
+            syncToken: existingBill?.SyncToken
+          }, `🔎 ${existingBill ? 'Found existing (updating)' : 'Not found (creating)'}`);
         }
         
         if (existingBill) {
@@ -74,8 +78,13 @@ function processPayroll(weekPeriod) {
           const qboResponse = callQBOApi(`/bill`, 'POST', fullPayload);
           
           if (isOwner) {
-            Logger.log(`📥 QBO Response: ${JSON.stringify(qboResponse)}`);
-            Logger.log(`✅ Response null check: ${qboResponse === null ? 'NULL' : 'HAS DATA'}`);
+            logToSheet("Owner Bill QBO Response", {
+              docNumber: fullPayload.DocNumber,
+              responseIsNull: qboResponse === null,
+              response: qboResponse,
+              billId: qboResponse?.Bill?.Id,
+              fault: qboResponse?.Fault
+            }, `📥 QBO Response: ${qboResponse === null ? 'NULL' : 'HAS DATA'}`);
           }
           
           Logger.log(`✅ Bill updated: ${fullPayload.VendorRef.name} - $${fullPayload.TotalAmt}`);
@@ -83,13 +92,13 @@ function processPayroll(weekPeriod) {
           const qboResponse = callQBOApi(`/bill`, 'POST', fullPayload);
           
           if (isOwner) {
-            Logger.log(`📥 QBO Response: ${JSON.stringify(qboResponse)}`);
-            Logger.log(`✅ Response null check: ${qboResponse === null ? 'NULL' : 'HAS DATA'}`);
-            if (qboResponse && qboResponse.Bill) {
-              Logger.log(`🎯 Bill Created Successfully - ID: ${qboResponse.Bill.Id}`);
-            } else if (qboResponse && qboResponse.Fault) {
-              Logger.log(`❌ QBO Fault: ${JSON.stringify(qboResponse.Fault)}`);
-            }
+            logToSheet("Owner Bill QBO Response", {
+              docNumber: fullPayload.DocNumber,
+              responseIsNull: qboResponse === null,
+              response: qboResponse,
+              billId: qboResponse?.Bill?.Id,
+              fault: qboResponse?.Fault
+            }, `📥 QBO Response: ${qboResponse === null ? 'NULL' : 'HAS DATA'}`);
           }
           
           Logger.log(`✅ Bill created: ${fullPayload.VendorRef.name} - $${fullPayload.TotalAmt}`);
@@ -259,11 +268,11 @@ function createOwnerDistributionBills(weekPeriod, workerLookup) {
   
   // Steve's distribution bill
   const steveId = "SG-001-844c9f7b";
-  Logger.log(`🔍 Steve lookup: ${workerLookup[steveId] ? 'Found' : 'NOT FOUND'}`);
-  if (workerLookup[steveId]) {
-    Logger.log(`   - Display Name: ${workerLookup[steveId].displayName}`);
-    Logger.log(`   - QBO Vendor ID: ${workerLookup[steveId].qboVendorId || 'MISSING'}`);
-  }
+  logToSheet("Steve Lookup", {
+    found: !!workerLookup[steveId],
+    displayName: workerLookup[steveId]?.displayName,
+    qboVendorId: workerLookup[steveId]?.qboVendorId
+  }, `🔍 Steve lookup: ${workerLookup[steveId] ? 'Found' : 'NOT FOUND'}`);
   
   if (workerLookup[steveId] && workerLookup[steveId].qboVendorId) {
     const steveCheckNumber = `${steveId}-${weekPeriod}`;
@@ -290,16 +299,16 @@ function createOwnerDistributionBills(weekPeriod, workerLookup) {
       APAccountRef: { value: "7", name: "Accounts Payable (A/P)" }
     });
     
-    Logger.log(`✅ Created distribution bill for Steve: $${distAmount}`);
+    logToSheet("Steve Bill Created", { amount: distAmount, docNumber: steveCheckNumber }, `✅ Created distribution bill for Steve: $${distAmount}`);
   }
   
   // Daniela's distribution bill
   const danielaId = "DMR-002-5c6334ca";
-  Logger.log(`🔍 Daniela lookup: ${workerLookup[danielaId] ? 'Found' : 'NOT FOUND'}`);
-  if (workerLookup[danielaId]) {
-    Logger.log(`   - Display Name: ${workerLookup[danielaId].displayName}`);
-    Logger.log(`   - QBO Vendor ID: ${workerLookup[danielaId].qboVendorId || 'MISSING'}`);
-  }
+  logToSheet("Daniela Lookup", {
+    found: !!workerLookup[danielaId],
+    displayName: workerLookup[danielaId]?.displayName,
+    qboVendorId: workerLookup[danielaId]?.qboVendorId
+  }, `🔍 Daniela lookup: ${workerLookup[danielaId] ? 'Found' : 'NOT FOUND'}`);
   
   if (workerLookup[danielaId] && workerLookup[danielaId].qboVendorId) {
     const danielaCheckNumber = `${danielaId}-${weekPeriod}`;
@@ -326,7 +335,7 @@ function createOwnerDistributionBills(weekPeriod, workerLookup) {
       APAccountRef: { value: "7", name: "Accounts Payable (A/P)" }
     });
     
-    Logger.log(`✅ Created distribution bill for Daniela: $${distAmount}`);
+    logToSheet("Daniela Bill Created", { amount: distAmount, docNumber: danielaCheckNumber }, `✅ Created distribution bill for Daniela: $${distAmount}`);
   }
   
   return billPayloads;
@@ -497,5 +506,20 @@ function getNextFriday(dateObj) {
   const offset = (12 - dayOfWeek) % 7 || 7;
   nextFriday.setDate(nextFriday.getDate() + offset);
   return nextFriday;
+}
+
+/**
+ * Helper to log to the Log sheet (Logger.log doesn't work in web app executions)
+ */
+function logToSheet(eventType, payload, status) {
+  try {
+    const sheet = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID).getSheetByName(CONFIG.SHEETS.LOG);
+    if (sheet) {
+      const timestamp = new Date().toISOString();
+      sheet.appendRow([timestamp, eventType, JSON.stringify(payload), status]);
+    }
+  } catch (err) {
+    // Silent fail if logging fails
+  }
 }
 
