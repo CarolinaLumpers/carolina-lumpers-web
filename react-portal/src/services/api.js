@@ -141,7 +141,9 @@ export const api = {
    * Get user role
    */
   whoami: async (workerId) => {
-    const url = `${API_BASE}?action=whoami&workerId=${encodeURIComponent(
+    const url = `${API_BASE}?action=whoami&requesterId=${encodeURIComponent(
+      workerId
+    )}&workerId=${encodeURIComponent(
       workerId
     )}`;
     const response = await fetch(url);
@@ -178,7 +180,9 @@ export const api = {
    * Get weekly report
    */
   getReport: async (workerId) => {
-    const url = `${API_BASE}?action=report&workerId=${encodeURIComponent(
+    const url = `${API_BASE}?action=report&requesterId=${encodeURIComponent(
+      workerId
+    )}&workerId=${encodeURIComponent(
       workerId
     )}`;
 
@@ -201,7 +205,9 @@ export const api = {
    * Get payroll data
    */
   getPayroll: async (workerId, range = "week") => {
-    const url = `${API_BASE}?action=payroll&workerId=${encodeURIComponent(
+    const url = `${API_BASE}?action=payroll&requesterId=${encodeURIComponent(
+      workerId
+    )}&workerId=${encodeURIComponent(
       workerId
     )}&range=${range}`;
     const response = await fetch(url);

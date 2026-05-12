@@ -138,9 +138,18 @@ function handleRequest(e) {
       // --------------------------
       // REPORTING & LOOKUP
       // --------------------------
-      case 'report':
-        result = getWeeklyReportObj(params.workerId);
+      case 'report': {
+        const requester = String(params.requesterId || '');
+        const target = String(params.workerId || '');
+        if (!requester || !target) {
+          result = { ok: false, message: 'Missing requesterId/workerId' };
+        } else if (requester !== target && !isAdmin_(requester)) {
+          result = { ok: false, message: 'Unauthorized' };
+        } else {
+          result = getWeeklyReportObj(target);
+        }
         break;
+      }
 
       case 'getworkerid':
         result = getWorkerIdByEmail(params.email);
@@ -150,22 +159,36 @@ function handleRequest(e) {
       // ADMIN / LEAD ENDPOINTS
       // --------------------------
       case 'reportAll': {
-        const who = String(params.workerId || '');
+        const who = String(params.requesterId || params.workerId || '');
         const workersCsv = String(params.workers || ''); // optional CSV filter
+        if (!who) {
+          result = { ok: false, message: 'Missing requesterId' };
+          break;
+        }
         result = handleReportAll_(who, workersCsv);
         break;
       }
 
       case 'whoami': {
+        const requester = String(params.requesterId || '');
         const who = String(params.workerId || '');
-        result = { ok: true, role: getRole_(who) };
+        if (!requester || !who) {
+          result = { ok: false, message: 'Missing requesterId/workerId' };
+        } else if (requester !== who && !isAdmin_(requester)) {
+          result = { ok: false, message: 'Unauthorized' };
+        } else {
+          result = { ok: true, role: getRole_(who) };
+        }
         break;
       }
 
       case 'whois': {
+        const requester = String(params.requesterId || '');
         const targetId = params.workerId;
-        if (!targetId) {
-          result = { ok: false, message: 'Missing workerId' };
+        if (!requester || !targetId) {
+          result = { ok: false, message: 'Missing requesterId/workerId' };
+        } else if (String(requester) !== String(targetId) && !isAdmin_(requester)) {
+          result = { ok: false, message: 'Unauthorized' };
         } else {
           result = lookupWorkerMeta_(targetId);
         }
@@ -272,7 +295,7 @@ function handleRequest(e) {
       // TIME EDIT REQUEST
       // --------------------------
       case 'timeEdit':
-      case 'submitTimeEdit': {
+      {
         try {
           result = handleTimeEditRequest_(params);
         } catch (err) {
@@ -401,23 +424,50 @@ function handleRequest(e) {
       // --------------------------
       // PAYROLL ENDPOINTS
       // --------------------------
-      case 'payroll':
-        result = getPayrollSummary_(params.workerId, params.range || 'current');
+      case 'payroll': {
+        const requester = String(params.requesterId || '');
+        const target = String(params.workerId || '');
+        if (!requester || !target) {
+          result = { success: false, message: 'Missing requesterId/workerId' };
+        } else if (requester !== target && !isAdmin_(requester)) {
+          result = { success: false, message: 'Unauthorized' };
+        } else {
+          result = getPayrollSummary_(target, params.range || 'current');
+        }
         break;
+      }
 
-      case 'payrollWeekPeriods':
-        result = getPayrollWeekPeriods_(params.workerId);
+      case 'payrollWeekPeriods': {
+        const requester = String(params.requesterId || '');
+        const target = String(params.workerId || '');
+        if (!requester || !target) {
+          result = { success: false, message: 'Missing requesterId/workerId' };
+        } else if (requester !== target && !isAdmin_(requester)) {
+          result = { success: false, message: 'Unauthorized' };
+        } else {
+          result = getPayrollWeekPeriods_(target);
+        }
         break;
+      }
 
-      case 'payrollPdf':
-        result = {
-          pdfUrl: generatePayrollPdf_(
-            params.workerId,
-            params.workerName,
-            params.weekPeriod
-          ),
-        };
+      case 'payrollPdf': {
+        const requester = String(params.requesterId || '');
+        const target = String(params.workerId || '');
+        if (!requester || !target) {
+          result = { success: false, message: 'Missing requesterId/workerId' };
+        } else if (requester !== target && !isAdmin_(requester)) {
+          result = { success: false, message: 'Unauthorized' };
+        } else {
+          result = {
+            pdfUrl: generatePayrollPdf_(
+              target,
+              params.workerName,
+              params.weekPeriod
+            ),
+          };
+        }
         break;
+      }
 
       // --------------------------
       // TEST ENDPOINTS

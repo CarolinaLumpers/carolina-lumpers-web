@@ -839,7 +839,7 @@
 
       try {
         const targetWorkerId = VIEW_AS_ACTIVE ? VIEW_AS_WORKER : workerId;
-        const url = `${API_URL}?action=payrollWeekPeriods&workerId=${encodeURIComponent(targetWorkerId)}`;
+        const url = `${API_URL}?action=payrollWeekPeriods&requesterId=${encodeURIComponent(workerId)}&workerId=${encodeURIComponent(targetWorkerId)}`;
 
         const data = await apiCallWithRetry(url);
 
@@ -1116,68 +1116,8 @@
           const data = await jsonp(`${API_URL}?action=reportAs&requesterId=${encodeURIComponent(workerId)}&targetId=${encodeURIComponent(VIEW_AS_WORKER)}`);
           records = data.records || [];
         } else {
-          // 🚀 HYBRID: Use direct Sheets API for faster loading (proof of concept)
-          const targetWorker = workerId;
-          const SPREADSHEET_ID = '1U8hSNREN5fEhskp0UM-Z80iiW39beaOj3oIsaLZyFzk';
-
-          // Fetch ClockIn sheet data directly (columns: A=ClockinID, B=WorkerID, C=Date, D=Time, E=Notes, F=TaskID, G=Approve, H=Lat, I=Lng, J=NeedsProcessing, K=NearestClient, L=Distance)
-          const response = await fetch(`${SHEETS_API_URL}/api/sheets/${SPREADSHEET_ID}/values/ClockIn!A2:L`);
-          const result = await response.json();
-          const rows = result.data?.values || [];
-
-          // Calculate date range (last 7 days)
-          const now = new Date();
-          const weekAgo = new Date(now);
-          weekAgo.setDate(now.getDate() - 7);
-          weekAgo.setHours(0, 0, 0, 0);
-
-          // Filter and format client-side
-          records = rows
-            .filter(row => {
-              if (row[1] !== targetWorker) return false; // B: WorkerID
-              const dateVal = row[2]; // C: Date
-              const d = dateVal instanceof Date ? dateVal : new Date(dateVal);
-              return !isNaN(d) && d >= weekAgo;
-            })
-            .map(row => {
-              const dateVal = row[2]; // C: Date
-              const timeVal = row[3]; // D: Time
-              const d = new Date(dateVal);
-
-              // Format date as MM/dd/yyyy
-              const formattedDate = d.toLocaleDateString('en-US', {
-                timeZone: 'America/New_York',
-                month: '2-digit',
-                day: '2-digit',
-                year: 'numeric'
-              });
-
-              // Format time
-              let formattedTime = '';
-              if (timeVal) {
-                const t = new Date(timeVal);
-                if (!isNaN(t)) {
-                  formattedTime = t.toLocaleTimeString('en-US', {
-                    timeZone: 'America/New_York',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit',
-                    hour12: true
-                  });
-                } else {
-                  formattedTime = String(timeVal);
-                }
-              }
-
-              return {
-                date: formattedDate,
-                time: formattedTime,
-                site: row[10] || '', // K: Nearest Client
-                distance: row[11] || '', // L: Distance
-                id: row[0] || '', // A: ClockinID
-                editStatus: row[6] || 'confirmed' // G: Approve (status column)
-              };
-            });
+          const data = await jsonp(`${API_URL}?action=report&requesterId=${encodeURIComponent(workerId)}&workerId=${encodeURIComponent(workerId)}`);
+          records = data.records || [];
         }
 
         body.innerHTML = "";
@@ -1276,7 +1216,7 @@
         if (VIEW_AS_ACTIVE && USER_ROLE === 'Admin') {
           res = await jsonp(`${API_URL}?action=payrollAs&requesterId=${encodeURIComponent(workerId)}&targetId=${encodeURIComponent(VIEW_AS_WORKER)}&range=${range}`);
         } else {
-          res = await jsonp(`${API_URL}?action=payroll&workerId=${encodeURIComponent(workerId)}&range=${range}`);
+          res = await jsonp(`${API_URL}?action=payroll&requesterId=${encodeURIComponent(workerId)}&workerId=${encodeURIComponent(workerId)}&range=${range}`);
         }
         if (!res || !res.success || !res.rows) {
           tbody.innerHTML = "";
@@ -1338,6 +1278,8 @@
 
       try {
         const url = `${baseUrl}?action=payrollPdf&workerId=${encodeURIComponent(
+          workerId
+        )}&requesterId=${encodeURIComponent(
           workerId
         )}&workerName=${encodeURIComponent(
           displayName || ''
@@ -1427,7 +1369,7 @@
         let storedRole = localStorage.getItem("CLS_Role");
 
         if (!storedRole) {
-          const info = await jsonp(`${API_URL}?action=whoami&workerId=${encodeURIComponent(workerId)}`);
+          const info = await jsonp(`${API_URL}?action=whoami&requesterId=${encodeURIComponent(workerId)}&workerId=${encodeURIComponent(workerId)}`);
           if (info && info.ok && info.role) {
             storedRole = info.role;
             localStorage.setItem("CLS_Role", storedRole);
@@ -1526,7 +1468,7 @@
       VIEW_AS_ACTIVE = true;
 
       // Fetch name for banner
-      const who = await jsonp(`${API_URL}?action=whois&workerId=${encodeURIComponent(targetId)}`);
+      const who = await jsonp(`${API_URL}?action=whois&requesterId=${encodeURIComponent(workerId)}&workerId=${encodeURIComponent(targetId)}`);
       setViewAsBanner(targetId, who?.displayName || '');
 
       document.getElementById('btnActivateViewAs').classList.add('d-none');

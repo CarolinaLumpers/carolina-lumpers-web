@@ -78,7 +78,7 @@ export class AdminTools {
         return false;
       }
 
-      const url = `${this.apiUrl}?action=whoami&workerId=${encodeURIComponent(workerId)}`;
+      const url = `${this.apiUrl}?action=whoami&requesterId=${encodeURIComponent(workerId)}&workerId=${encodeURIComponent(workerId)}`;
       const response = await fetch(url);
       const data = await response.json();
 
