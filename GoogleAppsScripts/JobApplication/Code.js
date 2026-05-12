@@ -83,15 +83,15 @@ function doPost(e) {
     // ===== Duplicate Check =====
     const dataRange = sh.getDataRange().getValues();
     const headers = dataRange[0];
-    const emailIndex = headers.indexOf('email');
-    const phoneIndex = headers.indexOf('phone');
+    const emailIndex = findHeaderIndex_(headers, ['email']);
+    const phoneIndex = findHeaderIndex_(headers, ['phone', 'phone_number', 'phone number']);
 
     const normalizedEmail = email.toLowerCase();
     const normalizedPhone = phone.replace(/\D/g, '');
 
     const duplicate = dataRange.slice(1).some(r => {
-      const existingEmail = (r[emailIndex] || '').toString().trim().toLowerCase();
-      const existingPhone = (r[phoneIndex] || '').toString().replace(/\D/g, '');
+      const existingEmail = emailIndex > -1 ? (r[emailIndex] || '').toString().trim().toLowerCase() : '';
+      const existingPhone = phoneIndex > -1 ? (r[phoneIndex] || '').toString().replace(/\D/g, '') : '';
       return existingEmail === normalizedEmail || (normalizedPhone && existingPhone === normalizedPhone);
     });
 
@@ -153,6 +153,12 @@ function doPost(e) {
       workAuthFlag
     ];
     sh.appendRow(row);
+
+    // Ensure key fields land in the intended columns even if sheet order drifts.
+    const insertedRow = sh.getLastRow();
+    setValueByHeader_(sh, headers, insertedRow, ['status', 'application_status', 'application status'], applicationStatus);
+    setValueByHeader_(sh, headers, insertedRow, ['work_auth_flag', 'work auth flag'], workAuthFlag);
+    setValueByHeader_(sh, headers, insertedRow, ['work_authorization', 'work authorization'], workAuthorization);
 
     // ===== Add Status History record =====
     let historyLogged = false;
@@ -295,6 +301,28 @@ function json(obj, status) {
 
 function trim(v) { return (v == null ? '' : v).toString().trim(); }
 function isEmail(v) { return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(String(v || '')); }
+
+function normalizeHeader_(value) {
+  return trim(value).toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '');
+}
+
+function findHeaderIndex_(headers, aliases) {
+  if (!headers || !aliases || !aliases.length) return -1;
+  const normalizedHeaders = headers.map(normalizeHeader_);
+  const normalizedAliases = aliases.map(normalizeHeader_);
+  for (let i = 0; i < normalizedAliases.length; i += 1) {
+    const idx = normalizedHeaders.indexOf(normalizedAliases[i]);
+    if (idx > -1) return idx;
+  }
+  return -1;
+}
+
+function setValueByHeader_(sheet, headers, rowNumber, aliases, value) {
+  const index = findHeaderIndex_(headers, aliases);
+  if (index > -1) {
+    sheet.getRange(rowNumber, index + 1).setValue(value);
+  }
+}
 
 /**
  * One-time maintenance helper.
