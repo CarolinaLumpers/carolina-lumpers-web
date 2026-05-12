@@ -40,6 +40,55 @@ function auditAccessDenied_(action, requesterId, targetId, reason, params) {
   }
 }
 
+function authorizeRequest_(params, action, targetId, okField) {
+  const requester = String(params.requesterId || '');
+  const target = String(targetId || '');
+  const token = params.authToken || params.token || '';
+
+  if (!requester || !target) {
+    auditAccessDenied_(action, requester, target, 'Missing requesterId/workerId', params);
+    return {
+      ok: false,
+      result: buildApiError_('Missing requesterId/workerId', 400, okField)
+    };
+  }
+
+  if (!token) {
+    auditAccessDenied_(action, requester, target, 'Missing auth token', params);
+    return {
+      ok: false,
+      result: buildApiError_('Missing auth token', 401, okField)
+    };
+  }
+
+  const verified = verifyAuthToken_(token);
+  if (!verified.ok) {
+    auditAccessDenied_(action, requester, target, verified.message, params);
+    return {
+      ok: false,
+      result: buildApiError_(verified.message, 401, okField)
+    };
+  }
+
+  if (verified.workerId !== requester) {
+    auditAccessDenied_(action, requester, target, 'Token/requester mismatch', params);
+    return {
+      ok: false,
+      result: buildApiError_('Unauthorized', 403, okField)
+    };
+  }
+
+  if (requester !== target && verified.role !== 'Admin') {
+    auditAccessDenied_(action, requester, target, 'Unauthorized cross-user access', params);
+    return {
+      ok: false,
+      result: buildApiError_('Unauthorized', 403, okField)
+    };
+  }
+
+  return { ok: true, requesterId: requester, claims: verified };
+}
+
 function handleRequest(e) {
   let params = {};
   let callback = null;
@@ -90,6 +139,8 @@ function handleRequest(e) {
           break;
         }
 
+        const authTokenData = createAuthToken_(auth.workerId, getRole_(auth.workerId));
+
         // Login logging handled by TT_LOGGER.logLogin() in loginUser() function
         result = {
           success: true,
@@ -102,6 +153,8 @@ function handleRequest(e) {
           w9SsnLast4: auth.w9SsnLast4 || "",
           w9PdfUrl: auth.w9PdfUrl || "",
           role: getRole_(auth.workerId),
+          authToken: authTokenData.token,
+          authTokenExp: authTokenData.exp,
           device,
         };
         break;
@@ -169,17 +222,9 @@ function handleRequest(e) {
       // REPORTING & LOOKUP
       // --------------------------
       case "report": {
-        const requester = String(params.requesterId || "");
         const target = String(params.workerId || "");
-        if (!requester || !target) {
-          auditAccessDenied_(action, requester, target, 'Missing requesterId/workerId', params);
-          result = buildApiError_("Missing requesterId/workerId", 400, 'ok');
-        } else if (requester !== target && !isAdmin_(requester)) {
-          auditAccessDenied_(action, requester, target, 'Unauthorized cross-user report', params);
-          result = buildApiError_("Unauthorized", 403, 'ok');
-        } else {
-          result = getWeeklyReportObj(target);
-        }
+        const auth = authorizeRequest_(params, action, target, 'ok');
+        result = auth.ok ? getWeeklyReportObj(target) : auth.result;
         break;
       }
 
@@ -203,17 +248,11 @@ function handleRequest(e) {
       }
 
       case "whoami": {
-        const requester = String(params.requesterId || "");
         const who = String(params.workerId || "");
-        if (!requester || !who) {
-          auditAccessDenied_(action, requester, who, 'Missing requesterId/workerId', params);
-          result = buildApiError_("Missing requesterId/workerId", 400, 'ok');
-        } else if (requester !== who && !isAdmin_(requester)) {
-          auditAccessDenied_(action, requester, who, 'Unauthorized role lookup', params);
-          result = buildApiError_("Unauthorized", 403, 'ok');
-        } else {
-          result = { ok: true, role: getRole_(who) };
-        }
+        const auth = authorizeRequest_(params, action, who, 'ok');
+        result = auth.ok
+          ? { ok: true, role: getRole_(who), workerId: who }
+          : auth.result;
         break;
       }
 
@@ -499,17 +538,11 @@ function handleRequest(e) {
       // PAYROLL ENDPOINTS
       // --------------------------
       case "payroll": {
-        const requester = String(params.requesterId || "");
         const target = String(params.workerId || "");
-        if (!requester || !target) {
-          auditAccessDenied_(action, requester, target, 'Missing requesterId/workerId', params);
-          result = buildApiError_("Missing requesterId/workerId", 400, 'success');
-        } else if (requester !== target && !isAdmin_(requester)) {
-          auditAccessDenied_(action, requester, target, 'Unauthorized cross-user payroll', params);
-          result = buildApiError_("Unauthorized", 403, 'success');
-        } else {
-          result = getPayrollSummary_(target, params.range || "current");
-        }
+        const auth = authorizeRequest_(params, action, target, 'success');
+        result = auth.ok
+          ? getPayrollSummary_(target, params.range || "current")
+          : auth.result;
         break;
       }
 

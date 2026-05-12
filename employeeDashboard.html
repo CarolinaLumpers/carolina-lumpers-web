@@ -589,6 +589,7 @@
 
     // =================== Session ===================
     const workerId = localStorage.getItem("CLS_WorkerID");
+    const authToken = localStorage.getItem("CLS_AuthToken") || "";
     const displayName = localStorage.getItem("CLS_WorkerName");
     const email = localStorage.getItem("CLS_Email");
     const w9Status = localStorage.getItem("CLS_W9Status"); // W-9 compliance status
@@ -631,6 +632,7 @@
 
     // Global constants for dashboard
     const WORKER_ID = workerId; // Make available globally for all functions
+    const AUTH_PARAM = authToken ? `&authToken=${encodeURIComponent(authToken)}` : '';
 
     // View As functionality
     let VIEW_AS_WORKER = null;      // stores workerId being viewed
@@ -1402,7 +1404,7 @@
           const data = await jsonp(`${API_URL}?action=reportAs&requesterId=${encodeURIComponent(workerId)}&targetId=${encodeURIComponent(VIEW_AS_WORKER)}`);
           records = data.records || [];
         } else {
-          const data = await jsonp(`${API_URL}?action=report&requesterId=${encodeURIComponent(workerId)}&workerId=${encodeURIComponent(workerId)}`);
+          const data = await jsonp(`${API_URL}?action=report&requesterId=${encodeURIComponent(workerId)}&workerId=${encodeURIComponent(workerId)}${AUTH_PARAM}`);
           records = data.records || [];
         }
 
@@ -1491,7 +1493,7 @@
         if (VIEW_AS_ACTIVE && USER_ROLE === 'Admin') {
           res = await jsonp(`${API_URL}?action=payrollAs&requesterId=${encodeURIComponent(workerId)}&targetId=${encodeURIComponent(VIEW_AS_WORKER)}&range=${range}`);
         } else {
-          res = await jsonp(`${API_URL}?action=payroll&requesterId=${encodeURIComponent(workerId)}&workerId=${encodeURIComponent(workerId)}&range=${range}`);
+          res = await jsonp(`${API_URL}?action=payroll&requesterId=${encodeURIComponent(workerId)}&workerId=${encodeURIComponent(workerId)}&range=${range}${AUTH_PARAM}`);
         }
         if (!res || !res.success || !res.rows) {
           tbody.innerHTML = "";
@@ -1644,7 +1646,7 @@
         let storedRole = localStorage.getItem("CLS_Role");
 
         if (!storedRole) {
-          const info = await jsonp(`${API_URL}?action=whoami&requesterId=${encodeURIComponent(workerId)}&workerId=${encodeURIComponent(workerId)}`);
+          const info = await jsonp(`${API_URL}?action=whoami&requesterId=${encodeURIComponent(workerId)}&workerId=${encodeURIComponent(workerId)}${AUTH_PARAM}`);
           if (info && info.ok && info.role) {
             storedRole = info.role;
             localStorage.setItem("CLS_Role", storedRole);

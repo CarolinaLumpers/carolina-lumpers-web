@@ -34,6 +34,11 @@ function getDeviceInfo() {
   return `${deviceType} - ${browserType}`;
 }
 
+function getAuthTokenParam() {
+  const token = localStorage.getItem("CLS_AuthToken") || "";
+  return token ? `&authToken=${encodeURIComponent(token)}` : "";
+}
+
 /**
  * JSONP helper for cross-origin requests (backend expects JSONP callbacks)
  */
@@ -143,7 +148,7 @@ export const api = {
   whoami: async (workerId) => {
     const url = `${API_BASE}?action=whoami&requesterId=${encodeURIComponent(
       workerId,
-    )}&workerId=${encodeURIComponent(workerId)}`;
+    )}&workerId=${encodeURIComponent(workerId)}${getAuthTokenParam()}`;
     const response = await fetch(url);
     return response.json();
   },
@@ -180,7 +185,7 @@ export const api = {
   getReport: async (workerId) => {
     const url = `${API_BASE}?action=report&requesterId=${encodeURIComponent(
       workerId,
-    )}&workerId=${encodeURIComponent(workerId)}`;
+    )}&workerId=${encodeURIComponent(workerId)}${getAuthTokenParam()}`;
 
     try {
       const response = await fetch(url);
@@ -203,7 +208,7 @@ export const api = {
   getPayroll: async (workerId, range = "week") => {
     const url = `${API_BASE}?action=payroll&requesterId=${encodeURIComponent(
       workerId,
-    )}&workerId=${encodeURIComponent(workerId)}&range=${range}`;
+    )}&workerId=${encodeURIComponent(workerId)}&range=${range}${getAuthTokenParam()}`;
     const response = await fetch(url);
     return response.json();
   },

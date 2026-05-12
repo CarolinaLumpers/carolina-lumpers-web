@@ -3,12 +3,12 @@
  * Initializes and manages all admin sub-modules
  */
 
-import { ClockInManager } from './clockin-manager.js';
-import { TimeEditRequests } from './time-edit-requests.js';
-import { RunPayroll } from './run-payroll.js';
-import { QuickBooksSync } from './quickbooks-sync.js';
-import { InvoiceManagement } from './invoice-management.js';
-import { ViewAs } from './view-as.js';
+import { ClockInManager } from "./clockin-manager.js";
+import { TimeEditRequests } from "./time-edit-requests.js";
+import { RunPayroll } from "./run-payroll.js";
+import { QuickBooksSync } from "./quickbooks-sync.js";
+import { InvoiceManagement } from "./invoice-management.js";
+import { ViewAs } from "./view-as.js";
 
 export class AdminTools {
   constructor(apiUrl) {
@@ -22,12 +22,12 @@ export class AdminTools {
   async init() {
     // Check if user is admin/supervisor
     const isAdmin = await this.checkAdminRole();
-    
+
     if (!isAdmin) {
-      console.log('User is not admin/supervisor - hiding admin section');
-      const adminSection = document.getElementById('admin-section');
+      console.log("User is not admin/supervisor - hiding admin section");
+      const adminSection = document.getElementById("admin-section");
       if (adminSection) {
-        adminSection.style.display = 'none';
+        adminSection.style.display = "none";
       }
       return;
     }
@@ -63,7 +63,7 @@ export class AdminTools {
     window.viewAsManager = this.modules.viewAs;
 
     // Listen for View As changes and reload dashboard data
-    window.addEventListener('viewAsChanged', (event) => {
+    window.addEventListener("viewAsChanged", (event) => {
       this.handleViewAsChange(event.detail);
     });
   }
@@ -73,21 +73,21 @@ export class AdminTools {
    */
   async checkAdminRole() {
     try {
-      const workerId = localStorage.getItem('CLS_WorkerID');
+      const workerId = localStorage.getItem("CLS_WorkerID");
+      const authToken = localStorage.getItem("CLS_AuthToken") || "";
       if (!workerId) {
         return false;
       }
 
-      const url = `${this.apiUrl}?action=whoami&requesterId=${encodeURIComponent(workerId)}&workerId=${encodeURIComponent(workerId)}`;
+      const url = `${this.apiUrl}?action=whoami&requesterId=${encodeURIComponent(workerId)}&workerId=${encodeURIComponent(workerId)}${authToken ? `&authToken=${encodeURIComponent(authToken)}` : ''}`;
       const response = await fetch(url);
       const data = await response.json();
 
-      const role = data.role || '';
-      const isAdmin = role === 'Admin' || role === 'Lead';
+      const role = data.role || "";
+      const isAdmin = role === "Admin" || role === "Lead";
       return isAdmin;
-
     } catch (err) {
-      console.error('Failed to check admin role:', err);
+      console.error("Failed to check admin role:", err);
       return false;
     }
   }
@@ -103,18 +103,17 @@ export class AdminTools {
       // Reload dashboard data for selected worker
       // This would trigger re-fetching of reports, payroll, etc.
       // Implementation depends on parent dashboard structure
-      
+
       // Dispatch event that parent dashboard can listen to
-      const reloadEvent = new CustomEvent('reloadDashboard', {
-        detail: { workerId }
+      const reloadEvent = new CustomEvent("reloadDashboard", {
+        detail: { workerId },
       });
       window.dispatchEvent(reloadEvent);
-
     } else {
       // Reload dashboard data for original user
-      const originalWorkerId = localStorage.getItem('CLS_WorkerID');
-      const reloadEvent = new CustomEvent('reloadDashboard', {
-        detail: { workerId: originalWorkerId }
+      const originalWorkerId = localStorage.getItem("CLS_WorkerID");
+      const reloadEvent = new CustomEvent("reloadDashboard", {
+        detail: { workerId: originalWorkerId },
       });
       window.dispatchEvent(reloadEvent);
     }

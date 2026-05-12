@@ -90,6 +90,77 @@ function hashPassword(password) {
   return Utilities.base64Encode(bytes);
 }
 
+function base64UrlEncodeText_(text) {
+  return Utilities.base64EncodeWebSafe(text).replace(/=+$/, '');
+}
+
+function base64UrlDecodeText_(encoded) {
+  return Utilities.newBlob(Utilities.base64DecodeWebSafe(encoded)).getDataAsString();
+}
+
+function createAuthToken_(workerId, role) {
+  const nowSec = Math.floor(Date.now() / 1000);
+  const expSec = nowSec + Math.max(1, AUTH_TOKEN_TTL_MINUTES) * 60;
+  const payloadObj = {
+    wid: String(workerId || ''),
+    role: String(role || 'Worker'),
+    iat: nowSec,
+    exp: expSec
+  };
+
+  const payloadB64 = base64UrlEncodeText_(JSON.stringify(payloadObj));
+  const sigBytes = Utilities.computeHmacSha256Signature(payloadB64, AUTH_TOKEN_SECRET);
+  const sigB64 = Utilities.base64EncodeWebSafe(sigBytes).replace(/=+$/, '');
+
+  return {
+    token: `${payloadB64}.${sigB64}`,
+    exp: expSec
+  };
+}
+
+function verifyAuthToken_(token) {
+  if (!token || typeof token !== 'string') {
+    return { ok: false, message: 'Missing auth token' };
+  }
+
+  const parts = token.split('.');
+  if (parts.length !== 2) {
+    return { ok: false, message: 'Invalid auth token format' };
+  }
+
+  const payloadB64 = parts[0];
+  const tokenSig = parts[1];
+  const expectedSigBytes = Utilities.computeHmacSha256Signature(payloadB64, AUTH_TOKEN_SECRET);
+  const expectedSig = Utilities.base64EncodeWebSafe(expectedSigBytes).replace(/=+$/, '');
+
+  if (expectedSig !== tokenSig) {
+    return { ok: false, message: 'Invalid auth token signature' };
+  }
+
+  let payload;
+  try {
+    payload = JSON.parse(base64UrlDecodeText_(payloadB64));
+  } catch (err) {
+    return { ok: false, message: 'Invalid auth token payload' };
+  }
+
+  if (!payload || !payload.wid || !payload.exp) {
+    return { ok: false, message: 'Invalid auth token claims' };
+  }
+
+  const nowSec = Math.floor(Date.now() / 1000);
+  if (Number(payload.exp) <= nowSec) {
+    return { ok: false, message: 'Auth token expired' };
+  }
+
+  return {
+    ok: true,
+    workerId: String(payload.wid),
+    role: String(payload.role || 'Worker'),
+    exp: Number(payload.exp)
+  };
+}
+
 // ======================================================
 //  LOGGING UTILITIES
 // ======================================================

@@ -114,6 +114,19 @@ server-side access checks.
 - `payrollPdf`: requires `requesterId` and `workerId`
 - `reportAs` / `payrollAs`: require `requesterId` and `targetId` and admin role
 
+### Phase 2 Token Rollout
+
+The following endpoints now also require `authToken` (issued at `login`):
+
+- `whoami`
+- `report`
+- `payroll`
+
+`login` now returns:
+
+- `authToken`: signed token string
+- `authTokenExp`: epoch seconds expiration
+
 ### Authorization Rules
 
 - Self-access: requester can access their own records (`requesterId === workerId`)
