@@ -220,6 +220,11 @@ function doPost(e) {
 
     sh.appendRow(row);
 
+    // Keep internal ops notification active for every quote request.
+    try {
+      sendSummaryEmail_(payload, stamp);
+    } catch (_) {}
+
     // Send confirmation to submitter, CC Steve
     sendConfirmationEmail_(payload);
 

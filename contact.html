@@ -569,11 +569,22 @@
         var formName = extendedOpen ? 'quote_request_extended' : 'quote_request_basic';
 
         try {
-          await fetch(API_BASE, {
+          var res = await fetch(API_BASE, {
             method: 'POST',
-            mode: 'no-cors',
+            mode: 'cors',
             body: payload
           });
+
+          var json = null;
+          try {
+            json = await res.json();
+          } catch (_) {
+            json = null;
+          }
+
+          if (!res.ok || !json || !json.ok) {
+            throw new Error((json && (json.error || json.message)) || 'Unable to submit right now.');
+          }
 
           if (typeof gtag === 'function') {
             gtag('event', 'generate_lead', {
@@ -607,7 +618,7 @@
             });
           }
 
-          successMsg.textContent = '⚠️ Unable to submit right now. Please try again.';
+          successMsg.textContent = (err && err.message) ? ('⚠️ ' + err.message) : '⚠️ Unable to submit right now. Please try again.';
           successMsg.style.display = 'block';
           submitBtn.disabled = false;
           submitBtn.textContent = 'Request Quote';
