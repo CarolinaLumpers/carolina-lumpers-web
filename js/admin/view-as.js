@@ -101,7 +101,7 @@ export class ViewAs {
     try {
       // Get current admin's worker ID
       const adminWorkerId = localStorage.getItem("CLS_WorkerID");
-      const url = `${this.apiUrl}?action=reportAll&workerId=${encodeURIComponent(adminWorkerId)}`;
+      const url = `${this.apiUrl}?action=reportAll&requesterId=${encodeURIComponent(adminWorkerId)}`;
       const response = await fetch(url);
       const data = await response.json();
 

@@ -297,6 +297,14 @@ function getWorkerNames_() {
 // ======================================================
 //  ROLE & PERMISSION FUNCTIONS
 // ======================================================
+function normalizeRoleName_(rawRole) {
+  const role = String(rawRole || '').trim().toLowerCase();
+  if (role === 'admin') return 'Admin';
+  if (role === 'lead' || role === 'supervisor') return 'Lead';
+  if (role === 'worker' || role === 'user' || role === 'none' || !role) return 'Worker';
+  return String(rawRole || 'Worker').trim();
+}
+
 function getRole_(workerId) {
   const ss = SpreadsheetApp.openById(SHEET_ID);
   const sh = ss.getSheetByName('Workers');
@@ -304,16 +312,21 @@ function getRole_(workerId) {
   const headers = data[0].map(String);
   const iWorker = headers.indexOf('WorkerID');
   const iRole = headers.indexOf('App Access');
-  if (iWorker < 0 || iRole < 0) return 'User';
+  if (iWorker < 0 || iRole < 0) return 'Worker';
   for (let r = 1; r < data.length; r++) {
     if (String(data[r][iWorker]) === String(workerId)) {
-      return String(data[r][iRole] || 'User');
+      return normalizeRoleName_(data[r][iRole]);
     }
   }
-  return 'User';
+  return 'Worker';
 }
 
 function isAdmin_(workerId) {
   const role = getRole_(workerId);
   return role === 'Admin';
+}
+
+function isPrivilegedRole_(workerId) {
+  const role = getRole_(workerId);
+  return role === 'Admin' || role === 'Lead';
 }

@@ -1663,7 +1663,7 @@
 
           // Populate View As list and worker filter using workers from Workers sheet
           try {
-            const data = await jsonp(`${API_URL}?action=reportAll&workerId=${encodeURIComponent(workerId)}`);
+            const data = await jsonp(`${API_URL}?action=reportAll&requesterId=${encodeURIComponent(workerId)}`);
 
             const viewAsSelect = document.getElementById('viewAsSelect');
             const workerFilter = document.getElementById('workerFilter');

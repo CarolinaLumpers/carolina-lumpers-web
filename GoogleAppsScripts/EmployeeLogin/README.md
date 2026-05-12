@@ -97,3 +97,44 @@ testDateTimeFormats()
 // Test clock-in flow
 testClockInFlow('WORKER001', 35.7796, -78.6382)
 ```
+
+## Security Contract (May 2026)
+
+Sensitive read actions now require an explicit `requesterId` and enforce
+server-side access checks.
+
+### Required Request Parameters
+
+- `report`: requires `requesterId` and `workerId`
+- `whoami`: requires `requesterId` and `workerId`
+- `whois`: requires `requesterId` and `workerId`
+- `reportAll`: requires `requesterId`
+- `payroll`: requires `requesterId` and `workerId`
+- `payrollWeekPeriods`: requires `requesterId` and `workerId`
+- `payrollPdf`: requires `requesterId` and `workerId`
+- `reportAs` / `payrollAs`: require `requesterId` and `targetId` and admin role
+
+### Authorization Rules
+
+- Self-access: requester can access their own records (`requesterId === workerId`)
+- Cross-user access: admin-only
+- Denied requests are logged with action/requester/target context
+
+### Error Format
+
+Apps Script web apps return HTTP 200 for JSON responses; therefore auth and
+validation failures include structured fields in the body:
+
+- `message`: human-readable reason
+- `errorCode`: semantic status code (for example `400`, `403`)
+- `ok:false` or `success:false` depending on endpoint schema
+
+Example unauthorized payload:
+
+```json
+{
+	"ok": false,
+	"message": "Unauthorized",
+	"errorCode": 403
+}
+```

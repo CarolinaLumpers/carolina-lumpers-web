@@ -57,7 +57,8 @@
   <!-- CLS brand fonts: Oswald (headings) + Barlow (body) + Inter (UI details) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Oswald:wght@400;500;600;700&display=swap"
+  <link
+    href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Oswald:wght@400;500;600;700&display=swap"
     rel="stylesheet">
 
   <!-- Global CSS System -->
@@ -1388,7 +1389,7 @@
 
           // Populate View As list and worker filter using workers from Workers sheet
           try {
-            const data = await jsonp(`${API_URL}?action=reportAll&workerId=${encodeURIComponent(workerId)}`);
+            const data = await jsonp(`${API_URL}?action=reportAll&requesterId=${encodeURIComponent(workerId)}`);
 
             const viewAsSelect = document.getElementById('viewAsSelect');
             const workerFilter = document.getElementById('workerFilter');

@@ -101,9 +101,9 @@ export const api = {
     console.log("🔄 Using legacy Google Apps Script authentication...");
     const device = getDeviceInfo();
     const url = `${API_BASE}?action=login&email=${encodeURIComponent(
-      email
+      email,
     )}&password=${encodeURIComponent(password)}&device=${encodeURIComponent(
-      device
+      device,
     )}`;
 
     const response = await fetch(url);
@@ -122,9 +122,9 @@ export const api = {
   signup: async (email, password) => {
     const device = getDeviceInfo();
     const url = `${API_BASE}?action=signup&email=${encodeURIComponent(
-      email
+      email,
     )}&password=${encodeURIComponent(password)}&device=${encodeURIComponent(
-      device
+      device,
     )}`;
 
     const response = await fetch(url);
@@ -142,10 +142,8 @@ export const api = {
    */
   whoami: async (workerId) => {
     const url = `${API_BASE}?action=whoami&requesterId=${encodeURIComponent(
-      workerId
-    )}&workerId=${encodeURIComponent(
-      workerId
-    )}`;
+      workerId,
+    )}&workerId=${encodeURIComponent(workerId)}`;
     const response = await fetch(url);
     return response.json();
   },
@@ -156,9 +154,9 @@ export const api = {
   clockIn: async (workerId, lat, lng, lang = "en", email = "") => {
     const device = getDeviceInfo();
     const url = `${API_BASE}?action=clockin&workerId=${encodeURIComponent(
-      workerId
+      workerId,
     )}&lat=${lat}&lng=${lng}&lang=${lang}&email=${encodeURIComponent(
-      email
+      email,
     )}&device=${encodeURIComponent(device)}`;
 
     try {
@@ -181,10 +179,8 @@ export const api = {
    */
   getReport: async (workerId) => {
     const url = `${API_BASE}?action=report&requesterId=${encodeURIComponent(
-      workerId
-    )}&workerId=${encodeURIComponent(
-      workerId
-    )}`;
+      workerId,
+    )}&workerId=${encodeURIComponent(workerId)}`;
 
     try {
       const response = await fetch(url);
@@ -206,10 +202,8 @@ export const api = {
    */
   getPayroll: async (workerId, range = "week") => {
     const url = `${API_BASE}?action=payroll&requesterId=${encodeURIComponent(
-      workerId
-    )}&workerId=${encodeURIComponent(
-      workerId
-    )}&range=${range}`;
+      workerId,
+    )}&workerId=${encodeURIComponent(workerId)}&range=${range}`;
     const response = await fetch(url);
     return response.json();
   },
@@ -219,7 +213,7 @@ export const api = {
    */
   getW9Status: async (workerId) => {
     const url = `${API_BASE}?action=getW9Status&workerId=${encodeURIComponent(
-      workerId
+      workerId,
     )}`;
     const response = await fetch(url);
     return response.json();
@@ -229,8 +223,8 @@ export const api = {
    * Admin: Get all reports
    */
   getReportAll: async (workerId, workersCsv = "") => {
-    let url = `${API_BASE}?action=reportAll&workerId=${encodeURIComponent(
-      workerId
+    let url = `${API_BASE}?action=reportAll&requesterId=${encodeURIComponent(
+      workerId,
     )}`;
     if (workersCsv) {
       url += `&workers=${encodeURIComponent(workersCsv)}`;
@@ -244,7 +238,7 @@ export const api = {
    */
   getTimeEditRequests: async (requesterId, status = "pending") => {
     const url = `${API_BASE}?action=getTimeEditRequests&requesterId=${encodeURIComponent(
-      requesterId
+      requesterId,
     )}&status=${status}`;
     const response = await fetch(url);
     return response.json();
@@ -256,9 +250,9 @@ export const api = {
   approveTimeEdit: async (requesterId, requestId) => {
     const device = getDeviceInfo();
     const url = `${API_BASE}?action=approveTimeEdit&requesterId=${encodeURIComponent(
-      requesterId
+      requesterId,
     )}&requestId=${encodeURIComponent(requestId)}&device=${encodeURIComponent(
-      device
+      device,
     )}`;
     const response = await fetch(url);
     return response.json();
@@ -270,9 +264,9 @@ export const api = {
   denyTimeEdit: async (requesterId, requestId, reason = "") => {
     const device = getDeviceInfo();
     const url = `${API_BASE}?action=denyTimeEdit&requesterId=${encodeURIComponent(
-      requesterId
+      requesterId,
     )}&requestId=${encodeURIComponent(requestId)}&reason=${encodeURIComponent(
-      reason
+      reason,
     )}&device=${encodeURIComponent(device)}`;
     const response = await fetch(url);
     return response.json();
@@ -283,7 +277,7 @@ export const api = {
    */
   listPendingW9s: async (requesterId) => {
     const url = `${API_BASE}?action=listPendingW9s&requesterId=${encodeURIComponent(
-      requesterId
+      requesterId,
     )}`;
     const response = await fetch(url);
     return response.json();
@@ -295,9 +289,9 @@ export const api = {
   approveW9: async (w9RecordId, adminId) => {
     const device = getDeviceInfo();
     const url = `${API_BASE}?action=approveW9&w9RecordId=${encodeURIComponent(
-      w9RecordId
+      w9RecordId,
     )}&adminId=${encodeURIComponent(adminId)}&device=${encodeURIComponent(
-      device
+      device,
     )}`;
     const response = await fetch(url);
     return response.json();
@@ -309,9 +303,9 @@ export const api = {
   rejectW9: async (w9RecordId, adminId, reason) => {
     const device = getDeviceInfo();
     const url = `${API_BASE}?action=rejectW9&w9RecordId=${encodeURIComponent(
-      w9RecordId
+      w9RecordId,
     )}&adminId=${encodeURIComponent(adminId)}&reason=${encodeURIComponent(
-      reason
+      reason,
     )}&device=${encodeURIComponent(device)}`;
     const response = await fetch(url);
     return response.json();

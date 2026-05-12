@@ -9,8 +9,7 @@
 //  ADMIN REPORT FUNCTIONS
 // ======================================================
 function handleReportAll_(requestingWorkerId, workersCSV) {
-  const role = getRole_(requestingWorkerId);
-  if (role !== "Admin" && role !== "Supervisor") {
+  if (!isPrivilegedRole_(requestingWorkerId)) {
     return { ok: false, message: "Access denied" };
   }
 
