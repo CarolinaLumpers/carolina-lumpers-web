@@ -741,6 +741,11 @@
             window.addEventListener('languageChanged', function (e) {
                 syncApplyLang((e.detail && e.detail.language) || 'en');
             });
+
+            // Start client timing as soon as the form is ready.
+            if (form && form.elements && form.elements.startedAt) {
+                form.elements.startedAt.value = String(Date.now());
+            }
             // ────────────────────────────────────────────────────────────────
             var requiredFields = [
                 'first_name', 'last_name', 'email', 'phone', 'start_date', 'city', 'state',
@@ -842,6 +847,9 @@
                     successMsg.classList.add('ok');
                     successMsg.style.display = 'block';
                     form.reset();
+                    if (form.elements && form.elements.startedAt) {
+                        form.elements.startedAt.value = String(Date.now());
+                    }
                     submitBtn.disabled = false;
                 } catch (err) {
                     if (typeof gtag === 'function') {
@@ -853,7 +861,7 @@
                         });
                     }
 
-                    successMsg.textContent = _sMsgs.networkError;
+                    successMsg.textContent = (err && err.message) ? err.message : _sMsgs.networkError;
                     successMsg.classList.remove('ok');
                     successMsg.style.display = 'block';
                     submitBtn.disabled = false;

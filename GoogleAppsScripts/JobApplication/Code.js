@@ -26,6 +26,17 @@ function doPost(e) {
       parametersCount
     });
 
+    // Honeypot check: real users should leave this blank.
+    const honeypotValue = trim(data.website);
+    if (honeypotValue) {
+      logActivity_('ERROR', data, {
+        startTime,
+        error: 'Honeypot field filled',
+        extra: { website: honeypotValue }
+      });
+      return json({ ok: false, message: 'Unable to submit right now.' }, 400);
+    }
+
     // Anti-spam timing check
     const started = Number(data.startedAt || 0);
     const timingCheckPassed = started && (Date.now() - started >= MIN_SUBMIT_MS);
