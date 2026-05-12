@@ -149,8 +149,7 @@ function doPost(e) {
       trim(data.emergency_contact_name),
       trim(data.emergency_contact_relation),
       trim(data.emergency_contact_phone),
-      trim(data.referral_source),
-      workAuthFlag
+      trim(data.referral_source)
     ];
     sh.appendRow(row);
 
@@ -159,6 +158,7 @@ function doPost(e) {
     setValueByHeader_(sh, headers, insertedRow, ['status', 'application_status', 'application status'], applicationStatus);
     setValueByHeader_(sh, headers, insertedRow, ['work_auth_flag', 'work auth flag'], workAuthFlag);
     setValueByHeader_(sh, headers, insertedRow, ['work_authorization', 'work authorization'], workAuthorization);
+    setValueByHeader_(sh, headers, insertedRow, ['certifications'], trim(data.certifications));
 
     // ===== Add Status History record =====
     let historyLogged = false;
