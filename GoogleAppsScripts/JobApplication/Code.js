@@ -103,6 +103,12 @@ function doPost(e) {
 
     const now = new Date();
     const appId = Utilities.getUuid();
+    const workAuthorization = trim(data.work_authorization);
+    const flaggedBySelection = workAuthorization === 'Not Authorized';
+    const flaggedByPayload = String(trim(data.work_auth_flag)).toUpperCase() === 'REVIEW_REQUIRED';
+    const requiresWorkAuthReview = flaggedBySelection || flaggedByPayload;
+    const workAuthFlag = requiresWorkAuthReview ? 'REVIEW_REQUIRED' : 'OK';
+    const applicationStatus = requiresWorkAuthReview ? 'Submitted - Review Required' : 'Submitted';
 
     // ===== Build main Applications record =====
     const row = [
@@ -112,11 +118,11 @@ function doPost(e) {
       trim(data.role_applied),
       trim(data.experience_level),
       trim(data.shift_preference),
-      trim(data.work_authorization),
+      workAuthorization,
       trim(data.site),
       trim(data.notes),
       trim(data.ui_lang) || 'en',
-      'Submitted',
+      applicationStatus,
       trim(data.language_preference),
       trim(data.english_proficiency),
       trim(data.dob),
@@ -129,7 +135,8 @@ function doPost(e) {
       trim(data.emergency_contact_name),
       trim(data.emergency_contact_relation),
       trim(data.emergency_contact_phone),
-      trim(data.referral_source)
+      trim(data.referral_source),
+      workAuthFlag
     ];
     sh.appendRow(row);
 
@@ -142,7 +149,7 @@ function doPost(e) {
         appId,
         now,
         '',
-        'Submitted',
+        applicationStatus,
         '',
         'via web form'
       ]);
@@ -173,7 +180,8 @@ function doPost(e) {
           <tr><td style="padding:8px 10px;font-weight:bold;">Preferred Site:</td><td>${trim(data.site)}</td></tr>
           <tr><td style="padding:8px 10px;font-weight:bold;">Experience Level:</td><td>${trim(data.experience_level)}</td></tr>
           <tr><td style="padding:8px 10px;font-weight:bold;">Preferred Shift:</td><td>${trim(data.shift_preference)}</td></tr>
-          <tr><td style="padding:8px 10px;font-weight:bold;">Work Authorization:</td><td>${trim(data.work_authorization)}</td></tr>
+          <tr><td style="padding:8px 10px;font-weight:bold;">Work Authorization:</td><td>${workAuthorization}</td></tr>
+          <tr><td style="padding:8px 10px;font-weight:bold;">Internal Review Flag:</td><td>${workAuthFlag}</td></tr>
           <tr><td style="padding:8px 10px;font-weight:bold;">Language Preference:</td><td>${trim(data.language_preference)}</td></tr>
           <tr><td style="padding:8px 10px;font-weight:bold;">English Proficiency:</td><td>${trim(data.english_proficiency)}</td></tr>
           <tr><td style="padding:8px 10px;font-weight:bold;">Date of Birth:</td><td>${trim(data.dob)}</td></tr>
@@ -229,6 +237,7 @@ function doPost(e) {
       timingCheck: true,
       validationCheck: true,
       duplicateCheck: true,
+      workAuthFlag,
       emailSent,
       historyLogged
     });

@@ -806,7 +806,11 @@
                 }
 
                 var fd = new FormData(form);
+                var selectedWorkAuth = String((form.elements.work_authorization && form.elements.work_authorization.value) || '').trim();
+                var requiresWorkAuthReview = selectedWorkAuth === 'Not Authorized';
+
                 fd.append('formType', 'careers-application');
+                fd.append('work_auth_flag', requiresWorkAuthReview ? 'REVIEW_REQUIRED' : 'OK');
                 fd.append('submissionMeta', JSON.stringify({
                     clientTime: new Date().toISOString(),
                     timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
