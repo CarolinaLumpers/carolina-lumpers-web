@@ -77,8 +77,8 @@ function doPost(e) {
       return json({ ok: false, message: `Sheet "${MAIN}" not found.` }, 500);
     }
 
-    // Ensure schema has the internal review flag header.
-    ensureWorkAuthFlagHeader();
+    // Ensure schema has required headers for review/status handling.
+    ensureWorkAuthFlagHeader(sh);
 
     // ===== Duplicate Check =====
     const dataRange = sh.getDataRange().getValues();
@@ -328,22 +328,40 @@ function setValueByHeader_(sheet, headers, rowNumber, aliases, value) {
  * One-time maintenance helper.
  * Ensures the Applications sheet has a trailing `work_auth_flag` header.
  */
-function ensureWorkAuthFlagHeader() {
-  const ss = SpreadsheetApp.openById(SHEET_ID);
-  const sh = ss.getSheetByName(MAIN);
+function ensureWorkAuthFlagHeader(sh) {
+  if (!sh) {
+    const ss = SpreadsheetApp.openById(SHEET_ID);
+    sh = ss.getSheetByName(MAIN);
+  }
   if (!sh) {
     throw new Error(`Sheet "${MAIN}" not found.`);
   }
 
   const lastCol = Math.max(sh.getLastColumn(), 1);
   const headers = sh.getRange(1, 1, 1, lastCol).getValues()[0].map(h => trim(h));
-  const hasHeader = headers.some(h => h.toLowerCase() === 'work_auth_flag');
-  if (hasHeader) {
-    return { ok: true, updated: false, message: 'work_auth_flag header already exists' };
+  const hasWorkAuthFlag = headers.some(h => h.toLowerCase() === 'work_auth_flag');
+  const hasStatus = headers.some(h => normalizeHeader_(h) === 'status');
+
+  let inserted = 0;
+  if (!hasStatus) {
+    sh.getRange(1, lastCol + inserted + 1).setValue('status');
+    inserted += 1;
+  }
+  if (!hasWorkAuthFlag) {
+    sh.getRange(1, lastCol + inserted + 1).setValue('work_auth_flag');
+    inserted += 1;
   }
 
-  sh.getRange(1, lastCol + 1).setValue('work_auth_flag');
-  return { ok: true, updated: true, message: 'Added work_auth_flag header', column: lastCol + 1 };
+  if (!inserted) {
+    return { ok: true, updated: false, message: 'status/work_auth_flag headers already exist' };
+  }
+
+  return {
+    ok: true,
+    updated: true,
+    message: 'Added missing application headers',
+    inserted
+  };
 }
 
 /* ---------- Activity Logging ---------- */
