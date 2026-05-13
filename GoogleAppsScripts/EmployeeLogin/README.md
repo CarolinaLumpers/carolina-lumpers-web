@@ -16,36 +16,43 @@
 ## 🧩 Module Breakdown
 
 ### CLS_EmployeeLogin_Main.js
+
 - **Purpose**: Main API entry point
 - **Functions**: `doGet()` - Routes all incoming requests
 - **Dependencies**: All other modules
 
 ### CLS_EmployeeLogin_Config.js
+
 - **Purpose**: Centralized configuration
 - **Contains**: Sheet IDs, email addresses, geofence settings, timing constants
 - **No Dependencies**: Pure configuration
 
 ### CLS_EmployeeLogin_Utils.js
+
 - **Purpose**: Shared utility functions
 - **Functions**: Date formatting, distance calculations, password hashing, logging, translations
 - **Dependencies**: Config module
 
 ### CLS_EmployeeLogin_Workers.js
+
 - **Purpose**: Worker authentication and lookup
 - **Functions**: `loginUser()`, `signUpUser()`, `getWorkerIdByEmail()`, `lookupWorkerMeta_()`, `getRole_()`
 - **Dependencies**: Config, Utils
 
 ### CLS_EmployeeLogin_ClockIn.js
+
 - **Purpose**: Clock-in processing and notifications
 - **Functions**: `handleClockIn()`, `maybeNotifyLateClockIn_()`, `ensureMinIntervalMinutes_()`, `getWeeklyReportObj()`
 - **Dependencies**: Config, Utils, Workers
 
 ### CLS_EmployeeLogin_Admin.js
+
 - **Purpose**: Admin functions and payroll
 - **Functions**: `handleReportAll_()`, `getPayrollSummary_()`, `generatePayrollPdf_()`
 - **Dependencies**: Config, Utils, Workers
 
 ### CLS_EmployeeLogin_TestTools.js
+
 - **Purpose**: Diagnostic and testing functions
 - **Functions**: `testDateTimeFormats()`, `testSystemConfig()`, `testClockInFlow()`
 - **Dependencies**: All modules
@@ -89,13 +96,13 @@ After deployment, test the system:
 
 ```javascript
 // Test system configuration
-testSystemConfig()
+testSystemConfig();
 
 // Test date/time formats
-testDateTimeFormats()
+testDateTimeFormats();
 
 // Test clock-in flow
-testClockInFlow('WORKER001', 35.7796, -78.6382)
+testClockInFlow("WORKER001", 35.7796, -78.6382);
 ```
 
 ## Security Contract (May 2026)
@@ -146,8 +153,8 @@ Example unauthorized payload:
 
 ```json
 {
-	"ok": false,
-	"message": "Unauthorized",
-	"errorCode": 403
+  "ok": false,
+  "message": "Unauthorized",
+  "errorCode": 403
 }
 ```

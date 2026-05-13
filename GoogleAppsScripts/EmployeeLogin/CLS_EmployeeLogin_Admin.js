@@ -17,7 +17,7 @@ function handleReportAll_(requestingWorkerId, workersCSV) {
     (workersCSV || "")
       .split(",")
       .map((s) => s.trim())
-      .filter(Boolean)
+      .filter(Boolean),
   );
 
   const ss = SpreadsheetApp.openById(SHEET_ID);
@@ -138,7 +138,7 @@ function getPayrollSummary_(workerId, range) {
     .filter(
       (r) =>
         String(r[iWorker]).trim() === String(workerId) &&
-        normalizeISO_(r[iWeek]) === weekEndISO
+        normalizeISO_(r[iWeek]) === weekEndISO,
     )
     .map((r) => ({
       date: normalizeISO_(r[iDate]),
@@ -219,7 +219,7 @@ function getPayrollWeekPeriods_(workerId) {
     }
 
     Logger.log(
-      `Found ${matchCount} records for worker ${workerId}, ${periodSet.size} unique periods`
+      `Found ${matchCount} records for worker ${workerId}, ${periodSet.size} unique periods`,
     );
 
     // Convert to array and sort descending (newest first)
@@ -262,7 +262,7 @@ function generatePayrollPdf_(workerId, workerName, weekEndISO) {
     .filter(
       (r) =>
         String(r[iWorker]).trim() === String(workerId) &&
-        normalizeISO_(r[iWeek]) === weekEndISO
+        normalizeISO_(r[iWeek]) === weekEndISO,
     )
     .map((r) => ({
       workerId: r[iWorker],

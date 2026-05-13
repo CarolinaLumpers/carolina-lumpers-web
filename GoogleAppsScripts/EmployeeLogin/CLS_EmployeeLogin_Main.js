@@ -17,7 +17,7 @@ function doPost(e) {
 }
 
 function buildApiError_(message, errorCode, okField) {
-  const key = okField === 'ok' ? 'ok' : 'success';
+  const key = okField === "ok" ? "ok" : "success";
   const out = { message: message, errorCode: errorCode };
   out[key] = false;
   return out;
@@ -26,38 +26,44 @@ function buildApiError_(message, errorCode, okField) {
 function auditAccessDenied_(action, requesterId, targetId, reason, params) {
   try {
     TT_LOGGER.logSystem(`Access denied: ${action}`, {
-      status: 'WARNING',
+      status: "WARNING",
       action: action,
-      requesterId: requesterId || 'unknown',
-      targetId: targetId || '',
+      requesterId: requesterId || "unknown",
+      targetId: targetId || "",
       reason: reason,
-      device: (params && params.device) || 'Unknown Device',
-      userAgent: (params && params.userAgent) || '',
-      timestamp: new Date().toISOString()
+      device: (params && params.device) || "Unknown Device",
+      userAgent: (params && params.userAgent) || "",
+      timestamp: new Date().toISOString(),
     });
   } catch (logErr) {
-    Logger.log('Access denied logging failed: ' + logErr);
+    Logger.log("Access denied logging failed: " + logErr);
   }
 }
 
 function authorizeRequest_(params, action, targetId, okField) {
-  const requester = String(params.requesterId || '');
-  const target = String(targetId || '');
-  const token = params.authToken || params.token || '';
+  const requester = String(params.requesterId || "");
+  const target = String(targetId || "");
+  const token = params.authToken || params.token || "";
 
   if (!requester || !target) {
-    auditAccessDenied_(action, requester, target, 'Missing requesterId/workerId', params);
+    auditAccessDenied_(
+      action,
+      requester,
+      target,
+      "Missing requesterId/workerId",
+      params,
+    );
     return {
       ok: false,
-      result: buildApiError_('Missing requesterId/workerId', 400, okField)
+      result: buildApiError_("Missing requesterId/workerId", 400, okField),
     };
   }
 
   if (!token) {
-    auditAccessDenied_(action, requester, target, 'Missing auth token', params);
+    auditAccessDenied_(action, requester, target, "Missing auth token", params);
     return {
       ok: false,
-      result: buildApiError_('Missing auth token', 401, okField)
+      result: buildApiError_("Missing auth token", 401, okField),
     };
   }
 
@@ -66,23 +72,35 @@ function authorizeRequest_(params, action, targetId, okField) {
     auditAccessDenied_(action, requester, target, verified.message, params);
     return {
       ok: false,
-      result: buildApiError_(verified.message, 401, okField)
+      result: buildApiError_(verified.message, 401, okField),
     };
   }
 
   if (verified.workerId !== requester) {
-    auditAccessDenied_(action, requester, target, 'Token/requester mismatch', params);
+    auditAccessDenied_(
+      action,
+      requester,
+      target,
+      "Token/requester mismatch",
+      params,
+    );
     return {
       ok: false,
-      result: buildApiError_('Unauthorized', 403, okField)
+      result: buildApiError_("Unauthorized", 403, okField),
     };
   }
 
-  if (requester !== target && verified.role !== 'Admin') {
-    auditAccessDenied_(action, requester, target, 'Unauthorized cross-user access', params);
+  if (requester !== target && verified.role !== "Admin") {
+    auditAccessDenied_(
+      action,
+      requester,
+      target,
+      "Unauthorized cross-user access",
+      params,
+    );
     return {
       ok: false,
-      result: buildApiError_('Unauthorized', 403, okField)
+      result: buildApiError_("Unauthorized", 403, okField),
     };
   }
 
@@ -139,7 +157,10 @@ function handleRequest(e) {
           break;
         }
 
-        const authTokenData = createAuthToken_(auth.workerId, getRole_(auth.workerId));
+        const authTokenData = createAuthToken_(
+          auth.workerId,
+          getRole_(auth.workerId),
+        );
 
         // Login logging handled by TT_LOGGER.logLogin() in loginUser() function
         result = {
@@ -223,7 +244,7 @@ function handleRequest(e) {
       // --------------------------
       case "report": {
         const target = String(params.workerId || "");
-        const auth = authorizeRequest_(params, action, target, 'ok');
+        const auth = authorizeRequest_(params, action, target, "ok");
         result = auth.ok ? getWeeklyReportObj(target) : auth.result;
         break;
       }
@@ -239,8 +260,8 @@ function handleRequest(e) {
         const who = String(params.requesterId || "");
         const workersCsv = String(params.workers || ""); // optional CSV filter
         if (!who) {
-          auditAccessDenied_(action, who, '', 'Missing requesterId', params);
-          result = buildApiError_("Missing requesterId", 400, 'ok');
+          auditAccessDenied_(action, who, "", "Missing requesterId", params);
+          result = buildApiError_("Missing requesterId", 400, "ok");
           break;
         }
         result = handleReportAll_(who, workersCsv);
@@ -249,7 +270,7 @@ function handleRequest(e) {
 
       case "whoami": {
         const who = String(params.workerId || "");
-        const auth = authorizeRequest_(params, action, who, 'ok');
+        const auth = authorizeRequest_(params, action, who, "ok");
         result = auth.ok
           ? { ok: true, role: getRole_(who), workerId: who }
           : auth.result;
@@ -260,14 +281,26 @@ function handleRequest(e) {
         const requester = String(params.requesterId || "");
         const targetId = params.workerId;
         if (!requester || !targetId) {
-          auditAccessDenied_(action, requester, targetId, 'Missing requesterId/workerId', params);
-          result = buildApiError_("Missing requesterId/workerId", 400, 'ok');
+          auditAccessDenied_(
+            action,
+            requester,
+            targetId,
+            "Missing requesterId/workerId",
+            params,
+          );
+          result = buildApiError_("Missing requesterId/workerId", 400, "ok");
         } else if (
           String(requester) !== String(targetId) &&
           !isAdmin_(requester)
         ) {
-          auditAccessDenied_(action, requester, targetId, 'Unauthorized worker metadata lookup', params);
-          result = buildApiError_("Unauthorized", 403, 'ok');
+          auditAccessDenied_(
+            action,
+            requester,
+            targetId,
+            "Unauthorized worker metadata lookup",
+            params,
+          );
+          result = buildApiError_("Unauthorized", 403, "ok");
         } else {
           result = lookupWorkerMeta_(targetId);
         }
@@ -278,11 +311,23 @@ function handleRequest(e) {
         const requester = params.requesterId;
         const target = params.targetId;
         if (!requester || !target) {
-          auditAccessDenied_(action, requester, target, 'Missing requesterId/targetId', params);
-          result = buildApiError_("Missing requesterId/targetId", 400, 'ok');
+          auditAccessDenied_(
+            action,
+            requester,
+            target,
+            "Missing requesterId/targetId",
+            params,
+          );
+          result = buildApiError_("Missing requesterId/targetId", 400, "ok");
         } else if (!isAdmin_(requester)) {
-          auditAccessDenied_(action, requester, target, 'Unauthorized reportAs attempt', params);
-          result = buildApiError_("Unauthorized", 403, 'ok');
+          auditAccessDenied_(
+            action,
+            requester,
+            target,
+            "Unauthorized reportAs attempt",
+            params,
+          );
+          result = buildApiError_("Unauthorized", 403, "ok");
         } else {
           result = handleReportForWorker_(target);
         }
@@ -294,11 +339,23 @@ function handleRequest(e) {
         const target = params.targetId;
         const range = params.range || "current";
         if (!requester || !target) {
-          auditAccessDenied_(action, requester, target, 'Missing requesterId/targetId', params);
-          result = buildApiError_("Missing requesterId/targetId", 400, 'ok');
+          auditAccessDenied_(
+            action,
+            requester,
+            target,
+            "Missing requesterId/targetId",
+            params,
+          );
+          result = buildApiError_("Missing requesterId/targetId", 400, "ok");
         } else if (!isAdmin_(requester)) {
-          auditAccessDenied_(action, requester, target, 'Unauthorized payrollAs attempt', params);
-          result = buildApiError_("Unauthorized", 403, 'ok');
+          auditAccessDenied_(
+            action,
+            requester,
+            target,
+            "Unauthorized payrollAs attempt",
+            params,
+          );
+          result = buildApiError_("Unauthorized", 403, "ok");
         } else {
           result = handlePayrollForWorker_(target, range);
         }
@@ -539,7 +596,7 @@ function handleRequest(e) {
       // --------------------------
       case "payroll": {
         const target = String(params.workerId || "");
-        const auth = authorizeRequest_(params, action, target, 'success');
+        const auth = authorizeRequest_(params, action, target, "success");
         result = auth.ok
           ? getPayrollSummary_(target, params.range || "current")
           : auth.result;
@@ -550,11 +607,27 @@ function handleRequest(e) {
         const requester = String(params.requesterId || "");
         const target = String(params.workerId || "");
         if (!requester || !target) {
-          auditAccessDenied_(action, requester, target, 'Missing requesterId/workerId', params);
-          result = buildApiError_("Missing requesterId/workerId", 400, 'success');
+          auditAccessDenied_(
+            action,
+            requester,
+            target,
+            "Missing requesterId/workerId",
+            params,
+          );
+          result = buildApiError_(
+            "Missing requesterId/workerId",
+            400,
+            "success",
+          );
         } else if (requester !== target && !isAdmin_(requester)) {
-          auditAccessDenied_(action, requester, target, 'Unauthorized payroll periods lookup', params);
-          result = buildApiError_("Unauthorized", 403, 'success');
+          auditAccessDenied_(
+            action,
+            requester,
+            target,
+            "Unauthorized payroll periods lookup",
+            params,
+          );
+          result = buildApiError_("Unauthorized", 403, "success");
         } else {
           result = getPayrollWeekPeriods_(target);
         }
@@ -565,11 +638,27 @@ function handleRequest(e) {
         const requester = String(params.requesterId || "");
         const target = String(params.workerId || "");
         if (!requester || !target) {
-          auditAccessDenied_(action, requester, target, 'Missing requesterId/workerId', params);
-          result = buildApiError_("Missing requesterId/workerId", 400, 'success');
+          auditAccessDenied_(
+            action,
+            requester,
+            target,
+            "Missing requesterId/workerId",
+            params,
+          );
+          result = buildApiError_(
+            "Missing requesterId/workerId",
+            400,
+            "success",
+          );
         } else if (requester !== target && !isAdmin_(requester)) {
-          auditAccessDenied_(action, requester, target, 'Unauthorized payroll PDF request', params);
-          result = buildApiError_("Unauthorized", 403, 'success');
+          auditAccessDenied_(
+            action,
+            requester,
+            target,
+            "Unauthorized payroll PDF request",
+            params,
+          );
+          result = buildApiError_("Unauthorized", 403, "success");
         } else {
           result = {
             pdfUrl: generatePayrollPdf_(

@@ -14,9 +14,9 @@ const SHEET_ID = PROPS.getProperty("SHEET_ID");
 // --- SECURITY CONFIGURATION ---
 const HASH_SALT = PROPS.getProperty("HASH_SALT");
 const AUTH_TOKEN_SECRET =
-	PROPS.getProperty("AUTH_TOKEN_SECRET") || HASH_SALT || "cls-fallback-secret";
+  PROPS.getProperty("AUTH_TOKEN_SECRET") || HASH_SALT || "cls-fallback-secret";
 const AUTH_TOKEN_TTL_MINUTES = Number(
-	PROPS.getProperty("AUTH_TOKEN_TTL_MINUTES") || 480,
+  PROPS.getProperty("AUTH_TOKEN_TTL_MINUTES") || 480,
 );
 
 // --- GEOFENCING CONFIGURATION ---
