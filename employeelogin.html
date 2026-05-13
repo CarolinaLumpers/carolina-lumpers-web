@@ -42,6 +42,7 @@
   <link rel="apple-touch-icon" href="assets/CLS-icon-192.png">
 
   <link rel="stylesheet" href="css/index-fresh-variant.css?v=20260423-a2">
+  <link rel="stylesheet" href="css/auth-pages-shared.css?v=20260513-auth-shared-1">
   <link rel="stylesheet" href="css/variant-a-priority1-modules.css?v=20260423-p1mods-a47">
 
   <style>
@@ -64,7 +65,7 @@
     body.variant-a[data-page="login"] .login-hero {
       align-items: center;
       min-height: clamp(420px, 54vh, 560px);
-      padding-bottom: 0;
+      padding-bottom: clamp(1.25rem, 2.2vw, 2rem);
       margin-bottom: 0;
     }
 
@@ -388,8 +389,14 @@
         <form id="loginForm">
           <input type="email" id="email" name="email" autocomplete="email" placeholder="Work Email" data-en="Work Email"
             data-es="Correo de Trabajo" data-pt="Email de Trabalho" required>
-          <input type="password" id="password" name="password" autocomplete="current-password" placeholder="Password"
-            data-en="Password" data-es="Contraseña" data-pt="Senha" required>
+          <div class="password-row">
+            <input type="password" id="password" name="password" autocomplete="current-password" placeholder="Password"
+              data-en="Password" data-es="Contraseña" data-pt="Senha" required>
+            <button type="button" class="password-toggle" data-target="password" data-show-en="Show password"
+              data-show-es="Mostrar contrasena" data-show-pt="Mostrar senha" data-hide-en="Hide password"
+              data-hide-es="Ocultar contrasena" data-hide-pt="Ocultar senha" aria-label="Show password"
+              title="Show password">👁</button>
+          </div>
 
           <button type="submit" id="loginBtn" data-en="Login" data-es="Iniciar Sesión" data-pt="Entrar">Login</button>
 
@@ -405,30 +412,7 @@
       </article>
     </section>
 
-    <!-- Employee portal feature strip -->
-    <section class="login-feature-strip" aria-label="Portal features">
-      <article>
-        <h2 data-en="📍 GPS Clock-In" data-es="📍 Registro de Entrada GPS" data-pt="📍 Registro GPS">📍 GPS Clock-In
-        </h2>
-        <p data-en="Clock in from any job site with location verification."
-          data-es="Regístrate desde cualquier sitio de trabajo con verificación de ubicación."
-          data-pt="Registre entrada em qualquer canteiro com verificação de localização.">Clock in from any job site
-          with location verification.</p>
-      </article>
-      <article>
-        <h2 data-en="🗓 Your Schedule" data-es="🗓 Tu Horario" data-pt="🗓 Seu Horário">🗓 Your Schedule</h2>
-        <p data-en="View your upcoming shifts, hours, and assignments."
-          data-es="Consulta tus turnos, horas y asignaciones." data-pt="Veja seus turnos, horas e atribuições.">View
-          your upcoming shifts, hours, and assignments.</p>
-      </article>
-      <article>
-        <h2 data-en="💰 Payroll Access" data-es="💰 Acceso a Nómina" data-pt="💰 Acesso à Folha">💰 Payroll Access</h2>
-        <p data-en="Track your earnings and download pay summaries."
-          data-es="Consulta tus ganancias y descarga resúmenes de pago."
-          data-pt="Acompanhe seus ganhos e baixe resumos de pagamento.">Track your earnings and download pay summaries.
-        </p>
-      </article>
-    </section>
+    <section id="authFeatureStripMount" aria-label="Portal features"></section>
   </main>
 
   <div id="footer-container"></div>
@@ -576,6 +560,7 @@
   <!-- Cache Busting Utility -->
   <script>
     // Apply cache version to scripts dynamically
+    document.write('<script src="js/auth-feature-strip.js?v=20260513-auth-shared-1" defer><\/script>');
     document.write('<script src="js/cache-buster.js?v=' + CACHE_VERSION + '" defer><\/script>');
     document.write('<script src="js/script.js?v=' + CACHE_VERSION + '" defer><\/script>');
   </script>

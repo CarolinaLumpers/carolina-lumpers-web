@@ -2,25 +2,26 @@
 <html lang="en">
 
 <head>
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3032955456184358" crossorigin="anonymous"></script>
-  <!-- Cache Version Control - Update this timestamp when deploying -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3032955456184358"
+    crossorigin="anonymous"></script>
   <script>
-    const CACHE_VERSION = '20251222-1230'; // Format: YYYYMMDD-HHMM
+    const CACHE_VERSION = "20260513-0910";
   </script>
 
-  <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-JPETF03TJ0"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
-    function gtag() { dataLayer.push(arguments); }
-    gtag('js', new Date());
-    gtag('config', 'G-JPETF03TJ0');
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+    gtag("js", new Date());
+    gtag("config", "G-JPETF03TJ0");
   </script>
 
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title data-en="Employee Sign Up | Carolina Lumper Service" data-es="Registro de Empleado | Carolina Lumper Service"
-    data-pt="Cadastro de Funcionário | Carolina Lumper Service">
+    data-pt="Cadastro de Funcionario | Carolina Lumper Service">
     Employee Sign Up | Carolina Lumper Service
   </title>
 
@@ -28,58 +29,110 @@
   <link rel="manifest" href="manifest-employee.json">
   <meta name="theme-color" content="#ffcc00">
 
-  <!-- iOS PWA Support -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Oswald:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="CLS Employee">
   <link rel="apple-touch-icon" href="assets/CLS-icon-192.png">
 
-  <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
-
-  <!-- Dynamic CSS Loading with Cache Version -->
-  <script>
-    document.write('<link rel="stylesheet" href="css/style.css?v=' + CACHE_VERSION + '">');
-    document.write('<link rel="stylesheet" href="css/forms.css?v=' + CACHE_VERSION + '">');
-  </script>
+  <link rel="stylesheet" href="css/index-fresh-variant.css?v=20260423-a2">
+  <link rel="stylesheet" href="css/auth-pages-shared.css?v=20260513-auth-shared-1">
+  <link rel="stylesheet" href="css/variant-a-priority1-modules.css?v=20260423-p1mods-a47">
 </head>
 
-<body data-page="signup">
-  <!-- NAVBAR -->
+<body data-page="signup" class="variant-a">
   <div id="navbar-container"></div>
 
-  <!-- SIGN UP FORM -->
-  <div class="signup-container">
-    <h1 data-en="Employee Sign Up" data-es="Registro de Empleado" data-pt="Cadastro de Funcionário">Employee Sign Up
-    </h1>
+  <main>
+    <section class="hero login-hero" aria-label="Employee Signup">
+      <div class="hero-content">
+        <p class="meta" data-en="Create your employee access" data-es="Crea tu acceso de empleado"
+          data-pt="Crie seu acesso de funcionario">Create your employee access</p>
+        <h1 data-en="Employee Sign Up" data-es="Registro de Empleado" data-pt="Cadastro de Funcionario">Employee
+          Sign Up</h1>
+        <p class="hero-subtitle"
+          data-en="Create your account to access schedules, payroll summaries, and employee tools from one place."
+          data-es="Crea tu cuenta para acceder a horarios, resumenes de pago y herramientas de empleado en un solo lugar."
+          data-pt="Crie sua conta para acessar horarios, resumos de pagamento e ferramentas do funcionario em um so lugar.">
+          Create your account to access schedules, payroll summaries, and employee tools from one place.
+        </p>
+      </div>
 
-    <form id="signupForm" class="amber-glow"
-      action="https://script.google.com/macros/s/AKfycbwHBLEQ5QHuhD-O4uI4hRN_5_yS9YsFgtn_dMAdoAO2C7zHLoi3qfHO82vas3Uv0wXXpg/exec"
-      method="POST">
-      <input type="hidden" name="action" value="signup">
-      <input type="email" id="email" name="email" placeholder="Work Email" required data-en="Work Email"
-        data-es="Correo de Trabajo" data-pt="Email de Trabalho">
-      <input type="password" id="password" name="password" placeholder="Create Password" required
-        data-en="Create Password" data-es="Crear Contraseña" data-pt="Criar Senha">
-      <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password" required
-        data-en="Confirm Password" data-es="Confirmar Contraseña" data-pt="Confirmar Senha">
-      <button type="submit" data-en="Create Account" data-es="Crear Cuenta" data-pt="Criar Conta">Create
-        Account</button>
-      <p id="status" role="status" aria-live="polite"></p>
-    </form>
+      <article class="login-container hero-form" id="signup-panel">
+        <h2 data-en="Create Account" data-es="Crear Cuenta" data-pt="Criar Conta">Create Account</h2>
+        <p class="login-subtext" data-en="Use your work email and create a secure password."
+          data-es="Usa tu correo de trabajo y crea una contrasena segura."
+          data-pt="Use seu email de trabalho e crie uma senha segura.">
+          Use your work email and create a secure password.
+        </p>
 
-    <p style="margin-top:20px;">
-      <span data-en="Already have an account?" data-es="¿Ya tienes una cuenta?" data-pt="Já tem uma conta?">Already have
-        an account?</span>
-      <a href="employeelogin.html" data-en="Login here" data-es="Inicia sesión aquí" data-pt="Entre aqui">Login here</a>
-    </p>
-  </div>
+        <form id="signupForm">
+          <input type="email" id="email" name="email" autocomplete="email" placeholder="Work Email" data-en="Work Email"
+            data-es="Correo de Trabajo" data-pt="Email de Trabalho" required>
 
-  <!-- FOOTER -->
+          <div class="password-row">
+            <input type="password" id="password" name="password" autocomplete="new-password"
+              placeholder="Create Password" data-en="Create Password" data-es="Crear Contrasena" data-pt="Criar Senha"
+              required>
+            <button type="button" class="password-toggle" data-target="password" data-show-en="Show password"
+              data-show-es="Mostrar contrasena" data-show-pt="Mostrar senha" data-hide-en="Hide password"
+              data-hide-es="Ocultar contrasena" data-hide-pt="Ocultar senha" aria-label="Show password"
+              title="Show password">👁</button>
+          </div>
+
+          <div class="password-strength" aria-hidden="true">
+            <div id="passwordStrengthFill" class="password-strength-fill"></div>
+          </div>
+          <p id="passwordStrengthLabel" class="password-strength-label"></p>
+
+          <div class="password-row">
+            <input type="password" id="confirmPassword" name="confirmPassword" autocomplete="new-password"
+              placeholder="Confirm Password" data-en="Confirm Password" data-es="Confirmar Contrasena"
+              data-pt="Confirmar Senha" required>
+            <button type="button" class="password-toggle" data-target="confirmPassword" data-show-en="Show password"
+              data-show-es="Mostrar contrasena" data-show-pt="Mostrar senha" data-hide-en="Hide password"
+              data-hide-es="Ocultar contrasena" data-hide-pt="Ocultar senha" aria-label="Show password"
+              title="Show password">👁</button>
+          </div>
+
+          <p class="password-policy-hint"
+            data-en="Password must be at least 10 characters and include uppercase, lowercase, and a number."
+            data-es="La contrasena debe tener al menos 10 caracteres e incluir mayuscula, minuscula y numero."
+            data-pt="A senha deve ter pelo menos 10 caracteres e incluir maiuscula, minuscula e numero.">
+            Password must be at least 10 characters and include uppercase, lowercase, and a number.
+          </p>
+
+          <button type="submit" id="signupBtn" data-en="Create Account" data-es="Crear Cuenta" data-pt="Criar Conta">
+            Create Account
+          </button>
+
+          <p id="status" role="status" aria-live="polite"></p>
+        </form>
+
+        <div class="link">
+          <span data-en="Already have an account?" data-es="Ya tienes una cuenta?" data-pt="Ja tem uma conta?">
+            Already have an account?
+          </span>
+          <a href="employeelogin.html" data-en="Sign In" data-es="Inicia Sesion" data-pt="Entrar">Sign In</a>
+        </div>
+      </article>
+    </section>
+
+    <section id="authFeatureStripMount" aria-label="Portal features"></section>
+  </main>
+
   <div id="footer-container"></div>
 
-  <!-- Cache Busting Utility -->
-  <script src="js/cache-buster.js?v=2025-11-04" defer></script>
-  <script src="js/script.js?v=2025-11-04-signup" defer></script>
+  <script>
+    document.write('<script src="js/auth-feature-strip.js?v=20260513-auth-shared-1" defer><\/script>');
+    document.write('<script src="js/cache-buster.js?v=' + CACHE_VERSION + '" defer><\/script>');
+    document.write('<script src="js/script.js?v=' + CACHE_VERSION + '" defer><\/script>');
+  </script>
 </body>
 
 </html>

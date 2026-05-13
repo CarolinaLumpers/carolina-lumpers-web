@@ -1,0 +1,296 @@
+body.variant-a[data-page="login"],
+body.variant-a[data-page="signup"] {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+body.variant-a[data-page="login"] > main,
+body.variant-a[data-page="signup"] > main {
+  width: min(1180px, calc(100% - 2rem));
+  margin-inline: auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding-bottom: 2rem;
+}
+
+body.variant-a[data-page="login"] .login-hero,
+body.variant-a[data-page="signup"] .login-hero {
+  align-items: center;
+  min-height: clamp(420px, 54vh, 560px);
+  padding-bottom: clamp(1.25rem, 2.2vw, 2rem);
+  margin-bottom: 0;
+}
+
+body.variant-a[data-page="login"] .hero::after,
+body.variant-a[data-page="signup"] .hero::after {
+  content: none;
+}
+
+body.variant-a[data-page="login"] .login-hero .hero-content,
+body.variant-a[data-page="signup"] .login-hero .hero-content {
+  align-content: center;
+  gap: 0.85rem;
+}
+
+body.variant-a[data-page="login"] .login-hero .hero-content h1,
+body.variant-a[data-page="signup"] .login-hero .hero-content h1 {
+  margin: 0;
+  max-width: 14ch;
+  color: #ffffff;
+  font-size: clamp(2rem, 4.2vw, 3.2rem);
+  line-height: 1.1;
+  letter-spacing: 0.01em;
+}
+
+body.variant-a[data-page="signup"] .login-hero .hero-content h1 {
+  max-width: none;
+  white-space: nowrap;
+}
+
+body.variant-a[data-page="login"] .login-hero .hero-content .hero-subtitle,
+body.variant-a[data-page="signup"] .login-hero .hero-content .hero-subtitle {
+  max-width: 56ch;
+  color: #ececec;
+}
+
+body.variant-a[data-page="login"] .hero-form,
+body.variant-a[data-page="signup"] .hero-form {
+  align-self: center;
+  margin: 0;
+  border: 1px solid #ffffff22;
+  background: #ffffff;
+  color: #171717;
+  box-shadow: var(--p1-shadow);
+  padding: clamp(1.2rem, 2vw, 1.9rem);
+  border-radius: var(--p1-radius);
+  width: min(560px, 100%);
+}
+
+body.variant-a[data-page="login"] .login-container,
+body.variant-a[data-page="signup"] .login-container {
+  width: 100%;
+}
+
+body.variant-a[data-page="login"] .login-container h2,
+body.variant-a[data-page="signup"] .login-container h2 {
+  margin: 0 0 0.35rem;
+  color: #171717;
+  font-family: "Oswald", "Arial Narrow", Arial, sans-serif;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+}
+
+body.variant-a[data-page="login"] .login-subtext,
+body.variant-a[data-page="signup"] .login-subtext {
+  margin: 0 0 0.9rem;
+  color: #4b4b4b;
+}
+
+body.variant-a[data-page="login"] #loginForm,
+body.variant-a[data-page="signup"] #signupForm {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  padding: 0;
+  margin: 0;
+  max-width: none;
+}
+
+body.variant-a[data-page="login"] #loginForm input,
+body.variant-a[data-page="signup"] #signupForm input {
+  width: 100%;
+  min-height: 3rem;
+  padding: 0.8rem 0.95rem;
+  border: 1px solid #c9c9c3;
+  background: #ffffff;
+  color: #1b1b1b;
+}
+
+body.variant-a[data-page="login"] .password-row,
+body.variant-a[data-page="signup"] .password-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+body.variant-a[data-page="login"] .password-row input,
+body.variant-a[data-page="signup"] .password-row input {
+  padding-right: 2.9rem;
+}
+
+body.variant-a[data-page="login"] .password-toggle,
+body.variant-a[data-page="signup"] .password-toggle {
+  position: absolute;
+  right: 0.45rem;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 0;
+  background: transparent;
+  color: #555;
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+  padding: 0.3rem;
+}
+
+body.variant-a[data-page="login"] .password-toggle:hover,
+body.variant-a[data-page="signup"] .password-toggle:hover {
+  color: #1b1b1b;
+}
+
+body.variant-a[data-page="login"] .password-toggle:focus-visible,
+body.variant-a[data-page="signup"] .password-toggle:focus-visible {
+  outline: 2px solid rgba(216, 171, 36, 0.45);
+  border-radius: 8px;
+}
+
+body.variant-a[data-page="signup"] .password-strength {
+  width: 100%;
+  height: 0.5rem;
+  background: #ecece7;
+  border-radius: 999px;
+  overflow: hidden;
+  margin-top: -0.1rem;
+}
+
+body.variant-a[data-page="signup"] .password-strength-fill {
+  width: 0%;
+  height: 100%;
+  border-radius: inherit;
+  transition:
+    width 0.2s ease,
+    background-color 0.2s ease;
+  background: #b8b8b2;
+}
+
+body.variant-a[data-page="signup"] .password-strength-label {
+  margin: -0.2rem 0 0;
+  min-height: 1rem;
+  font-size: 0.84rem;
+  color: #666;
+}
+
+body.variant-a[data-page="signup"] .password-policy-hint {
+  margin: 0;
+  font-size: 0.84rem;
+  line-height: 1.4;
+  color: #5a5a55;
+}
+
+body.variant-a[data-page="login"] #loginForm input:focus,
+body.variant-a[data-page="signup"] #signupForm input:focus {
+  outline: 2px solid rgba(216, 171, 36, 0.35);
+  border-color: #b68813;
+}
+
+body.variant-a[data-page="login"] #loginBtn,
+body.variant-a[data-page="signup"] #signupBtn {
+  width: 100%;
+  min-height: 3rem;
+  border: 0;
+  border-radius: 12px;
+  background: #d8ab24;
+  color: #141414;
+  font-family: "Oswald", "Arial Narrow", Arial, sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition:
+    transform 0.16s ease,
+    box-shadow 0.16s ease,
+    background-color 0.16s ease;
+}
+
+body.variant-a[data-page="login"] #loginBtn:hover,
+body.variant-a[data-page="signup"] #signupBtn:hover {
+  background: #c3961b;
+  transform: translateY(-1px);
+  box-shadow: 0 10px 20px rgba(182, 136, 19, 0.28);
+}
+
+body.variant-a[data-page="login"] #status,
+body.variant-a[data-page="signup"] #status {
+  margin: 0.3rem 0 0;
+  min-height: 1.2rem;
+  font-size: 0.93rem;
+}
+
+body.variant-a[data-page="login"] .link,
+body.variant-a[data-page="signup"] .link {
+  margin-top: 1rem;
+  text-align: left;
+}
+
+body.variant-a[data-page="login"] .link a,
+body.variant-a[data-page="signup"] .link a {
+  font-weight: 600;
+  color: #1f1f1f;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+body.variant-a[data-page="login"] .login-feature-strip,
+body.variant-a[data-page="signup"] .login-feature-strip {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.8rem;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  margin: 0.6rem 0 0;
+}
+
+body.variant-a[data-page="login"] .login-feature-strip article,
+body.variant-a[data-page="signup"] .login-feature-strip article {
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  box-shadow: var(--shadow-soft);
+  padding: clamp(1.05rem, 2vw, 1.5rem);
+}
+
+body.variant-a[data-page="login"] .login-feature-strip article h2,
+body.variant-a[data-page="signup"] .login-feature-strip article h2 {
+  font-family: "Cormorant Garamond", serif;
+  font-size: clamp(1.2rem, 2vw, 1.5rem);
+  font-weight: 700;
+  color: var(--charcoal-strong);
+  text-transform: none;
+  letter-spacing: 0;
+  margin: 0;
+}
+
+body.variant-a[data-page="login"] .login-feature-strip article p,
+body.variant-a[data-page="signup"] .login-feature-strip article p {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  margin: 0.62rem 0 0;
+  line-height: 1.5;
+}
+
+@media (max-width: 900px) {
+  body.variant-a[data-page="login"] .login-hero,
+  body.variant-a[data-page="signup"] .login-hero {
+    min-height: auto;
+  }
+
+  body.variant-a[data-page="login"] .hero-form,
+  body.variant-a[data-page="signup"] .hero-form {
+    border-radius: var(--p1-radius);
+  }
+}
+
+@media (max-width: 600px) {
+  body.variant-a[data-page="login"] .login-feature-strip,
+  body.variant-a[data-page="signup"] .login-feature-strip {
+    grid-template-columns: 1fr;
+  }
+}

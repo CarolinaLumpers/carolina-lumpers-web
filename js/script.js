@@ -1133,47 +1133,184 @@ function initApplyForm() {
   });
 }
 
+function initPasswordToggles(scope = document) {
+  const toggles = scope.querySelectorAll(".password-toggle[data-target]");
+  const currentLang = localStorage.getItem("CLS_Lang") || "en";
+
+  toggles.forEach((toggle) => {
+    if (toggle.dataset.bound === "true") return;
+
+    const targetId = toggle.dataset.target;
+    const input = document.getElementById(targetId);
+    if (!input) return;
+
+    const applyToggleLabel = () => {
+      const visible = input.type === "text";
+      const suffix =
+        currentLang === "es" ? "Es" : currentLang === "pt" ? "Pt" : "En";
+      const labelKey = visible ? `hide${suffix}` : `show${suffix}`;
+      const defaultLabel = visible ? "Hide password" : "Show password";
+      const label = toggle.dataset[labelKey] || defaultLabel;
+      toggle.setAttribute("aria-label", label);
+      toggle.title = label;
+    };
+
+    toggle.addEventListener("click", () => {
+      input.type = input.type === "password" ? "text" : "password";
+      applyToggleLabel();
+    });
+
+    applyToggleLabel();
+    toggle.dataset.bound = "true";
+  });
+}
+
 // Employee Signup Module
 function initSignupForm() {
   const form = document.getElementById("signupForm");
   if (!form) return;
 
   const statusEl = document.getElementById("status");
+  const passwordInput = document.getElementById("password");
+  const confirmInput = document.getElementById("confirmPassword");
+  const strengthFill = document.getElementById("passwordStrengthFill");
+  const strengthLabel = document.getElementById("passwordStrengthLabel");
+
+  if (!passwordInput || !confirmInput) return;
+
   const MESSAGES = {
     en: {
       sending: "⏳ Creating account...",
       success: "✅ Account created! You can now log in.",
       error: "❌ Please fill in all fields.",
       mismatch: "❌ Passwords do not match.",
+      weakPassword:
+        "❌ Password must be at least 10 characters and include uppercase, lowercase, and a number.",
       serverError: "⚠️ Error during signup.",
+      strength: [
+        "Strength: too weak",
+        "Strength: weak",
+        "Strength: fair",
+        "Strength: good",
+        "Strength: strong",
+      ],
     },
     es: {
       sending: "⏳ Creando cuenta...",
       success: "✅ ¡Cuenta creada! Ya puedes iniciar sesión.",
       error: "❌ Por favor completa todos los campos.",
       mismatch: "❌ Las contraseñas no coinciden.",
+      weakPassword:
+        "❌ La contrasena debe tener al menos 10 caracteres e incluir mayuscula, minuscula y numero.",
       serverError: "⚠️ Error durante el registro.",
+      strength: [
+        "Fortaleza: muy debil",
+        "Fortaleza: debil",
+        "Fortaleza: regular",
+        "Fortaleza: buena",
+        "Fortaleza: fuerte",
+      ],
     },
     pt: {
       sending: "⏳ Criando conta...",
       success: "✅ Conta criada! Agora você pode fazer login.",
       error: "❌ Por favor preencha todos os campos.",
       mismatch: "❌ As senhas não coincidem.",
+      weakPassword:
+        "❌ A senha deve ter pelo menos 10 caracteres e incluir maiuscula, minuscula e numero.",
       serverError: "⚠️ Erro durante o cadastro.",
+      strength: [
+        "Forca: muito fraca",
+        "Forca: fraca",
+        "Forca: regular",
+        "Forca: boa",
+        "Forca: forte",
+      ],
     },
   };
+
+  const getCurrentLang = () => localStorage.getItem("CLS_Lang") || "en";
+
+  const getPasswordScore = (value) => {
+    let score = 0;
+    if (value.length >= 10) score += 1;
+    if (/[A-Z]/.test(value)) score += 1;
+    if (/[a-z]/.test(value)) score += 1;
+    if (/[0-9]/.test(value)) score += 1;
+    return score;
+  };
+
+  const meetsPasswordPolicy = (value) => getPasswordScore(value) === 4;
+
+  const updateStrengthUI = () => {
+    if (!strengthFill || !strengthLabel) return;
+
+    const lang = getCurrentLang();
+    const password = passwordInput.value || "";
+    const score = getPasswordScore(password);
+    const percent = (score / 4) * 100;
+
+    strengthFill.style.width = `${percent}%`;
+    if (!password) {
+      strengthFill.style.backgroundColor = "#b8b8b2";
+      strengthLabel.textContent = "";
+      return;
+    }
+
+    if (score <= 1) {
+      strengthFill.style.backgroundColor = "#d14343";
+    } else if (score <= 2) {
+      strengthFill.style.backgroundColor = "#de8d2e";
+    } else if (score === 3) {
+      strengthFill.style.backgroundColor = "#d8ab24";
+    } else {
+      strengthFill.style.backgroundColor = "#2f8c3e";
+    }
+
+    strengthLabel.textContent = MESSAGES[lang].strength[score];
+  };
+
+  const updateMismatchStatus = () => {
+    const lang = getCurrentLang();
+    const password = passwordInput.value;
+    const confirm = confirmInput.value;
+
+    if (!statusEl) return;
+    if (!confirm) return;
+
+    if (password !== confirm) {
+      statusEl.textContent = MESSAGES[lang].mismatch;
+    } else if (statusEl.textContent === MESSAGES[lang].mismatch) {
+      statusEl.textContent = "";
+    }
+  };
+
+  initPasswordToggles(form);
+  updateStrengthUI();
+
+  passwordInput.addEventListener("input", () => {
+    updateStrengthUI();
+    updateMismatchStatus();
+  });
+
+  confirmInput.addEventListener("input", updateMismatchStatus);
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const currentLang = localStorage.getItem("CLS_Lang") || "en";
+    const currentLang = getCurrentLang();
 
     const email = document.getElementById("email")?.value.trim();
-    const password = document.getElementById("password")?.value.trim();
-    const confirm = document.getElementById("confirmPassword")?.value.trim();
+    const password = passwordInput.value.trim();
+    const confirm = confirmInput.value.trim();
 
     if (!email || !password || !confirm) {
       if (statusEl) statusEl.textContent = MESSAGES[currentLang].error;
+      return;
+    }
+
+    if (!meetsPasswordPolicy(password)) {
+      if (statusEl) statusEl.textContent = MESSAGES[currentLang].weakPassword;
       return;
     }
 
@@ -1196,9 +1333,9 @@ function initSignupForm() {
           : text || MESSAGES[currentLang].serverError;
       }
 
-      // Reset form on success
       if (text.includes("✅")) {
         form.reset();
+        updateStrengthUI();
       }
     } catch (err) {
       console.error(err);
@@ -1232,6 +1369,7 @@ function initLoginForm() {
   console.log("✅ Login form found, setting up event handlers");
 
   const statusEl = document.getElementById("status");
+  initPasswordToggles(form);
 
   // 🔒 DEBOUNCE FLAG: Prevent double-submission race condition
   let isSubmitting = false;
@@ -1303,7 +1441,10 @@ function initLoginForm() {
         localStorage.setItem("CLS_W9Status", data.w9Status || "none"); // W-9 compliance status
         localStorage.setItem("CLS_Role", data.role || "Worker"); // User role (Admin/Lead/Worker)
         localStorage.setItem("CLS_AuthToken", data.authToken || "");
-        localStorage.setItem("CLS_AuthTokenExp", String(data.authTokenExp || ""));
+        localStorage.setItem(
+          "CLS_AuthTokenExp",
+          String(data.authTokenExp || ""),
+        );
 
         // Always stay logged in by default - no session expiry
         localStorage.setItem("CLS_RememberUser", "true");
