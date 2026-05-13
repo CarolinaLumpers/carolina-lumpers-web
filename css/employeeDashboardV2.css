@@ -54,6 +54,7 @@ body {
   max-width: 1120px;
   margin: 0 auto;
   padding: 1rem 0.9rem 2rem;
+  overflow-x: clip;
 }
 
 .site-header {
@@ -71,6 +72,7 @@ body {
   backdrop-filter: blur(12px);
   box-shadow: 0 8px 24px rgba(26, 26, 26, 0.08);
   margin-bottom: 1rem;
+  min-width: 0;
 }
 
 .wordmark {
@@ -83,7 +85,16 @@ body {
   letter-spacing: -0.01em;
   color: var(--hub-ink);
   white-space: nowrap;
-  flex-shrink: 0;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.wordmark span {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .wordmark img {
@@ -111,6 +122,8 @@ body {
   align-items: center;
   gap: 0.6rem;
   flex-wrap: nowrap;
+  flex: 0 0 auto;
+  min-width: 0;
 }
 
 .hub-user-chip {
@@ -134,6 +147,10 @@ body {
   background: color-mix(in srgb, var(--hub-accent) 19%, var(--hub-surface));
   color: var(--hub-accent-strong);
   box-shadow: var(--hub-shadow-soft);
+  max-width: 108px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .hub-status-pill[data-status="on-shift"] {
@@ -682,6 +699,17 @@ select {
   .header-controls {
     margin-left: auto;
     gap: 0.45rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .wordmark span {
+    max-width: 170px;
+  }
+
+  .hub-status-pill {
+    max-width: 90px;
+    padding: 0.34rem 0.54rem;
   }
 }
 
