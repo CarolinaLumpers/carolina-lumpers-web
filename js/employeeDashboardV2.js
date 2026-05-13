@@ -28,6 +28,8 @@
       refreshData: "Refresh Data",
       logout: "Logout",
       clockAction: "Clock In / Out",
+      clockIn: "Clock In",
+      clockOut: "Clock Out",
       refresh: "Refresh",
       offlineBanner:
         "You are offline. Clock actions may be queued until connection returns.",
@@ -49,6 +51,7 @@
       sendReport: "Send Report",
       hoursDetail: "Hours / Detail",
       checkAmount: "Check Amount",
+      totalLabel: "Total",
       adminDrawer: "Admin / Lead Drawer",
       adminHelp: "View data as another worker.",
       applyView: "Apply View",
@@ -59,6 +62,7 @@
       offShift: "Off Shift",
       onShift: "On Shift",
       synced: "Synced",
+      syncing: "Syncing",
       offline: "Offline",
       dataRefreshed: "Data refreshed",
       languageUpdated: "Language updated",
@@ -88,6 +92,8 @@
       refreshData: "Actualizar Datos",
       logout: "Cerrar Sesion",
       clockAction: "Marcar Entrada / Salida",
+      clockIn: "Marcar Entrada",
+      clockOut: "Marcar Salida",
       refresh: "Actualizar",
       offlineBanner:
         "Sin conexion. Las marcaciones pueden quedar en cola hasta reconectar.",
@@ -109,6 +115,7 @@
       sendReport: "Enviar Reporte",
       hoursDetail: "Horas / Detalle",
       checkAmount: "Monto del Cheque",
+      totalLabel: "Total",
       adminDrawer: "Panel Admin / Lead",
       adminHelp: "Ver datos como otro trabajador.",
       applyView: "Aplicar Vista",
@@ -119,6 +126,7 @@
       offShift: "Fuera de Turno",
       onShift: "En Turno",
       synced: "Sincronizado",
+      syncing: "Sincronizando",
       offline: "Sin conexion",
       dataRefreshed: "Datos actualizados",
       languageUpdated: "Idioma actualizado",
@@ -149,6 +157,8 @@
       refreshData: "Atualizar Dados",
       logout: "Sair",
       clockAction: "Registrar Entrada / Saida",
+      clockIn: "Registrar Entrada",
+      clockOut: "Registrar Saida",
       refresh: "Atualizar",
       offlineBanner:
         "Sem conexao. Os registros podem ficar em fila ate reconectar.",
@@ -170,6 +180,7 @@
       sendReport: "Enviar Relatorio",
       hoursDetail: "Horas / Detalhe",
       checkAmount: "Valor do Cheque",
+      totalLabel: "Total",
       adminDrawer: "Painel Admin / Lead",
       adminHelp: "Ver dados como outro trabalhador.",
       applyView: "Aplicar Visualizacao",
@@ -180,6 +191,7 @@
       offShift: "Fora do Turno",
       onShift: "Em Turno",
       synced: "Sincronizado",
+      syncing: "Sincronizando",
       offline: "Sem conexao",
       dataRefreshed: "Dados atualizados",
       languageUpdated: "Idioma atualizado",
@@ -198,8 +210,10 @@
       offlineDetected: "Sem conexao. Reconecte para enviar o registro.",
       loadPayrollFirst: "Carregue a folha primeiro.",
       payrollSent: "Relatorio de folha enviado.",
-      payrollSendFailed: "Nao foi possivel enviar o relatorio",      selectWorker: "Selecionar trabalhador...",
-      error: "Erro",    },
+      payrollSendFailed: "Nao foi possivel enviar o relatorio",
+      selectWorker: "Selecionar trabalhador...",
+      error: "Erro",
+    },
   };
 
   function normalizeLang(lang) {
@@ -211,6 +225,64 @@
   function t(key) {
     const dict = I18N[state.lang] || I18N.en;
     return dict[key] || I18N.en[key] || key;
+  }
+
+  function getLocale() {
+    if (state.lang === "es") return "es-ES";
+    if (state.lang === "pt") return "pt-BR";
+    return "en-US";
+  }
+
+  function formatCurrency(amount) {
+    const numeric = Number(amount || 0);
+    return new Intl.NumberFormat(getLocale(), {
+      style: "currency",
+      currency: "USD",
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(Number.isFinite(numeric) ? numeric : 0);
+  }
+
+  function formatNumber(value, fractionDigits) {
+    const numeric = Number(value || 0);
+    return new Intl.NumberFormat(getLocale(), {
+      minimumFractionDigits: fractionDigits,
+      maximumFractionDigits: fractionDigits,
+    }).format(Number.isFinite(numeric) ? numeric : 0);
+  }
+
+  function formatDateForDisplay(rawDate) {
+    if (!rawDate) return "-";
+
+    const text = String(rawDate).trim();
+    const mmddyyyy = text.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+    if (mmddyyyy) {
+      const month = Number(mmddyyyy[1]);
+      const day = Number(mmddyyyy[2]);
+      const year = Number(mmddyyyy[3]);
+      const dateObj = new Date(Date.UTC(year, month - 1, day));
+      return new Intl.DateTimeFormat(getLocale(), {
+        timeZone: "UTC",
+        month: "2-digit",
+        day: "2-digit",
+        year: "numeric",
+      }).format(dateObj);
+    }
+
+    const parsed = new Date(text);
+    if (!Number.isNaN(parsed.getTime())) {
+      return new Intl.DateTimeFormat(getLocale(), {
+        month: "2-digit",
+        day: "2-digit",
+        year: "numeric",
+      }).format(parsed);
+    }
+
+    return text;
+  }
+
+  function updatePayrollTotal(amount) {
+    dom.payrollTotal.textContent = `${t("totalLabel")}: ${formatCurrency(amount)}`;
   }
 
   function applyLanguage() {
@@ -227,7 +299,7 @@
     dom.langSelect.value = state.lang;
     setText("menuRefreshBtn", t("refreshData"));
     setText("menuLogoutBtn", t("logout"));
-    setText("clockActionBtn", t("clockAction"));
+    updateClockButtonFromState();
     setText("refreshBtn", t("refresh"));
     setText("offlineBanner", t("offlineBanner"));
 
@@ -273,20 +345,22 @@
 
     // Re-translate current status values
     const currentSync = dom.syncState.textContent?.trim();
-    if (currentSync === "Synced" || currentSync === "Sincronizado" || currentSync === "Sincronizado") {
-      dom.syncState.textContent = t("synced");
+    if (currentSync === "Synced" || currentSync === "Sincronizado") {
+      setSyncState("synced");
     } else if (currentSync === "Offline" || currentSync === "Sin conexion" || currentSync === "Sem conexao") {
-      dom.syncState.textContent = t("offline");
-    } else if (currentSync === "Error" || currentSync === "Error" || currentSync === "Erro") {
-      dom.syncState.textContent = t("error");
+      setSyncState("offline");
+    } else if (currentSync === "Syncing" || currentSync === "Sincronizando") {
+      setSyncState("syncing");
+    } else if (currentSync === "Error" || currentSync === "Erro") {
+      setSyncState("error");
     }
 
     // Re-translate shift state
     const currentShift = dom.shiftState.textContent?.trim();
     if (currentShift === "On Shift" || currentShift === "En Turno" || currentShift === "Em Turno") {
-      dom.shiftState.textContent = t("onShift");
+      setShiftStatus("onShift");
     } else if (currentShift === "Off Shift" || currentShift === "Fuera de Turno" || currentShift === "Fora do Turno") {
-      dom.shiftState.textContent = t("offShift");
+      setShiftStatus("offShift");
     }
   }
 
@@ -317,10 +391,51 @@
     hubMenuBackdrop: document.getElementById("hubMenuBackdrop"),
   };
 
+  function setSyncState(stateKey) {
+    const valid = ["synced", "syncing", "offline", "error"];
+    const key = valid.includes(stateKey) ? stateKey : "synced";
+    dom.syncState.textContent = t(key);
+    dom.syncState.dataset.status = key;
+  }
+
+  function setShiftStatus(stateKey) {
+    const map = {
+      onShift: { text: t("onShift"), attr: "on-shift" },
+      offShift: { text: t("offShift"), attr: "off-shift" },
+      syncing: { text: t("syncing"), attr: "syncing" },
+      offline: { text: t("offline"), attr: "offline" },
+      error: { text: t("error"), attr: "error" },
+    };
+    const chosen = map[stateKey] || map.offShift;
+    dom.shiftState.textContent = chosen.text;
+    dom.shiftStatusPill.textContent = chosen.text;
+    dom.shiftStatusPill.dataset.status = chosen.attr;
+    updateClockButtonFromState();
+  }
+
+  function updateClockButtonFromState() {
+    const btn = document.getElementById("clockActionBtn");
+    if (!btn) return;
+    const onShift = dom.shiftStatusPill.dataset.status === "on-shift";
+    btn.textContent = onShift ? t("clockOut") : t("clockIn");
+    btn.classList.toggle("is-clock-out", onShift);
+    btn.classList.toggle("is-clock-in", !onShift);
+  }
+
+  function renderTableLoading(tbodyEl, columns) {
+    tbodyEl.innerHTML = Array.from({ length: 3 })
+      .map(
+        () =>
+          `<tr>${"<td><span class='skeleton-line'></span></td>".repeat(columns)}</tr>`,
+      )
+      .join("");
+  }
+
   function closeMenu() {
     dom.hubMenu.classList.add("hidden");
     dom.hubMenuBackdrop.classList.add("hidden");
     dom.menuToggle.setAttribute("aria-expanded", "false");
+    dom.menuToggle.classList.remove("menu-open");
     document.body.style.overflow = "";
   }
 
@@ -329,6 +444,7 @@
     dom.hubMenu.classList.toggle("hidden", !willOpen);
     dom.hubMenuBackdrop.classList.toggle("hidden", !willOpen);
     dom.menuToggle.setAttribute("aria-expanded", willOpen ? "true" : "false");
+    dom.menuToggle.classList.toggle("menu-open", willOpen);
     document.body.style.overflow = willOpen ? "hidden" : "";
   }
 
@@ -459,11 +575,10 @@
     if (!todayRows.length) {
       dom.todayEntriesBody.innerHTML = `<tr><td colspan='3' class='muted'>${t("noEntriesToday")}</td></tr>`;
       dom.entryCount.textContent = "0";
-      dom.hoursEstimate.textContent = "0.00";
+      dom.hoursEstimate.textContent = formatNumber(0, 2);
       dom.lastEntry.textContent = "-";
       dom.lastSite.textContent = "-";
-      dom.shiftState.textContent = t("offShift");
-      dom.shiftStatusPill.textContent = t("offShift");
+      setShiftStatus("offShift");
       return;
     }
 
@@ -472,7 +587,7 @@
       .slice(0, 6)
       .map(
         (r) =>
-          `<tr><td>${r.date}</td><td>${r.time || "-"}</td><td>${r.site || "-"}</td></tr>`,
+          `<tr><td>${formatDateForDisplay(r.date)}</td><td>${r.time || "-"}</td><td>${r.site || "-"}</td></tr>`,
       )
       .join("");
 
@@ -482,30 +597,28 @@
       const n = Number(String(row.hours).replace(/[^0-9.-]/g, ""));
       return Number.isFinite(n) ? sum + n : sum;
     }, 0);
-    dom.hoursEstimate.textContent = hours.toFixed(2);
+    dom.hoursEstimate.textContent = formatNumber(hours, 2);
 
     const latest = sorted[0];
-    dom.lastEntry.textContent = `${latest.date} ${latest.time || ""}`.trim();
+    dom.lastEntry.textContent = `${formatDateForDisplay(latest.date)} ${latest.time || ""}`.trim();
     dom.lastSite.textContent = latest.site || "-";
 
     const active = !latest.clockOut || String(latest.clockOut).trim() === "";
-    const statusText = active ? t("onShift") : t("offShift");
-    dom.shiftState.textContent = statusText;
-    dom.shiftStatusPill.textContent = statusText;
+    setShiftStatus(active ? "onShift" : "offShift");
   }
 
   function renderPayroll(payload) {
     const rows = normalizePayrollRows(payload?.rows || []);
     if (!rows.length) {
       dom.payrollBody.innerHTML = `<tr><td colspan='3' class='muted'>${t("noPayrollRows")}</td></tr>`;
-      dom.payrollTotal.textContent = "Total: $0.00";
+      updatePayrollTotal(0);
       return;
     }
 
     dom.payrollBody.innerHTML = rows
       .map(
         (r) =>
-          `<tr><td>${r.date || "-"}</td><td>${r.detail || "-"}</td><td>$${r.checkAmount.toFixed(2)}</td></tr>`,
+          `<tr><td>${formatDateForDisplay(r.date)}</td><td>${r.detail || "-"}</td><td>${formatCurrency(r.checkAmount)}</td></tr>`,
       )
       .join("");
 
@@ -513,7 +626,7 @@
       payload?.totals?.checkAmountSum ||
         rows.reduce((sum, r) => sum + r.checkAmount, 0),
     );
-    dom.payrollTotal.textContent = `Total: $${amount.toFixed(2)}`;
+    updatePayrollTotal(amount);
     dom.payrollWeekPeriod = payload?.period?.weekEnd || "";
     state.payrollWeekPeriod = payload?.period?.weekEnd || "";
   }
@@ -559,7 +672,7 @@
   }
 
   async function loadReport() {
-    dom.todayEntriesBody.innerHTML = `<tr><td colspan='3' class='muted'>${t("loading")}</td></tr>`;
+    renderTableLoading(dom.todayEntriesBody, 3);
 
     let data;
     if (state.viewAsWorker && state.role === "Admin") {
@@ -574,7 +687,7 @@
   }
 
   async function loadPayroll() {
-    dom.payrollBody.innerHTML = `<tr><td colspan='3' class='muted'>${t("loading")}</td></tr>`;
+    renderTableLoading(dom.payrollBody, 3);
     const range = dom.rangeSelect.value || "current";
 
     let data;
@@ -593,7 +706,8 @@
     if (state.busy.clock) return;
     if (!navigator.onLine) {
       showToast(t("offlineDetected"), "error");
-      dom.syncState.textContent = t("offline");
+      setSyncState("offline");
+      setShiftStatus("offline");
       return;
     }
 
@@ -613,18 +727,19 @@
     const url = `${API_BASE}?action=clockin&workerId=${encodeURIComponent(state.workerId)}&lat=${pos.coords.latitude}&lng=${pos.coords.longitude}&lang=${encodeURIComponent(localStorage.getItem("CLS_Lang") || "en")}&email=${encodeURIComponent(state.email)}&device=${encodeURIComponent(getDeviceInfo())}`;
 
     const btn = document.getElementById("clockActionBtn");
-    const originalText = btn.textContent;
 
     await runWithBusyFlag(
       "clock",
       async () => {
         btn.disabled = true;
         btn.textContent = t("recording");
+        setSyncState("syncing");
+        setShiftStatus("syncing");
         try {
           const res = await jsonp(url);
           if (res && res.success) {
             showToast(res.message || t("clockRecorded"), "ok");
-            dom.syncState.textContent = t("synced");
+            setSyncState("synced");
           } else {
             throw new Error(
               (res && (res.error || res.message)) || t("clockFailed"),
@@ -633,13 +748,14 @@
           await Promise.all([loadReport(), loadPayroll()]);
         } catch (err) {
           showToast(err.message || t("clockFailed"), "error");
-          dom.syncState.textContent = t("error");
+          setSyncState("error");
+          setShiftStatus("error");
         }
       },
       {
         onFinally: () => {
           btn.disabled = false;
-          btn.textContent = originalText;
+          updateClockButtonFromState();
         },
       },
     );
@@ -684,7 +800,7 @@
 
   function updateOnlineState() {
     dom.offlineBanner.classList.toggle("hidden", navigator.onLine);
-    dom.syncState.textContent = navigator.onLine ? t("synced") : t("offline");
+    setSyncState(navigator.onLine ? "synced" : "offline");
   }
 
   function logout() {
@@ -757,10 +873,15 @@
           },
         );
       });
-    dom.langSelect.addEventListener("change", () => {
+    dom.langSelect.addEventListener("change", async () => {
       state.lang = dom.langSelect.value.toLowerCase();
       localStorage.setItem("CLS_Lang", state.lang);
       applyLanguage();
+      try {
+        await Promise.all([loadReport(), loadPayroll()]);
+      } catch (_err) {
+        // Keep language change responsive even if a fetch fails.
+      }
       showToast(`${t("languageUpdated")}: ${state.lang.toUpperCase()}`, "ok");
     });
     dom.rangeSelect.addEventListener("change", loadPayroll);
@@ -840,7 +961,7 @@
       return;
     }
 
-    dom.userChip.textContent = `${state.displayName} (${state.workerId})`;
+    dom.userChip.textContent = state.displayName;
     applyLanguage();
     updateOnlineState();
     attachEvents();

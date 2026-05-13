@@ -2,51 +2,66 @@
 <html lang="en">
 
 <head>
+    <script>
+        (function () {
+            try {
+                var theme = localStorage.getItem('CLS_Theme');
+                if (!theme) {
+                    theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+                }
+                document.documentElement.setAttribute('data-theme', theme);
+            } catch (e) { }
+        })();
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Worker Hub V2 | Carolina Lumper Service</title>
+    <link rel="icon" type="image/png" href="assets/CLS-favicon.png" />
+    <meta name="theme-color" content="#ffbf00">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
         href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="css/employeeDashboardV2.css?v=20260512-v2-4">
+    <link rel="stylesheet" href="css/variables.css?v=20260513-v2-theme">
+    <link rel="stylesheet" href="css/employeeDashboardV2.css?v=20260513-v2-theme-4">
 </head>
 
 <body>
     <div class="hub-shell">
-        <header class="hub-topbar">
-            <div class="hub-title-wrap">
-                <p class="hub-kicker">Carolina Lumper Service</p>
-                <h1 id="hubTitle" class="hub-title">Worker Hub</h1>
+        <header class="site-header">
+            <div class="wordmark">
+                <img src="assets/CLS-favicon.png" alt="" width="36" height="36">
+                <span>Carolina Lumper Service</span>
             </div>
-            <div class="hub-user-wrap">
-                <div class="hub-user-chip" id="userChip">Loading user...</div>
+            <div class="header-title">
+                <h1 id="hubTitle">Worker Hub</h1>
+            </div>
+            <div class="header-controls">
+                <div class="hub-user-chip" id="userChip">Loading...</div>
                 <div class="hub-status-pill" id="shiftStatusPill">Initializing</div>
-            </div>
-            <div class="hub-menu-wrap">
-                <button id="menuToggle" class="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false"
+                <button id="menuToggle" class="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false"
                     aria-controls="hubMenu">
                     <span></span>
                     <span></span>
                     <span></span>
                 </button>
-                <div id="hubMenu" class="hub-menu-panel hidden" role="menu" aria-label="Dashboard Menu">
-                    <div class="hub-menu-head">
-                        <h2 id="menuTitle">Menu</h2>
-                        <button id="menuCloseBtn" class="menu-close" type="button"
-                            aria-label="Close menu">Close</button>
-                    </div>
-                    <select id="menuLangSelect" class="menu-item menu-item-select" aria-label="Select language">
-                        <option value="en">English</option>
-                        <option value="es">Español</option>
-                        <option value="pt">Português</option>
-                    </select>
-                    <button id="menuRefreshBtn" class="ghost-btn menu-item" type="button" role="menuitem">Refresh
-                        Data</button>
-                    <button id="menuLogoutBtn" class="ghost-btn menu-item menu-danger" type="button"
-                        role="menuitem">Logout</button>
+            </div>
+            <div id="hubMenu" class="hub-menu-panel hidden" role="menu" aria-label="Dashboard Menu">
+                <div class="hub-menu-head">
+                    <h2 id="menuTitle">Menu</h2>
+                    <button id="menuCloseBtn" class="menu-close" type="button"
+                        aria-label="Close menu">Close</button>
                 </div>
+                <select id="menuLangSelect" class="menu-item menu-item-select" aria-label="Select language">
+                    <option value="en">English</option>
+                    <option value="es">Español</option>
+                    <option value="pt">Português</option>
+                </select>
+                <button id="menuRefreshBtn" class="ghost-btn menu-item" type="button" role="menuitem">Refresh
+                    Data</button>
+                <button id="menuLogoutBtn" class="ghost-btn menu-item menu-danger" type="button"
+                    role="menuitem">Logout</button>
             </div>
         </header>
         <div id="hubMenuBackdrop" class="hub-menu-backdrop hidden" aria-hidden="true"></div>
@@ -91,7 +106,7 @@
                             </thead>
                             <tbody id="todayEntriesBody">
                                 <tr>
-                                    <td colspan="3" class="muted">Loading...</td>
+                                    <td colspan="3" class="muted">...</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -138,12 +153,12 @@
                         </thead>
                         <tbody id="payrollBody">
                             <tr>
-                                <td colspan="3" class="muted">Loading...</td>
+                                <td colspan="3" class="muted">...</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-                <p class="payroll-total" id="payrollTotal">Total: $0.00</p>
+                <p class="payroll-total" id="payrollTotal">...</p>
             </section>
 
             <section class="hub-card admin-drawer hidden" id="adminDrawer" aria-label="Admin Tools">
@@ -163,7 +178,7 @@
 
     <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
 
-    <script src="js/employeeDashboardV2.js?v=20260512-v2-8" defer></script>
+    <script src="js/employeeDashboardV2.js?v=20260513-v2-polish1-langfix" defer></script>
 </body>
 
 </html>
