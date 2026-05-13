@@ -29,7 +29,26 @@
     adminDrawer: document.getElementById("adminDrawer"),
     offlineBanner: document.getElementById("offlineBanner"),
     toast: document.getElementById("toast"),
+    menuToggle: document.getElementById("menuToggle"),
+    hubMenu: document.getElementById("hubMenu"),
+    menuCloseBtn: document.getElementById("menuCloseBtn"),
+    hubMenuBackdrop: document.getElementById("hubMenuBackdrop"),
   };
+
+  function closeMenu() {
+    dom.hubMenu.classList.add("hidden");
+    dom.hubMenuBackdrop.classList.add("hidden");
+    dom.menuToggle.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = "";
+  }
+
+  function toggleMenu() {
+    const willOpen = dom.hubMenu.classList.contains("hidden");
+    dom.hubMenu.classList.toggle("hidden", !willOpen);
+    dom.hubMenuBackdrop.classList.toggle("hidden", !willOpen);
+    dom.menuToggle.setAttribute("aria-expanded", willOpen ? "true" : "false");
+    document.body.style.overflow = willOpen ? "hidden" : "";
+  }
 
   function getDeviceInfo() {
     const ua = navigator.userAgent;
@@ -376,12 +395,24 @@
     document
       .getElementById("sendPayrollBtn")
       .addEventListener("click", sendPayrollReport);
-    document.getElementById("logoutBtn").addEventListener("click", logout);
+    dom.menuToggle.addEventListener("click", (event) => {
+      event.stopPropagation();
+      toggleMenu();
+    });
+    dom.menuCloseBtn.addEventListener("click", closeMenu);
+    dom.hubMenuBackdrop.addEventListener("click", closeMenu);
+    document.getElementById("menuLogoutBtn").addEventListener("click", logout);
     document
-      .getElementById("langBtn")
-      .addEventListener("click", () =>
-        showToast("Language switch will be added to V2 next.", "ok"),
-      );
+      .getElementById("menuRefreshBtn")
+      .addEventListener("click", async () => {
+        closeMenu();
+        await Promise.all([loadReport(), loadPayroll()]);
+        showToast("Data refreshed", "ok");
+      });
+    document.getElementById("menuLangBtn").addEventListener("click", () => {
+      closeMenu();
+      showToast("Language switch will be added to V2 next.", "ok");
+    });
     dom.rangeSelect.addEventListener("change", loadPayroll);
 
     document
@@ -408,6 +439,17 @@
 
     window.addEventListener("online", updateOnlineState);
     window.addEventListener("offline", updateOnlineState);
+    document.addEventListener("click", (event) => {
+      if (
+        !dom.hubMenu.contains(event.target) &&
+        !dom.menuToggle.contains(event.target)
+      ) {
+        closeMenu();
+      }
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") closeMenu();
+    });
   }
 
   async function init() {

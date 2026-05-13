@@ -10,25 +10,42 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="css/employeeDashboardV2.css?v=20260512-v2-1">
+    <link rel="stylesheet" href="css/employeeDashboardV2.css?v=20260512-v2-2">
 </head>
 
 <body>
     <div class="hub-shell">
         <header class="hub-topbar">
             <div class="hub-title-wrap">
-                <p class="hub-kicker">Carolina Lumpers Service</p>
+                <p class="hub-kicker">Carolina Lumper Service</p>
                 <h1 class="hub-title">Worker Hub</h1>
             </div>
             <div class="hub-user-wrap">
                 <div class="hub-user-chip" id="userChip">Loading user...</div>
                 <div class="hub-status-pill" id="shiftStatusPill">Initializing</div>
             </div>
-            <div class="hub-actions-inline">
-                <button id="langBtn" class="ghost-btn" type="button">Language</button>
-                <button id="logoutBtn" class="ghost-btn" type="button">Logout</button>
+            <div class="hub-menu-wrap">
+                <button id="menuToggle" class="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false"
+                    aria-controls="hubMenu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <div id="hubMenu" class="hub-menu-panel hidden" role="menu" aria-label="Dashboard Menu">
+                    <div class="hub-menu-head">
+                        <h2>Menu</h2>
+                        <button id="menuCloseBtn" class="menu-close" type="button"
+                            aria-label="Close menu">Close</button>
+                    </div>
+                    <button id="menuLangBtn" class="ghost-btn menu-item" type="button" role="menuitem">Language</button>
+                    <button id="menuRefreshBtn" class="ghost-btn menu-item" type="button" role="menuitem">Refresh
+                        Data</button>
+                    <button id="menuLogoutBtn" class="ghost-btn menu-item menu-danger" type="button"
+                        role="menuitem">Logout</button>
+                </div>
             </div>
         </header>
+        <div id="hubMenuBackdrop" class="hub-menu-backdrop hidden" aria-hidden="true"></div>
 
         <main class="hub-main">
             <section class="quick-actions" aria-label="Quick Actions">
@@ -143,7 +160,7 @@
 
     <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
 
-    <script src="js/employeeDashboardV2.js?v=20260512-v2-1" defer></script>
+    <script src="js/employeeDashboardV2.js?v=20260512-v2-2" defer></script>
 </body>
 
 </html>
