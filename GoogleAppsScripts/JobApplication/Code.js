@@ -2,52 +2,55 @@
 
 // Load credentials from Script Properties (secure storage)
 const PROPS = PropertiesService.getScriptProperties();
-const SHEET_ID = PROPS.getProperty('SHEET_ID');
-const NOTIFY_EMAIL = PROPS.getProperty('NOTIFY_EMAIL');
+const SHEET_ID = PROPS.getProperty("SHEET_ID");
+const NOTIFY_EMAIL = PROPS.getProperty("NOTIFY_EMAIL");
 
-const MAIN = 'Applications';
-const HIST = 'Status_History';
-const ACTIVITY_LOG = 'Activity_Log';
+const MAIN = "Applications";
+const HIST = "Status_History";
+const ACTIVITY_LOG = "Activity_Log";
 const MIN_SUBMIT_MS = 1200;
 
 function doPost(e) {
   const startTime = Date.now();
   let data = {};
-  
+
   try {
     data = parseBody(e);
     const contentLength = e.postData ? e.postData.contents.length : 0;
     const parametersCount = Object.keys(data).length;
-    
+
     // Log initial receipt
-    logActivity_('RECEIVED', data, {
+    logActivity_("RECEIVED", data, {
       startTime,
       contentLength,
-      parametersCount
+      parametersCount,
     });
 
     // Honeypot check: real users should leave this blank.
     const honeypotValue = trim(data.website);
     if (honeypotValue) {
-      logActivity_('ERROR', data, {
+      logActivity_("ERROR", data, {
         startTime,
-        error: 'Honeypot field filled',
-        extra: { website: honeypotValue }
+        error: "Honeypot field filled",
+        extra: { website: honeypotValue },
       });
-      return json({ ok: false, message: 'Unable to submit right now.' }, 400);
+      return json({ ok: false, message: "Unable to submit right now." }, 400);
     }
 
     // Anti-spam timing check
     const started = Number(data.startedAt || 0);
-    const timingCheckPassed = started && (Date.now() - started >= MIN_SUBMIT_MS);
-    
+    const timingCheckPassed = started && Date.now() - started >= MIN_SUBMIT_MS;
+
     if (!timingCheckPassed) {
-      logActivity_('ERROR', data, {
+      logActivity_("ERROR", data, {
         startTime,
         timingCheck: false,
-        error: `Anti-spam check failed. Started: ${started}, Required: ${MIN_SUBMIT_MS}ms`
+        error: `Anti-spam check failed. Started: ${started}, Required: ${MIN_SUBMIT_MS}ms`,
       });
-      return json({ ok: false, message: 'Please wait a moment before submitting.' }, 429);
+      return json(
+        { ok: false, message: "Please wait a moment before submitting." },
+        429,
+      );
     }
 
     // Validate required fields
@@ -56,23 +59,26 @@ function doPost(e) {
     const email = trim(data.email);
     const phone = trim(data.phone);
     const validationPassed = first && last && isEmail(email) && phone;
-    
+
     if (!validationPassed) {
-      logActivity_('ERROR', data, {
+      logActivity_("ERROR", data, {
         startTime,
         timingCheck: true,
         validationCheck: false,
-        error: `Validation failed. First: ${!!first}, Last: ${!!last}, Email: ${!!email}, Phone: ${!!phone}`
+        error: `Validation failed. First: ${!!first}, Last: ${!!last}, Email: ${!!email}, Phone: ${!!phone}`,
       });
-      return json({ ok: false, message: 'Please check your name and email.' }, 400);
+      return json(
+        { ok: false, message: "Please check your name and email." },
+        400,
+      );
     }
 
     const ss = SpreadsheetApp.openById(SHEET_ID);
     const sh = ss.getSheetByName(MAIN);
     if (!sh) {
-      logActivity_('ERROR', data, {
+      logActivity_("ERROR", data, {
         startTime,
-        error: `Sheet "${MAIN}" not found`
+        error: `Sheet "${MAIN}" not found`,
       });
       return json({ ok: false, message: `Sheet "${MAIN}" not found.` }, 500);
     }
@@ -83,50 +89,78 @@ function doPost(e) {
     // ===== Duplicate Check =====
     const dataRange = sh.getDataRange().getValues();
     const headers = dataRange[0];
-    const emailIndex = findHeaderIndex_(headers, ['email']);
-    const phoneIndex = findHeaderIndex_(headers, ['phone', 'phone_number', 'phone number']);
+    const emailIndex = findHeaderIndex_(headers, ["email"]);
+    const phoneIndex = findHeaderIndex_(headers, [
+      "phone",
+      "phone_number",
+      "phone number",
+    ]);
 
     const normalizedEmail = email.toLowerCase();
-    const normalizedPhone = phone.replace(/\D/g, '');
+    const normalizedPhone = phone.replace(/\D/g, "");
 
-    const duplicate = dataRange.slice(1).some(r => {
-      const existingEmail = emailIndex > -1 ? (r[emailIndex] || '').toString().trim().toLowerCase() : '';
-      const existingPhone = phoneIndex > -1 ? (r[phoneIndex] || '').toString().replace(/\D/g, '') : '';
-      return existingEmail === normalizedEmail || (normalizedPhone && existingPhone === normalizedPhone);
+    const duplicate = dataRange.slice(1).some((r) => {
+      const existingEmail =
+        emailIndex > -1
+          ? (r[emailIndex] || "").toString().trim().toLowerCase()
+          : "";
+      const existingPhone =
+        phoneIndex > -1
+          ? (r[phoneIndex] || "").toString().replace(/\D/g, "")
+          : "";
+      return (
+        existingEmail === normalizedEmail ||
+        (normalizedPhone && existingPhone === normalizedPhone)
+      );
     });
 
     if (duplicate) {
-      logActivity_('ERROR', data, {
+      logActivity_("ERROR", data, {
         startTime,
         timingCheck: true,
         validationCheck: true,
         duplicateCheck: false,
-        error: 'Duplicate email or phone detected'
+        error: "Duplicate email or phone detected",
       });
-      return json({ ok: false, message: 'This email or phone number has already been used for an application.' }, 409);
+      return json(
+        {
+          ok: false,
+          message:
+            "This email or phone number has already been used for an application.",
+        },
+        409,
+      );
     }
     // ============================
-    
+
     // Log validation passed
-    logActivity_('VALIDATED', data, {
+    logActivity_("VALIDATED", data, {
       startTime,
       timingCheck: true,
       validationCheck: true,
-      duplicateCheck: true
+      duplicateCheck: true,
     });
 
     const now = new Date();
     const appId = Utilities.getUuid();
     const workAuthorization = trim(data.work_authorization);
-    const flaggedBySelection = workAuthorization === 'Not Authorized';
-    const flaggedByPayload = String(trim(data.work_auth_flag)).toUpperCase() === 'REVIEW_REQUIRED';
+    const flaggedBySelection = workAuthorization === "Not Authorized";
+    const flaggedByPayload =
+      String(trim(data.work_auth_flag)).toUpperCase() === "REVIEW_REQUIRED";
     const requiresWorkAuthReview = flaggedBySelection || flaggedByPayload;
-    const workAuthFlag = requiresWorkAuthReview ? 'REVIEW_REQUIRED' : 'OK';
-    const applicationStatus = requiresWorkAuthReview ? 'Submitted - Review Required' : 'Submitted';
+    const workAuthFlag = requiresWorkAuthReview ? "REVIEW_REQUIRED" : "OK";
+    const applicationStatus = requiresWorkAuthReview
+      ? "Submitted - Review Required"
+      : "Submitted";
 
     // ===== Build main Applications record =====
     const row = [
-      appId, now, first, last, email, phone,
+      appId,
+      now,
+      first,
+      last,
+      email,
+      phone,
       trim(data.city),
       trim(data.state),
       trim(data.role_applied),
@@ -135,7 +169,7 @@ function doPost(e) {
       workAuthorization,
       trim(data.site),
       trim(data.notes),
-      trim(data.ui_lang) || 'en',
+      trim(data.ui_lang) || "en",
       applicationStatus,
       trim(data.language_preference),
       trim(data.english_proficiency),
@@ -149,16 +183,40 @@ function doPost(e) {
       trim(data.emergency_contact_name),
       trim(data.emergency_contact_relation),
       trim(data.emergency_contact_phone),
-      trim(data.referral_source)
+      trim(data.referral_source),
     ];
     sh.appendRow(row);
 
     // Ensure key fields land in the intended columns even if sheet order drifts.
     const insertedRow = sh.getLastRow();
-    setValueByHeader_(sh, headers, insertedRow, ['status', 'application_status', 'application status'], applicationStatus);
-    setValueByHeader_(sh, headers, insertedRow, ['work_auth_flag', 'work auth flag'], workAuthFlag);
-    setValueByHeader_(sh, headers, insertedRow, ['work_authorization', 'work authorization'], workAuthorization);
-    setValueByHeader_(sh, headers, insertedRow, ['certifications'], trim(data.certifications));
+    setValueByHeader_(
+      sh,
+      headers,
+      insertedRow,
+      ["status", "application_status", "application status"],
+      applicationStatus,
+    );
+    setValueByHeader_(
+      sh,
+      headers,
+      insertedRow,
+      ["work_auth_flag", "work auth flag"],
+      workAuthFlag,
+    );
+    setValueByHeader_(
+      sh,
+      headers,
+      insertedRow,
+      ["work_authorization", "work authorization"],
+      workAuthorization,
+    );
+    setValueByHeader_(
+      sh,
+      headers,
+      insertedRow,
+      ["certifications"],
+      trim(data.certifications),
+    );
 
     // ===== Add Status History record =====
     let historyLogged = false;
@@ -168,10 +226,10 @@ function doPost(e) {
         Utilities.getUuid(),
         appId,
         now,
-        '',
+        "",
         applicationStatus,
-        '',
-        'via web form'
+        "",
+        "via web form",
       ]);
       historyLogged = true;
     }
@@ -231,20 +289,20 @@ function doPost(e) {
     `;
 
     try {
-      GmailApp.sendEmail(NOTIFY_EMAIL, subject, '', {
-        name: 'CLS Applications',
-        from: 'jobs@carolinalumpers.com',
-        cc: 's.garay@carolinalumpers.com',
+      GmailApp.sendEmail(NOTIFY_EMAIL, subject, "", {
+        name: "CLS Applications",
+        from: "jobs@carolinalumpers.com",
+        cc: "s.garay@carolinalumpers.com",
         replyTo: email,
-        htmlBody
+        htmlBody,
       });
       emailSent = true;
     } catch (emailErr) {
       // Email failed but application was saved - log but don't fail
-      logActivity_('ERROR', data, {
+      logActivity_("ERROR", data, {
         startTime,
         error: `Email send failed: ${emailErr.message}`,
-        extra: { applicationSaved: true }
+        extra: { applicationSaved: true },
       });
     }
 
@@ -252,33 +310,32 @@ function doPost(e) {
     data.application_id = appId;
 
     // Log successful processing
-    logActivity_('PROCESSED', data, {
+    logActivity_("PROCESSED", data, {
       startTime,
       timingCheck: true,
       validationCheck: true,
       duplicateCheck: true,
       workAuthFlag,
       emailSent,
-      historyLogged
+      historyLogged,
     });
 
     // ===== Multilingual success response =====
-    const lang = (trim(data.ui_lang) || 'en').toLowerCase();
-    let message = 'Thanks. We received your application.';
-    if (lang === 'es') message = 'Gracias. Recibimos su solicitud.';
-    else if (lang === 'pt') message = 'Obrigado. Recebemos sua candidatura.';
+    const lang = (trim(data.ui_lang) || "en").toLowerCase();
+    let message = "Thanks. We received your application.";
+    if (lang === "es") message = "Gracias. Recibimos su solicitud.";
+    else if (lang === "pt") message = "Obrigado. Recebemos sua candidatura.";
 
     return json({ success: true, ok: true, message, id: appId }, 200);
-
   } catch (err) {
     // Log catastrophic error
-    logActivity_('ERROR', data, {
+    logActivity_("ERROR", data, {
       startTime,
       error: `Unhandled error: ${err.message}`,
-      extra: { stack: err.stack }
+      extra: { stack: err.stack },
     });
-    
-    return json({ success: false, ok: false, message: 'Server error' }, 500);
+
+    return json({ success: false, ok: false, message: "Server error" }, 500);
   }
 }
 
@@ -286,24 +343,37 @@ function doPost(e) {
 
 function parseBody(e) {
   if (!e) return {};
-  const ct = (e.postData && e.postData.type) ? e.postData.type : '';
-  if (ct.indexOf('application/json') > -1 && e.postData && e.postData.contents) {
-    try { return JSON.parse(e.postData.contents) || {}; } catch (_) {}
+  const ct = e.postData && e.postData.type ? e.postData.type : "";
+  if (
+    ct.indexOf("application/json") > -1 &&
+    e.postData &&
+    e.postData.contents
+  ) {
+    try {
+      return JSON.parse(e.postData.contents) || {};
+    } catch (_) {}
   }
   return e.parameter || {};
 }
 
 function json(obj, status) {
-  return ContentService
-    .createTextOutput(JSON.stringify(obj))
-    .setMimeType(ContentService.MimeType.JSON);
+  return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(
+    ContentService.MimeType.JSON,
+  );
 }
 
-function trim(v) { return (v == null ? '' : v).toString().trim(); }
-function isEmail(v) { return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(String(v || '')); }
+function trim(v) {
+  return (v == null ? "" : v).toString().trim();
+}
+function isEmail(v) {
+  return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(String(v || ""));
+}
 
 function normalizeHeader_(value) {
-  return trim(value).toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '');
+  return trim(value)
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/^_+|_+$/g, "");
 }
 
 function findHeaderIndex_(headers, aliases) {
@@ -338,29 +408,38 @@ function ensureWorkAuthFlagHeader(sh) {
   }
 
   const lastCol = Math.max(sh.getLastColumn(), 1);
-  const headers = sh.getRange(1, 1, 1, lastCol).getValues()[0].map(h => trim(h));
-  const hasWorkAuthFlag = headers.some(h => h.toLowerCase() === 'work_auth_flag');
-  const hasStatus = headers.some(h => normalizeHeader_(h) === 'status');
+  const headers = sh
+    .getRange(1, 1, 1, lastCol)
+    .getValues()[0]
+    .map((h) => trim(h));
+  const hasWorkAuthFlag = headers.some(
+    (h) => h.toLowerCase() === "work_auth_flag",
+  );
+  const hasStatus = headers.some((h) => normalizeHeader_(h) === "status");
 
   let inserted = 0;
   if (!hasStatus) {
-    sh.getRange(1, lastCol + inserted + 1).setValue('status');
+    sh.getRange(1, lastCol + inserted + 1).setValue("status");
     inserted += 1;
   }
   if (!hasWorkAuthFlag) {
-    sh.getRange(1, lastCol + inserted + 1).setValue('work_auth_flag');
+    sh.getRange(1, lastCol + inserted + 1).setValue("work_auth_flag");
     inserted += 1;
   }
 
   if (!inserted) {
-    return { ok: true, updated: false, message: 'status/work_auth_flag headers already exist' };
+    return {
+      ok: true,
+      updated: false,
+      message: "status/work_auth_flag headers already exist",
+    };
   }
 
   return {
     ok: true,
     updated: true,
-    message: 'Added missing application headers',
-    inserted
+    message: "Added missing application headers",
+    inserted,
   };
 }
 
@@ -376,46 +455,53 @@ function logActivity_(stage, data, details) {
   try {
     const ss = SpreadsheetApp.openById(SHEET_ID);
     let sheet = ss.getSheetByName(ACTIVITY_LOG);
-    
+
     // Create Activity_Log sheet if it doesn't exist
     if (!sheet) {
       sheet = ss.insertSheet(ACTIVITY_LOG);
-      sheet.getRange('A1:J1').setValues([[
-        'Timestamp',
-        'Stage',
-        'Application ID',
-        'Email',
-        'Name',
-        'Client Time',
-        'Device',
-        'Processing Time (ms)',
-        'Details',
-        'Error'
-      ]]);
+      sheet
+        .getRange("A1:J1")
+        .setValues([
+          [
+            "Timestamp",
+            "Stage",
+            "Application ID",
+            "Email",
+            "Name",
+            "Client Time",
+            "Device",
+            "Processing Time (ms)",
+            "Details",
+            "Error",
+          ],
+        ]);
       sheet.setFrozenRows(1);
-      sheet.getRange('A1:J1').setFontWeight('bold');
+      sheet.getRange("A1:J1").setFontWeight("bold");
     }
-    
+
     const timestamp = new Date();
-    const appId = data.application_id || 'N/A';
-    const email = trim(data.email) || 'N/A';
-    const name = `${trim(data.first_name)} ${trim(data.last_name)}`.trim() || 'N/A';
-    
+    const appId = data.application_id || "N/A";
+    const email = trim(data.email) || "N/A";
+    const name =
+      `${trim(data.first_name)} ${trim(data.last_name)}`.trim() || "N/A";
+
     // Parse metadata if available
-    let clientTime = '', device = '', processingTime = '';
+    let clientTime = "",
+      device = "",
+      processingTime = "";
     try {
-      const meta = JSON.parse(data.submissionMeta || '{}');
-      clientTime = meta.clientTime || '';
-      device = meta.device || '';
+      const meta = JSON.parse(data.submissionMeta || "{}");
+      clientTime = meta.clientTime || "";
+      device = meta.device || "";
     } catch (e) {
       // Metadata parsing failed, continue with empty values
     }
-    
+
     // Calculate processing time if available
     if (details.startTime) {
       processingTime = Date.now() - details.startTime;
     }
-    
+
     // Build details string
     const detailsStr = JSON.stringify({
       contentLength: details.contentLength || 0,
@@ -425,11 +511,11 @@ function logActivity_(stage, data, details) {
       validationCheck: details.validationCheck,
       emailSent: details.emailSent,
       historyLogged: details.historyLogged,
-      ...details.extra
+      ...details.extra,
     });
-    
-    const errorStr = details.error || '';
-    
+
+    const errorStr = details.error || "";
+
     sheet.appendRow([
       timestamp,
       stage,
@@ -440,12 +526,11 @@ function logActivity_(stage, data, details) {
       device,
       processingTime,
       detailsStr,
-      errorStr
+      errorStr,
     ]);
-    
   } catch (logErr) {
     // If logging fails, don't block the main process
     // Could optionally log to a fallback location
-    console.error('Logging failed:', logErr.message);
+    console.error("Logging failed:", logErr.message);
   }
 }
