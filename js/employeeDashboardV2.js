@@ -77,6 +77,8 @@
       loadPayrollFirst: "Load payroll first.",
       payrollSent: "Payroll report sent.",
       payrollSendFailed: "Unable to send payroll report",
+      selectWorker: "Select worker...",
+      error: "Error",
     },
     es: {
       hubTitle: "Panel de Trabajo",
@@ -136,6 +138,8 @@
       loadPayrollFirst: "Primero carga la nomina.",
       payrollSent: "Reporte de nomina enviado.",
       payrollSendFailed: "No se pudo enviar el reporte de nomina",
+      selectWorker: "Seleccionar trabajador...",
+      error: "Error",
     },
     pt: {
       hubTitle: "Painel de Trabalho",
@@ -194,8 +198,8 @@
       offlineDetected: "Sem conexao. Reconecte para enviar o registro.",
       loadPayrollFirst: "Carregue a folha primeiro.",
       payrollSent: "Relatorio de folha enviado.",
-      payrollSendFailed: "Nao foi possivel enviar o relatorio",
-    },
+      payrollSendFailed: "Nao foi possivel enviar o relatorio",      selectWorker: "Selecionar trabalhador...",
+      error: "Erro",    },
   };
 
   function normalizeLang(lang) {
@@ -247,6 +251,7 @@
     setText("thPayrollAmount", t("checkAmount"));
 
     setText("adminDrawerTitle", t("adminDrawer"));
+    setText("roleTag", state.role || "Role");
     setText("adminHelpText", t("adminHelp"));
     setText("applyViewBtn", t("applyView"));
     setText("clearViewBtn", t("clear"));
@@ -261,6 +266,28 @@
     if (optionCurrent) optionCurrent.textContent = t("current");
     if (optionWeek) optionWeek.textContent = t("week");
     if (optionPrevious) optionPrevious.textContent = t("previous");
+
+    // Update worker dropdown placeholder
+    const workerPlaceholder = dom.viewAsSelect.querySelector("option[value='']");
+    if (workerPlaceholder) workerPlaceholder.textContent = t("selectWorker");
+
+    // Re-translate current status values
+    const currentSync = dom.syncState.textContent?.trim();
+    if (currentSync === "Synced" || currentSync === "Sincronizado" || currentSync === "Sincronizado") {
+      dom.syncState.textContent = t("synced");
+    } else if (currentSync === "Offline" || currentSync === "Sin conexion" || currentSync === "Sem conexao") {
+      dom.syncState.textContent = t("offline");
+    } else if (currentSync === "Error" || currentSync === "Error" || currentSync === "Erro") {
+      dom.syncState.textContent = t("error");
+    }
+
+    // Re-translate shift state
+    const currentShift = dom.shiftState.textContent?.trim();
+    if (currentShift === "On Shift" || currentShift === "En Turno" || currentShift === "Em Turno") {
+      dom.shiftState.textContent = t("onShift");
+    } else if (currentShift === "Off Shift" || currentShift === "Fuera de Turno" || currentShift === "Fora do Turno") {
+      dom.shiftState.textContent = t("offShift");
+    }
   }
 
 
@@ -515,7 +542,7 @@
       if (id && !unique.has(id)) unique.set(id, name);
     }
 
-    const options = [`<option value="">Select worker...</option>`].concat(
+    const options = [`<option value="">${t("selectWorker")}</option>`].concat(
       Array.from(unique.entries()).map(
         ([id, name]) => `<option value="${id}">${name} (${id})</option>`,
       ),
@@ -599,7 +626,7 @@
           await Promise.all([loadReport(), loadPayroll()]);
         } catch (err) {
           showToast(err.message || t("clockFailed"), "error");
-          dom.syncState.textContent = "Error";
+          dom.syncState.textContent = t("error");
         }
       },
       {
