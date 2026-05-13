@@ -7,11 +7,266 @@
     displayName: localStorage.getItem("CLS_WorkerName") || "Employee",
     email: localStorage.getItem("CLS_Email") || "",
     role: localStorage.getItem("CLS_Role") || "Worker",
+    lang: (localStorage.getItem("CLS_Lang") || "en").toLowerCase(),
     viewAsWorker: "",
     payrollWeekPeriod: "",
+    busy: {
+      refresh: false,
+      payrollSend: false,
+      applyView: false,
+      clearView: false,
+      clock: false,
+    },
   };
 
+  const I18N = {
+    en: {
+      hubTitle: "Worker Hub",
+      menu: "Menu",
+      close: "Close",
+      language: "Language",
+      refreshData: "Refresh Data",
+      logout: "Logout",
+      clockAction: "Clock In / Out",
+      refresh: "Refresh",
+      offlineBanner:
+        "You are offline. Clock actions may be queued until connection returns.",
+      currentShift: "Current Shift",
+      state: "State",
+      lastEntry: "Last Entry",
+      site: "Site",
+      todayEntries: "Today Entries",
+      date: "Date",
+      time: "Time",
+      dailyTotals: "Daily Totals",
+      entries: "Entries",
+      hoursEst: "Hours (est.)",
+      status: "Status",
+      payrollSnapshot: "Payroll Snapshot",
+      current: "Current",
+      week: "Week",
+      previous: "Previous",
+      sendReport: "Send Report",
+      hoursDetail: "Hours / Detail",
+      checkAmount: "Check Amount",
+      adminDrawer: "Admin / Lead Drawer",
+      adminHelp: "View data as another worker.",
+      applyView: "Apply View",
+      clear: "Clear",
+      loading: "Loading...",
+      noEntriesToday: "No entries today.",
+      noPayrollRows: "No payroll rows found.",
+      offShift: "Off Shift",
+      onShift: "On Shift",
+      synced: "Synced",
+      offline: "Offline",
+      dataRefreshed: "Data refreshed",
+      languageUpdated: "Language updated",
+      viewingAs: "Viewing as",
+      viewCleared: "View cleared",
+      returnedToOwnView: "Returned to your worker view",
+      roleCheckLimited: "Role check returned limited data.",
+      roleCheckUnavailable:
+        "Role check unavailable. Continuing with cached role.",
+      dataLoadError: "Data load error",
+      recording: "Recording...",
+      clockRecorded: "Clock event recorded.",
+      clockFailed: "Clock action failed.",
+      locationUnavailable: "Location unavailable. Please enable GPS and retry.",
+      offlineDetected: "Offline detected. Reconnect to submit clock action.",
+      loadPayrollFirst: "Load payroll first.",
+      payrollSent: "Payroll report sent.",
+      payrollSendFailed: "Unable to send payroll report",
+    },
+    es: {
+      hubTitle: "Panel de Trabajo",
+      menu: "Menu",
+      close: "Cerrar",
+      language: "Idioma",
+      refreshData: "Actualizar Datos",
+      logout: "Cerrar Sesion",
+      clockAction: "Marcar Entrada / Salida",
+      refresh: "Actualizar",
+      offlineBanner:
+        "Sin conexion. Las marcaciones pueden quedar en cola hasta reconectar.",
+      currentShift: "Turno Actual",
+      state: "Estado",
+      lastEntry: "Ultimo Registro",
+      site: "Sitio",
+      todayEntries: "Entradas de Hoy",
+      date: "Fecha",
+      time: "Hora",
+      dailyTotals: "Totales del Dia",
+      entries: "Entradas",
+      hoursEst: "Horas (est.)",
+      status: "Estado",
+      payrollSnapshot: "Resumen de Nomina",
+      current: "Actual",
+      week: "Semana",
+      previous: "Anterior",
+      sendReport: "Enviar Reporte",
+      hoursDetail: "Horas / Detalle",
+      checkAmount: "Monto del Cheque",
+      adminDrawer: "Panel Admin / Lead",
+      adminHelp: "Ver datos como otro trabajador.",
+      applyView: "Aplicar Vista",
+      clear: "Limpiar",
+      loading: "Cargando...",
+      noEntriesToday: "Sin entradas hoy.",
+      noPayrollRows: "No hay filas de nomina.",
+      offShift: "Fuera de Turno",
+      onShift: "En Turno",
+      synced: "Sincronizado",
+      offline: "Sin conexion",
+      dataRefreshed: "Datos actualizados",
+      languageUpdated: "Idioma actualizado",
+      viewingAs: "Viendo como",
+      viewCleared: "Vista limpiada",
+      returnedToOwnView: "Volviste a tu vista",
+      roleCheckLimited: "La verificacion de rol devolvio datos limitados.",
+      roleCheckUnavailable:
+        "Verificacion de rol no disponible. Continuando con el rol en cache.",
+      dataLoadError: "Error de carga",
+      recording: "Registrando...",
+      clockRecorded: "Evento registrado.",
+      clockFailed: "Fallo al registrar.",
+      locationUnavailable:
+        "Ubicacion no disponible. Activa GPS e intenta de nuevo.",
+      offlineDetected: "Sin conexion. Reconecta para enviar el registro.",
+      loadPayrollFirst: "Primero carga la nomina.",
+      payrollSent: "Reporte de nomina enviado.",
+      payrollSendFailed: "No se pudo enviar el reporte de nomina",
+    },
+    pt: {
+      hubTitle: "Painel de Trabalho",
+      menu: "Menu",
+      close: "Fechar",
+      language: "Idioma",
+      refreshData: "Atualizar Dados",
+      logout: "Sair",
+      clockAction: "Registrar Entrada / Saida",
+      refresh: "Atualizar",
+      offlineBanner:
+        "Sem conexao. Os registros podem ficar em fila ate reconectar.",
+      currentShift: "Turno Atual",
+      state: "Estado",
+      lastEntry: "Ultimo Registro",
+      site: "Local",
+      todayEntries: "Entradas de Hoje",
+      date: "Data",
+      time: "Hora",
+      dailyTotals: "Totais do Dia",
+      entries: "Entradas",
+      hoursEst: "Horas (est.)",
+      status: "Status",
+      payrollSnapshot: "Resumo da Folha",
+      current: "Atual",
+      week: "Semana",
+      previous: "Anterior",
+      sendReport: "Enviar Relatorio",
+      hoursDetail: "Horas / Detalhe",
+      checkAmount: "Valor do Cheque",
+      adminDrawer: "Painel Admin / Lead",
+      adminHelp: "Ver dados como outro trabalhador.",
+      applyView: "Aplicar Visualizacao",
+      clear: "Limpar",
+      loading: "Carregando...",
+      noEntriesToday: "Sem entradas hoje.",
+      noPayrollRows: "Sem linhas de folha.",
+      offShift: "Fora do Turno",
+      onShift: "Em Turno",
+      synced: "Sincronizado",
+      offline: "Sem conexao",
+      dataRefreshed: "Dados atualizados",
+      languageUpdated: "Idioma atualizado",
+      viewingAs: "Visualizando como",
+      viewCleared: "Visualizacao limpa",
+      returnedToOwnView: "Voce voltou para sua visualizacao",
+      roleCheckLimited: "Verificacao de papel retornou dados limitados.",
+      roleCheckUnavailable:
+        "Verificacao de papel indisponivel. Continuando com papel em cache.",
+      dataLoadError: "Erro de carregamento",
+      recording: "Registrando...",
+      clockRecorded: "Evento registrado.",
+      clockFailed: "Falha ao registrar.",
+      locationUnavailable:
+        "Localizacao indisponivel. Ative o GPS e tente novamente.",
+      offlineDetected: "Sem conexao. Reconecte para enviar o registro.",
+      loadPayrollFirst: "Carregue a folha primeiro.",
+      payrollSent: "Relatorio de folha enviado.",
+      payrollSendFailed: "Nao foi possivel enviar o relatorio",
+    },
+  };
+
+  function normalizeLang(lang) {
+    return ["en", "es", "pt"].includes(lang) ? lang : "en";
+  }
+
+  state.lang = normalizeLang(state.lang);
+
+  function t(key) {
+    const dict = I18N[state.lang] || I18N.en;
+    return dict[key] || I18N.en[key] || key;
+  }
+
+  function applyLanguage() {
+    document.documentElement.lang = state.lang;
+
+    const setText = (id, value) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = value;
+    };
+
+    setText("hubTitle", t("hubTitle"));
+    setText("menuTitle", t("menu"));
+    setText("menuCloseBtn", t("close"));
+    dom.langSelect.value = state.lang;
+    setText("menuRefreshBtn", t("refreshData"));
+    setText("menuLogoutBtn", t("logout"));
+    setText("clockActionBtn", t("clockAction"));
+    setText("refreshBtn", t("refresh"));
+    setText("offlineBanner", t("offlineBanner"));
+
+    setText("currentShiftTitle", t("currentShift"));
+    setText("labelState", t("state"));
+    setText("labelLastEntry", t("lastEntry"));
+    setText("labelSite", t("site"));
+    setText("todayEntriesTitle", t("todayEntries"));
+    setText("thDateToday", t("date"));
+    setText("thTimeToday", t("time"));
+    setText("thSiteToday", t("site"));
+    setText("dailyTotalsTitle", t("dailyTotals"));
+    setText("labelEntries", t("entries"));
+    setText("labelHours", t("hoursEst"));
+    setText("labelStatus", t("status"));
+
+    setText("payrollTitle", t("payrollSnapshot"));
+    setText("sendPayrollBtn", t("sendReport"));
+    setText("thPayrollDate", t("date"));
+    setText("thPayrollDetail", t("hoursDetail"));
+    setText("thPayrollAmount", t("checkAmount"));
+
+    setText("adminDrawerTitle", t("adminDrawer"));
+    setText("adminHelpText", t("adminHelp"));
+    setText("applyViewBtn", t("applyView"));
+    setText("clearViewBtn", t("clear"));
+
+    const optionCurrent = dom.rangeSelect.querySelector(
+      "option[value='current']",
+    );
+    const optionWeek = dom.rangeSelect.querySelector("option[value='week']");
+    const optionPrevious = dom.rangeSelect.querySelector(
+      "option[value='previous']",
+    );
+    if (optionCurrent) optionCurrent.textContent = t("current");
+    if (optionWeek) optionWeek.textContent = t("week");
+    if (optionPrevious) optionPrevious.textContent = t("previous");
+  }
+
+
+
   const dom = {
+    langSelect: document.getElementById("menuLangSelect"),
     userChip: document.getElementById("userChip"),
     shiftStatusPill: document.getElementById("shiftStatusPill"),
     shiftState: document.getElementById("shiftState"),
@@ -81,6 +336,17 @@
     dom.toast.style.background =
       type === "error" ? "rgba(120, 22, 22, 0.95)" : "rgba(24, 32, 40, 0.94)";
     setTimeout(() => dom.toast.classList.add("hidden"), 2800);
+  }
+
+  async function runWithBusyFlag(flagName, action, { onFinally } = {}) {
+    if (state.busy[flagName]) return;
+    state.busy[flagName] = true;
+    try {
+      await action();
+    } finally {
+      state.busy[flagName] = false;
+      if (typeof onFinally === "function") onFinally();
+    }
   }
 
   function jsonp(url) {
@@ -164,14 +430,13 @@
     const todayRows = normalizeRows(records).filter((r) => r.date === today);
 
     if (!todayRows.length) {
-      dom.todayEntriesBody.innerHTML =
-        "<tr><td colspan='3' class='muted'>No entries today.</td></tr>";
+      dom.todayEntriesBody.innerHTML = `<tr><td colspan='3' class='muted'>${t("noEntriesToday")}</td></tr>`;
       dom.entryCount.textContent = "0";
       dom.hoursEstimate.textContent = "0.00";
       dom.lastEntry.textContent = "-";
       dom.lastSite.textContent = "-";
-      dom.shiftState.textContent = "Off Shift";
-      dom.shiftStatusPill.textContent = "Off Shift";
+      dom.shiftState.textContent = t("offShift");
+      dom.shiftStatusPill.textContent = t("offShift");
       return;
     }
 
@@ -197,7 +462,7 @@
     dom.lastSite.textContent = latest.site || "-";
 
     const active = !latest.clockOut || String(latest.clockOut).trim() === "";
-    const statusText = active ? "On Shift" : "Off Shift";
+    const statusText = active ? t("onShift") : t("offShift");
     dom.shiftState.textContent = statusText;
     dom.shiftStatusPill.textContent = statusText;
   }
@@ -205,8 +470,7 @@
   function renderPayroll(payload) {
     const rows = normalizePayrollRows(payload?.rows || []);
     if (!rows.length) {
-      dom.payrollBody.innerHTML =
-        "<tr><td colspan='3' class='muted'>No payroll rows found.</td></tr>";
+      dom.payrollBody.innerHTML = `<tr><td colspan='3' class='muted'>${t("noPayrollRows")}</td></tr>`;
       dom.payrollTotal.textContent = "Total: $0.00";
       return;
     }
@@ -261,8 +525,7 @@
   }
 
   async function loadReport() {
-    dom.todayEntriesBody.innerHTML =
-      "<tr><td colspan='3' class='muted'>Loading...</td></tr>";
+    dom.todayEntriesBody.innerHTML = `<tr><td colspan='3' class='muted'>${t("loading")}</td></tr>`;
 
     let data;
     if (state.viewAsWorker && state.role === "Admin") {
@@ -277,8 +540,7 @@
   }
 
   async function loadPayroll() {
-    dom.payrollBody.innerHTML =
-      "<tr><td colspan='3' class='muted'>Loading...</td></tr>";
+    dom.payrollBody.innerHTML = `<tr><td colspan='3' class='muted'>${t("loading")}</td></tr>`;
     const range = dom.rangeSelect.value || "current";
 
     let data;
@@ -294,9 +556,10 @@
   }
 
   async function handleClockAction() {
+    if (state.busy.clock) return;
     if (!navigator.onLine) {
-      showToast("Offline detected. Reconnect to submit clock action.", "error");
-      dom.syncState.textContent = "Offline";
+      showToast(t("offlineDetected"), "error");
+      dom.syncState.textContent = t("offline");
       return;
     }
 
@@ -309,59 +572,85 @@
         });
       });
     } catch (err) {
-      showToast("Location unavailable. Please enable GPS and retry.", "error");
+      showToast(t("locationUnavailable"), "error");
       return;
     }
 
     const url = `${API_BASE}?action=clockin&workerId=${encodeURIComponent(state.workerId)}&lat=${pos.coords.latitude}&lng=${pos.coords.longitude}&lang=${encodeURIComponent(localStorage.getItem("CLS_Lang") || "en")}&email=${encodeURIComponent(state.email)}&device=${encodeURIComponent(getDeviceInfo())}`;
 
     const btn = document.getElementById("clockActionBtn");
-    btn.disabled = true;
-    btn.textContent = "Recording...";
+    const originalText = btn.textContent;
 
-    try {
-      const res = await jsonp(url);
-      if (res && res.success) {
-        showToast(res.message || "Clock event recorded.", "ok");
-        dom.syncState.textContent = "Synced";
-      } else {
-        throw new Error(
-          (res && (res.error || res.message)) || "Clock action failed",
-        );
-      }
-      await Promise.all([loadReport(), loadPayroll()]);
-    } catch (err) {
-      showToast(err.message || "Clock action failed.", "error");
-      dom.syncState.textContent = "Error";
-    } finally {
-      btn.disabled = false;
-      btn.textContent = "Clock In / Out";
-    }
+    await runWithBusyFlag(
+      "clock",
+      async () => {
+        btn.disabled = true;
+        btn.textContent = t("recording");
+        try {
+          const res = await jsonp(url);
+          if (res && res.success) {
+            showToast(res.message || t("clockRecorded"), "ok");
+            dom.syncState.textContent = t("synced");
+          } else {
+            throw new Error(
+              (res && (res.error || res.message)) || t("clockFailed"),
+            );
+          }
+          await Promise.all([loadReport(), loadPayroll()]);
+        } catch (err) {
+          showToast(err.message || t("clockFailed"), "error");
+          dom.syncState.textContent = "Error";
+        }
+      },
+      {
+        onFinally: () => {
+          btn.disabled = false;
+          btn.textContent = originalText;
+        },
+      },
+    );
   }
 
   async function sendPayrollReport() {
+    if (state.busy.payrollSend) return;
     if (!state.payrollWeekPeriod) {
-      showToast("Load payroll first.", "error");
+      showToast(t("loadPayrollFirst"), "error");
       return;
     }
 
     const url = `${API_BASE}?action=payrollPdf&workerId=${encodeURIComponent(state.viewAsWorker || state.workerId)}&requesterId=${encodeURIComponent(state.workerId)}&workerName=${encodeURIComponent(state.displayName || "")}&weekPeriod=${encodeURIComponent(state.payrollWeekPeriod)}`;
 
-    try {
-      const res = await jsonp(url);
-      if (res && res.success !== false) {
-        showToast("Payroll report sent.", "ok");
-      } else {
-        throw new Error("Unable to send payroll report");
-      }
-    } catch (err) {
-      showToast(err.message || "Unable to send payroll report", "error");
-    }
+    const btn = document.getElementById("sendPayrollBtn");
+    const originalText = btn.textContent;
+
+    await runWithBusyFlag(
+      "payrollSend",
+      async () => {
+        btn.disabled = true;
+        btn.textContent = t("loading");
+        try {
+          const res = await jsonp(url);
+          if (res && res.success !== false) {
+            showToast(t("payrollSent"), "ok");
+          } else {
+            throw new Error(t("payrollSendFailed"));
+          }
+        } catch (err) {
+          showToast(err.message || t("payrollSendFailed"), "error");
+        }
+      },
+      {
+        onFinally: () => {
+          btn.disabled = false;
+          btn.textContent = originalText;
+        },
+      },
+    );
   }
 
   function updateOnlineState() {
     dom.offlineBanner.classList.toggle("hidden", navigator.onLine);
-    dom.syncState.textContent = navigator.onLine ? "Synced" : "Offline";
+    dom.syncState.textContent = navigator.onLine ? t("synced") : t("offline");
   }
 
   function logout() {
@@ -381,17 +670,26 @@
       .addEventListener("click", handleClockAction);
     document
       .getElementById("refreshBtn")
-      .addEventListener("click", () =>
-        Promise.all([loadReport(), loadPayroll()]),
-      );
-    document
-      .getElementById("requestEditBtn")
-      .addEventListener("click", () =>
-        showToast(
-          "Time edit request flow will be connected in next pass.",
-          "ok",
-        ),
-      );
+      .addEventListener("click", async () => {
+        if (state.busy.refresh) return;
+        const btn = document.getElementById("refreshBtn");
+        const originalText = btn.textContent;
+        await runWithBusyFlag(
+          "refresh",
+          async () => {
+            btn.disabled = true;
+            btn.textContent = t("loading");
+            await Promise.all([loadReport(), loadPayroll()]);
+            showToast(t("dataRefreshed"), "ok");
+          },
+          {
+            onFinally: () => {
+              btn.disabled = false;
+              btn.textContent = originalText;
+            },
+          },
+        );
+      });
     document
       .getElementById("sendPayrollBtn")
       .addEventListener("click", sendPayrollReport);
@@ -405,36 +703,86 @@
     document
       .getElementById("menuRefreshBtn")
       .addEventListener("click", async () => {
+        if (state.busy.refresh) return;
         closeMenu();
-        await Promise.all([loadReport(), loadPayroll()]);
-        showToast("Data refreshed", "ok");
+        const btn = document.getElementById("menuRefreshBtn");
+        const originalText = btn.textContent;
+        await runWithBusyFlag(
+          "refresh",
+          async () => {
+            btn.disabled = true;
+            btn.textContent = t("loading");
+            await Promise.all([loadReport(), loadPayroll()]);
+            showToast(t("dataRefreshed"), "ok");
+          },
+          {
+            onFinally: () => {
+              btn.disabled = false;
+              btn.textContent = originalText;
+            },
+          },
+        );
       });
-    document.getElementById("menuLangBtn").addEventListener("click", () => {
-      closeMenu();
-      showToast("Language switch will be added to V2 next.", "ok");
+    dom.langSelect.addEventListener("change", () => {
+      state.lang = dom.langSelect.value.toLowerCase();
+      localStorage.setItem("CLS_Lang", state.lang);
+      applyLanguage();
+      showToast(`${t("languageUpdated")}: ${state.lang.toUpperCase()}`, "ok");
     });
     dom.rangeSelect.addEventListener("change", loadPayroll);
 
     document
       .getElementById("applyViewBtn")
       .addEventListener("click", async () => {
-        state.viewAsWorker = dom.viewAsSelect.value || "";
-        await Promise.all([loadReport(), loadPayroll()]);
-        showToast(
-          state.viewAsWorker
-            ? `Viewing as ${state.viewAsWorker}`
-            : "View cleared",
-          "ok",
+        if (state.busy.applyView) return;
+        const btn = document.getElementById("applyViewBtn");
+        const originalText = btn.textContent;
+        await runWithBusyFlag(
+          "applyView",
+          async () => {
+            btn.disabled = true;
+            btn.textContent = t("loading");
+            state.viewAsWorker = dom.viewAsSelect.value || "";
+            await Promise.all([loadReport(), loadPayroll()]);
+            showToast(
+              state.viewAsWorker
+                ? `${t("viewingAs")} ${state.viewAsWorker}`
+                : t("viewCleared"),
+              "ok",
+            );
+          },
+          {
+            onFinally: () => {
+              btn.disabled = false;
+              btn.textContent = originalText;
+            },
+          },
         );
       });
 
     document
       .getElementById("clearViewBtn")
       .addEventListener("click", async () => {
-        state.viewAsWorker = "";
-        dom.viewAsSelect.value = "";
-        await Promise.all([loadReport(), loadPayroll()]);
-        showToast("Returned to your worker view", "ok");
+        if (state.busy.clearView) return;
+        const btn = document.getElementById("clearViewBtn");
+        const originalText = btn.textContent;
+        await runWithBusyFlag(
+          "clearView",
+          async () => {
+            btn.disabled = true;
+            btn.textContent = t("loading");
+            state.viewAsWorker = "";
+            dom.viewAsSelect.value = "";
+            await Promise.all([loadReport(), loadPayroll()]);
+            showToast(t("returnedToOwnView"), "ok");
+          },
+          {
+            onFinally: () => {
+              btn.disabled = false;
+              btn.textContent = originalText;
+            },
+          },
+        );
       });
 
     window.addEventListener("online", updateOnlineState);
@@ -459,6 +807,7 @@
     }
 
     dom.userChip.textContent = `${state.displayName} (${state.workerId})`;
+    applyLanguage();
     updateOnlineState();
     attachEvents();
 
@@ -472,19 +821,16 @@
       }
 
       if (!who || !who.ok) {
-        showToast("Role check returned limited data.", "error");
+        showToast(t("roleCheckLimited"), "error");
       }
     } catch (_err) {
-      showToast(
-        "Role check unavailable. Continuing with cached role.",
-        "error",
-      );
+      showToast(t("roleCheckUnavailable"), "error");
     }
 
     try {
       await Promise.all([loadReport(), loadPayroll()]);
     } catch (err) {
-      showToast(`Data load error: ${err.message || err}`, "error");
+      showToast(`${t("dataLoadError")}: ${err.message || err}`, "error");
     }
   }
 

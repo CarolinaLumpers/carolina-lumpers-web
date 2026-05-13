@@ -10,7 +10,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="css/employeeDashboardV2.css?v=20260512-v2-2">
+    <link rel="stylesheet" href="css/employeeDashboardV2.css?v=20260512-v2-4">
 </head>
 
 <body>
@@ -18,7 +18,7 @@
         <header class="hub-topbar">
             <div class="hub-title-wrap">
                 <p class="hub-kicker">Carolina Lumper Service</p>
-                <h1 class="hub-title">Worker Hub</h1>
+                <h1 id="hubTitle" class="hub-title">Worker Hub</h1>
             </div>
             <div class="hub-user-wrap">
                 <div class="hub-user-chip" id="userChip">Loading user...</div>
@@ -33,11 +33,15 @@
                 </button>
                 <div id="hubMenu" class="hub-menu-panel hidden" role="menu" aria-label="Dashboard Menu">
                     <div class="hub-menu-head">
-                        <h2>Menu</h2>
+                        <h2 id="menuTitle">Menu</h2>
                         <button id="menuCloseBtn" class="menu-close" type="button"
                             aria-label="Close menu">Close</button>
                     </div>
-                    <button id="menuLangBtn" class="ghost-btn menu-item" type="button" role="menuitem">Language</button>
+                    <select id="menuLangSelect" class="menu-item menu-item-select" aria-label="Select language">
+                        <option value="en">English</option>
+                        <option value="es">Español</option>
+                        <option value="pt">Português</option>
+                    </select>
                     <button id="menuRefreshBtn" class="ghost-btn menu-item" type="button" role="menuitem">Refresh
                         Data</button>
                     <button id="menuLogoutBtn" class="ghost-btn menu-item menu-danger" type="button"
@@ -51,7 +55,6 @@
             <section class="quick-actions" aria-label="Quick Actions">
                 <button id="clockActionBtn" class="primary-action" type="button">Clock In / Out</button>
                 <button id="refreshBtn" class="secondary-action" type="button">Refresh</button>
-                <button id="requestEditBtn" class="secondary-action" type="button">Request Time Edit</button>
             </section>
 
             <section class="hub-banner hidden" id="offlineBanner" role="status">
@@ -60,30 +63,30 @@
 
             <section class="hub-grid" aria-label="Dashboard Cards">
                 <article class="hub-card">
-                    <h2>Current Shift</h2>
+                    <h2 id="currentShiftTitle">Current Shift</h2>
                     <div class="metric-row">
-                        <span>State</span>
+                        <span id="labelState">State</span>
                         <strong id="shiftState">Unknown</strong>
                     </div>
                     <div class="metric-row">
-                        <span>Last Entry</span>
+                        <span id="labelLastEntry">Last Entry</span>
                         <strong id="lastEntry">-</strong>
                     </div>
                     <div class="metric-row">
-                        <span>Site</span>
+                        <span id="labelSite">Site</span>
                         <strong id="lastSite">-</strong>
                     </div>
                 </article>
 
                 <article class="hub-card">
-                    <h2>Today Entries</h2>
+                    <h2 id="todayEntriesTitle">Today Entries</h2>
                     <div class="list-scroll">
                         <table class="hub-table" aria-label="Today's Entries">
                             <thead>
                                 <tr>
-                                    <th>Date</th>
-                                    <th>Time</th>
-                                    <th>Site</th>
+                                    <th id="thDateToday">Date</th>
+                                    <th id="thTimeToday">Time</th>
+                                    <th id="thSiteToday">Site</th>
                                 </tr>
                             </thead>
                             <tbody id="todayEntriesBody">
@@ -96,17 +99,17 @@
                 </article>
 
                 <article class="hub-card">
-                    <h2>Daily Totals</h2>
+                    <h2 id="dailyTotalsTitle">Daily Totals</h2>
                     <div class="metric-row">
-                        <span>Entries</span>
+                        <span id="labelEntries">Entries</span>
                         <strong id="entryCount">0</strong>
                     </div>
                     <div class="metric-row">
-                        <span>Hours (est.)</span>
+                        <span id="labelHours">Hours (est.)</span>
                         <strong id="hoursEstimate">0.00</strong>
                     </div>
                     <div class="metric-row">
-                        <span>Status</span>
+                        <span id="labelStatus">Status</span>
                         <strong id="syncState">Synced</strong>
                     </div>
                 </article>
@@ -114,7 +117,7 @@
 
             <section class="hub-card payroll-card" aria-label="Payroll Snapshot">
                 <div class="payroll-header">
-                    <h2>Payroll Snapshot</h2>
+                    <h2 id="payrollTitle">Payroll Snapshot</h2>
                     <div class="payroll-controls">
                         <select id="rangeSelect" aria-label="Payroll Range">
                             <option value="current">Current</option>
@@ -128,9 +131,9 @@
                     <table class="hub-table" aria-label="Payroll Rows">
                         <thead>
                             <tr>
-                                <th>Date</th>
-                                <th>Hours / Detail</th>
-                                <th>Check Amount</th>
+                                <th id="thPayrollDate">Date</th>
+                                <th id="thPayrollDetail">Hours / Detail</th>
+                                <th id="thPayrollAmount">Check Amount</th>
                             </tr>
                         </thead>
                         <tbody id="payrollBody">
@@ -145,10 +148,10 @@
 
             <section class="hub-card admin-drawer hidden" id="adminDrawer" aria-label="Admin Tools">
                 <div class="admin-head">
-                    <h2>Admin / Lead Drawer</h2>
+                    <h2 id="adminDrawerTitle">Admin / Lead Drawer</h2>
                     <span class="role-tag" id="roleTag">Role</span>
                 </div>
-                <p class="muted">View data as another worker.</p>
+                <p id="adminHelpText" class="muted">View data as another worker.</p>
                 <div class="admin-controls">
                     <select id="viewAsSelect" aria-label="Choose Worker"></select>
                     <button id="applyViewBtn" class="secondary-action" type="button">Apply View</button>
@@ -160,7 +163,7 @@
 
     <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
 
-    <script src="js/employeeDashboardV2.js?v=20260512-v2-2" defer></script>
+    <script src="js/employeeDashboardV2.js?v=20260512-v2-4" defer></script>
 </body>
 
 </html>
