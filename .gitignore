@@ -23,6 +23,10 @@ Thumbs.db
 logs/
 *.log
 
+# Local-only working files
+chat history.md
+FRONTEND_RESTORE_ROADMAP.md
+
 # Environment
 .env
 .env.local
