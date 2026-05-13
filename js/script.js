@@ -1133,6 +1133,80 @@ function initApplyForm() {
   });
 }
 
+// Employee Signup Module
+function initSignupForm() {
+  const form = document.getElementById("signupForm");
+  if (!form) return;
+
+  const statusEl = document.getElementById("status");
+  const MESSAGES = {
+    en: {
+      sending: "⏳ Creating account...",
+      success: "✅ Account created! You can now log in.",
+      error: "❌ Please fill in all fields.",
+      mismatch: "❌ Passwords do not match.",
+      serverError: "⚠️ Error during signup.",
+    },
+    es: {
+      sending: "⏳ Creando cuenta...",
+      success: "✅ ¡Cuenta creada! Ya puedes iniciar sesión.",
+      error: "❌ Por favor completa todos los campos.",
+      mismatch: "❌ Las contraseñas no coinciden.",
+      serverError: "⚠️ Error durante el registro.",
+    },
+    pt: {
+      sending: "⏳ Criando conta...",
+      success: "✅ Conta criada! Agora você pode fazer login.",
+      error: "❌ Por favor preencha todos os campos.",
+      mismatch: "❌ As senhas não coincidem.",
+      serverError: "⚠️ Erro durante o cadastro.",
+    },
+  };
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const currentLang = localStorage.getItem("CLS_Lang") || "en";
+
+    const email = document.getElementById("email")?.value.trim();
+    const password = document.getElementById("password")?.value.trim();
+    const confirm = document.getElementById("confirmPassword")?.value.trim();
+
+    if (!email || !password || !confirm) {
+      if (statusEl) statusEl.textContent = MESSAGES[currentLang].error;
+      return;
+    }
+
+    if (password !== confirm) {
+      if (statusEl) statusEl.textContent = MESSAGES[currentLang].mismatch;
+      return;
+    }
+
+    if (statusEl) statusEl.textContent = MESSAGES[currentLang].sending;
+
+    try {
+      const res = await fetch(
+        `${API_BASE}?action=signup&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`,
+      );
+      const text = await res.text();
+
+      if (statusEl) {
+        statusEl.textContent = text.includes("✅")
+          ? MESSAGES[currentLang].success
+          : text || MESSAGES[currentLang].serverError;
+      }
+
+      // Reset form on success
+      if (text.includes("✅")) {
+        form.reset();
+      }
+    } catch (err) {
+      console.error(err);
+      if (statusEl) statusEl.textContent = MESSAGES[currentLang].serverError;
+    }
+  });
+}
+
 // ======================================================
 // BIOMETRIC AUTHENTICATION MODULE REMOVED (2025-11-04)
 // ======================================================
@@ -1149,6 +1223,7 @@ function initLoginForm() {
     return;
   }
 
+  // Check if already initialized
   if (form.hasAttribute("data-initialized")) {
     console.log("ℹ️ Login form already initialized, skipping");
     return;
@@ -1157,18 +1232,24 @@ function initLoginForm() {
   console.log("✅ Login form found, setting up event handlers");
 
   const statusEl = document.getElementById("status");
+
+  // 🔒 DEBOUNCE FLAG: Prevent double-submission race condition
   let isSubmitting = false;
 
+  console.log("✅ Adding submit event listener to login form");
   form.addEventListener("submit", async (e) => {
     console.log("🔥 Login form submitted!");
     e.preventDefault();
 
+    // 🚨 CRITICAL: Check if already submitting (prevents double-tap)
     if (isSubmitting) {
-      console.warn("⚠️ Login already in progress, ignoring duplicate submission");
+      console.warn(
+        "⚠️ Login already in progress, ignoring duplicate submission",
+      );
       return;
     }
 
-    isSubmitting = true;
+    isSubmitting = true; // Set flag immediately
 
     const currentLang = localStorage.getItem("CLS_Lang") || "en";
     const email = document.getElementById("email")?.value.trim();
@@ -1176,93 +1257,24 @@ function initLoginForm() {
     const loginBtn = document.getElementById("loginBtn");
 
     if (!email || !password) {
-      if (statusEl) statusEl.textContent = getText("login.missing", currentLang);
-      isSubmitting = false;
+      if (statusEl)
+        statusEl.textContent = getText("login.missing", currentLang);
+      isSubmitting = false; // Reset flag on validation failure
       return;
     }
 
+    // 🔒 PREVENT DUPLICATE SUBMISSIONS: Disable button immediately
     if (loginBtn) {
       loginBtn.disabled = true;
       loginBtn.dataset.originalText = loginBtn.textContent;
       loginBtn.textContent = "⏳ Logging in...";
     }
 
-    const loadingOverlay = document.getElementById("loadingOverlay");
-    const loadingText = document.getElementById("loadingText");
-    if (loadingOverlay) {
-      loadingOverlay.classList.add("active");
-      if (loadingText) loadingText.textContent = "⏳ Logging in...";
-    }
-
-    if (statusEl) statusEl.textContent = getText("login.sending", currentLang);
-
-    try {
-      const deviceType = getDeviceType();
-      const browserType = getBrowserType();
-      const deviceInfo = `${deviceType} - ${browserType}`;
-
-      const res = await fetch(
-        `${API_BASE}?action=login&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}&device=${encodeURIComponent(deviceInfo)}`,
-      );
-
-      const data = await res.json();
-
-      if (data.success) {
-        localStorage.setItem("CLS_WorkerID", data.workerId);
-        localStorage.setItem("CLS_WorkerName", data.displayName);
-        localStorage.setItem("CLS_Email", data.email);
-        localStorage.setItem("CLS_W9Status", data.w9Status || "none");
-        localStorage.setItem("CLS_Role", data.role || "Worker");
-        localStorage.setItem("CLS_AuthToken", data.authToken || "");
-        localStorage.setItem("CLS_AuthTokenExp", String(data.authTokenExp || ""));
-        localStorage.setItem("CLS_RememberUser", "true");
-        localStorage.removeItem("CLS_SessionExpiry");
-
-        if (statusEl) statusEl.textContent = getText("login.success", currentLang);
-
-        if ("serviceWorker" in navigator) {
-          try {
-            await navigator.serviceWorker.register("service-worker-employee.js", { scope: "./" });
-            console.log("✅ Service Worker preloaded before redirect");
-          } catch (err) {
-            console.warn("⚠️ SW pre-registration failed:", err);
-          }
-        }
-
-        if (loadingText) loadingText.textContent = "✅ Login successful!";
-
-        setTimeout(() => {
-          window.location.href = "employeeDashboard.html";
-        }, 1500);
-      } else {
-        if (loadingOverlay) loadingOverlay.classList.remove("active");
-        if (statusEl) statusEl.textContent = data.message || getText("login.invalid", currentLang);
-
-        isSubmitting = false;
-        if (loginBtn) {
-          loginBtn.disabled = false;
-          loginBtn.textContent = loginBtn.dataset.originalText || "Login";
-        }
-      }
-    } catch (err) {
-      console.error(err);
-      if (loadingOverlay) loadingOverlay.classList.remove("active");
-      if (statusEl) statusEl.textContent = getText("login.error", currentLang);
-
-      isSubmitting = false;
-      if (loginBtn) {
-        loginBtn.disabled = false;
-        loginBtn.textContent = loginBtn.dataset.originalText || "Login";
-      }
-    }
+    // Mark form as initialized
+    form.setAttribute("data-initialized", "true");
   });
 
-  const currentLang = localStorage.getItem("CLS_Lang") || "en";
-  loginPlaceholders(currentLang);
-
-  form.setAttribute("data-initialized", "true");
-  console.log("✅ Login form initialization complete and marked");
-
+  // Initialize eye toggle buttons for password fields
   initPasswordToggles();
 }
 
@@ -1571,6 +1583,112 @@ function initSignupForm() {
   form.setAttribute('data-initialized', 'true');
   
   console.log('✅ Signup form initialization complete');
+
+    // Show full-screen loading overlay
+    const loadingOverlay = document.getElementById("loadingOverlay");
+    const loadingText = document.getElementById("loadingText");
+    if (loadingOverlay) {
+      loadingOverlay.classList.add("active");
+      if (loadingText) {
+        loadingText.textContent = "⏳ Logging in...";
+      }
+    }
+
+    // Also show status below form
+    if (statusEl) statusEl.textContent = getText("login.sending", currentLang);
+
+    try {
+      // Get device and browser info for tracking
+      const deviceType = getDeviceType();
+      const browserType = getBrowserType();
+      const deviceInfo = `${deviceType} - ${browserType}`;
+
+      const res = await fetch(
+        `${API_BASE}?action=login&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}&device=${encodeURIComponent(deviceInfo)}`,
+      );
+
+      const data = await res.json();
+
+      if (data.success) {
+        // Save user info to localStorage for later use (dashboard, etc.)
+        localStorage.setItem("CLS_WorkerID", data.workerId);
+        localStorage.setItem("CLS_WorkerName", data.displayName);
+        localStorage.setItem("CLS_Email", data.email);
+        localStorage.setItem("CLS_W9Status", data.w9Status || "none"); // W-9 compliance status
+        localStorage.setItem("CLS_Role", data.role || "Worker"); // User role (Admin/Lead/Worker)
+        localStorage.setItem("CLS_AuthToken", data.authToken || "");
+        localStorage.setItem("CLS_AuthTokenExp", String(data.authTokenExp || ""));
+
+        // Always stay logged in by default - no session expiry
+        localStorage.setItem("CLS_RememberUser", "true");
+        localStorage.removeItem("CLS_SessionExpiry"); // No expiry = infinite session
+
+        statusEl.textContent = getText("login.success", currentLang);
+
+        // PHASE 6: Preload SW Before Successful Login Redirect
+        if ("serviceWorker" in navigator) {
+          try {
+            await navigator.serviceWorker.register(
+              "service-worker-employee.js",
+              { scope: "./" },
+            );
+            console.log("✅ Service Worker preloaded before redirect");
+          } catch (err) {
+            console.warn("⚠️ SW pre-registration failed:", err);
+          }
+        }
+
+        // Update loading text for redirect
+        const loadingText = document.getElementById("loadingText");
+        if (loadingText) {
+          loadingText.textContent = "✅ Login successful!";
+        }
+
+        // Redirect after short delay
+        setTimeout(() => {
+          window.location.href = "employeeDashboard.html";
+        }, 1500);
+      } else {
+        // Hide loading overlay on error
+        const loadingOverlay = document.getElementById("loadingOverlay");
+        if (loadingOverlay) {
+          loadingOverlay.classList.remove("active");
+        }
+        statusEl.textContent =
+          data.message || getText("login.invalid", currentLang);
+
+        // 🔓 Reset debounce flag and re-enable button on error
+        isSubmitting = false;
+        if (loginBtn) {
+          loginBtn.disabled = false;
+          loginBtn.textContent = loginBtn.dataset.originalText || "Login";
+        }
+      }
+    } catch (err) {
+      console.error(err);
+      // Hide loading overlay on error
+      const loadingOverlay = document.getElementById("loadingOverlay");
+      if (loadingOverlay) {
+        loadingOverlay.classList.remove("active");
+      }
+      if (statusEl) statusEl.textContent = getText("login.error", currentLang);
+
+      // 🔓 Reset debounce flag and re-enable button on error
+      isSubmitting = false;
+      if (loginBtn) {
+        loginBtn.disabled = false;
+        loginBtn.textContent = loginBtn.dataset.originalText || "Login";
+      }
+    }
+  });
+
+  // Apply current language placeholders on form init
+  const currentLang = localStorage.getItem("CLS_Lang") || "en";
+  loginPlaceholders(currentLang);
+
+  // Mark form as initialized
+  form.setAttribute("data-initialized", "true");
+  console.log("✅ Login form initialization complete and marked");
 }
 
 // Contact Form Module

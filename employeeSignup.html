@@ -7,7 +7,7 @@
 
   <!-- Cache Version Control - Update this timestamp when deploying -->
   <script>
-    const CACHE_VERSION = '20260513-auth-fix2'; // Format: YYYYMMDD-HHMM
+    const CACHE_VERSION = '20260513-auth-rebuild'; // Format: YYYYMMDD-HHMM
   </script>
 
   <!-- Google Analytics -->
@@ -44,7 +44,7 @@
 
   <link rel="stylesheet" href="css/index-fresh-variant.css?v=20260423-a2">
   <link rel="stylesheet" href="css/variant-a-priority1-modules.css?v=20260423-p1mods-a47">
-  <link rel="stylesheet" href="css/auth-pages-shared.css?v=20260513-auth-fix2">
+  <link rel="stylesheet" href="css/auth-pages-shared.css?v=20260513-auth-rebuild">
 
   <style>
     body.variant-a[data-page="signup"] {
@@ -251,10 +251,37 @@
   <!-- FOOTER -->
   <div id="footer-container"></div>
 
+  <!-- Load shared navbar/footer/feature-strip components -->
+  <script>
+    // Dynamically load navbar
+    fetch('js/navbar.html')
+      .then(r => r.text())
+      .then(html => {
+        const container = document.getElementById('navbar-container');
+        if (container) container.innerHTML = html;
+        const navScript = document.createElement('script');
+        navScript.src = 'js/navbar.js';
+        document.head.appendChild(navScript);
+      })
+      .catch(err => console.warn('Navbar load error:', err));
+
+    // Dynamically load footer
+    fetch('js/footer.html')
+      .then(r => r.text())
+      .then(html => {
+        const container = document.getElementById('footer-container');
+        if (container) container.innerHTML = html;
+        const footScript = document.createElement('script');
+        footScript.src = 'js/footer.js';
+        document.head.appendChild(footScript);
+      })
+      .catch(err => console.warn('Footer load error:', err));
+  </script>
+
   <!-- Main signup logic -->
-  <script src="js/script.js?v=20260513-auth-fix2" defer></script>
+  <script src="js/script.js?v=20260513-auth-rebuild" defer></script>
   <!-- Feature strip renderer -->
-  <script src="js/auth-feature-strip.js?v=20260513-auth-fix2" defer></script>
+  <script src="js/auth-feature-strip.js?v=20260513-auth-rebuild" defer></script>
   <!-- Cache buster utility -->
   <script src="js/cache-buster.js?v=2025-11-04" defer></script>
 </body>
