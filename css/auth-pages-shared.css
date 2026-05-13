@@ -1,0 +1,316 @@
+/* ============================================================================
+   AUTH PAGES SHARED STYLES (Login & Signup)
+   Source of truth for all employee login/signup page styling
+   ============================================================================ */
+
+body.variant-a[data-page="login"],
+body.variant-a[data-page="signup"] {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%);
+}
+
+body.variant-a[data-page="login"] > main,
+body.variant-a[data-page="signup"] > main {
+  width: min(1180px, calc(100% - 2rem));
+  margin-inline: auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding-bottom: 2rem;
+}
+
+/* ============================================================================
+   HERO SECTION
+   ============================================================================ */
+
+body.variant-a[data-page="login"] .login-hero,
+body.variant-a[data-page="signup"] .signup-hero {
+  align-items: center;
+  min-height: clamp(420px, 54vh, 560px);
+  padding-bottom: 0;
+  margin-bottom: 0;
+}
+
+body.variant-a[data-page="login"] .login-hero .hero-content,
+body.variant-a[data-page="signup"] .signup-hero .hero-content {
+  align-content: center;
+  gap: 0.85rem;
+}
+
+body.variant-a[data-page="login"] .login-hero .hero-content h1,
+body.variant-a[data-page="signup"] .signup-hero .hero-content h1 {
+  margin: 0;
+  max-width: 14ch;
+  color: #ffffff;
+  font-size: clamp(2rem, 4.2vw, 3.2rem);
+  line-height: 1.1;
+  letter-spacing: 0.01em;
+}
+
+body.variant-a[data-page="login"] .login-hero .hero-content .hero-subtitle,
+body.variant-a[data-page="signup"] .signup-hero .hero-content .hero-subtitle {
+  max-width: 56ch;
+  color: #ececec;
+}
+
+/* Disable slanted separator on auth pages */
+body.variant-a[data-page="login"] .hero::after,
+body.variant-a[data-page="signup"] .hero::after {
+  display: none;
+}
+
+/* ============================================================================
+   FORM CARD
+   ============================================================================ */
+
+body.variant-a[data-page="login"] .hero-form,
+body.variant-a[data-page="signup"] .signup-form {
+  align-self: center;
+  margin: 0;
+  border: 1px solid #ffffff22;
+  background: #ffffff;
+  color: #171717;
+  box-shadow: var(--p1-shadow);
+  padding: clamp(1.2rem, 2vw, 1.9rem);
+  border-radius: var(--p1-radius);
+  width: min(560px, 100%);
+}
+
+/* ============================================================================
+   FORM INPUTS
+   ============================================================================ */
+
+body.variant-a[data-page="login"] .hero-form input,
+body.variant-a[data-page="signup"] .signup-form input,
+body.variant-a[data-page="login"] .hero-form button,
+body.variant-a[data-page="signup"] .signup-form button {
+  width: 100%;
+  margin: 0.5rem 0;
+  padding: 0.75rem 1rem;
+  border: 1px solid #d0d0d0;
+  border-radius: 0.375rem;
+  font-size: 1rem;
+  font-family: inherit;
+}
+
+body.variant-a[data-page="login"] .hero-form input:focus,
+body.variant-a[data-page="signup"] .signup-form input:focus {
+  outline: none;
+  border-color: #ffbf00;
+  box-shadow: 0 0 0 2px #ffbf0022;
+}
+
+/* ============================================================================
+   PASSWORD FIELD WITH EYE TOGGLE
+   ============================================================================ */
+
+.password-field {
+  position: relative;
+  width: 100%;
+  margin: 0.5rem 0;
+}
+
+.password-field input {
+  width: 100%;
+  padding-right: 2.5rem;
+  border: 1px solid #d0d0d0;
+  border-radius: 0.375rem;
+  font-size: 1rem;
+  font-family: inherit;
+  padding: 0.75rem 1rem;
+}
+
+.password-field input:focus {
+  outline: none;
+  border-color: #ffbf00;
+  box-shadow: 0 0 0 2px #ffbf0022;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 0.55rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0.25rem;
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+}
+
+.password-toggle:hover {
+  opacity: 1;
+}
+
+/* ============================================================================
+   PASSWORD STRENGTH METER
+   ============================================================================ */
+
+.password-strength {
+  margin-top: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.password-strength__bar {
+  height: 6px;
+  background: #e0e0e0;
+  border-radius: 3px;
+  overflow: hidden;
+  width: 100%;
+}
+
+.password-strength__fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 3px;
+  transition: all 0.3s ease;
+  background-color: #ff6b6b;
+}
+
+.password-strength__fill.weak {
+  width: 33%;
+  background-color: #ff6b6b;
+}
+
+.password-strength__fill.medium {
+  width: 66%;
+  background-color: #ffa500;
+}
+
+.password-strength__fill.strong {
+  width: 100%;
+  background-color: #51cf66;
+}
+
+.password-strength__label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #666;
+  height: 1.2rem;
+}
+
+.password-strength__label.weak {
+  color: #ff6b6b;
+}
+
+.password-strength__label.medium {
+  color: #ffa500;
+}
+
+.password-strength__label.strong {
+  color: #51cf66;
+}
+
+/* ============================================================================
+   PASSWORD POLICY HINT
+   ============================================================================ */
+
+.password-policy-hint {
+  font-size: 0.875rem;
+  color: #666;
+  margin: 0.75rem 0 0 0;
+  line-height: 1.4;
+}
+
+/* ============================================================================
+   MISMATCH FEEDBACK
+   ============================================================================ */
+
+.password-mismatch {
+  display: none;
+  font-size: 0.875rem;
+  color: #dc2626;
+  margin-top: 0.5rem;
+  font-weight: 500;
+}
+
+.password-mismatch.show {
+  display: block;
+}
+
+/* ============================================================================
+   FORM BUTTONS
+   ============================================================================ */
+
+body.variant-a[data-page="login"] .hero-form button,
+body.variant-a[data-page="signup"] .signup-form button {
+  background: #ffbf00;
+  color: #1a1a1a;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+}
+
+body.variant-a[data-page="login"] .hero-form button:hover,
+body.variant-a[data-page="signup"] .signup-form button:hover {
+  background: #e6aa00;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+body.variant-a[data-page="login"] .hero-form button:disabled,
+body.variant-a[data-page="signup"] .signup-form button:disabled {
+  background: #d0d0d0;
+  color: #999;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* ============================================================================
+   FORM STATUS MESSAGES
+   ============================================================================ */
+
+#status,
+.form-status {
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.375rem;
+  display: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+#status.show,
+.form-status.show {
+  display: block;
+}
+
+#status.success,
+.form-status.success {
+  background: #dcfce7;
+  color: #166534;
+  border: 1px solid #86efac;
+}
+
+#status.error,
+.form-status.error {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+/* ============================================================================
+   LINKS
+   ============================================================================ */
+
+body.variant-a[data-page="login"] .hero-form a,
+body.variant-a[data-page="signup"] .signup-form a {
+  color: #ffbf00;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+body.variant-a[data-page="login"] .hero-form a:hover,
+body.variant-a[data-page="signup"] .signup-form a:hover {
+  text-decoration: underline;
+}
