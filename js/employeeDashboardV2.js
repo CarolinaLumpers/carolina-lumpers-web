@@ -530,15 +530,22 @@
   }
 
   async function loadWorkersForAdmin() {
-    const url = `${API_BASE}?action=reportAll&requesterId=${encodeURIComponent(state.workerId)}`;
-    const res = await fetch(url);
-    const data = await res.json();
-    const records = Array.isArray(data?.records) ? data.records : [];
+    const url = `${API_BASE}?action=reportAll&requesterId=${encodeURIComponent(state.workerId)}${getAuthParam()}`;
+    const data = await jsonp(url);
+    
+    // The API returns either 'workers' array or 'records' object
+    let records = [];
+    if (Array.isArray(data?.workers)) {
+      records = data.workers;
+    } else if (data?.records && typeof data.records === "object") {
+      records = Object.values(data.records);
+    }
 
     const unique = new Map();
     for (const r of records) {
-      const id = r.workerId || r.workerID || r.WorkerID || r.id;
-      const name = r.workerName || r.displayName || r.name || id;
+      // Handle both API formats: {id, name} and {workerId, workerName}
+      const id = r.id || r.workerId || r.workerID || r.WorkerID;
+      const name = r.name || r.workerName || r.displayName || id;
       if (id && !unique.has(id)) unique.set(id, name);
     }
 
