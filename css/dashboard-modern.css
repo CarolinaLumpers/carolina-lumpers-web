@@ -1,0 +1,249 @@
+/* Strong dashboard-only redesign with a cleaner structure and clearer hierarchy. */
+
+.dashboard-page {
+  background:
+    radial-gradient(
+      1200px 420px at 50% -140px,
+      rgba(255, 191, 0, 0.11),
+      rgba(255, 191, 0, 0) 62%
+    ),
+    linear-gradient(180deg, #f7f7f7 0%, #f0f0f0 100%);
+}
+
+.dashboard {
+  max-width: 1120px;
+  padding: clamp(24px, 4vw, 48px) clamp(14px, 2.8vw, 28px);
+  background: transparent;
+}
+
+.dashboard h1 {
+  font-family: "Oswald", "Barlow", sans-serif;
+  font-size: clamp(1.9rem, 4vw, 2.65rem);
+  letter-spacing: 0.01em;
+  color: #b98809;
+  margin-bottom: 0.28em;
+}
+
+.dashboard h2#welcomeName {
+  font-family: "Barlow", "Segoe UI", Arial, sans-serif;
+  font-size: 1rem;
+  color: #5b5b5b;
+  margin-bottom: 0.5rem;
+}
+
+.dashboard .info {
+  color: #3a3a3a;
+}
+
+.tab-buttons {
+  gap: 0.65rem;
+  margin-top: 1rem;
+}
+
+.tab-btn {
+  min-height: 2.65rem;
+  border-radius: 10px;
+  padding: 0.55rem 1.1rem;
+  font-family: "Barlow", "Segoe UI", Arial, sans-serif;
+  font-weight: 600;
+}
+
+.dashboard .card,
+.view-as-wrap {
+  border-radius: 12px;
+  border: 1px solid #e3e3e3;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+}
+
+.dashboard .card {
+  margin-bottom: 1.35rem;
+}
+
+.dashboard .section-title,
+.view-as-wrap h4 {
+  font-family: "Oswald", "Barlow", sans-serif;
+  letter-spacing: 0.02em;
+}
+
+.view-as-wrap h4 {
+  font-size: 1.05rem;
+  text-transform: uppercase;
+  margin-bottom: 0.8rem;
+}
+
+.view-as-label {
+  margin-bottom: 0.45rem;
+}
+
+.dashboard-select,
+.dashboard-select-wide,
+.view-as-wrap select {
+  border-radius: 10px;
+  min-height: 2.65rem;
+  font-family: "Barlow", "Segoe UI", Arial, sans-serif;
+  border-color: #d7d7d7;
+  background: #ffffff;
+}
+
+#clockInBtn,
+.dashboard .btn,
+.view-as-actions .btn,
+.view-as-actions button {
+  border-radius: 10px;
+  min-height: 2.65rem;
+  font-family: "Barlow", "Segoe UI", Arial, sans-serif;
+  font-weight: 600;
+}
+
+.dashboard table {
+  border-radius: 10px;
+  overflow: hidden;
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 1px solid #ececec;
+}
+
+.dashboard th {
+  background: #f6f6f6;
+  color: #3a3a3a;
+}
+
+.dashboard td {
+  background: #ffffff;
+}
+
+.dashboard tr:nth-child(even) td {
+  background: #fbfbfb;
+}
+
+[data-theme="light"] .dashboard .card,
+[data-theme="light"] .view-as-wrap {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="light"] .view-as-wrap h4 {
+  color: #242424;
+}
+
+[data-theme="dark"] .dashboard-page {
+  background:
+    radial-gradient(
+      1200px 420px at 50% -140px,
+      rgba(255, 191, 0, 0.16),
+      rgba(255, 191, 0, 0) 62%
+    ),
+    linear-gradient(180deg, #171717 0%, #121212 100%);
+}
+
+[data-theme="dark"] .dashboard h2#welcomeName,
+[data-theme="dark"] .dashboard .info {
+  color: #d8d8d8;
+}
+
+[data-theme="dark"] .dashboard .card,
+[data-theme="dark"] .view-as-wrap {
+  background: rgba(24, 24, 24, 0.95);
+  border-color: #383838;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .dashboard th {
+  background: #262626;
+  color: #f2f2f2;
+}
+
+[data-theme="dark"] .dashboard td {
+  background: #1b1b1b;
+}
+
+[data-theme="dark"] .dashboard tr:nth-child(even) td {
+  background: #1f1f1f;
+}
+
+[data-theme="dark"] .dashboard-select,
+[data-theme="dark"] .dashboard-select-wide,
+[data-theme="dark"] .view-as-wrap select {
+  background: #151515;
+  border-color: #4b4b4b;
+}
+
+@media (max-width: 800px) {
+  .dashboard {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .dashboard .card,
+  .view-as-wrap {
+    border-radius: 14px;
+  }
+
+  .tab-btn {
+    flex: 1;
+    min-width: 44%;
+  }
+}
+
+/* Hard override layer to prevent legacy visual bleed-through. */
+html .dashboard-page {
+  background:
+    radial-gradient(
+      1200px 420px at 50% -140px,
+      rgba(255, 191, 0, 0.11),
+      rgba(255, 191, 0, 0) 62%
+    ),
+    linear-gradient(180deg, #f7f7f7 0%, #f0f0f0 100%) !important;
+}
+
+html .dashboard .card,
+html .view-as-wrap {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border-color: #e3e3e3 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06) !important;
+}
+
+html .dashboard th {
+  background: #f6f6f6 !important;
+  color: #3a3a3a !important;
+}
+
+html .dashboard td {
+  background: #ffffff !important;
+}
+
+html .dashboard tr:nth-child(even) td {
+  background: #fbfbfb !important;
+}
+
+html .dashboard .tab-btn,
+html .dashboard #clockInBtn,
+html .dashboard .btn,
+html .dashboard-select,
+html .dashboard-select-wide,
+html .view-as-wrap select {
+  border-radius: 10px !important;
+  font-family: "Barlow", "Segoe UI", Arial, sans-serif !important;
+}
+
+html .dashboard h1,
+html .view-as-wrap h4 {
+  font-family: "Oswald", "Barlow", sans-serif !important;
+}
+
+html[data-theme="dark"] .dashboard-page {
+  background:
+    radial-gradient(
+      1200px 420px at 50% -140px,
+      rgba(255, 191, 0, 0.16),
+      rgba(255, 191, 0, 0) 62%
+    ),
+    linear-gradient(180deg, #171717 0%, #121212 100%) !important;
+}
+
+html[data-theme="dark"] .dashboard .card,
+html[data-theme="dark"] .view-as-wrap {
+  background: rgba(24, 24, 24, 0.95) !important;
+  border-color: #383838 !important;
+}

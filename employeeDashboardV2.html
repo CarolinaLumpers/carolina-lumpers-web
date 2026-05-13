@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Worker Hub V2 | Carolina Lumper Service</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="css/employeeDashboardV2.css?v=20260512-v2-1">
+</head>
+
+<body>
+    <div class="hub-shell">
+        <header class="hub-topbar">
+            <div class="hub-title-wrap">
+                <p class="hub-kicker">Carolina Lumpers Service</p>
+                <h1 class="hub-title">Worker Hub</h1>
+            </div>
+            <div class="hub-user-wrap">
+                <div class="hub-user-chip" id="userChip">Loading user...</div>
+                <div class="hub-status-pill" id="shiftStatusPill">Initializing</div>
+            </div>
+            <div class="hub-actions-inline">
+                <button id="langBtn" class="ghost-btn" type="button">Language</button>
+                <button id="logoutBtn" class="ghost-btn" type="button">Logout</button>
+            </div>
+        </header>
+
+        <main class="hub-main">
+            <section class="quick-actions" aria-label="Quick Actions">
+                <button id="clockActionBtn" class="primary-action" type="button">Clock In / Out</button>
+                <button id="refreshBtn" class="secondary-action" type="button">Refresh</button>
+                <button id="requestEditBtn" class="secondary-action" type="button">Request Time Edit</button>
+            </section>
+
+            <section class="hub-banner hidden" id="offlineBanner" role="status">
+                You are offline. Clock actions may be queued until connection returns.
+            </section>
+
+            <section class="hub-grid" aria-label="Dashboard Cards">
+                <article class="hub-card">
+                    <h2>Current Shift</h2>
+                    <div class="metric-row">
+                        <span>State</span>
+                        <strong id="shiftState">Unknown</strong>
+                    </div>
+                    <div class="metric-row">
+                        <span>Last Entry</span>
+                        <strong id="lastEntry">-</strong>
+                    </div>
+                    <div class="metric-row">
+                        <span>Site</span>
+                        <strong id="lastSite">-</strong>
+                    </div>
+                </article>
+
+                <article class="hub-card">
+                    <h2>Today Entries</h2>
+                    <div class="list-scroll">
+                        <table class="hub-table" aria-label="Today's Entries">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Time</th>
+                                    <th>Site</th>
+                                </tr>
+                            </thead>
+                            <tbody id="todayEntriesBody">
+                                <tr>
+                                    <td colspan="3" class="muted">Loading...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </article>
+
+                <article class="hub-card">
+                    <h2>Daily Totals</h2>
+                    <div class="metric-row">
+                        <span>Entries</span>
+                        <strong id="entryCount">0</strong>
+                    </div>
+                    <div class="metric-row">
+                        <span>Hours (est.)</span>
+                        <strong id="hoursEstimate">0.00</strong>
+                    </div>
+                    <div class="metric-row">
+                        <span>Status</span>
+                        <strong id="syncState">Synced</strong>
+                    </div>
+                </article>
+            </section>
+
+            <section class="hub-card payroll-card" aria-label="Payroll Snapshot">
+                <div class="payroll-header">
+                    <h2>Payroll Snapshot</h2>
+                    <div class="payroll-controls">
+                        <select id="rangeSelect" aria-label="Payroll Range">
+                            <option value="current">Current</option>
+                            <option value="week">Week</option>
+                            <option value="previous">Previous</option>
+                        </select>
+                        <button id="sendPayrollBtn" class="secondary-action" type="button">Send Report</button>
+                    </div>
+                </div>
+                <div class="list-scroll">
+                    <table class="hub-table" aria-label="Payroll Rows">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Hours / Detail</th>
+                                <th>Check Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody id="payrollBody">
+                            <tr>
+                                <td colspan="3" class="muted">Loading...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="payroll-total" id="payrollTotal">Total: $0.00</p>
+            </section>
+
+            <section class="hub-card admin-drawer hidden" id="adminDrawer" aria-label="Admin Tools">
+                <div class="admin-head">
+                    <h2>Admin / Lead Drawer</h2>
+                    <span class="role-tag" id="roleTag">Role</span>
+                </div>
+                <p class="muted">View data as another worker.</p>
+                <div class="admin-controls">
+                    <select id="viewAsSelect" aria-label="Choose Worker"></select>
+                    <button id="applyViewBtn" class="secondary-action" type="button">Apply View</button>
+                    <button id="clearViewBtn" class="ghost-btn" type="button">Clear</button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+
+    <script src="js/employeeDashboardV2.js?v=20260512-v2-1" defer></script>
+</body>
+
+</html>
