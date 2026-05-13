@@ -133,14 +133,20 @@
 
             <div class="field full" id="serviceTypeField">
               <fieldset class="svc-group" aria-required="true">
-                <legend class="required">Service Type <span class="svc-group__note">(select all that apply)</span></legend>
+                <legend class="required">Service Type <span class="svc-group__note">(select all that apply)</span>
+                </legend>
                 <div class="svc-options">
-                  <label class="svc-option"><input type="checkbox" name="serviceType" value="Inbound Services"> Inbound Services</label>
-                  <label class="svc-option"><input type="checkbox" name="serviceType" value="Outbound Services"> Outbound Services</label>
-                  <label class="svc-option"><input type="checkbox" name="serviceType" value="Floor-Loaded Freight"> Floor-Loaded Freight</label>
-                  <label class="svc-option"><input type="checkbox" name="serviceType" value="Additional Support"> Additional Support</label>
+                  <label class="svc-option"><input type="checkbox" name="serviceType" value="Inbound Services"> Inbound
+                    Services</label>
+                  <label class="svc-option"><input type="checkbox" name="serviceType" value="Outbound Services">
+                    Outbound Services</label>
+                  <label class="svc-option"><input type="checkbox" name="serviceType" value="Floor-Loaded Freight">
+                    Floor-Loaded Freight</label>
+                  <label class="svc-option"><input type="checkbox" name="serviceType" value="Additional Support">
+                    Additional Support</label>
                 </div>
-                <div class="error" id="serviceTypeError" style="display:none;">Please select at least one service type.</div>
+                <div class="error" id="serviceTypeError" style="display:none;">Please select at least one service type.
+                </div>
               </fieldset>
             </div>
 
@@ -153,7 +159,8 @@
 
           <!-- Extend toggle -->
           <div class="extend-bar">
-            <button type="button" id="extendToggle" class="extend-toggle-btn" aria-expanded="false" aria-controls="extendedFields">
+            <button type="button" id="extendToggle" class="extend-toggle-btn" aria-expanded="false"
+              aria-controls="extendedFields">
               <span id="extendIcon" aria-hidden="true">＋</span>
               <span class="extend-label">Add full operation details</span>
               <span class="extend-hint">(optional)</span>
@@ -210,7 +217,8 @@
               </div>
               <div class="field full">
                 <label for="entryRequirements">Entry / Safety Requirements</label>
-                <input id="entryRequirements" name="entryRequirements" type="text" placeholder="e.g. safety vest, sign-in required">
+                <input id="entryRequirements" name="entryRequirements" type="text"
+                  placeholder="e.g. safety vest, sign-in required">
               </div>
             </div>
 
@@ -264,9 +272,12 @@
                 </select>
               </div>
               <div class="field full ext-check-row">
-                <label class="ext-check-label"><input type="checkbox" name="sendRateSheet" value="yes"> Send me a rate sheet</label>
-                <label class="ext-check-label"><input type="checkbox" name="siteVisit" value="yes"> Request a site visit</label>
-                <label class="ext-check-label"><input type="checkbox" name="requireDocs" value="yes"> Require W9 / insurance docs</label>
+                <label class="ext-check-label"><input type="checkbox" name="sendRateSheet" value="yes"> Send me a rate
+                  sheet</label>
+                <label class="ext-check-label"><input type="checkbox" name="siteVisit" value="yes"> Request a site
+                  visit</label>
+                <label class="ext-check-label"><input type="checkbox" name="requireDocs" value="yes"> Require W9 /
+                  insurance docs</label>
               </div>
             </div>
 
@@ -322,22 +333,26 @@
       margin: 0;
       padding: 0;
     }
+
     .svc-group legend {
       font-weight: 600;
       margin-bottom: 0.6rem;
       padding: 0;
       font-size: inherit;
     }
+
     .svc-group__note {
       font-weight: 400;
       font-size: 0.85em;
       opacity: 0.7;
     }
+
     .svc-options {
       display: flex;
       flex-wrap: wrap;
       gap: 0.5rem 1.25rem;
     }
+
     .svc-option {
       display: flex;
       align-items: center;
@@ -345,6 +360,7 @@
       cursor: pointer;
       font-size: 0.95rem;
     }
+
     .svc-option input[type="checkbox"] {
       width: 16px;
       height: 16px;
@@ -352,6 +368,7 @@
       accent-color: currentColor;
       flex-shrink: 0;
     }
+
     #serviceTypeField.invalid .error {
       display: block !important;
     }
@@ -360,6 +377,7 @@
     .extend-bar {
       margin: 1rem 0 0;
     }
+
     .extend-toggle-btn {
       background: none;
       border: none;
@@ -375,9 +393,11 @@
       opacity: 0.75;
       transition: opacity 0.15s;
     }
+
     .extend-toggle-btn:hover {
       opacity: 1;
     }
+
     .extend-hint {
       font-weight: 400;
       opacity: 0.7;
@@ -386,9 +406,10 @@
     /* Extended fields */
     #extendedFields {
       margin-top: 1.25rem;
-      border-top: 1px solid rgba(0,0,0,0.1);
+      border-top: 1px solid rgba(0, 0, 0, 0.1);
       padding-top: 0.75rem;
     }
+
     .ext-section-head {
       font-size: 0.72rem;
       font-weight: 700;
@@ -397,15 +418,18 @@
       opacity: 0.5;
       margin: 1rem 0 0.5rem;
     }
+
     .ext-section-head:first-child {
       margin-top: 0;
     }
+
     .ext-check-row {
       display: flex;
       flex-wrap: wrap;
       gap: 0.5rem 1.5rem;
       align-items: center;
     }
+
     .ext-check-label {
       display: flex;
       align-items: center;
@@ -413,6 +437,7 @@
       cursor: pointer;
       font-size: 0.9rem;
     }
+
     .ext-check-label input[type="checkbox"] {
       width: 15px;
       height: 15px;
